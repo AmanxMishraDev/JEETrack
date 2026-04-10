@@ -3281,6 +3281,11 @@ function nav(page, _pushState){
     if(choicePage){ choicePage.style.display='block'; choicePage.classList.add('active'); }
     document.title = 'JEETrack — Tests';
     updateMobTopbarTitle('tests-choice');
+    // Hide all FABs — tests page has none
+    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'none';
+    });
     return;
   }
   // Hide tests choice screen if visible
@@ -3304,9 +3309,10 @@ function nav(page, _pushState){
   // Show the correct FAB on mobile, hide others
   const isMob = window.innerWidth <= 768;
   const fabMap = {hours:'mob-fab-hours', todo:'mob-fab-todo', backlog:'mob-fab-backlog'};
+  const activeFabId = fabMap[page] || null;
   ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{
     const el = document.getElementById(id);
-    if(el) el.style.display = (isMob && fabMap[page] === id) ? 'flex' : 'none';
+    if(el) el.style.display = (isMob && activeFabId === id) ? 'flex' : 'none';
   });
 
   // Only re-render if data is dirty or page hasn't been rendered yet.
