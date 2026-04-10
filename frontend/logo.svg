@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Background circle -->
+  <circle cx="24" cy="24" r="24" fill="#111118"/>
+  <!-- Outer ring arc (purple) -->
+  <path d="M 24 6 A 18 18 0 0 1 42 24" stroke="#7c6af7" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Outer ring arc (pink) -->
+  <path d="M 42 24 A 18 18 0 0 1 24 42" stroke="#f472b6" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Outer ring arc (muted) -->
+  <path d="M 24 42 A 18 18 0 1 1 24 6" stroke="#2a2a35" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- J letter -->
+  <text x="24" y="30" font-family="Arial" font-weight="900" font-size="18" fill="#a695ff" text-anchor="middle">J</text>
+</svg>
