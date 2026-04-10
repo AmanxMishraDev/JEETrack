@@ -12,18 +12,15 @@ let saveQueue = false;
 
 // Decide whether onboarding should be shown.
 // Rules:
-//   - DB loaded and onboarding_done === true  → never show (any device)
-//   - DB says new_user (no row yet)           → show (brand new signup)
-//   - DB loaded and onboarding_done === false → show (started but never finished)
-//   - DB error / unreachable                 → DON'T show; send to app (avoid false positives on existing users)
+//   - DB loaded and onboarding_done === true  → never show
+//   - DB loaded and onboarding_done === false → always show (trigger guarantees row exists)
+//   - DB error / unreachable                 → DON'T show; send to app safely
+// Note: 'new_user' (no row) should never happen anymore since the Postgres trigger
+// automatically creates a profile row with onboarding_done=false on every signup.
 function _shouldShowOnboarding(userId, profileStatus) {
-  if (userProfile.onboarding_done) return false;           // DB confirmed done — never show
-  if (profileStatus === 'new_user') return true;           // Genuinely new account
-  if (profileStatus === 'loaded') return true;             // Row exists but onboarding_done is false
-  // profileStatus === 'error' or 'no_client': DB unreachable
-  // Fall back to localStorage to avoid showing onboarding to existing users on bad connection
-  const localDone = localStorage.getItem('jt_ob_done_' + userId) === '1';
-  return !localDone; // Only show if we have no local record of completion either
+  if (profileStatus === 'error' || profileStatus === 'no_client') return false; // DB unreachable — don't block user
+  if (userProfile.onboarding_done) return false;  // DB confirmed done
+  return true;                                     // Row exists, onboarding not done
 }
 
 function initSupabase(){
@@ -63,7 +60,6 @@ function initSupabase(){
           showOnboarding();
         } else {
           // Cache done state locally so next load on this device is instant
-          if(userProfile.onboarding_done) localStorage.setItem('jt_ob_done_' + session.user.id, '1');
           const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showApp(name, session.user.email);
           registerPushNotifications();
@@ -91,7 +87,6 @@ function initSupabase(){
           document.getElementById('landing').classList.add('hidden');
           showOnboarding();
         } else {
-          if(userProfile.onboarding_done) localStorage.setItem('jt_ob_done_' + session.user.id, '1');
           const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showApp(name, session.user.email);
         }
@@ -1355,8 +1350,6 @@ async function finishOnboarding() {
     } catch(e) {}
   }
   await saveUserProfile(fields);
-  // Stamp localStorage so onboarding NEVER shows again for this user on this device
-  if (currentUser) localStorage.setItem('jt_ob_done_' + currentUser.id, '1');
   // Mark that we just finished onboarding — show perm modal once on dashboard
   localStorage.setItem('jt_show_perm_after_onboarding', '1');
   // Now show the app
