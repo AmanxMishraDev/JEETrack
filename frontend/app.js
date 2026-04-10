@@ -9,6 +9,7 @@ let sb = null;
 let currentUser = null;
 let isSaving = false;
 let saveQueue = false;
+let _appInitialized = false; // prevents getSession + onAuthStateChange SIGNED_IN both calling showApp
 
 // Decide whether onboarding should be shown.
 // Rules:
@@ -50,6 +51,8 @@ function initSupabase(){
     _authResolved = true;
     clearTimeout(_splashSafetyTimer);
     if(session?.user){
+      if(_appInitialized) return; // onAuthStateChange already handled this
+      _appInitialized = true;
       currentUser = session.user;
       loadUserData().then(async () => {
         const profileStatus = await loadUserProfile();
@@ -73,11 +76,14 @@ function initSupabase(){
   // Listen for future auth changes
   sb.auth.onAuthStateChange((event, session) => {
     if(event === 'SIGNED_OUT'){
+      _appInitialized = false;
       currentUser = null;
       S = getDefaultState();
       showAuthScreen();
       setTimeout(initSlideshow, 100);
-    } else if(event === 'SIGNED_IN' && session?.user && !currentUser){
+    } else if(event === 'SIGNED_IN' && session?.user){
+      if(_appInitialized) return; // getSession already handled this
+      _appInitialized = true;
       currentUser = session.user;
       loadUserData().then(async () => {
         const profileStatus = await loadUserProfile();
