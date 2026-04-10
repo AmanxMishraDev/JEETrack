@@ -1,0 +1,16 @@
+# Supabase local CLI state
+supabase/.temp/
+
+# Environment files - never commit these
+.env
+.env.local
+.env.*.local
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
