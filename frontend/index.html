@@ -1196,11 +1196,11 @@
       <div class="hmg" id="hr-hm" style="margin-bottom:10px"></div>
       <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--mu)">
         <span>Less</span>
-        <div style="width:9px;height:9px;background:#1e1e28;border-radius:2px"></div>
-        <div style="width:9px;height:9px;background:rgba(124,106,247,.15);border-radius:2px"></div>
-        <div style="width:9px;height:9px;background:rgba(124,106,247,.35);border-radius:2px"></div>
-        <div style="width:9px;height:9px;background:rgba(166,149,255,.65);border-radius:2px"></div>
-        <div style="width:9px;height:9px;background:#a695ff;border-radius:2px"></div>
+        <div style="width:9px;height:9px;background:#141a14;border-radius:2px"></div>
+        <div style="width:9px;height:9px;background:#1a3d2b;border-radius:2px"></div>
+        <div style="width:9px;height:9px;background:#1f6b41;border-radius:2px"></div>
+        <div style="width:9px;height:9px;background:#22a05a;border-radius:2px"></div>
+        <div style="width:9px;height:9px;background:#34d399;border-radius:2px"></div>
         <span>More</span>
       </div>
     </div>
@@ -4159,8 +4159,8 @@ function renderHours(){
   const months={};
   S.hours.forEach(h=>{if(!hF(h))return;const k=h.date.substring(0,7);if(!months[k]){months[k]={total:0,days:new Set(),max:0};}months[k].total+=h.total;months[k].days.add(h.date);const dayTot=S.hours.filter(x=>x.date===h.date&&hF(x)).reduce((a,b)=>a+b.total,0);months[k].max=Math.max(months[k].max,dayTot);});
   const mKeys=Object.keys(months).sort().slice(-6);
-  const hrMCData={labels:mKeys.map(k=>{const[y,m2]=k.split('-');return new Date(y,m2-1).toLocaleDateString('en',{month:'short',year:'2-digit'});}),datasets:[{label:'Avg hrs/day',data:mKeys.map(k=>(months[k].total/months[k].days.size).toFixed(1)),borderColor:'#a695ff',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'}]};
-  const hrMCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
+  const hrMCData={labels:mKeys.map(k=>{const[y,m2]=k.split('-');return new Date(y,m2-1).toLocaleDateString('en',{month:'short',year:'2-digit'});}),datasets:[{label:'Avg hrs/day',data:mKeys.map(k=>parseFloat((months[k].total/months[k].days.size).toFixed(1))),borderColor:'#a695ff',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'}]};
+  const hrMCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>parseFloat(ctx.parsed.y.toFixed(1))+'h'}}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>parseFloat(v.toFixed(1))+'h'}}}};
   if(!uC('hrMC',hrMCData,hrMCOpts)){dc('hrMC');CIs['hrMC']=new Chart(document.getElementById('hrMC').getContext('2d'),{type:'line',data:hrMCData,options:hrMCOpts});}
   // Heatmap
   const hm=document.getElementById('hr-hm');hm.innerHTML='';
