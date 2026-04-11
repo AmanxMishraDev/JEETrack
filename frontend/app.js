@@ -1396,6 +1396,8 @@ async function finishOnboarding() {
   await saveUserProfile(fields);
   // Mark that we just finished onboarding — show perm modal once on dashboard
   localStorage.setItem('jt_show_perm_after_onboarding', '1');
+  // Load user data before showing app so dashboard isn't empty on first login
+  await loadUserData();
   // Now show the app
   showApp(fields.username, currentUser?.email || '');
 }
@@ -2166,7 +2168,7 @@ async function sendFeedback() {
     toast('Feedback sent! Thank you 🙏', 'success');
     if (document.getElementById('fb-subject')) document.getElementById('fb-subject').value = '';
     if (document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
-    if (btn) { btn.textContent = 'Sent ✓'; setTimeout(() => { if(btn){ btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; btn.disabled = true; } }, 2500); }
+    if (btn) { btn.textContent = 'Sent ✓'; setTimeout(() => { if(btn){ btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; btn.disabled = false; } }, 2500); }
   } catch(e) {
     toast('Could not send — please email aman@jeetrack.app directly', 'error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; }
