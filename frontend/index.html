@@ -49,21 +49,17 @@
   <div class="splash-credit">crafted by <strong>Aman Mishra</strong></div>
 </div>
 
-<!-- AUTH SCREEN -->
 <!-- ══════════════════════════════════════════
      LANDING PAGE
 ══════════════════════════════════════════ -->
 <div id="landing" class="hidden">
-  <!-- Animated background layers -->
   <div class="land-aura-wrap">
     <div class="land-aura land-aura-1"></div>
     <div class="land-aura land-aura-2"></div>
     <div class="land-aura land-aura-3"></div>
     <div class="land-aura land-aura-4"></div>
   </div>
-  <!-- Star field -->
   <div class="land-stars" id="land-stars"></div>
-  <!-- TOP NAVBAR -->
   <nav class="land-nav">
     <div class="land-nav-logo">
       <div class="land-nav-logo-mark">J</div>
@@ -80,9 +76,7 @@
     </div>
   </nav>
 
-  <!-- MAIN BODY -->
   <div class="land-body">
-    <!-- Left: feature slideshow -->
     <div class="land-left">
       <div class="land-grid-bg"></div>
       <div class="land-orb land-orb-1"></div>
@@ -190,7 +184,7 @@
 
     <!-- Right: hero CTA + auth form -->
     <div class="land-right">
-      <!-- Mobile close button (only shown when overlay is open) -->
+      <!-- Mobile close button -->
       <button class="mob-auth-close" onclick="closeMobAuthOverlay()" aria-label="Close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <div class="land-right-shimmer"></div>
       <div class="land-auth-inner">
@@ -219,7 +213,7 @@
           <div style="margin-top:1.6rem;font-size:10px;color:rgba(255,255,255,.15);text-align:center;letter-spacing:.04em">crafted by Aman Mishra</div>
         </div>
 
-        <!-- Auth form (shown after click) -->
+        <!-- Auth form -->
         <div class="land-auth-form" id="land-auth-form">
           <button class="land-auth-back" onclick="window.innerWidth<=768 ? closeMobAuthOverlay() : landingCloseAuth()">← Back</button>
           <div class="land-auth-welcome" id="land-form-title">Welcome back</div>
@@ -264,7 +258,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     ONBOARDING — Ultra Premium Profile Setup
+     ONBOARDING
 ══════════════════════════════════════════ -->
 <div id="onboarding">
   <canvas id="ob-bg-canvas"></canvas>
@@ -506,10 +500,10 @@
 
 
 <div class="app" id="main-app" style="display:none">
-<!-- SIDEBAR OVERLAY (tap outside to close) -->
+<!-- SIDEBAR OVERLAY -->
 <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
-<!-- SIDEBAR — clean, no ham icon in logo -->
+<!-- SIDEBAR -->
 <nav class="sb" id="sidebar">
   <div class="logo" style="margin-bottom:1.5rem">JEE<span>Track</span></div>
   <div class="ns"><div class="nl">Overview</div>
@@ -788,7 +782,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     ULTRA PREMIUM MAINS / ADVANCED / COMPARE STYLES
+     MAINS / ADVANCED / COMPARE STYLES
 ══════════════════════════════════════════════════════ -->
 
 <!-- MAINS -->
@@ -802,7 +796,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M4 7h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
       </div>
       <div>
-        <div class="prem-hero-title">JEE <span style="background:linear-gradient(135deg,#a695ff,#7c6af7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Mains</span></div>
+        <div class="prem-hero-title">JEE <span style="background:linear-gradient(135deg,#a695ff,#7c6af7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Mains</span></div>
         <div class="prem-hero-sub">
           <span class="prem-hero-sub-part">Mock test tracker</span>
           <span class="prem-hero-sub-dot"></span>
@@ -901,7 +895,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
       </div>
       <div>
-        <div class="prem-hero-title">JEE <span style="background:linear-gradient(135deg,#f472b6,#fb7185);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Advanced</span></div>
+        <div class="prem-hero-title">JEE <span style="background:linear-gradient(135deg,#f472b6,#fb7185);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Advanced</span></div>
         <div class="prem-hero-sub">
           <span class="prem-hero-sub-part">Paper 1 &amp; 2 tracker</span>
           <span class="prem-hero-sub-dot"></span>
@@ -1109,7 +1103,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
       </div>
       <div>
-        <div class="prem-hero-title">Study <span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Hours</span></div>
+        <div class="prem-hero-title">Study <span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Hours</span></div>
         <div class="prem-hero-sub">
           <span class="prem-hero-sub-part">Lecture</span>
           <span class="prem-hero-sub-dot"></span>
@@ -1955,18 +1949,18 @@
             <div style="display:flex;flex-direction:column;gap:9px">
               <div class="fgr">
                 <label class="fl">Subject</label>
-                <input type="text" class="fi" id="fb-subject" placeholder="e.g. Bug in syllabus page, feature request..." maxlength="100"/>
+                <input type="text" class="fi" id="fb-subject" placeholder="e.g. Bug in syllabus page, feature request..." maxlength="100" oninput="updateFbBtn()"/>
               </div>
               <div class="fgr">
                 <label class="fl">Message</label>
-                <textarea class="fi" id="fb-message" rows="5" placeholder="Describe the issue or suggestion in detail..." maxlength="1000" style="resize:vertical;min-height:100px;font-family:'DM Sans',sans-serif;line-height:1.6"></textarea>
+                <textarea class="fi" id="fb-message" rows="5" placeholder="Describe the issue or suggestion in detail..." maxlength="1000" style="resize:vertical;min-height:100px;font-family:'DM Sans',sans-serif;line-height:1.6" oninput="updateFbBtn()"></textarea>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:4px">
                 <div style="font-size:11px;color:var(--mu);display:flex;align-items:center;gap:5px">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
-                  Sends to: <span style="color:var(--ac2);font-weight:500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0c6f6362786d6f78226d616d6261657f647e6d3b3a4c6b616d6560226f6361">[email&#160;protected]</a></span>
+                  Sends to: <span style="color:var(--ac2);font-weight:500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="10717d717e507a7575646271737b3e716060">[email&#160;protected]</a></span>
                 </div>
-                <button class="btn bp" onclick="sendFeedback()" id="fb-send-btn" style="min-width:120px">
+                <button class="btn bp" onclick="sendFeedback()" id="fb-send-btn" style="min-width:120px" disabled>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   Send Feedback
                 </button>
@@ -2110,114 +2104,527 @@
 </div>
 
 <!-- ===== MODALS ===== -->
-<div class="mo" id="modal-addTest" onclick="if(event.target===this)closeM('addTest')"><div class="md">
-  <button class="md-close" onclick="closeM('addTest')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">Add Mock Test Score</div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Exam</label><select class="fs" id="at-exam" onchange="toggleExam()"><option value="mains">JEE Mains</option><option value="advanced">JEE Advanced</option></select></div>
-    <div class="fgr" id="at-paper-g" style="display:none"><label class="fl">Paper</label><select class="fs" id="at-paper"><option value="p1">Paper 1</option><option value="p2">Paper 2</option><option value="combined">Combined</option></select></div>
-    <div class="fgr"><label class="fl">Test Type</label><select class="fs" id="at-type"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select></div>
-    <div class="fgr"><label class="fl">Date</label><input type="date" class="fi" id="at-date"/></div>
-    <div class="fgr"><label class="fl">Total Score</label><input type="number" class="fi" id="at-total" placeholder="e.g. 210" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);clearFieldErr('at-total','at-total-err')"/><span class="fi-err-msg" id="at-total-err"></span></div>
-    <div class="fgr"><label class="fl">Max Score</label><input type="number" class="fi" id="at-max" placeholder="300" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Physics</label><input type="number" class="fi" id="at-phy" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/></div>
-    <div class="fgr"><label class="fl">Chemistry</label><input type="number" class="fi" id="at-chem" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/></div>
-    <div class="fgr"><label class="fl">Maths</label><input type="number" class="fi" id="at-math" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/></div>
-    <div class="fgr" style="grid-column:span 2"><span class="fi-err-msg" id="at-sum-err"></span></div>
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Notes</label><input type="text" class="fi" id="at-notes" maxlength="100" placeholder="e.g. PW grand test"/></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('addTest')">Cancel</button><button class="btn bp" onclick="saveTest()">Save Score</button></div>
-</div></div>
 
-<div class="mo" id="modal-scheduleTest" onclick="if(event.target===this)closeM('scheduleTest')"><div class="md">
-  <button class="md-close" onclick="closeM('scheduleTest')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2" id="sch-title">Schedule Test</div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Exam</label><select class="fs" id="sch-exam"><option value="mains">JEE Mains</option><option value="advanced">JEE Advanced</option></select></div>
-    <div class="fgr"><label class="fl">Session / Paper</label><input type="text" class="fi" id="sch-sess" placeholder="e.g. Jan, Paper 1"/></div>
-    <div class="fgr"><label class="fl">Test Type</label><select class="fs" id="sch-type"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select></div>
-    <div class="fgr"><label class="fl">Test Date</label><input type="date" class="fi" id="sch-date" onchange="clearFieldErr('sch-date','sch-date-err')"/><span class="fi-err-msg" id="sch-date-err"></span></div>
-    <div class="fgr"><label class="fl">Venue</label><input type="text" class="fi" id="sch-venue" placeholder="e.g. PW, NTA"/></div>
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Notes</label><input type="text" class="fi" id="sch-notes" placeholder="e.g. Focus on Modern Physics"/></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('scheduleTest')">Cancel</button><button class="btn bp" onclick="saveSchedule()">Schedule</button></div>
-</div></div>
+<!-- ADD TEST SCORE MODAL -->
+<div class="mo" id="modal-addTest" onclick="if(event.target===this)closeM('addTest')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-violet"></div>
+    <button class="pmo-close" onclick="closeM('addTest')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(166,149,255,.08));border-color:rgba(124,106,247,.3);box-shadow:0 0 28px rgba(124,106,247,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gv1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="gv1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a695ff"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+          <rect x="9" y="2" width="6" height="4" rx="1"/><path d="M4 7h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
+          <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Log Test Score</div>
+        <div class="pmo-sub">Record your mock test performance</div>
+      </div>
+    </div>
 
-<div class="mo" id="modal-logHours" onclick="if(event.target===this)closeM('logHours')"><div class="md">
-  <button class="md-close" onclick="closeM('logHours')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">Log Study Hours</div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Date</label><input type="date" class="fi" id="lh-date"/></div>
-    <div class="fgr"><label class="fl">Subject</label><select class="fs" id="lh-subj"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select></div>
-    <div class="fgr"><label class="fl">Lecture (hrs)</label><input type="number" step="0.5" min="0" max="24" class="fi" id="lh-l" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal();clearFieldErr('lh-l','lh-hrs-err');clearFieldErr('lh-p','lh-hrs-err');clearFieldErr('lh-r','lh-hrs-err')"/><span class="fi-err-msg" id="lh-hrs-err"></span></div>
-    <div class="fgr"><label class="fl">Practice (hrs)</label><input type="number" step="0.5" min="0" max="24" class="fi" id="lh-p" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/></div>
-    <div class="fgr"><label class="fl">Revision (hrs)</label><input type="number" step="0.5" min="0" max="24" class="fi" id="lh-r" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/></div>
-    <div class="fgr"><label class="fl">Total</label><input type="text" class="fi" id="lh-tot" readonly style="opacity:.6"/></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('logHours')">Cancel</button><button class="btn bp" onclick="saveHours()">Log</button></div>
-</div></div>
+    <!-- Exam type pill selector -->
+    <div class="pmo-pill-row" style="margin-bottom:14px">
+      <button class="pmo-pill active" id="at-exam-mains" onclick="document.getElementById('at-exam').value='mains';document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active');toggleExam()">JEE Mains</button>
+      <button class="pmo-pill" id="at-exam-adv" onclick="document.getElementById('at-exam').value='advanced';document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active');toggleExam()">JEE Advanced</button>
+    </div>
+    <select class="fi" id="at-exam" onchange="toggleExam()" style="display:none"><option value="mains">JEE Mains</option><option value="advanced">JEE Advanced</option></select>
 
-<div class="mo" id="modal-addTodo" onclick="if(event.target===this)closeM('addTodo')"><div class="md">
-  <button class="md-close" onclick="closeM('addTodo')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">Add To-Do Task</div>
-  <div class="fg">
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Task</label><input type="text" class="fi" id="td-title" maxlength="120" placeholder="e.g. Solve DPP 12 — Thermodynamics" oninput="clearFieldErr('td-title','td-title-err')"/><span class="fi-err-msg" id="td-title-err"></span></div>
-    <div class="fgr"><label class="fl">Subject</label><select class="fs" id="td-subj-i"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select></div>
-    <div class="fgr"><label class="fl">Priority</label><select class="fs" id="td-pri"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
-    <div class="fgr"><label class="fl">Due Date</label><input type="date" class="fi" id="td-due"/></div>
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Details</label><input type="text" class="fi" id="td-det" maxlength="200" placeholder="e.g. Pages 45-80, focus on derivations"/></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('addTodo')">Cancel</button><button class="btn bp" onclick="saveTodo()">Add</button></div>
-</div></div>
+    <div class="pmo-grid2">
+      <div class="pmo-field" id="at-paper-g" style="display:none">
+        <label class="pmo-label">Paper</label>
+        <select class="pmo-input" id="at-paper"><option value="p1">Paper 1</option><option value="p2">Paper 2</option><option value="combined">Combined</option></select>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Test Type</label>
+        <div class="pmo-pill-row" style="margin-top:2px">
+          <button class="pmo-pill pmo-pill-sm active" onclick="document.getElementById('at-type').value='partial';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')" class="at-type-pill">Partial</button>
+          <button class="pmo-pill pmo-pill-sm at-type-pill" onclick="document.getElementById('at-type').value='full';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Full Syllabus</button>
+        </div>
+        <select class="fi" id="at-type" style="display:none"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Test Date</label>
+        <input type="date" class="pmo-input" id="at-date"/>
+      </div>
+    </div>
 
-<div class="mo" id="modal-addBacklog" onclick="if(event.target===this)closeM('addBacklog')"><div class="md">
-  <button class="md-close" onclick="closeM('addBacklog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">Add Backlog Task</div>
-  <div class="fg">
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Task</label><input type="text" class="fi" id="bl-title-i" maxlength="120" placeholder="e.g. HC Verma Ch 12 Rotational Dynamics" oninput="clearFieldErr('bl-title-i','bl-title-err')"/><span class="fi-err-msg" id="bl-title-err"></span></div>
-    <div class="fgr"><label class="fl">Subject</label><select class="fs" id="bl-subj-i"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select></div>
-    <div class="fgr"><label class="fl">Priority</label><select class="fs" id="bl-pri"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
-    <div class="fgr"><label class="fl">Due Date</label><input type="date" class="fi" id="bl-due-i"/></div>
-    <div class="fgr" style="grid-column:span 2"><label class="fl">Details</label><input type="text" class="fi" id="bl-det" maxlength="200" placeholder="e.g. Focus on rolling motion, Q1-40"/></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('addBacklog')">Cancel</button><button class="btn bp" onclick="saveBacklog()">Add</button></div>
-</div></div>
+    <!-- Score section -->
+    <div class="pmo-score-section">
+      <div class="pmo-score-header">
+        <span class="pmo-section-label">Score Breakdown</span>
+        <span class="pmo-live-pct" id="at-live-pct">—%</span>
+      </div>
+      <div class="pmo-score-bar-wrap"><div class="pmo-score-bar-fill" id="at-score-bar" style="width:0%"></div></div>
+      <div class="pmo-grid3">
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-phy">⚛ Physics</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="at-phy" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-chem">⚗ Chemistry</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="at-chem" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-math">∑ Maths</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="at-math" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
+        </div>
+      </div>
+      <div class="pmo-grid2" style="margin-top:10px">
+        <div class="pmo-field">
+          <label class="pmo-label">Total Score</label>
+          <input type="number" class="pmo-input pmo-input-total" id="at-total" placeholder="e.g. 210" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atUpdateBar();clearFieldErr('at-total','at-total-err')"/>
+          <span class="fi-err-msg" id="at-total-err"></span>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label">Max Score</label>
+          <input type="number" class="pmo-input" id="at-max" placeholder="300" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atUpdateBar()"/>
+        </div>
+      </div>
+      <span class="fi-err-msg" id="at-sum-err" style="margin-top:4px;display:none"></span>
+    </div>
 
-<div class="mo" id="modal-addChapter" onclick="if(event.target===this)closeM('addChapter')"><div class="md" style="width:380px">
-  <button class="md-close" onclick="closeM('addChapter')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">Add Chapter</div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Subject</label><select class="fs" id="ch-subj-i" onchange="toggleChemSection_modal()"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select></div>
-    <div class="fgr" id="ch-section-g" style="display:none"><label class="fl">Chemistry Section</label><select class="fs" id="ch-section-i"><option value="physical">Physical</option><option value="organic">Organic</option><option value="inorganic">Inorganic</option></select></div>
-    <div class="fgr"><label class="fl">Chapter Name</label><input type="text" class="fi" id="ch-name" maxlength="80" placeholder="e.g. Electrochemistry" oninput="clearFieldErr('ch-name','ch-name-err')"/><span class="fi-err-msg" id="ch-name-err"></span></div>
-  </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('addChapter')">Cancel</button><button class="btn bp" onclick="saveChapter()">Add Chapter</button></div>
-</div></div>
+    <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Notes <span style="opacity:.5;font-weight:400">(optional)</span></label>
+      <input type="text" class="pmo-input" id="at-notes" maxlength="100" placeholder="e.g. PW Grand Test — felt strong in Physics"/>
+    </div>
 
-<div class="mo" id="modal-quickLog" onclick="if(event.target===this)closeM('quickLog')"><div class="md" style="width:340px">
-  <button class="md-close" onclick="closeM('quickLog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2" id="ql-title">Quick Log</div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Subject</label><select class="fs" id="ql-subj"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select></div>
-    <div class="fgr"><label class="fl">Hours</label><input type="number" step="0.5" min="0.5" max="12" class="fi" id="ql-hrs" placeholder="1.5" oninput="if(+this.value>12)this.value=12;clearFieldErr('ql-hrs','ql-hrs-err')"/><span class="fi-err-msg" id="ql-hrs-err"></span></div>
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('addTest')">Cancel</button>
+      <button class="pmo-btn-save" onclick="saveTest()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Score
+      </button>
+    </div>
   </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('quickLog')">Cancel</button><button class="btn bp" onclick="doQuickLog()">Log</button></div>
-</div></div>
+</div>
 
-<div class="mo" id="modal-howWasTest" onclick="if(event.target===this)closeM('howWasTest')"><div class="md" style="width:400px">
-  <button class="md-close" onclick="closeM('howWasTest')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div class="mt2">How was your test? 📊</div>
-  <div style="font-size:12px;color:var(--mu);margin-bottom:12px" id="hwt-desc"></div>
-  <div class="fg">
-    <div class="fgr"><label class="fl">Total Score</label><input type="number" class="fi" id="hwt-total" min="0" max="999" placeholder="e.g. 210" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Max Score</label><input type="number" class="fi" id="hwt-max" min="0" max="999" placeholder="300" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Physics</label><input type="number" class="fi" id="hwt-phy" min="0" max="999" placeholder="0" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Chemistry</label><input type="number" class="fi" id="hwt-chem" min="0" max="999" placeholder="0" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Maths</label><input type="number" class="fi" id="hwt-math" min="0" max="999" placeholder="0" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)"/></div>
-    <div class="fgr"><label class="fl">Notes</label><input type="text" class="fi" id="hwt-notes" placeholder="How did it go?"/></div>
+<!-- SCHEDULE TEST MODAL -->
+<div class="mo" id="modal-scheduleTest" onclick="if(event.target===this)closeM('scheduleTest')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-blue"></div>
+    <button class="pmo-close" onclick="closeM('scheduleTest')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(96,165,250,.06));border-color:rgba(96,165,250,.3);box-shadow:0 0 28px rgba(96,165,250,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gb1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="gb1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#93c5fd"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title" id="sch-title">Schedule a Test</div>
+        <div class="pmo-sub">Plan ahead — set a reminder for your next mock</div>
+      </div>
+    </div>
+
+    <div class="pmo-pill-row" style="margin-bottom:14px">
+      <button class="pmo-pill active" onclick="document.getElementById('sch-exam').value='mains';document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">JEE Mains</button>
+      <button class="pmo-pill" onclick="document.getElementById('sch-exam').value='advanced';document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">JEE Advanced</button>
+    </div>
+    <select class="fi" id="sch-exam" style="display:none"><option value="mains">JEE Mains</option><option value="advanced">JEE Advanced</option></select>
+
+    <div class="pmo-grid2">
+      <div class="pmo-field">
+        <label class="pmo-label">Session / Label</label>
+        <input type="text" class="pmo-input" id="sch-sess" placeholder="e.g. Jan, Paper 1, Mock #3"/>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Test Date</label>
+        <input type="date" class="pmo-input" id="sch-date" onchange="clearFieldErr('sch-date','sch-date-err')"/>
+        <span class="fi-err-msg" id="sch-date-err"></span>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Test Type</label>
+        <select class="pmo-input" id="sch-type"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Venue / Centre</label>
+        <input type="text" class="pmo-input" id="sch-venue" placeholder="e.g. PW, NTA, Home"/>
+      </div>
+      <div class="pmo-field pmo-field-full">
+        <label class="pmo-label">Notes <span style="opacity:.5;font-weight:400">(optional)</span></label>
+        <input type="text" class="pmo-input" id="sch-notes" placeholder="e.g. Focus on Modern Physics, carry ID"/>
+      </div>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('scheduleTest')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);box-shadow:0 4px 18px rgba(59,130,246,.35)" onclick="saveSchedule()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Schedule
+      </button>
+    </div>
   </div>
-  <div class="ma"><button class="btn bg2" onclick="closeM('howWasTest')">Skip</button><button class="btn bp" onclick="saveHWT()">Log Score</button></div>
-</div></div>
+</div>
+
+<!-- LOG HOURS MODAL -->
+<div class="mo" id="modal-logHours" onclick="if(event.target===this)closeM('logHours')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-pink"></div>
+    <button class="pmo-close" onclick="closeM('logHours')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(244,114,182,.2),rgba(244,114,182,.06));border-color:rgba(244,114,182,.3);box-shadow:0 0 28px rgba(244,114,182,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gp1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="gp1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9a8d4"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Log Study Hours</div>
+        <div class="pmo-sub">Track today's grind — every hour counts</div>
+      </div>
+    </div>
+
+    <!-- Subject pills -->
+    <div class="pmo-subj-pills" style="margin-bottom:14px">
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_lhSetSubj('physics',this)">⚛ Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_lhSetSubj('chemistry',this)">⚗ Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_lhSetSubj('maths',this)">∑ Maths</button>
+    </div>
+    <select class="fi" id="lh-subj" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
+
+    <div class="pmo-field" style="margin-bottom:14px">
+      <label class="pmo-label">Date</label>
+      <input type="date" class="pmo-input" id="lh-date"/>
+    </div>
+
+    <!-- Hours sliders / inputs -->
+    <div class="pmo-hours-grid">
+      <div class="pmo-hrs-card pmo-hrs-lec">
+        <div class="pmo-hrs-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Lecture
+        </div>
+        <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-l" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal();clearFieldErr('lh-l','lh-hrs-err');clearFieldErr('lh-p','lh-hrs-err');clearFieldErr('lh-r','lh-hrs-err')"/>
+        <div class="pmo-hrs-unit">hrs</div>
+      </div>
+      <div class="pmo-hrs-card pmo-hrs-prac">
+        <div class="pmo-hrs-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Practice
+        </div>
+        <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-p" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/>
+        <div class="pmo-hrs-unit">hrs</div>
+      </div>
+      <div class="pmo-hrs-card pmo-hrs-rev">
+        <div class="pmo-hrs-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Revision
+        </div>
+        <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-r" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/>
+        <div class="pmo-hrs-unit">hrs</div>
+      </div>
+    </div>
+    <span class="fi-err-msg" id="lh-hrs-err" style="margin-bottom:8px"></span>
+
+    <!-- Live total -->
+    <div class="pmo-total-pill">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Total: <strong id="lh-tot" style="color:var(--ac2);margin-left:3px">0 hrs</strong>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('logHours')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#f472b6,#f9a8d4);box-shadow:0 4px 18px rgba(244,114,182,.35);color:#0a0a0f" onclick="saveHours()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Log Hours
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TO-DO MODAL -->
+<div class="mo" id="modal-addTodo" onclick="if(event.target===this)closeM('addTodo')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-green"></div>
+    <button class="pmo-close" onclick="closeM('addTodo')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(52,211,153,.06));border-color:rgba(52,211,153,.3);box-shadow:0 0 28px rgba(52,211,153,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gg1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="gg1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6ee7b7"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>
+          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Add To-Do Task</div>
+        <div class="pmo-sub">Stay on top of your study targets</div>
+      </div>
+    </div>
+
+    <div class="pmo-field" style="margin-bottom:12px">
+      <label class="pmo-label">Task Title</label>
+      <input type="text" class="pmo-input pmo-input-lg" id="td-title" maxlength="120" placeholder="e.g. Solve DPP 12 — Thermodynamics" oninput="clearFieldErr('td-title','td-title-err')"/>
+      <span class="fi-err-msg" id="td-title-err"></span>
+    </div>
+
+    <div class="pmo-subj-pills" style="margin-bottom:14px">
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_tdSetSubj('physics',this)">⚛ Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_tdSetSubj('chemistry',this)">⚗ Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_tdSetSubj('maths',this)">∑ Maths</button>
+    </div>
+    <select class="fi" id="td-subj-i" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
+
+    <div class="pmo-grid2">
+      <div class="pmo-field">
+        <label class="pmo-label">Priority</label>
+        <div class="pmo-pri-row">
+          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('td-pri','high',this,'#f87171')">🔴 High</button>
+          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('td-pri','medium',this,'#fbbf24')">🟡 Medium</button>
+          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('td-pri','low',this,'#34d399')">🟢 Low</button>
+        </div>
+        <select class="fi" id="td-pri" style="display:none"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Due Date <span style="opacity:.5;font-weight:400">(optional)</span></label>
+        <input type="date" class="pmo-input" id="td-due"/>
+      </div>
+      <div class="pmo-field pmo-field-full">
+        <label class="pmo-label">Details <span style="opacity:.5;font-weight:400">(optional)</span></label>
+        <input type="text" class="pmo-input" id="td-det" maxlength="200" placeholder="e.g. Pages 45–80, focus on derivations"/>
+      </div>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('addTodo')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#34d399,#6ee7b7);box-shadow:0 4px 18px rgba(52,211,153,.35);color:#0a0a0f" onclick="saveTodo()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Add Task
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD BACKLOG MODAL -->
+<div class="mo" id="modal-addBacklog" onclick="if(event.target===this)closeM('addBacklog')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-amber"></div>
+    <button class="pmo-close" onclick="closeM('addBacklog')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(251,191,36,.06));border-color:rgba(251,191,36,.35);box-shadow:0 0 28px rgba(251,191,36,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#ga1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="ga1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fde68a"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Add Backlog Task</div>
+        <div class="pmo-sub">Clear what's pending — one chapter at a time</div>
+      </div>
+    </div>
+
+    <div class="pmo-field" style="margin-bottom:12px">
+      <label class="pmo-label">Task Title</label>
+      <input type="text" class="pmo-input pmo-input-lg" id="bl-title-i" maxlength="120" placeholder="e.g. HC Verma Ch 12 — Rotational Dynamics" oninput="clearFieldErr('bl-title-i','bl-title-err')"/>
+      <span class="fi-err-msg" id="bl-title-err"></span>
+    </div>
+
+    <div class="pmo-subj-pills" style="margin-bottom:14px">
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_blSetSubj('physics',this)">⚛ Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_blSetSubj('chemistry',this)">⚗ Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_blSetSubj('maths',this)">∑ Maths</button>
+    </div>
+    <select class="fi" id="bl-subj-i" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
+
+    <div class="pmo-grid2">
+      <div class="pmo-field">
+        <label class="pmo-label">Priority</label>
+        <div class="pmo-pri-row">
+          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('bl-pri','high',this,'#f87171')">🔴 High</button>
+          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('bl-pri','medium',this,'#fbbf24')">🟡 Medium</button>
+          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('bl-pri','low',this,'#34d399')">🟢 Low</button>
+        </div>
+        <select class="fi" id="bl-pri" style="display:none"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Due Date <span style="opacity:.5;font-weight:400">(optional)</span></label>
+        <input type="date" class="pmo-input" id="bl-due-i"/>
+      </div>
+      <div class="pmo-field pmo-field-full">
+        <label class="pmo-label">Details <span style="opacity:.5;font-weight:400">(optional)</span></label>
+        <input type="text" class="pmo-input" id="bl-det" maxlength="200" placeholder="e.g. Focus on rolling motion, Q1–40"/>
+      </div>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('addBacklog')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);box-shadow:0 4px 18px rgba(251,191,36,.35);color:#0a0a0f" onclick="saveBacklog()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Backlog
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CHAPTER MODAL -->
+<div class="mo" id="modal-addChapter" onclick="if(event.target===this)closeM('addChapter')">
+  <div class="pmo" style="max-width:400px">
+    <div class="pmo-glow pmo-glow-violet"></div>
+    <button class="pmo-close" onclick="closeM('addChapter')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(166,149,255,.08));border-color:rgba(124,106,247,.3);box-shadow:0 0 28px rgba(124,106,247,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gv2)" stroke-width="1.8" stroke-linecap="round">
+          <defs><linearGradient id="gv2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a695ff"/><stop offset="1" stop-color="#c4b5fd"/></linearGradient></defs>
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Add Chapter</div>
+        <div class="pmo-sub">Track your syllabus coverage</div>
+      </div>
+    </div>
+
+    <div class="pmo-subj-pills" style="margin-bottom:14px">
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_chSetSubj('physics',this)">⚛ Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_chSetSubj('chemistry',this)">⚗ Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_chSetSubj('maths',this)">∑ Maths</button>
+    </div>
+    <select class="fi" id="ch-subj-i" onchange="toggleChemSection_modal()" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
+
+    <div class="pmo-field" id="ch-section-g" style="display:none;margin-bottom:12px">
+      <label class="pmo-label">Chemistry Section</label>
+      <div class="pmo-pill-row">
+        <button class="pmo-pill active" onclick="document.getElementById('ch-section-i').value='physical';document.querySelectorAll('#modal-addChapter .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Physical</button>
+        <button class="pmo-pill" onclick="document.getElementById('ch-section-i').value='organic';document.querySelectorAll('#modal-addChapter .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Organic</button>
+        <button class="pmo-pill" onclick="document.getElementById('ch-section-i').value='inorganic';document.querySelectorAll('#modal-addChapter .pmo-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Inorganic</button>
+      </div>
+      <select class="fi" id="ch-section-i" style="display:none"><option value="physical">Physical</option><option value="organic">Organic</option><option value="inorganic">Inorganic</option></select>
+    </div>
+
+    <div class="pmo-field">
+      <label class="pmo-label">Chapter Name</label>
+      <input type="text" class="pmo-input pmo-input-lg" id="ch-name" maxlength="80" placeholder="e.g. Electrochemistry" oninput="clearFieldErr('ch-name','ch-name-err')"/>
+      <span class="fi-err-msg" id="ch-name-err"></span>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('addChapter')">Cancel</button>
+      <button class="pmo-btn-save" onclick="saveChapter()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Chapter
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK LOG MODAL -->
+<div class="mo" id="modal-quickLog" onclick="if(event.target===this)closeM('quickLog')">
+  <div class="pmo" style="max-width:360px">
+    <div class="pmo-glow pmo-glow-pink"></div>
+    <button class="pmo-close" onclick="closeM('quickLog')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(244,114,182,.2),rgba(244,114,182,.06));border-color:rgba(244,114,182,.3);box-shadow:0 0 28px rgba(244,114,182,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gp2)" stroke-width="1.8" stroke-linecap="round">
+          <defs><linearGradient id="gp2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9a8d4"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title" id="ql-title">Quick Log</div>
+        <div class="pmo-sub">Add a fast study session entry</div>
+      </div>
+    </div>
+
+    <div class="pmo-subj-pills" style="margin-bottom:16px">
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_qlSetSubj('physics',this)">⚛ Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_qlSetSubj('chemistry',this)">⚗ Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_qlSetSubj('maths',this)">∑ Maths</button>
+    </div>
+    <select class="fi" id="ql-subj" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
+
+    <div class="pmo-field">
+      <label class="pmo-label">Hours Spent</label>
+      <input type="number" step="0.5" min="0.5" max="12" class="pmo-input pmo-input-xl" id="ql-hrs" placeholder="1.5" oninput="if(+this.value>12)this.value=12;clearFieldErr('ql-hrs','ql-hrs-err')"/>
+      <span class="fi-err-msg" id="ql-hrs-err"></span>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('quickLog')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#f472b6,#f9a8d4);box-shadow:0 4px 18px rgba(244,114,182,.35);color:#0a0a0f" onclick="doQuickLog()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Quick Log
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- HOW WAS YOUR TEST MODAL -->
+<div class="mo" id="modal-howWasTest" onclick="if(event.target===this)closeM('howWasTest')">
+  <div class="pmo" style="max-width:440px">
+    <div class="pmo-glow pmo-glow-violet"></div>
+    <button class="pmo-close" onclick="closeM('howWasTest')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(244,114,182,.1));border-color:rgba(124,106,247,.3);box-shadow:0 0 28px rgba(124,106,247,.25)">
+        <span style="font-size:22px;line-height:1">📊</span>
+      </div>
+      <div>
+        <div class="pmo-title">How was your test?</div>
+        <div class="pmo-sub" id="hwt-desc">Log your score from yesterday's test</div>
+      </div>
+    </div>
+
+    <div class="pmo-score-section">
+      <div class="pmo-score-header">
+        <span class="pmo-section-label">Score Breakdown</span>
+        <span class="pmo-live-pct" id="hwt-live-pct">—%</span>
+      </div>
+      <div class="pmo-score-bar-wrap"><div class="pmo-score-bar-fill" id="hwt-score-bar" style="width:0%"></div></div>
+      <div class="pmo-grid3">
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-phy">⚛ Physics</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="hwt-phy" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-chem">⚗ Chemistry</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="hwt-chem" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label pmo-label-math">∑ Maths</label>
+          <input type="number" class="pmo-input pmo-score-inp" id="hwt-math" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
+        </div>
+      </div>
+      <div class="pmo-grid2" style="margin-top:10px">
+        <div class="pmo-field">
+          <label class="pmo-label">Total Score</label>
+          <input type="number" class="pmo-input pmo-input-total" id="hwt-total" min="0" max="999" placeholder="e.g. 210" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtUpdateBar()"/>
+        </div>
+        <div class="pmo-field">
+          <label class="pmo-label">Max Score</label>
+          <input type="number" class="pmo-input" id="hwt-max" min="0" max="999" placeholder="300" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtUpdateBar()"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Notes <span style="opacity:.5;font-weight:400">(optional)</span></label>
+      <input type="text" class="pmo-input" id="hwt-notes" placeholder="How did it feel? What to improve?"/>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="(async()=>{const id=+document.querySelector('#modal-howWasTest').dataset.upid;if(id)await _hwtMarkDismissed(id);closeM('howWasTest');})()">Skip for now</button>
+      <button class="pmo-btn-save" onclick="saveHWT()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Log Score
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="mo" id="modal-resetConfirm" onclick="if(event.target===this)closeM('resetConfirm')"><div class="md">
   <button class="md-close" onclick="closeM('resetConfirm')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2236,7 +2643,7 @@
 
 <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importData(this)"/>
 
-<!-- WELCOME / PERMISSIONS MODAL (2-step) — ULTRA PREMIUM -->
+<!-- WELCOME / PERMISSIONS MODAL (2-step) -->
 
 <div class="mo" id="modal-welcome" style="z-index:10000;align-items:center!important">
   <div class="wm-card md" style="position:relative!important;bottom:auto!important;left:auto!important;right:auto!important;">
@@ -2620,7 +3027,7 @@
 </div>
 
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // =========== CANONICAL SYLLABUS (always authoritative — never read from cache) ===========
 const CANONICAL_SYLLABUS = {
   physics:[
@@ -2768,11 +3175,11 @@ function dismissNotif(id){dismissedNotifs.add(id);renderOvNotifs();}
 function renderOvNotifs(){
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);const tmrStr=tomorrow.toISOString().split('T')[0];
   const notifs=[];
-  // Dashboard: only test notifications
-  S.upcoming.filter(t=>t.date===tmrStr).forEach(t=>notifs.push({id:'tmr-'+t.id,c:'am',msg:`⏰ Test TOMORROW: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}')`}));
-  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}')`}));
+  // Dashboard: only test notifications — clicking goes to the upcoming tab
+  S.upcoming.filter(t=>t.date===tmrStr).forEach(t=>notifs.push({id:'tmr-'+t.id,c:'am',msg:`⏰ Test TOMORROW: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
+  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
   const visible=notifs.filter(n=>!dismissedNotifs.has(n.id));
-  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer" onclick="${n.fn}">${n.msg}<span style="margin-left:auto;opacity:.4;font-size:11px;flex-shrink:0">→</span><button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></div>`).join('');
+  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer" onclick="${n.fn}">${n.msg}<button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></div>`).join('');
 }
 
 function save(){localStorage.setItem('jt3',JSON.stringify(S));updateActivity();}
@@ -3387,12 +3794,70 @@ function toggleExam(){
   const v=document.getElementById('at-exam').value;
   document.getElementById('at-paper-g').style.display=v==='advanced'?'':'none';
   document.getElementById('at-max').value=v==='advanced'?360:300;
+  _atUpdateBar();
 }
 function calcTotal(){
   const l=+document.getElementById('lh-l').value||0,p=+document.getElementById('lh-p').value||0,r=+document.getElementById('lh-r').value||0;
-  document.getElementById('lh-tot').value=(l+p+r).toFixed(1)+'h';
+  const tot=(l+p+r).toFixed(1);
+  const el=document.getElementById('lh-tot');if(el)el.textContent=tot+'h';
 }
 function quickLog(type){currentQLType=type;document.getElementById('ql-title').textContent='Quick Log — '+cap(type);document.getElementById('ql-hrs').value='';openM('quickLog')}
+
+function _atAutoSum(){
+  const p=+document.getElementById('at-phy').value||0,c=+document.getElementById('at-chem').value||0,m=+document.getElementById('at-math').value||0;
+  const s=p+c+m;if(s>0){document.getElementById('at-total').value=s;_atUpdateBar();}
+}
+function _atUpdateBar(){
+  const t=+document.getElementById('at-total').value||0,mx=+document.getElementById('at-max').value||300;
+  const pct=mx?Math.min(100,Math.round(t/mx*100)):0;
+  document.getElementById('at-score-bar').style.width=pct+'%';
+  document.getElementById('at-live-pct').textContent=mx?pct+'%':'—%';
+}
+function _hwtAutoSum(){
+  const p=+document.getElementById('hwt-phy').value||0,c=+document.getElementById('hwt-chem').value||0,m=+document.getElementById('hwt-math').value||0;
+  const s=p+c+m;if(s>0){document.getElementById('hwt-total').value=s;_hwtUpdateBar();}
+}
+function _hwtUpdateBar(){
+  const t=+document.getElementById('hwt-total').value||0,mx=+document.getElementById('hwt-max').value||300;
+  const pct=mx?Math.min(100,Math.round(t/mx*100)):0;
+  document.getElementById('hwt-score-bar').style.width=pct+'%';
+  document.getElementById('hwt-live-pct').textContent=mx?pct+'%':'—%';
+}
+// Subject pill setters
+function _lhSetSubj(v,btn){document.getElementById('lh-subj').value=v;document.querySelectorAll('#modal-logHours .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+function _tdSetSubj(v,btn){document.getElementById('td-subj-i').value=v;document.querySelectorAll('#modal-addTodo .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+function _blSetSubj(v,btn){document.getElementById('bl-subj-i').value=v;document.querySelectorAll('#modal-addBacklog .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+function _qlSetSubj(v,btn){document.getElementById('ql-subj').value=v;document.querySelectorAll('#modal-quickLog .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+function _chSetSubj(v,btn){document.getElementById('ch-subj-i').value=v;document.querySelectorAll('#modal-addChapter .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');toggleChemSection_modal();}
+function _setPri(selId,val,btn,col){
+  document.getElementById(selId).value=val;
+  const row=btn.closest('.pmo-pri-row');
+  if(row)row.querySelectorAll('.pmo-pri-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+// Reset premium modal fields on open
+const _origOpenM=openM;
+function openM(id,preset){
+  _origOpenM(id,preset);
+  // Reset score bar + live pct when opening score modals
+  if(id==='addTest'){
+    setTimeout(()=>{
+      document.getElementById('at-score-bar').style.width='0%';
+      document.getElementById('at-live-pct').textContent='—%';
+      // Reset pill states
+      document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
+      document.getElementById('at-exam-mains')?.classList.add('active');
+      document.getElementById('at-exam').value='mains';
+      toggleExam();
+    },50);
+  }
+  if(id==='howWasTest'){
+    setTimeout(()=>{
+      document.getElementById('hwt-score-bar').style.width='0%';
+      document.getElementById('hwt-live-pct').textContent='—%';
+    },50);
+  }
+}
 
 // =========== MODE TOGGLE ===========
 function setMode(page,m,el){
@@ -3448,19 +3913,63 @@ function updateBadges(){
   nb1.textContent=tdP;nb1.style.display=tdP?'':'none';
   nb2.textContent=blP;nb2.style.display=blP?'':'none';
 }
+// ── HWT Dismissed IDs — Supabase-backed, localStorage as fast cache ──────────
+// S.hwtDismissed is loaded from Supabase streaks.hwt_dismissed (JSONB array of ids)
+// localStorage key is used as an instant read cache so checkHWTNotifs() is synchronous.
+function _getHwtCacheKey(){return 'jt_hwt_dismissed_'+(currentUser?.id||'guest');}
+
+function _hwtIsDismissed(id){
+  // Check local cache first (instant)
+  try{
+    const arr=JSON.parse(localStorage.getItem(_getHwtCacheKey())||'[]');
+    if(arr.includes(id))return true;
+  }catch(e){}
+  // Also check in-memory S.hwtDismissed (loaded from Supabase on login)
+  return Array.isArray(S.hwtDismissed)&&S.hwtDismissed.includes(id);
+}
+
+async function _hwtMarkDismissed(id){
+  // 1. Update in-memory state
+  if(!Array.isArray(S.hwtDismissed))S.hwtDismissed=[];
+  if(!S.hwtDismissed.includes(id))S.hwtDismissed.push(id);
+  // 2. Update localStorage cache immediately (so same-device re-login is instant)
+  try{
+    const key=_getHwtCacheKey();
+    const arr=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!arr.includes(id)){arr.push(id);localStorage.setItem(key,JSON.stringify(arr));}
+  }catch(e){}
+  // 3. Persist to Supabase streaks table (hwt_dismissed column) — cross-device sync
+  if(sb&&currentUser){
+    try{
+      await sb.from('streaks').upsert({
+        user_id:currentUser.id,
+        hwt_dismissed:S.hwtDismissed
+      },{onConflict:'user_id'});
+    }catch(e){console.warn('HWT dismiss sync failed:',e);}
+  }
+}
+
 function checkHWTNotifs(){
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   const yd=yesterday.toISOString().split('T')[0];
-  S.upcoming.filter(t=>t.date===yd&&!S.notifiedHWT.includes(t.id)).forEach(t=>{
-    if(!S.notifiedHWT.includes(t.id)){
-      S.notifiedHWT.push(t.id);save();
-      // Show prompt
-      document.getElementById('hwt-desc').textContent=`Yesterday you had: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''} — How did it go?`;
-      document.getElementById('hwt-max').value=t.exam==='advanced'?360:300;
-      document.querySelector('#modal-howWasTest').dataset.upid=t.id;
-      openM('howWasTest');
-    }
+  // Find yesterday's upcoming tests that haven't been handled
+  const pending=S.upcoming.filter(t=>{
+    if(t.date!==yd)return false;
+    // Already dismissed (logged or skipped) — checks both local cache + Supabase-loaded array
+    if(_hwtIsDismissed(t.id))return false;
+    // Already logged as a test score for that date+exam
+    if(S.tests.some(x=>x.date===t.date&&x.exam===t.exam))return false;
+    return true;
   });
+  if(!pending.length)return;
+  const t=pending[0];
+  // Mark dismissed immediately (async — fires and continues)
+  _hwtMarkDismissed(t.id);
+  if(!S.notifiedHWT.includes(t.id)){S.notifiedHWT.push(t.id);}
+  document.getElementById('hwt-desc').textContent=`Yesterday you had: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''} — How did it go?`;
+  document.getElementById('hwt-max').value=t.exam==='advanced'?360:300;
+  document.querySelector('#modal-howWasTest').dataset.upid=t.id;
+  openM('howWasTest');
 }
 
 // =========== SAVE FUNCTIONS ===========
@@ -3513,14 +4022,19 @@ function saveHWT(){
   if(!up)return;
   const exam=up.exam;
   const e={id:Date.now(),exam,session:up.session,paper:up.session,type:up.type,date:up.date,total:+document.getElementById('hwt-total').value||0,max:+document.getElementById('hwt-max').value||(exam==='advanced'?360:300),physics:+document.getElementById('hwt-phy').value||0,chemistry:+document.getElementById('hwt-chem').value||0,maths:+document.getElementById('hwt-math').value||0,notes:document.getElementById('hwt-notes').value||'From scheduled test'};
-  S.tests.push(e);save();closeM('howWasTest');
+  S.tests.push(e);
+  // Remove from upcoming (logged tests move to the test history)
+  S.upcoming=S.upcoming.filter(t=>t.id!==upid);
+  dbDelete('upcoming',upid);
+  save();closeM('howWasTest');
+  _hwtMarkDismissed(upid); // async — syncs to Supabase in background
   pushUndo('test',e,'Score logged from scheduled test',false);
   const gm2=getGoalMains(),ga2=getGoalAdv();
   if(e.exam==='mains'&&e.total>=gm2) setTimeout(()=>celebrate('🏆',`LEGENDARY! ${gm2}+ in Mains!`,`You scored ${e.total}/${e.max}!`,true),300);
   else if(e.exam==='advanced'&&e.total>=ga2) setTimeout(()=>celebrate('🌟',`OUTSTANDING! ${ga2}+ in Advanced!`,`You scored ${e.total}/${e.max}!`,true),300);
   else celebrate('📊','Score Logged!',`${e.total}/${e.max} from scheduled test`);
   navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');
-  renderOverview();
+  renderMains();renderAdv();renderOverview();
 }
 function saveSchedule(){
   const date=document.getElementById('sch-date').value;
@@ -3966,21 +4480,33 @@ function renderMains(){
   document.getElementById('mn-notifs').innerHTML=notif.map(n=>`<div class="prem-notif ${n.c==='am'?'warn':'danger'}"><div class="prem-notif-icon">${n.c==='am'?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>':'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'}</div>${n.msg}</div>`).join('');
   renderMnUnified();
 }
+function openLogFromUpcoming(upid){
+  const t=S.upcoming.find(x=>x.id===upid);if(!t)return;
+  document.getElementById('hwt-desc').textContent=`Log score for: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''} on ${fmt(t.date)}`;
+  document.getElementById('hwt-max').value=t.exam==='advanced'?360:300;
+  document.querySelector('#modal-howWasTest').dataset.upid=t.id;
+  openM('howWasTest');
+}
 function renderMnUnified(){
   const tmr=new Date();tmr.setDate(tmr.getDate()+1);const tmrStr=tmr.toISOString().split('T')[0];
   const tests=getTests('mains');const m=M.mn;
   const el=document.getElementById('mn-unified');
   if(mnView==='upcoming'){
-    const up=S.upcoming.filter(t=>t.exam==='mains').sort((a,b)=>a.date.localeCompare(b.date));
+    // Only show upcoming (today + future), not past
+    const up=S.upcoming.filter(t=>t.exam==='mains'&&t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date));
+    const logSVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
     el.innerHTML=up.length?up.map(t=>{
-      const isT=t.date===td(),isTmr=t.date===tmrStr,isPast=t.date<td();
+      const isT=t.date===td(),isTmr=t.date===tmrStr;
       const dl2=Math.ceil((new Date(t.date+'T00:00:00')-new Date(td()+'T00:00:00'))/86400000);
-      return`<div style="background:var(--sf2);border:1px solid var(--bd);border-left:3px solid ${isT?'var(--rd)':isTmr?'var(--am)':isPast?'var(--mu2)':'var(--bl)'};border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:5px;display:flex;align-items:center;gap:8px">
-        <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Mains Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':isPast?'<span class="chip" style="background:var(--sf3);color:var(--mu);margin-left:4px">Past</span>':'<span class="chip bb" style="margin-left:4px">in '+dl2+'d</span>'}
+      return`<div style="background:var(--sf2);border:1px solid var(--bd);border-left:3px solid ${isT?'var(--rd)':isTmr?'var(--am)':'var(--bl)'};border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:5px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Mains Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':'<span class="chip bb" style="margin-left:4px">in '+dl2+'d</span>'}
         <div style="font-size:11px;color:var(--mu);margin-top:2px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${fmt(t.date)} ${t.venue?''+t.venue:''} ${t.notes?'· '+t.notes:''}</div></div>
-        <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})">✕</button>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-size:11px">${logSVG} Log</button>`:''}
+          <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})" title="Remove">✕</button>
+        </div>
       </div>`;
-    }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No scheduled tests yet.</div>`;
+    }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
     el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbg(pct(t.total,t.max))}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>`;
   }
@@ -4065,16 +4591,21 @@ function renderAdvUnified(){
   const tests=getTests('advanced');
   const el=document.getElementById('adv-unified');
   if(advView==='upcoming'){
-    const up=S.upcoming.filter(t=>t.exam==='advanced').sort((a,b)=>a.date.localeCompare(b.date));
+    // Only show upcoming (today + future), not past
+    const up=S.upcoming.filter(t=>t.exam==='advanced'&&t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date));
+    const logSVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
     el.innerHTML=up.length?up.map(t=>{
-      const isT=t.date===td(),isTmr=t.date===tmrStr,isPast=t.date<td();
+      const isT=t.date===td(),isTmr=t.date===tmrStr;
       const dl2=Math.ceil((new Date(t.date+'T00:00:00')-new Date(td()+'T00:00:00'))/86400000);
-      return`<div style="background:var(--sf2);border:1px solid var(--bd);border-left:3px solid ${isT?'var(--rd)':isTmr?'var(--am)':isPast?'var(--mu2)':'var(--bl)'};border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:5px;display:flex;align-items:center;gap:8px">
-        <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Advanced Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':isPast?'<span class="chip" style="background:var(--sf3);color:var(--mu);margin-left:4px">Past</span>':'<span class="chip bac" style="margin-left:4px">in '+dl2+'d</span>'}
+      return`<div style="background:var(--sf2);border:1px solid var(--bd);border-left:3px solid ${isT?'var(--rd)':isTmr?'var(--am)':'var(--bl)'};border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:5px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Advanced Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':'<span class="chip bac" style="margin-left:4px">in '+dl2+'d</span>'}
         <div style="font-size:11px;color:var(--mu);margin-top:2px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${fmt(t.date)} ${t.venue?''+t.venue:''} ${t.notes?'· '+t.notes:''}</div></div>
-        <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})">✕</button>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-size:11px">${logSVG} Log</button>`:''}
+          <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})" title="Remove">✕</button>
+        </div>
       </div>`;
-    }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No scheduled tests yet.</div>`;
+    }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
     el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbg(pct(t.total,t.max))}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>`;
   }
@@ -4205,7 +4736,7 @@ function renderTodo(){
   const pct=total?Math.round(done/total*100):0;
   const circumference=2*Math.PI*18;
   const offset=circumference-(pct/100)*circumference;
-  // Premium stat cards
+  // stat cards
   document.getElementById('td-stats').innerHTML=`
     <div class="prem-stat">
       <div class="prem-stat-glow" style="background:rgba(248,113,113,.7)"></div>
@@ -4324,7 +4855,7 @@ function renderBacklog(){
   const total=S.backlogs.length,done=S.backlogs.filter(b=>b.done).length;
   document.getElementById('bl-rate').textContent=total?Math.round(done/total*100)+'%':'—';
 
-  // Premium subject cards
+  //subject cards
   const subjs=['physics','chemistry','maths'];
   const subjColors={'physics':'#60a5fa','chemistry':'#34d399','maths':'#fbbf24'};
   const subjBgColors={'physics':'rgba(96,165,250,.12)','chemistry':'rgba(52,211,153,.12)','maths':'rgba(251,191,36,.1)'};
@@ -5460,16 +5991,10 @@ function renderInsights(d){
   // Animate score bars after paint
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     content.querySelectorAll('.ai-subj-bar-fill').forEach(el=>{
-      const w=el.style.width;el.style.width='0';
-      requestAnimationFrame(()=>el.style.width=w);
+      const targetWidth = el.style.width;
+      el.style.width = '0%';
+      el.style.transition = 'width 0.7s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(()=>{ el.style.width = targetWidth; });
     });
   }));
 }
-
-
-</script>
-
-<!-- ===== SUPABASE + AUTH + PDF + NOTIFICATIONS ===== -->
-<script src="app.js"></script>
-</body>
-</html>
