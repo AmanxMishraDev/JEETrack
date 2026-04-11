@@ -67,7 +67,29 @@ tr:hover td{background:rgba(124,106,247,.06)}
 .fi,.fs{background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);border-radius:var(--rs);padding:6px 9px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s;width:100%}
 .fi.fi-error{border-color:var(--rd)!important;background:rgba(248,113,113,.06)!important}
 .fi-err-msg{font-size:11px;color:var(--rd);margin-top:3px;display:none}
-.fi-err-msg.show{display:block}
+.fi-err-msg.show{display:block;animation:errFadeIn .2s ease both}
+@keyframes errFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* pmo-input error state (used in score modals) */
+.pmo-input.pmo-inp-error,.pmo-score-inp.pmo-inp-error,.pmo-input-total.pmo-inp-error{
+  border-color:rgba(248,113,113,.7)!important;
+  background:rgba(248,113,113,.07)!important;
+  box-shadow:0 0 0 3px rgba(248,113,113,.14)!important;
+  color:#fca5a5!important;
+}
+.pmo-input.pmo-inp-error::placeholder,.pmo-score-inp.pmo-inp-error::placeholder{color:rgba(252,165,165,.5)!important}
+
+/* Shake animation for invalid fields */
+@keyframes pmoShake{
+  0%,100%{transform:translateX(0)}
+  15%{transform:translateX(-7px)}
+  30%{transform:translateX(6px)}
+  45%{transform:translateX(-5px)}
+  60%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+  90%{transform:translateX(1px)}
+}
+.pmo-inp-shake{animation:pmoShake .38s cubic-bezier(.36,.07,.19,.97) both}
 .fi:focus,.fs:focus{border-color:var(--ac)}
 .fs{cursor:pointer}
 /* buttons */
