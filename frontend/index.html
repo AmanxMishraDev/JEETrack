@@ -14,6 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 </head>
 <body>
 
@@ -3022,6 +3023,14 @@
       </button>
     </div>
 
+    <!-- Change Goal link -->
+    <div class="cel-change-goal-wrap">
+      <button class="cel-change-goal-btn" onclick="closeCel();nav('settings');setTimeout(()=>showSettingsPanel('goals',document.querySelector('.settings-nav-item[data-tip=Goals]')),200)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 3 12c0 1.5.33 2.92.93 4.2"/><path d="M4.93 19.07A10 10 0 0 0 21 12c0-1.5-.33-2.92-.93-4.2"/></svg>
+        Raise your goal
+      </button>
+    </div>
+
     <p class="cel-dismiss-hint">tap outside to dismiss</p>
   </div>
 </div>
@@ -3254,6 +3263,15 @@ function uC(id, newData, newOptions){
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
 function pct(s,m){return m?(s/m*100).toFixed(1):0}
 function sbg(p){if(p>=80)return'bg';if(p>=60)return'bb';if(p>=40)return'ba';return'br'}
+function sbgGoal(score, max, exam){
+  const goal = exam==='advanced' ? getGoalAdv() : getGoalMains();
+  const goalPct = (goal / max) * 100;
+  const scorePct = (score / max) * 100;
+  if(scorePct >= goalPct) return 'bg';           // at or above goal → green
+  if(scorePct >= goalPct * 0.8) return 'bb';     // within 20% of goal → blue (close)
+  if(scorePct >= goalPct * 0.55) return 'ba';    // within 45% of goal → amber
+  return 'br';                                   // very low → red
+}
 function sc(s){return s==='physics'?'#60a5fa':s==='chemistry'?'#34d399':'#fbbf24'}
 function l7(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().split('T')[0]})}
 function dLeft(dt){const n=new Date();n.setHours(0,0,0,0);return Math.max(0,Math.ceil((dt-n)/86400000))}
@@ -3472,15 +3490,47 @@ function closeCel(){
 }
 
 async function shareScore(){
-  const title=document.getElementById('cel-title')?.textContent||'Achievement unlocked!';
-  const score=document.getElementById('cel-score-display')?.textContent||'';
-  const userName=document.getElementById('sb-username')?.textContent||'a JEE aspirant';
-  // Build share text — promotes naturally without looking forced
-  const shareText=`${title} ${score}\n\nTracked with JEETrack — a personal JEE preparation dashboard.\nBuilt for aspirants who take their prep seriously 🎯\n\n#JEE2027 #JEEPreparation`;
-  const shareUrl='https://jeetrack.app';
+  const scoreNum=document.getElementById('cel-score-num')?.textContent||'';
+  const scoreMax=document.getElementById('cel-score-max')?.textContent||'300';
+  const examPill=document.getElementById('cel-pill')?.querySelector('span')?.textContent||'';
+  const isMains=examPill.toLowerCase().includes('mains');
+  const examLabel=isMains?'JEE Mains':'JEE Advanced';
+  const examMax=isMains?'300':'360';
+  const goal=isMains?getGoalMains():getGoalAdv();
+  const shareUrl='https://jeetrack.vercel.app';
+  const shareText=
+`🏆 I scored ${scoreNum}/${examMax} in ${examLabel}!
+
+JEETrack helped me set a clear goal (${goal}/${examMax}), track every mock test, and stay consistent. I hit it — and you can too.
+
+Start tracking your JEE prep for free 👇
+${shareUrl}
+
+#JEE2026 #JEEMains #JEEPreparation #JEETrack`;
+
+  // Try to capture the card as an image first
+  const card = document.getElementById('cel-box');
+  let imageFile = null;
+  if(card && window.html2canvas){
+    try{
+      const canvas = await html2canvas(card, {
+        backgroundColor: '#0e0a1e',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      imageFile = new File([blob], 'jeetrack-score.png', {type:'image/png'});
+    }catch(e){ imageFile = null; }
+  }
+
   if(navigator.share){
     try{
-      await navigator.share({title:'JEETrack — '+title,text:shareText,url:shareUrl});
+      const shareData = {title:`JEETrack — ${examLabel} Goal Crushed! 🏆`, text:shareText, url:shareUrl};
+      if(imageFile && navigator.canShare && navigator.canShare({files:[imageFile]})){
+        shareData.files = [imageFile];
+      }
+      await navigator.share(shareData);
     }catch(e){if(e.name!=='AbortError')fallbackShare(shareText,shareUrl);}
   } else {
     fallbackShare(shareText,shareUrl);
@@ -3767,7 +3817,7 @@ function renderAll(){const active=document.querySelector('.page.active');if(acti
 const openM=function(id,preset){
   if(id==='resetConfirm'){try{document.getElementById('reset-confirm-input').value='';}catch(e){}}
   if(id==='addTest'){document.getElementById('at-date').value=td();if(preset)document.getElementById('at-exam').value=preset;toggleExam();}
-  if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset)document.getElementById('sch-exam').value=preset;}
+  if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset){document.getElementById('sch-exam').value=preset;document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));document.querySelector('#modal-scheduleTest .pmo-pill[onclick*="'+preset+'"]')?.classList.add('active');}}
   if(id==='logHours'){document.getElementById('lh-date').value=td();['lh-l','lh-p','lh-r'].forEach(i=>document.getElementById(i).value='');document.getElementById('lh-tot').value='';['lh-l','lh-p','lh-r'].forEach(i=>clearFieldErr(i,'lh-hrs-err'));}
   if(id==='addTodo'){['td-title','td-det','td-due'].forEach(i=>{try{document.getElementById(i).value=''}catch(e){}});clearFieldErr('td-title','td-title-err');}
   if(id==='addBacklog'){['bl-title-i','bl-det','bl-due-i'].forEach(i=>{try{document.getElementById(i).value=''}catch(e){}});clearFieldErr('bl-title-i','bl-title-err');}
@@ -3790,8 +3840,9 @@ const openM=function(id,preset){
       document.getElementById('at-score-bar').style.width='0%';
       document.getElementById('at-live-pct').textContent='—%';
       document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
-      document.getElementById('at-exam-mains')?.classList.add('active');
-      document.getElementById('at-exam').value='mains';
+      const _examPreset = preset || 'mains';
+      document.getElementById('at-exam').value=_examPreset;
+      document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
       toggleExam();
     },50);
   }
@@ -4273,11 +4324,11 @@ function renderOverview(){
   const ml=mains[0];
   const mlEl=document.getElementById('ov-ml');
   if(ml){animateNumber(mlEl,ml.total);}else mlEl.textContent='—';
-  document.getElementById('ov-mb').innerHTML=ml?`<span class="sbadge ${sbg(pct(ml.total,ml.max))}">${pct(ml.total,ml.max)}%</span>`:'';
+  document.getElementById('ov-mb').innerHTML=ml?`<span class="sbadge ${sbgGoal(ml.total,ml.max,'mains')}">${pct(ml.total,ml.max)}%</span>`:'';
   const al=adv[0];
   const alEl=document.getElementById('ov-al');
   if(al){animateNumber(alEl,al.total);}else alEl.textContent='—';
-  document.getElementById('ov-ab').innerHTML=al?`<span class="sbadge ${sbg(pct(al.total,al.max))}">${pct(al.total,al.max)}%</span>`:'';
+  document.getElementById('ov-ab').innerHTML=al?`<span class="sbadge ${sbgGoal(al.total,al.max,'advanced')}">${pct(al.total,al.max)}%</span>`:'';
   animateNumber(document.getElementById('ov-st'),S.backlogStreak||0,600,'d');
   document.getElementById('ov-stb').textContent=S.backlogStreak?`Best: ${S.backlogBestStreak}d`:'start today';
   const tdP=S.todos.filter(t=>!t.done).length;
@@ -4498,13 +4549,13 @@ function renderMnUnified(){
         <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Mains Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':'<span class="chip bb" style="margin-left:4px">in '+dl2+'d</span>'}
         <div style="font-size:11px;color:var(--mu);margin-top:2px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${fmt(t.date)} ${t.venue?''+t.venue:''} ${t.notes?'· '+t.notes:''}</div></div>
         <div style="display:flex;gap:5px;align-items:center">
-          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-size:11px">${logSVG} Log</button>`:''}
+          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;font-size:11px">${logSVG}</button>`:''}
           <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})" title="Remove">✕</button>
         </div>
       </div>`;
     }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbg(pct(t.total,t.max))}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>`;
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'mains')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>`;
   }
 }
 
@@ -4597,13 +4648,13 @@ function renderAdvUnified(){
         <div style="flex:1"><span style="font-weight:500;font-size:13px">${t.session||'Advanced Mock'}</span> <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span> ${isT?'<span class="chip br" style="margin-left:4px">TODAY</span>':isTmr?'<span class="chip ba" style="margin-left:4px">TOMORROW</span>':'<span class="chip bac" style="margin-left:4px">in '+dl2+'d</span>'}
         <div style="font-size:11px;color:var(--mu);margin-top:2px"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${fmt(t.date)} ${t.venue?''+t.venue:''} ${t.notes?'· '+t.notes:''}</div></div>
         <div style="display:flex;gap:5px;align-items:center">
-          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;gap:4px;padding:4px 9px;font-size:11px">${logSVG} Log</button>`:''}
+          ${isT?`<button class="btn bp bsm" onclick="openLogFromUpcoming(${t.id})" title="Log score for this test" style="display:inline-flex;align-items:center;justify-content:center;padding:4px 7px;font-size:11px">${logSVG}</button>`:''}
           <button class="btn brd bsm" onclick="deleteUpcoming(${t.id})" title="Remove">✕</button>
         </div>
       </div>`;
     }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbg(pct(t.total,t.max))}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>`;
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'advanced')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>`;
   }
 }
 
