@@ -265,6 +265,8 @@ function showApp(name, email){
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
   setDashGreeting(displayName.split(' ')[0]);
   // Navigate to the page matching the current URL, or default to dashboard
+  // Mark all pages dirty so data loaded from Supabase is always reflected immediately
+  if(typeof navMarkDirty === 'function') navMarkDirty(null);
   updateBadges();checkHWTNotifs();setQuote();
   // Push a sentinel history entry so first back press navigates within app, not exits
   // If the current URL is an auth route, redirect to /dashboard instead of staying on /login etc.
@@ -408,7 +410,7 @@ function getDefaultState(){
     syllabus:JSON.parse(JSON.stringify(CANONICAL_SYLLABUS)),
     backlogStreak:0,backlogBestStreak:0,lastBLClear:null,
     subjStreaks:{physics:0,chemistry:0,maths:0},
-    subjBestStreaks:{physics:0,chemistry:0,maths:0},notifiedHWT:[]};
+    subjBestStreaks:{physics:0,chemistry:0,maths:0},notifiedHWT:[],hwtDismissed:[]};
 }
 
 // ===== LOAD FROM SUPABASE =====
@@ -451,6 +453,16 @@ async function loadUserData(){
       S.lastBLClear = streaks.data.last_clear;
       S.subjStreaks = streaks.data.subj_streaks||{physics:0,chemistry:0,maths:0};
       S.subjBestStreaks = streaks.data.subj_best_streaks||{physics:0,chemistry:0,maths:0};
+      // Load cross-device HWT dismissed list
+      S.hwtDismissed = streaks.data.hwt_dismissed||[];
+      // Sync into localStorage cache so checkHWTNotifs() reads it instantly
+      try{
+        const cacheKey='jt_hwt_dismissed_'+uid;
+        const localArr=JSON.parse(localStorage.getItem(cacheKey)||'[]');
+        const merged=[...new Set([...localArr,...S.hwtDismissed])];
+        localStorage.setItem(cacheKey,JSON.stringify(merged));
+        S.hwtDismissed=merged;
+      }catch(e){}
     }
   }catch(e){
     console.error('Load error:',e);
@@ -478,7 +490,7 @@ async function save(){
     if(S.upcoming.length) ops.push(sb.from('upcoming').upsert(S.upcoming.map(u=>({id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}))));
     const sylRows=[]; ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>sylRows.push({id:c.id,user_id:uid,subject:s,name:c.name,section:c.section||null,theory:c.theory,practice:c.practice})); });
     if(sylRows.length) ops.push(sb.from('syllabus').upsert(sylRows));
-    ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks},{onConflict:'user_id'}));
+    ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]},{onConflict:'user_id'}));
     await Promise.all(ops);
   }catch(e){ console.error('Save error:',e); }
   isSaving=false; if(saveQueue){ saveQueue=false; save(); }
@@ -2111,3 +2123,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// ── Feedback ────────────────────────────────────────────────────────────────
+function updateFbBtn() {
+  const subj = document.getElementById('fb-subject')?.value.trim() || '';
+  const msg  = document.getElementById('fb-message')?.value.trim() || '';
+  const btn  = document.getElementById('fb-send-btn');
+  if (btn) btn.disabled = !(subj && msg);
+}
+
+async function sendFeedback() {
+  const subj = document.getElementById('fb-subject')?.value.trim();
+  const msg  = document.getElementById('fb-message')?.value.trim();
+  if (!subj || !msg) { toast('Please fill in both subject and message', 'warning'); return; }
+
+  const btn = document.getElementById('fb-send-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  try {
+    // Try saving to Supabase feedback table if it exists
+    let saved = false;
+    if (sb && currentUser) {
+      try {
+        const { error } = await sb.from('feedback').insert({
+          user_id: currentUser.id,
+          email: currentUser.email,
+          subject: subj,
+          message: msg,
+          created_at: new Date().toISOString()
+        });
+        if (!error) saved = true;
+      } catch(e) {}
+    }
+
+    // Always open mailto as fallback/primary delivery
+    if (!saved) {
+      const mailtoUrl = `mailto:aman@jeetrack.app?subject=${encodeURIComponent('[JEETrack Feedback] ' + subj)}&body=${encodeURIComponent(msg + '\n\n— Sent from JEETrack\nUser: ' + (currentUser?.email || 'anonymous'))}`;
+      window.open(mailtoUrl, '_blank');
+    }
+
+    toast('Feedback sent! Thank you 🙏', 'success');
+    if (document.getElementById('fb-subject')) document.getElementById('fb-subject').value = '';
+    if (document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
+    if (btn) { btn.textContent = 'Sent ✓'; setTimeout(() => { if(btn){ btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; btn.disabled = true; } }, 2500); }
+  } catch(e) {
+    toast('Could not send — please email aman@jeetrack.app directly', 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; }
+  }
+}
