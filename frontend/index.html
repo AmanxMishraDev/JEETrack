@@ -1942,7 +1942,7 @@
                 </div>
                 <div>
                   <div style="font-size:13px;font-weight:700;color:var(--tx)">We'd love your feedback!</div>
-                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello!</div>
+                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello 👋</div>
                 </div>
               </div>
               <div style="font-size:12px;color:var(--mu);line-height:1.7">JEETrack is actively being improved. Your feedback directly shapes what gets built next. Don't hesitate — even a one-line message helps!</div>
@@ -2142,10 +2142,11 @@
       <div class="pmo-field">
         <label class="pmo-label">Test Type</label>
         <div class="pmo-pill-row" style="margin-top:2px">
-          <button class="pmo-pill pmo-pill-sm at-type-pill active" onclick="document.getElementById('at-type').value='partial';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Partial</button>
-          <button class="pmo-pill pmo-pill-sm at-type-pill" onclick="document.getElementById('at-type').value='full';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Full Syllabus</button>
+          <button class="pmo-pill pmo-pill-sm at-type-pill active" onclick="document.getElementById('at-type').value='partial';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active');clearPmoErr('at-type','at-type-err')">Partial</button>
+          <button class="pmo-pill pmo-pill-sm at-type-pill" onclick="document.getElementById('at-type').value='full';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active');clearPmoErr('at-type','at-type-err')">Full Syllabus</button>
         </div>
-        <select class="fi" id="at-type" style="display:none"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select>
+        <select class="fi" id="at-type" style="display:none"><option value="">-- select --</option><option value="partial">Partial</option><option value="full">Full Syllabus</option></select>
+        <span class="fi-err-msg" id="at-type-err"></span>
       </div>
       <div class="pmo-field">
         <label class="pmo-label">Test Date</label>
@@ -3842,6 +3843,7 @@ const openM=function(id,preset){
       document.getElementById('at-score-bar').style.width='0%';
       document.getElementById('at-live-pct').textContent='—%';
       document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
+      document.getElementById('at-type').value='';
       const _examPreset = preset || 'mains';
       document.getElementById('at-exam').value=_examPreset;
       document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
@@ -4089,6 +4091,12 @@ function saveTest(){
   // Validate: date required
   if(!date){
     showFieldErr('at-date','at-date-err','Test date is required');
+    return;
+  }
+  // Validate: test type required
+  if(!document.getElementById('at-type').value){
+    showFieldErr('at-type','at-type-err','Please select Partial or Full Syllabus');
+    document.querySelector('.at-type-pill')?.closest('.pmo-pill-row')?.classList.add('field-error');
     return;
   }
   // Validate: future date not allowed
