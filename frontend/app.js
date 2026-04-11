@@ -2056,6 +2056,7 @@ saveGoalSettings = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  initSupabase(); // ← boot: authenticate & load data, then hide splash
   setTimeout(initSettingsDirtyTracking, 600);
   // Drag-and-drop avatar upload
   const dropzone = document.getElementById('settings-avatar-dropzone');
