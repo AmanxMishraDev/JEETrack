@@ -3764,7 +3764,7 @@ function _navInternal(page, push){ nav(page, push); }
 function renderAll(){const active=document.querySelector('.page.active');if(active)eval('render'+active.id.replace('page-','').charAt(0).toUpperCase()+active.id.replace('page-','').slice(1).replace(/-([a-z])/g,g=>g[1].toUpperCase()))();}
 
 // =========== MODALS ===========
-function openM(id,preset){
+const openM=function(id,preset){
   if(id==='resetConfirm'){try{document.getElementById('reset-confirm-input').value='';}catch(e){}}
   if(id==='addTest'){document.getElementById('at-date').value=td();if(preset)document.getElementById('at-exam').value=preset;toggleExam();}
   if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset)document.getElementById('sch-exam').value=preset;}
@@ -3784,6 +3784,23 @@ function openM(id,preset){
   const el=document.getElementById('modal-'+id);
   if(!el)return;
   el.classList.add('open');
+  // Reset score bar + live pct when opening score modals
+  if(id==='addTest'){
+    setTimeout(()=>{
+      document.getElementById('at-score-bar').style.width='0%';
+      document.getElementById('at-live-pct').textContent='—%';
+      document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
+      document.getElementById('at-exam-mains')?.classList.add('active');
+      document.getElementById('at-exam').value='mains';
+      toggleExam();
+    },50);
+  }
+  if(id==='howWasTest'){
+    setTimeout(()=>{
+      document.getElementById('hwt-score-bar').style.width='0%';
+      document.getElementById('hwt-live-pct').textContent='—%';
+    },50);
+  }
   // Backdrop click to close (skip for destructive modals)
   if(id!=='resetConfirm'){
     el.onclick=function(e){if(e.target===el)closeM(id);};
@@ -3836,28 +3853,7 @@ function _setPri(selId,val,btn,col){
   btn.classList.add('active');
 }
 // Reset premium modal fields on open
-const _origOpenM=openM;
-function openM(id,preset){
-  _origOpenM(id,preset);
-  // Reset score bar + live pct when opening score modals
-  if(id==='addTest'){
-    setTimeout(()=>{
-      document.getElementById('at-score-bar').style.width='0%';
-      document.getElementById('at-live-pct').textContent='—%';
-      // Reset pill states
-      document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
-      document.getElementById('at-exam-mains')?.classList.add('active');
-      document.getElementById('at-exam').value='mains';
-      toggleExam();
-    },50);
-  }
-  if(id==='howWasTest'){
-    setTimeout(()=>{
-      document.getElementById('hwt-score-bar').style.width='0%';
-      document.getElementById('hwt-live-pct').textContent='—%';
-    },50);
-  }
-}
+
 
 // =========== MODE TOGGLE ===========
 function setMode(page,m,el){
@@ -5998,7 +5994,3 @@ function renderInsights(d){
     });
   }));
 }
-</script>
-<script src="app.js"></script>
-</body>
-</html>
