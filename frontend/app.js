@@ -188,6 +188,22 @@ async function signOut(){
   if(sb){
     await sb.auth.signOut({ scope: 'local' }); // local scope — signs out this device only
   }
+  // Clear per-user localStorage data before nulling currentUser
+  if(currentUser?.id){
+    const uid = currentUser.id;
+    localStorage.removeItem('jt_ai_insights_'+uid);
+    localStorage.removeItem('jt_goal_mains_'+uid);
+    localStorage.removeItem('jt_goal_adv_'+uid);
+  }
+  // Also clear legacy non-user-specific keys just in case
+  localStorage.removeItem('jt_ai_insights');
+  localStorage.removeItem('jt_goal_mains');
+  localStorage.removeItem('jt_goal_adv');
+  // Clear AI insights DOM so the next account starts fresh
+  const insContent = document.getElementById('insights-content');
+  const insEmpty   = document.getElementById('insights-empty');
+  if(insContent){ insContent.innerHTML=''; insContent.style.display='none'; }
+  if(insEmpty)  { insEmpty.style.display=''; }
   currentUser = null;
   S = getDefaultState();
   localStorage.removeItem('jt3');
@@ -206,6 +222,9 @@ function showAuthScreen(){
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='none';
+  // Reset URL to /login so the browser reflects the logged-out state
+  history.replaceState({page:'login'}, '', '/login');
+  document.title = 'JEETrack — Sign In';
   setTimeout(initLandingStarField, 50);
   setTimeout(initSlideshow, 100);
 }
@@ -248,8 +267,12 @@ function showApp(name, email){
   // Navigate to the page matching the current URL, or default to dashboard
   updateBadges();checkHWTNotifs();setQuote();
   // Push a sentinel history entry so first back press navigates within app, not exits
-  if (!history.state) {
-    history.replaceState({page: _routeMap[window.location.pathname] || 'overview'}, '', window.location.pathname || '/dashboard');
+  // If the current URL is an auth route, redirect to /dashboard instead of staying on /login etc.
+  const _authPaths = ['/login', '/onboarding', '/'];
+  const _currentPath = window.location.pathname;
+  if (!history.state || _authPaths.includes(_currentPath)) {
+    const _destPath = _authPaths.includes(_currentPath) ? '/dashboard' : (_currentPath || '/dashboard');
+    history.replaceState({page: _routeMap[_destPath] || 'overview'}, '', _destPath);
   }
   _handleRoute();
   localStorage.removeItem('groq_key');
@@ -665,7 +688,7 @@ async function loadUserProfile() {
   if (!sb || !currentUser) return 'no_client';
   try {
     const { data, error } = await sb.from('user_preferences')
-      .select('username,class_year,study_mode,coaching,target_year,avatar_url,onboarding_done,email_reports')
+      .select('username,class_year,study_mode,coaching,target_year,avatar_url,onboarding_done,email_reports,goal_mains,goal_adv')
       .eq('user_id', currentUser.id).single();
     if (data) {
       userProfile = { ...userProfile, ...data };
@@ -674,6 +697,9 @@ async function loadUserProfile() {
       // Sync email toggle in settings
       const et = document.getElementById('settings-email-toggle');
       if (et) et.checked = data.email_reports === 'monthly';
+      // Sync goals from Supabase into local cache (Supabase is source of truth)
+      if (data.goal_mains) localStorage.setItem(_goalKey('goal_mains'), data.goal_mains);
+      if (data.goal_adv)   localStorage.setItem(_goalKey('goal_adv'),   data.goal_adv);
       return 'loaded';
     }
     // No row found — brand new user who hasn't completed onboarding yet
@@ -1089,6 +1115,9 @@ let obData = { name: '', class_year: '', mode: '', coaching: '', year: '', avata
 function showOnboarding() {
   document.getElementById('landing').classList.add('hidden');
   document.getElementById('onboarding').classList.add('show');
+  // Set URL to /onboarding so it's bookmarkable and reflects state
+  history.replaceState({page:'onboarding'}, '', '/onboarding');
+  document.title = 'JEETrack — Setup Profile';
   // Hide coaching section until mode is picked
   const cs = document.getElementById('coaching-section');
   if (cs) cs.style.display = 'none';
@@ -1855,19 +1884,32 @@ function resetAppearance() {
 }
 
 // ── Goal Settings ──────────────────────────────────────────────────────────
-function getGoalMains(){ return parseInt(localStorage.getItem('jt_goal_mains')||'200',10); }
-function getGoalAdv()  { return parseInt(localStorage.getItem('jt_goal_adv')  ||'150',10); }
+function _goalKey(name){ const uid=currentUser?.id||'guest'; return 'jt_'+name+'_'+uid; }
+function getGoalMains(){ return parseInt(localStorage.getItem(_goalKey('goal_mains'))||'200',10); }
+function getGoalAdv()  { return parseInt(localStorage.getItem(_goalKey('goal_adv'))  ||'150',10); }
 
-function saveGoalSettings(){
+async function saveGoalSettings(){
   const gm=Math.max(1,Math.min(300,parseInt(document.getElementById('goal-mains').value)||200));
   const ga=Math.max(1,Math.min(360,parseInt(document.getElementById('goal-adv').value)||150));
-  localStorage.setItem('jt_goal_mains',gm);
-  localStorage.setItem('jt_goal_adv',ga);
+  // Save to local cache
+  localStorage.setItem(_goalKey('goal_mains'),gm);
+  localStorage.setItem(_goalKey('goal_adv'),ga);
   document.getElementById('goal-mains').value=gm;
   document.getElementById('goal-adv').value=ga;
   updateGoalsPreview();
   navMarkDirty('overview');navMarkDirty('mains');navMarkDirty('advanced');
   renderOverview();
+  // Persist to Supabase so goals sync across devices
+  if(sb && currentUser){
+    try{
+      await sb.from('user_preferences').upsert({
+        user_id: currentUser.id,
+        goal_mains: gm,
+        goal_adv: ga,
+        updated_at: new Date().toISOString()
+      },{onConflict:'user_id'});
+    }catch(e){ console.warn('Could not save goals to Supabase',e); }
+  }
   // toast handled by wrapper
 }
 

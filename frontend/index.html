@@ -675,7 +675,7 @@
       <div class="dash-stat-value hrd" id="ov-td">0</div>
       <div class="dash-stat-sub" style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
         <span>tasks pending</span>
-        <button class="btn bg2" onclick="nav('todo')" style="font-size:9px;padding:2px 8px;border-radius:4px">
+        <button class="btn bg2" onclick="nav('todo');updateMobTopbarTitle('todo');" style="font-size:9px;padding:2px 8px;border-radius:4px">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> View
         </button>
       </div>
@@ -3222,6 +3222,8 @@ const _routeMap = {
   '/':'overview', '/dashboard':'overview', '/mains':'mains', '/advanced':'advanced',
   '/compare':'compare', '/tests':'tests', '/hours':'hours', '/todo':'todo',
   '/backlog':'backlog', '/syllabus':'syllabus', '/insights':'insights', '/settings':'settings',
+  // Auth routes — handled by auth layer, not app nav
+  '/login':'__login__', '/onboarding':'__onboarding__',
 };
 const _pageToPath = {
   overview:'/dashboard', mains:'/mains', advanced:'/advanced', compare:'/compare',
@@ -3238,6 +3240,17 @@ const _settingsTabs = ['profile','study','goals','appearance','alerts','data','a
 function _handleRoute(){
   const path = window.location.pathname;
   const tab = new URLSearchParams(window.location.search).get('tab');
+  // Auth routes — don't try to nav into the app
+  if(path === '/login'){ showAuthScreen(); return; }
+  if(path === '/onboarding'){
+    // Only show onboarding if user is logged in but not done; otherwise send to login
+    if(typeof currentUser !== 'undefined' && currentUser && typeof userProfile !== 'undefined' && !userProfile.onboarding_done){
+      showOnboarding();
+    } else {
+      showAuthScreen();
+    }
+    return;
+  }
   if(path === '/tests'){ _navInternal('tests', false); return; }
   if(path === '/settings'){
     _navInternal('settings', false);
@@ -3250,8 +3263,15 @@ function _handleRoute(){
 }
 
 window.addEventListener('popstate', function(e) {
+  const path = window.location.pathname;
+  // If the user presses back into /login or /onboarding while logged in, push them forward to dashboard
+  if ((path === '/login' || path === '/onboarding') && typeof currentUser !== 'undefined' && currentUser) {
+    history.pushState({page:'overview'}, '', '/dashboard');
+    _navInternal('overview', false);
+    return;
+  }
   // If navigating back past the first page, push sentinel and stay on dashboard
-  if (!e.state && window.location.pathname === '/dashboard') {
+  if (!e.state && path === '/dashboard') {
     history.pushState({page:'overview'}, '', '/dashboard');
     _navInternal('overview', false);
     return;
@@ -4734,26 +4754,25 @@ function openAvMenu(){
   }
   const tag=document.getElementById('avMenuTag');
   if(tag){const plan=localStorage.getItem('jt_plan')||'Free';tag.textContent=plan;}
-  // ── Populate quick stats ──
+  // ── Populate quick stats from live S state ──
   try {
-    // Hours this month
-    const hrs = (JSON.parse(localStorage.getItem('jt_hours')||'[]'));
+    // Hours this month (from S.hours, sum lecture+practice+revision)
     const now = new Date();
-    const monthHrs = hrs.filter(h=>{const d=new Date(h.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();})
-      .reduce((s,h)=>s+(+h.hours||0),0);
+    const monthHrs = (S.hours||[])
+      .filter(h=>{ const d=new Date(h.date); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); })
+      .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0),0);
     const hrsEl = document.getElementById('avStatHrs');
     if(hrsEl) hrsEl.textContent = monthHrs>0 ? (Number.isInteger(monthHrs)?monthHrs:monthHrs.toFixed(1))+'h' : '—';
-    // Latest mains score
-    const tests = (JSON.parse(localStorage.getItem('jt_tests')||'[]')).filter(t=>t.exam==='mains'||!t.exam);
+    // Latest mains score (from S.tests, most recent by date)
+    const mainTests = (S.tests||[]).filter(t=>t.exam==='mains').sort((a,b)=>b.date.localeCompare(a.date));
     const scoreEl = document.getElementById('avStatScore');
     if(scoreEl){
-      if(tests.length){const lt=tests[tests.length-1];scoreEl.textContent=lt.total+(lt.max?'/'+lt.max:'');}
+      if(mainTests.length){ const lt=mainTests[0]; scoreEl.textContent=lt.total+(lt.max?'/'+lt.max:''); }
       else scoreEl.textContent='—';
     }
-    // Backlog streak
-    const blStreak = parseInt(document.getElementById('bl-streak')?.textContent)||0;
+    // Backlog streak from S state
     const stEl = document.getElementById('avStatStreak');
-    if(stEl) stEl.textContent = blStreak>0 ? blStreak+'d' : '—';
+    if(stEl){ const streak=S.backlogStreak||0; stEl.textContent = streak>0 ? streak+'d' : '—'; }
   } catch(e){}
   overlay.classList.add('open');
   menu.classList.add('open');
@@ -4837,13 +4856,14 @@ function mobNavTo(page, el){
   updateMobTopbarTitle(page);
 }
 function syncMobNav(page){
-  const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights'};
+  // todo, backlog, syllabus, settings all live under the 'more' drawer tab
+  const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',settings:'todo-tab'};
   _mobNavItems().forEach(b=>b.classList.remove('active'));
   const tab = navMap[page];
-  if(tab){
+  if(tab && tab !== 'todo-tab'){
     const btn = _mobNavItems().find(b=>b.dataset.page===tab);
     if(btn) btn.classList.add('active');
-  } else {
+  } else if(!tab || tab === 'todo-tab') {
     document.getElementById('mob-more-btn')?.classList.add('active');
   }
   // For test sub-pages, always show "Tests" in topbar
@@ -4980,12 +5000,14 @@ nav=function(page, _pushState){
     document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
     document.getElementById('page-insights').classList.add('active');
     document.querySelectorAll('.ni').forEach(n=>{if(n.textContent.toLowerCase().includes('ai insight'))n.classList.add('active');});
+    // Hide all FABs — AI insights page has none
+    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
     // Restore cached insights if available and not yet shown
     const content=document.getElementById('insights-content');
     const empty=document.getElementById('insights-empty');
     if(content && empty && content.innerHTML.trim()===''){
       try{
-        const cached=localStorage.getItem('jt_ai_insights');
+        const cached=localStorage.getItem('jt_ai_insights_'+(typeof currentUser!=='undefined'&&currentUser?.id||'guest'));
         if(cached){
           const {data,ts}=JSON.parse(cached);
           if(data){
@@ -5261,7 +5283,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
       }
     })();
     // Persist insights so they survive page refresh
-    try{ localStorage.setItem('jt_ai_insights', JSON.stringify({data:insight, ts:Date.now()})); }catch(e){}
+    try{ localStorage.setItem('jt_ai_insights_'+(typeof currentUser!=='undefined'&&currentUser?.id||'guest'), JSON.stringify({data:insight, ts:Date.now()})); }catch(e){}
     content.style.display='block';
     empty.style.display='none';
     toast('Insights ready 🧠', 'success');

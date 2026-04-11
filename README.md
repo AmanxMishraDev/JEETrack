@@ -1,67 +1,101 @@
 <div align="center">
 
-<img src="frontend/logo.svg" alt="JEETrack Logo" width="120" />
+<br/>
+
+<img src="frontend/logo.svg" alt="JEETrack Logo" width="100" />
+
+<br/>
+<br/>
 
 # JEETrack
 
-**The all-in-one preparation tracker for JEE 2026 / 2027 aspirants**
-
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20App-6366f1?style=for-the-badge&logo=vercel)](https://jeetrack.vercel.app)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
-[![Groq AI](https://img.shields.io/badge/Groq-AI%20Insights-F55036?style=for-the-badge&logo=lightning)](https://groq.com)
-[![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa)](https://web.dev/progressive-web-apps/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+### The all-in-one preparation tracker for JEE aspirants
 
 <br/>
 
-> Track study hours · Analyse test scores · Crush the JEE syllabus — with AI-powered insights running at **lightning speed** via Groq.
+[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.vercel.app-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.vercel.app)
 
 <br/>
 
-![Dashboard](screenshots/dashboard.png)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=flat-square&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-<p align="center">
-  <img src="screenshots/test-tracker.png" width="48%" alt="JEE Mains Test Tracker" />
-  <img src="screenshots/syllabus.png" width="48%" alt="Syllabus Tracker" />
-</p>
+<br/>
 
-<p align="center">
-  <img src="screenshots/ai-insights.png" width="48%" alt="AI Insights Analysis" />
-  <img src="screenshots/ai-insights-2.png" width="48%" alt="AI Insights - Subject Report & Action Plan" />
-</p>
+> Track study hours · Analyse test scores · Crush the JEE syllabus — with AI-powered insights built in.
+
+<br/>
 
 </div>
 
 ---
 
+<br/>
+
+<div align="center">
+  <img src="screenshots/dashboard.png" alt="JEETrack Dashboard" width="90%" />
+  <br/><br/>
+  <sub><i>Dashboard — daily study tracking, countdowns, score trends and subject progress at a glance</i></sub>
+</div>
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+  <img src="screenshots/test-tracker.png" alt="Test Tracker" width="48%" />
+  &nbsp;&nbsp;
+  <img src="screenshots/syllabus.png" alt="Syllabus Tracker" width="48%" />
+  <br/><br/>
+  <sub><i>JEE Mains &amp; Advanced test analytics &nbsp;·&nbsp; Topic-level syllabus coverage tracker</i></sub>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="screenshots/ai-insights.png" alt="AI Insights" width="48%" />
+  &nbsp;&nbsp;
+  <img src="screenshots/ai-insights-2.png" alt="AI Insights Report" width="48%" />
+  <br/><br/>
+  <sub><i>AI-powered coaching analysis &nbsp;·&nbsp; Personalised subject report &amp; action plan</i></sub>
+</div>
+
+<br/>
+
+---
+
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 📊 **Dashboard** | Daily study tracking, subject-wise progress rings, streak system |
-| 📝 **Test Tracker** | Log JEE Mains / Advanced mock scores with trend analytics |
-| 📚 **Syllabus Tracker** | Topic-level coverage for Physics, Chemistry & Maths |
-| 🗂️ **Backlog Manager** | Surface and clear weak topics before exam day |
-| 🤖 **AI Insights** | Personalised coaching analysis powered by **Groq (LLaMA 3.3 70B)** — responses in under 1 second |
-| 📧 **Monthly Reports** | Automated PDF report card via Supabase Edge Functions + Resend |
-| 📱 **PWA** | Installable on Android & iOS; works fully offline |
-| 🔔 **Push Notifications** | Daily study reminders via service worker |
+| | Feature | Description |
+|---|---|---|
+| 📊 | **Dashboard** | Daily study tracking, subject-wise progress, streak system & JEE countdown |
+| 📝 | **Test Tracker** | Log JEE Mains / Advanced mock scores with trend charts and performance analytics |
+| 📚 | **Syllabus Tracker** | Topic-level coverage across Physics, Chemistry & Maths |
+| 🗂️ | **To-Do & Backlog** | Task management with priority levels and no-backlog streak |
+| 🤖 | **AI Insights** | Personalised coaching analysis powered by **Groq (LLaMA 3.3 70B)** — pinpoints weak areas and suggests a plan |
+| 📧 | **Monthly Reports** | Automated PDF report card delivered via email |
+| 📱 | **PWA** | Installable on Android & iOS, works fully offline |
+| 🔔 | **Push Notifications** | Daily study reminders via service worker |
 
 ---
 
 ## 🛠 Tech Stack
 
 ```
-Frontend   →  Vanilla HTML · CSS · JavaScript  (zero framework overhead)
-Database   →  Supabase (PostgreSQL + Row Level Security)
-Auth       →  Supabase Auth
-AI Engine  →  Groq API  (LLaMA 3.3 70B Versatile, ~0.5 s latency)
-Functions  →  Supabase Edge Functions  (Deno / TypeScript)
-Email      →  Resend API
-Charts     →  Chart.js
-PDF        →  jsPDF + html2canvas
-Hosting    →  Vercel
-Cron       →  pg_cron  (Supabase)
+Frontend    Vanilla HTML · CSS · JavaScript  (zero framework overhead)
+Database    Supabase (PostgreSQL + Row Level Security)
+Auth        Supabase Auth
+AI Engine   Groq API  (LLaMA 3.3 70B Versatile, ~0.5s latency)
+Functions   Supabase Edge Functions  (Deno / TypeScript)
+Email       Resend API
+Charts      Chart.js
+PDF         jsPDF + html2canvas
+Hosting     Vercel
+Cron        pg_cron (Supabase)
 ```
 
 ---
@@ -71,14 +105,12 @@ Cron       →  pg_cron  (Supabase)
 ```
 jeetrack/
 ├── frontend/                     # Static PWA — deployed to Vercel
-│   ├── index.html                # App markup
+│   ├── index.html                # App shell & markup
 │   ├── styles.css                # All styles
 │   ├── app.js                    # All application logic
 │   ├── manifest.json             # PWA manifest
 │   ├── sw.js                     # Service worker (offline + push)
-│   ├── vercel.json               # Vercel SPA rewrite config
-│   ├── icon-192.png
-│   └── icon-512.png
+│   └── vercel.json               # SPA rewrite config
 ├── supabase/
 │   └── functions/
 │       ├── ai-insights/          # Edge function — Groq AI analysis
@@ -87,7 +119,7 @@ jeetrack/
 │           └── index.ts
 ├── supabase-schema.sql           # Full database schema
 ├── migration.sql                 # DB migrations
-├── onboarding-trigger.sql        # Onboarding automation trigger
+├── onboarding-trigger.sql        # New-user onboarding automation
 └── README.md
 ```
 
@@ -106,7 +138,7 @@ cd JEETrack
 
 1. Create a project at [supabase.com](https://supabase.com)
 2. Open **SQL Editor** and run `supabase-schema.sql`
-3. Run `migration.sql` and `onboarding-trigger.sql`
+3. Run `migration.sql` then `onboarding-trigger.sql`
 4. Copy your **Project URL** and **anon key** from **Settings → API**
 
 ### 3 · Configure the frontend
@@ -120,27 +152,20 @@ const SUPABASE_ANON_KEY = 'your-anon-key';
 
 ### 4 · Deploy to Vercel
 
-1. Push the repo to GitHub (see the [Git Push Guide](#-git-push-guide) below)
+1. Push the repo to GitHub
 2. Go to [vercel.com](https://vercel.com) → **Add New Project**
-3. Import your GitHub repository
-4. Set **Root Directory** to `frontend`
-5. Click **Deploy** — done ✅
+3. Import your repository and set **Root Directory** to `frontend`
+4. Click **Deploy** ✅
 
-The `frontend/vercel.json` already handles SPA rewrites:
+The `frontend/vercel.json` already handles SPA rewrites so all routes work on hard refresh.
 
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-### 5 · Deploy Supabase Edge Functions
+### 5 · Deploy Edge Functions
 
 ```bash
-# Install Supabase CLI if needed
+# Install Supabase CLI
 npm install -g supabase
 
-# Login and link project
+# Login and link your project
 supabase login
 supabase link --project-ref your-project-ref
 
@@ -159,22 +184,9 @@ supabase functions deploy monthly-report
 
 ---
 
-## 🤖 AI Insights — How It Works
+## 🔐 Environment Variables
 
-AI insights are powered by **Groq's inference API** running **LLaMA 3.3 70B Versatile** — one of the fastest open-weight models available. The Groq API key never touches the browser; all calls go through the Supabase Edge Function which:
-
-1. Verifies the user's Supabase session token
-2. Constructs a JEE coaching prompt from the user's study data
-3. Calls `https://api.groq.com/openai/v1/chat/completions`
-4. Returns structured JSON insights back to the frontend
-
-**Get a free Groq API key** at [console.groq.com](https://console.groq.com) — no credit card required.
-
----
-
-## 🔐 Environment Variables Reference
-
-| Variable | Where to set | Description |
+| Variable | Where | Description |
 |---|---|---|
 | `GROQ_API_KEY` | Supabase secrets | Groq API key for AI insights |
 | `RESEND_API_KEY` | Supabase secrets | Resend key for email reports |
@@ -185,57 +197,17 @@ AI insights are powered by **Groq's inference API** running **LLaMA 3.3 70B Vers
 
 ---
 
-## 📤 Git Push Guide
-
-> Already hosted on GitHub and want to push an updated version? Follow these steps exactly.
-
-### First time setup (one-time)
+## 📤 Pushing Updates to GitHub
 
 ```bash
-# Navigate to your project folder
-cd path/to/JEETrack
-
-# Verify the remote is set correctly
-git remote -v
-# Should show: origin  https://github.com/contactamanmishra76-blip/JEETrack.git
-```
-
-### Push updates (every time)
-
-```bash
-# 1. Check what changed
-git status
-
-# 2. Stage all changes
 git add .
-
-# 3. Commit with a meaningful message
-git commit -m "feat: describe what you changed"
-
-# 4. Push to GitHub
+git commit -m "feat: describe your change"
 git push origin main
 ```
 
-### If git push asks for credentials
+Vercel auto-deploys on every push — no manual steps needed.
 
-GitHub no longer accepts passwords. Use a **Personal Access Token (PAT)**:
-
-1. Go to [github.com/settings/tokens](https://github.com/settings/tokens) → **Generate new token (classic)**
-2. Select scope: `repo`
-3. Copy the token
-4. When git asks for password, **paste the token** instead
-
-Or cache it permanently:
-
-```bash
-git config --global credential.helper store
-git push origin main
-# Enter username + token once — never asked again
-```
-
-### Vercel auto-deploys on every push 🎉
-
-Once your repo is connected to Vercel, every `git push origin main` automatically triggers a new deployment. No manual steps needed.
+> **Note:** GitHub no longer accepts passwords over HTTPS. Use a [Personal Access Token](https://github.com/settings/tokens) with `repo` scope when prompted for credentials.
 
 ---
 
@@ -244,17 +216,15 @@ Once your repo is connected to Vercel, every `git push origin main` automaticall
 - [ ] Revision scheduler with spaced repetition
 - [ ] Peer leaderboard (opt-in)
 - [ ] JEE Previous Year Question tagging
-- [ ] Dark / Light theme toggle
 - [ ] Offline AI insights (on-device model)
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome! For major changes, open an issue first to discuss what you'd like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
 
 ```bash
-# Fork → clone → branch → push → PR
 git checkout -b feature/your-feature-name
 ```
 
@@ -262,15 +232,25 @@ git checkout -b feature/your-feature-name
 
 ## 👨‍💻 Author
 
-**Aman Mishra**
-- GitHub: [@contactamanmishra76-blip](https://github.com/contactamanmishra76-blip)
+**Aman Mishra** · [@contactamanmishra76-blip](https://github.com/contactamanmishra76-blip)
 
 ---
 
 <div align="center">
 
+<br/>
+
 **Built with ❤️ for every JEE aspirant who refuses to give up**
 
-⭐ Star this repo if JEETrack helped your preparation!
+<br/>
+
+⭐ &nbsp;Star this repo if JEETrack helped your preparation
+
+<br/>
+<br/>
+
+[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.vercel.app-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.vercel.app)
+
+<br/>
 
 </div>
