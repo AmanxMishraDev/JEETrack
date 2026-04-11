@@ -1942,7 +1942,7 @@
                 </div>
                 <div>
                   <div style="font-size:13px;font-weight:700;color:var(--tx)">We'd love your feedback!</div>
-                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello 👋</div>
+                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello!</div>
                 </div>
               </div>
               <div style="font-size:12px;color:var(--mu);line-height:1.7">JEETrack is actively being improved. Your feedback directly shapes what gets built next. Don't hesitate — even a one-line message helps!</div>
@@ -2142,7 +2142,7 @@
       <div class="pmo-field">
         <label class="pmo-label">Test Type</label>
         <div class="pmo-pill-row" style="margin-top:2px">
-          <button class="pmo-pill pmo-pill-sm active" onclick="document.getElementById('at-type').value='partial';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')" class="at-type-pill">Partial</button>
+          <button class="pmo-pill pmo-pill-sm at-type-pill active" onclick="document.getElementById('at-type').value='partial';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Partial</button>
           <button class="pmo-pill pmo-pill-sm at-type-pill" onclick="document.getElementById('at-type').value='full';document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Full Syllabus</button>
         </div>
         <select class="fi" id="at-type" style="display:none"><option value="partial">Partial</option><option value="full">Full Syllabus</option></select>
@@ -2379,9 +2379,9 @@
       <div class="pmo-field">
         <label class="pmo-label">Priority</label>
         <div class="pmo-pri-row">
-          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('td-pri','high',this,'#f87171')">🔴 High</button>
-          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('td-pri','medium',this,'#fbbf24')">🟡 Medium</button>
-          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('td-pri','low',this,'#34d399')">🟢 Low</button>
+          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('td-pri','high',this,'#f87171')"><span style="color:#f87171;font-weight:600">High</span></button>
+          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('td-pri','medium',this,'#fbbf24')"><span style="color:#fbbf24;font-weight:600">Med</span></button>
+          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('td-pri','low',this,'#34d399')"><span style="color:#34d399;font-weight:600">Low</span></button>
         </div>
         <select class="fi" id="td-pri" style="display:none"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
       </div>
@@ -2442,9 +2442,9 @@
       <div class="pmo-field">
         <label class="pmo-label">Priority</label>
         <div class="pmo-pri-row">
-          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('bl-pri','high',this,'#f87171')">🔴 High</button>
-          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('bl-pri','medium',this,'#fbbf24')">🟡 Medium</button>
-          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('bl-pri','low',this,'#34d399')">🟢 Low</button>
+          <button class="pmo-pri-btn pmo-pri-high active" onclick="_setPri('bl-pri','high',this,'#f87171')"><span style="color:#f87171;font-weight:600">High</span></button>
+          <button class="pmo-pri-btn pmo-pri-med" onclick="_setPri('bl-pri','medium',this,'#fbbf24')"><span style="color:#fbbf24;font-weight:600">Med</span></button>
+          <button class="pmo-pri-btn pmo-pri-low" onclick="_setPri('bl-pri','low',this,'#34d399')"><span style="color:#34d399;font-weight:600">Low</span></button>
         </div>
         <select class="fi" id="bl-pri" style="display:none"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
       </div>
@@ -3271,9 +3271,8 @@ function sbgGoal(score, max, exam){
   const goalPct = (goal / max) * 100;
   const scorePct = (score / max) * 100;
   if(scorePct >= goalPct) return 'bg';           // at or above goal → green
-  if(scorePct >= goalPct * 0.8) return 'bb';     // within 20% of goal → blue (close)
-  if(scorePct >= goalPct * 0.55) return 'ba';    // within 45% of goal → amber
-  return 'br';                                   // very low → red
+  if(scorePct >= goalPct * 0.85) return 'ba';   // within 15% of goal → yellow/amber (close)
+  return 'br';                                   // below → red
 }
 function sc(s){return s==='physics'?'#60a5fa':s==='chemistry'?'#34d399':'#fbbf24'}
 function l7(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().split('T')[0]})}
