@@ -86,7 +86,7 @@
 ## 🛠 Tech Stack
 
 ```
-Frontend    Vanilla HTML · CSS · JavaScript  (zero framework overhead)
+Frontend    Vanilla HTML · CSS · JavaScript 
 Database    Supabase (PostgreSQL + Row Level Security)
 Auth        Supabase Auth
 AI Engine   Groq API  (LLaMA 3.3 70B Versatile, ~0.5s latency)
@@ -130,7 +130,7 @@ jeetrack/
 ### 1 · Clone the repository
 
 ```bash
-git clone https://github.com/contactamanmishra76-blip/JEETrack.git
+git clone https://github.com/AmanxMishraDev/JEETrack.git
 cd JEETrack
 ```
 
