@@ -1489,6 +1489,7 @@ function showSettingsPanel(id, btn) {
 
 function renderSettings() {
   // Called when settings page is navigated to
+  loadGoalSettings(); // populate goal fields from actual saved values
   const name = userProfile.username || document.getElementById('sb-username')?.textContent || '';
   const email = document.getElementById('sb-email')?.textContent || '';
   const initials = name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'A';
