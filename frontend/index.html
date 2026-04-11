@@ -2149,7 +2149,8 @@
       </div>
       <div class="pmo-field">
         <label class="pmo-label">Test Date</label>
-        <input type="date" class="pmo-input" id="at-date"/>
+        <input type="date" class="pmo-input" id="at-date" oninput="clearPmoErr('at-date','at-date-err')"/>
+        <span class="fi-err-msg" id="at-date-err"></span>
       </div>
     </div>
 
@@ -2603,13 +2604,15 @@
       <div class="pmo-grid2" style="margin-top:10px">
         <div class="pmo-field">
           <label class="pmo-label">Total Score</label>
-          <input type="number" class="pmo-input pmo-input-total" id="hwt-total" min="0" max="999" placeholder="e.g. 210" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtUpdateBar()"/>
+          <input type="number" class="pmo-input pmo-input-total" id="hwt-total" min="0" max="999" placeholder="e.g. 210" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtUpdateBar();clearPmoErr('hwt-total','hwt-total-err')"/>
+          <span class="fi-err-msg" id="hwt-total-err"></span>
         </div>
         <div class="pmo-field">
           <label class="pmo-label">Max Score</label>
           <input type="number" class="pmo-input" id="hwt-max" min="0" max="999" placeholder="300" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtUpdateBar()"/>
         </div>
       </div>
+      <span class="fi-err-msg" id="hwt-sum-err" style="margin-top:4px;display:none"></span>
     </div>
 
     <div class="pmo-field" style="margin-top:12px">
@@ -4020,40 +4023,141 @@ function checkHWTNotifs(){
 }
 
 // =========== SAVE FUNCTIONS ===========
+// ── Field error helpers (upgraded with shake + pmo-input support) ──
 function clearFieldErr(fieldId, msgId){
-  document.getElementById(fieldId)?.classList.remove('fi-error');
+  const f=document.getElementById(fieldId);
+  if(f){f.classList.remove('fi-error','pmo-inp-error');}
   const m=document.getElementById(msgId);if(m){m.textContent='';m.classList.remove('show');}
 }
-function showFieldErr(fieldId, msgId, msg){
+function clearPmoErr(fieldId, msgId){
   const f=document.getElementById(fieldId);
-  if(f){f.classList.add('fi-error');f.focus();}
+  if(f){f.classList.remove('pmo-inp-error');}
+  const m=document.getElementById(msgId);if(m){m.textContent='';m.classList.remove('show');}
+}
+function _shakeField(fieldId){
+  const f=document.getElementById(fieldId);
+  if(!f)return;
+  f.classList.remove('pmo-inp-shake');
+  void f.offsetWidth; // reflow to restart animation
+  f.classList.add('pmo-inp-shake');
+  f.addEventListener('animationend',()=>f.classList.remove('pmo-inp-shake'),{once:true});
+}
+function _shakeGroup(ids){
+  ids.forEach(id=>_shakeField(id));
+}
+function showFieldErr(fieldId, msgId, msg, shake=true){
+  const f=document.getElementById(fieldId);
+  if(f){
+    f.classList.add(f.classList.contains('pmo-input')||f.classList.contains('pmo-score-inp')||f.classList.contains('pmo-input-total')?'pmo-inp-error':'fi-error');
+    f.focus();
+    if(shake)_shakeField(fieldId);
+  }
   const m=document.getElementById(msgId);
   if(m){m.textContent=msg;m.classList.add('show');}
 }
+function _showGroupErr(ids, msgId, msg){
+  ids.forEach(id=>{
+    const f=document.getElementById(id);
+    if(f) f.classList.add(f.classList.contains('pmo-input')||f.classList.contains('pmo-score-inp')?'pmo-inp-error':'fi-error');
+  });
+  _shakeGroup(ids);
+  const m=document.getElementById(msgId);if(m){m.textContent=msg;m.classList.add('show');}
+}
+function _clearGroupErr(ids, msgId){
+  ids.forEach(id=>clearFieldErr(id, msgId));
+  clearFieldErr(ids[0], msgId);
+}
+
 function saveTest(){
   const exam=document.getElementById('at-exam').value;
   const phy=+document.getElementById('at-phy').value||0;
   const chem=+document.getElementById('at-chem').value||0;
   const math=+document.getElementById('at-math').value||0;
-  const total=+document.getElementById('at-total').value||0;
-  const max=+document.getElementById('at-max').value||(exam==='advanced'?360:300);
+  const totalRaw=document.getElementById('at-total').value;
+  const total=+totalRaw||0;
+  const maxRaw=document.getElementById('at-max').value;
+  const max=+maxRaw||(exam==='advanced'?360:300);
   const date=document.getElementById('at-date').value;
-  // Clear previous errors
-  ['at-total','at-phy','at-chem','at-math'].forEach(id=>clearFieldErr(id,id==='at-total'?'at-total-err':'at-sum-err'));
-  if(!date){toast('Please enter the test date', 'warning');return;}
-  if(!total){showFieldErr('at-total','at-total-err','Total marks required');return;}
-  if(!phy&&!chem&&!math){
-    ['at-phy','at-chem','at-math'].forEach(id=>document.getElementById(id)?.classList.add('fi-error'));
-    const m=document.getElementById('at-sum-err');if(m){m.textContent='Enter subject-wise marks';m.classList.add('show');}
+  const defaultMax=exam==='advanced'?360:300;
+
+  // Clear all previous errors first
+  ['at-phy','at-chem','at-math'].forEach(id=>clearFieldErr(id,'at-sum-err'));
+  clearFieldErr('at-total','at-total-err');
+  clearPmoErr('at-date','at-date-err');
+  const errMsgEl=document.getElementById('at-sum-err');
+  if(errMsgEl){errMsgEl.textContent='';errMsgEl.classList.remove('show');}
+
+  // Validate: date required
+  if(!date){
+    showFieldErr('at-date','at-date-err','Test date is required');
     return;
   }
+  // Validate: future date not allowed
+  if(date>td()){
+    showFieldErr('at-date','at-date-err','Date cannot be in the future');
+    return;
+  }
+  // Validate: total required
+  if(!totalRaw && totalRaw!=='0'){
+    showFieldErr('at-total','at-total-err','Total score is required');
+    return;
+  }
+  // Validate: total >= 0
+  if(total<0){
+    showFieldErr('at-total','at-total-err','Score cannot be negative');
+    return;
+  }
+  // Validate: total <= max
+  if(total>max){
+    showFieldErr('at-total','at-total-err',`Score (${total}) cannot exceed max (${max})`);
+    _shakeField('at-total');
+    return;
+  }
+  // Validate: max sanity
+  if(max<=0){
+    showFieldErr('at-total','at-total-err','Max score must be greater than 0');
+    return;
+  }
+
+  // Validate: subject scores — if any entered, check them
+  const anySubj=phy||chem||math;
+  if(!anySubj){
+    _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err','Enter at least one subject score');
+    return;
+  }
+  // Validate: no subject score can be negative (already clamped by min=0 but just in case)
+  if(phy<0||chem<0||math<0){
+    _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err','Subject scores cannot be negative');
+    return;
+  }
+  // Validate: each subject score <= total
+  if(phy>total||chem>total||math>total){
+    const culprits=[];
+    if(phy>total)culprits.push('at-phy');
+    if(chem>total)culprits.push('at-chem');
+    if(math>total)culprits.push('at-math');
+    _showGroupErr(culprits,'at-sum-err',`A subject score can't exceed total (${total})`);
+    return;
+  }
+  // Validate: each subject score <= max/3 (sanity cap per subject)
+  const perSubjMax=Math.ceil(max/3);
+  if(phy>perSubjMax||chem>perSubjMax||math>perSubjMax){
+    const culprits=[];
+    if(phy>perSubjMax)culprits.push('at-phy');
+    if(chem>perSubjMax)culprits.push('at-chem');
+    if(math>perSubjMax)culprits.push('at-math');
+    _showGroupErr(culprits,'at-sum-err',`Subject score exceeds section max (~${perSubjMax})`);
+    return;
+  }
+  // Validate: subject sum === total
   const subSum=phy+chem+math;
   if(subSum!==total){
-    ['at-phy','at-chem','at-math'].forEach(id=>document.getElementById(id)?.classList.add('fi-error'));
-    const m=document.getElementById('at-sum-err');
-    if(m){m.textContent=`Total ≠ subj. sum (${subSum})`;m.classList.add('show');}
+    _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err',
+      subSum>total?`Subjects add up to ${subSum} — more than total (${total})`
+                 :`Subjects add up to ${subSum} — less than total (${total})`);
     return;
   }
+
   const e={id:Date.now(),exam,session:null,paper:exam==='advanced'?document.getElementById('at-paper').value:null,type:document.getElementById('at-type').value,date,total,max,physics:phy,chemistry:chem,maths:math,notes:document.getElementById('at-notes').value};
   S.tests.push(e);save();closeM('addTest');
   pushUndo('test',e,'Test score added',false);
@@ -4068,13 +4172,69 @@ function saveHWT(){
   const up=S.upcoming.find(t=>t.id===upid);
   if(!up)return;
   const exam=up.exam;
-  const e={id:Date.now(),exam,session:up.session,paper:up.session,type:up.type,date:up.date,total:+document.getElementById('hwt-total').value||0,max:+document.getElementById('hwt-max').value||(exam==='advanced'?360:300),physics:+document.getElementById('hwt-phy').value||0,chemistry:+document.getElementById('hwt-chem').value||0,maths:+document.getElementById('hwt-math').value||0,notes:document.getElementById('hwt-notes').value||'From scheduled test'};
+  const phy=+document.getElementById('hwt-phy').value||0;
+  const chem=+document.getElementById('hwt-chem').value||0;
+  const math=+document.getElementById('hwt-math').value||0;
+  const totalRaw=document.getElementById('hwt-total').value;
+  const total=+totalRaw||0;
+  const max=+document.getElementById('hwt-max').value||(exam==='advanced'?360:300);
+
+  // Clear previous errors
+  ['hwt-phy','hwt-chem','hwt-math'].forEach(id=>clearFieldErr(id,'hwt-sum-err'));
+  clearFieldErr('hwt-total','hwt-total-err');
+  const sumEl=document.getElementById('hwt-sum-err');
+  if(sumEl){sumEl.textContent='';sumEl.classList.remove('show');}
+
+  // Validate: total required
+  if(!totalRaw && totalRaw!=='0'){
+    showFieldErr('hwt-total','hwt-total-err','Total score is required');
+    return;
+  }
+  if(total<0){
+    showFieldErr('hwt-total','hwt-total-err','Score cannot be negative');
+    return;
+  }
+  if(total>max){
+    showFieldErr('hwt-total','hwt-total-err',`Score (${total}) cannot exceed max (${max})`);
+    return;
+  }
+  // Validate subjects
+  const anySubj=phy||chem||math;
+  if(!anySubj){
+    _showGroupErr(['hwt-phy','hwt-chem','hwt-math'],'hwt-sum-err','Enter at least one subject score');
+    return;
+  }
+  const perSubjMax=Math.ceil(max/3);
+  if(phy>total||chem>total||math>total){
+    const culprits=[];
+    if(phy>total)culprits.push('hwt-phy');
+    if(chem>total)culprits.push('hwt-chem');
+    if(math>total)culprits.push('hwt-math');
+    _showGroupErr(culprits,'hwt-sum-err',`A subject score can't exceed total (${total})`);
+    return;
+  }
+  if(phy>perSubjMax||chem>perSubjMax||math>perSubjMax){
+    const culprits=[];
+    if(phy>perSubjMax)culprits.push('hwt-phy');
+    if(chem>perSubjMax)culprits.push('hwt-chem');
+    if(math>perSubjMax)culprits.push('hwt-math');
+    _showGroupErr(culprits,'hwt-sum-err',`Subject score exceeds section max (~${perSubjMax})`);
+    return;
+  }
+  const subSum=phy+chem+math;
+  if(subSum!==total){
+    _showGroupErr(['hwt-phy','hwt-chem','hwt-math'],'hwt-sum-err',
+      subSum>total?`Subjects add up to ${subSum} — more than total (${total})`
+                 :`Subjects add up to ${subSum} — less than total (${total})`);
+    return;
+  }
+
+  const e={id:Date.now(),exam,session:up.session,paper:up.session,type:up.type,date:up.date,total,max,physics:phy,chemistry:chem,maths:math,notes:document.getElementById('hwt-notes').value||'From scheduled test'};
   S.tests.push(e);
-  // Remove from upcoming (logged tests move to the test history)
   S.upcoming=S.upcoming.filter(t=>t.id!==upid);
   dbDelete('upcoming',upid);
   save();closeM('howWasTest');
-  _hwtMarkDismissed(upid); // async — syncs to Supabase in background
+  _hwtMarkDismissed(upid);
   pushUndo('test',e,'Score logged from scheduled test',false);
   const gm2=getGoalMains(),ga2=getGoalAdv();
   if(e.exam==='mains'&&e.total>=gm2) setTimeout(()=>celebrate('🏆',`LEGENDARY! ${gm2}+ in Mains!`,`You scored ${e.total}/${e.max}!`,true),300);
