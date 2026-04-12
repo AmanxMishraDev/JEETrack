@@ -14,26 +14,26 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+
 </head>
 <body>
 
 <!-- SPLASH SCREEN -->
 <div id="splash">
-  <!-- Ambient orbs -->
+  
   <div class="splash-orb splash-orb-1"></div>
   <div class="splash-orb splash-orb-2"></div>
   <div class="splash-orb splash-orb-3"></div>
-  <!-- Grid overlay -->
+  
   <div class="splash-grid"></div>
-  <!-- Floating particles -->
+  
   <div class="splash-particle"></div>
   <div class="splash-particle"></div>
   <div class="splash-particle"></div>
   <div class="splash-particle"></div>
   <div class="splash-particle"></div>
   <div class="splash-particle"></div>
-  <!-- Logo -->
+  
   <div class="splash-logo-wrap">
     <div class="splash-hex"></div>
     <div class="splash-glow-ring"></div>
@@ -50,9 +50,6 @@
   <div class="splash-credit">crafted by <strong>Aman Mishra</strong></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     LANDING PAGE
-══════════════════════════════════════════ -->
 <div id="landing" class="hidden">
   <div class="land-aura-wrap">
     <div class="land-aura land-aura-1"></div>
@@ -128,7 +125,7 @@
         <div class="slide-progress-bar"><div class="slide-progress-fill" id="slide-fill"></div></div>
       </div>
 
-      <!-- Mobile-only CTA button -->
+      
       <button class="mob-land-cta-btn" id="mob-land-cta" onclick="mobileLandingShowAuth()">Get Started for Free →</button>
 
       <div class="land-stats" style="margin-top:2.5rem">
@@ -161,7 +158,7 @@
 
       <div class="trust-badges-wrap">
         <div class="trust-badges-track" id="trust-badges-track">
-          <!-- Set 1 -->
+          
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Mock Test Analytics</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></span>AI Weekly Insights</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Daily Streak Tracking</div>
@@ -170,7 +167,7 @@
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>JEE Mains + Advanced</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Score Trend Charts</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Zero Backlog System</div>
-          <!-- Set 2 (duplicate for seamless loop) -->
+          
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Mock Test Analytics</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></span>AI Weekly Insights</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Daily Streak Tracking</div>
@@ -183,14 +180,14 @@
       </div>
     </div>
 
-    <!-- Right: hero CTA + auth form -->
+    
     <div class="land-right">
-      <!-- Mobile close button -->
+      
       <button class="mob-auth-close" onclick="closeMobAuthOverlay()" aria-label="Close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <div class="land-right-shimmer"></div>
       <div class="land-auth-inner">
 
-        <!-- Default hero state -->
+        
         <div class="land-hero-cta" id="land-hero-cta">
           <div class="land-hero-logo"><div class="land-hero-logo-ring"></div>J</div>
           <div class="land-hero-title">Your JEE command<br>centre awaits</div>
@@ -214,7 +211,7 @@
           <div style="margin-top:1.6rem;font-size:10px;color:rgba(255,255,255,.15);text-align:center;letter-spacing:.04em">crafted by Aman Mishra</div>
         </div>
 
-        <!-- Auth form -->
+        
         <div class="land-auth-form" id="land-auth-form">
           <button class="land-auth-back" onclick="window.innerWidth<=768 ? closeMobAuthOverlay() : landingCloseAuth()">← Back</button>
           <div class="land-auth-welcome" id="land-form-title">Welcome back</div>
@@ -258,14 +255,11 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ONBOARDING
-══════════════════════════════════════════ -->
 <div id="onboarding">
   <canvas id="ob-bg-canvas"></canvas>
   <div class="ob-wrap">
 
-    <!-- Progress track -->
+    
     <div class="ob-progress-wrap">
       <div class="ob-progress-track">
         <div class="ob-progress-fill" id="ob-progress-fill" style="width:0%"></div>
@@ -278,11 +272,11 @@
       </div>
     </div>
 
-    <!-- Shell card -->
+    
     <div class="ob-card-shell">
       <div class="ob-card-inner">
 
-        <!-- ── Step 0: Avatar + Name ── -->
+        
         <div class="ob-step active" id="ob-step-0">
           <div class="ob-step-header">
             <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 1 of 4</div>
@@ -290,11 +284,11 @@
             <div class="ob-step-desc">Set your name and a profile photo to personalize your dashboard</div>
           </div>
 
-          <!-- Avatar zone — settings-style -->
+          
           <div style="flex-direction:column;align-items:stretch;gap:0;margin-bottom:1.4rem;background:linear-gradient(135deg,rgba(108,92,231,.04) 0%,transparent 60%);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;position:relative;display:flex">
             <div style="position:absolute;top:-50px;left:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(108,92,231,.12) 0%,transparent 65%);pointer-events:none;z-index:0"></div>
             <div style="display:flex;align-items:center;gap:1.4rem;padding:1.4rem 1.2rem;position:relative;z-index:1">
-              <!-- Avatar with trash overlay button -->
+              
               <div style="position:relative;flex-shrink:0">
                 <div id="ob-av" onclick="document.getElementById('ob-photo-input').click()" title="Click to upload photo"
                   style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,#6c5ce7,#a29bfe,#fd79a8);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:#fff;position:relative;overflow:hidden;border:3px solid rgba(108,92,231,.25);cursor:pointer;transition:transform .25s,box-shadow .25s;box-shadow:0 6px 24px rgba(108,92,231,.3),0 2px 8px rgba(0,0,0,.4)">
@@ -305,7 +299,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   </div>
                 </div>
-                <!-- Trash icon — only visible when photo is set -->
+                
                 <button type="button" id="ob-av-remove-btn" onclick="removeObAvatar()" title="Remove photo"
                   style="display:none;position:absolute;top:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:rgba(248,113,113,.9);border:2px solid rgba(18,15,32,.95);cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .18s;z-index:10;padding:0"
                   onmouseenter="this.style.background='rgba(239,68,68,1)';this.style.transform='scale(1.12)'"
@@ -354,7 +348,7 @@
           </div>
         </div>
 
-        <!-- ── Step 1: Class ── -->
+        
         <div class="ob-step" id="ob-step-1">
           <div class="ob-step-header">
             <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 2 of 4</div>
@@ -390,7 +384,7 @@
           </div>
         </div>
 
-        <!-- ── Step 2: Study Mode + Coaching ── -->
+        
         <div class="ob-step" id="ob-step-2">
           <div class="ob-step-header">
             <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 3 of 4</div>
@@ -439,7 +433,7 @@
           </div>
         </div>
 
-        <!-- ── Step 3: Target Year ── -->
+        
         <div class="ob-step" id="ob-step-3">
           <div class="ob-step-header">
             <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Final Step</div>
@@ -470,7 +464,7 @@
             </div>
           </div>
 
-          <!-- Summary preview -->
+          
           <div class="ob-finish-glow" style="margin-top:1.4rem">
             <div class="ob-finish-icon">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -498,7 +492,6 @@
 
 <!-- keep auth-screen as hidden fallback (for showAuthScreen fn) -->
 <div id="auth-screen" class="hidden" style="display:none!important"></div>
-
 
 <div class="app" id="main-app" style="display:none">
 <!-- SIDEBAR OVERLAY -->
@@ -564,7 +557,7 @@
     <div class="av-menu-email" id="avMenuEmail"></div>
     <div class="av-menu-tag" id="avMenuTag">Free</div>
   </div>
-  <!-- Quick Stats Row -->
+  
   <div class="av-stats-row">
     <div class="av-stat-item">
       <div class="av-stat-val" id="avStatHrs">—</div>
@@ -592,7 +585,7 @@
 <!-- OVERVIEW -->
 
 <div class="page active" id="page-overview">
-  <!-- Ambient background SVG -->
+  
   <svg style="position:fixed;top:60px;right:0;width:400px;height:400px;pointer-events:none;z-index:0;opacity:.04" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="320" cy="80" r="200" fill="url(#dashBg1)"/>
     <defs>
@@ -603,7 +596,7 @@
     </defs>
   </svg>
 
-  <!-- Header -->
+  
   <div class="dash-header-wrap">
     <div class="dash-greeting-block">
       <div class="dash-greeting-name"><em id="dash-greeting">Hi, there</em></div>
@@ -623,8 +616,7 @@
 
   <div id="ov-notifs" style="margin-bottom:10px;position:relative;z-index:1"></div>
 
-
-  <!-- Stat cards grid -->
+  
   <div class="dash-stat-grid">
     <!-- Latest Mains -->
     <div class="dash-stat purple">
@@ -707,7 +699,7 @@
     <div style="display:flex;align-items:center;gap:5px;color:var(--pk)"><span style="width:8px;height:8px;border-radius:50%;background:var(--pk);display:inline-block;flex-shrink:0"></span> JEE Advanced: <b id="jtt-a">—</b> days</div>
   </div>
 
-  <!-- Charts row -->
+  
   <div class="g3" style="position:relative;z-index:1">
     <div class="card dash-card-premium" style="grid-column:span 2;border-radius:14px">
       <div class="glow-line"></div>
@@ -743,7 +735,7 @@
     </div>
   </div>
 
-  <!-- Analytics row -->
+  
   <div class="g3" style="position:relative;z-index:1">
     <div class="card dash-card-premium" style="border-radius:14px">
       <div class="glow-line"></div>
@@ -762,7 +754,7 @@
     </div>
   </div>
 
-  <!-- Syllabus + Upcoming -->
+  
   <div class="g3" style="position:relative;z-index:1">
     <div class="card dash-card-premium" style="grid-column:span 2;border-radius:14px">
       <div class="glow-line"></div>
@@ -782,15 +774,11 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     MAINS / ADVANCED / COMPARE STYLES
-══════════════════════════════════════════════════════ -->
-
 <!-- MAINS -->
 <div class="page prem-page" id="page-mains">
 <div class="page-inner">
 
-  <!-- Hero header -->
+  
   <div class="prem-hero">
     <div class="prem-hero-left">
       <div class="prem-hero-icon" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(166,149,255,.1));border:1px solid rgba(124,106,247,.25)">
@@ -819,7 +807,7 @@
     </div>
   </div>
 
-  <!-- Filter bar -->
+  
   <div class="prem-filter-bar">
     <span class="prem-filter-label">Filter</span>
     <button class="fc active" data-group="ms-type" onclick="flt('mains','type','all',this)">All</button>
@@ -832,7 +820,7 @@
       <option value="maths">Maths</option>
     </select>
   </div>
-  <!-- Score/% toggle below filter bar, left-aligned -->
+  
   <div style="display:flex;align-items:center;gap:8px;margin-top:-6px;margin-bottom:12px;">
     <span style="font-size:10px;font-weight:600;color:var(--mu2);text-transform:uppercase;letter-spacing:.08em">Display</span>
     <div class="prem-mode-tog" id="mn-mtog">
@@ -841,13 +829,13 @@
     </div>
   </div>
 
-  <!-- Notifications -->
+  
   <div id="mn-notifs" style="margin-bottom:10px;position:relative;z-index:1"></div>
 
-  <!-- Stat cards -->
+  
   <div class="prem-stat-grid" id="mn-stats"></div>
 
-  <!-- Charts -->
+  
   <div class="prem-chart-grid">
     <div class="prem-chart-card">
       <div class="prem-chart-glow"></div>
@@ -867,7 +855,7 @@
     </div>
   </div>
 
-  <!-- All tests card -->
+  
   <div class="prem-table-card">
     <div class="prem-table-hdr">
       <span class="prem-table-title">
@@ -889,7 +877,7 @@
 <div class="page prem-page" id="page-advanced">
 <div class="page-inner">
 
-  <!-- Hero header -->
+  
   <div class="prem-hero">
     <div class="prem-hero-left">
       <div class="prem-hero-icon" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(251,113,133,.1));border:1px solid rgba(244,114,182,.25)">
@@ -918,7 +906,7 @@
     </div>
   </div>
 
-  <!-- Filter bar -->
+  
   <div class="prem-filter-bar">
     <span class="prem-filter-label">Filter</span>
     <select class="fc adv-fc" onchange="flt('advanced','type',this.value,this)">
@@ -939,7 +927,7 @@
       <option value="maths">Maths</option>
     </select>
   </div>
-  <!-- Score/% toggle below filter bar, left-aligned -->
+  
   <div style="display:flex;align-items:center;gap:8px;margin-top:-6px;margin-bottom:12px;">
     <span style="font-size:10px;font-weight:600;color:var(--mu2);text-transform:uppercase;letter-spacing:.08em">Display</span>
     <div class="prem-mode-tog" id="adv-mtog">
@@ -948,13 +936,13 @@
     </div>
   </div>
 
-  <!-- Notifications -->
+  
   <div id="adv-notifs" style="margin-bottom:10px;position:relative;z-index:1"></div>
 
-  <!-- Stat cards -->
+  
   <div class="prem-stat-grid" id="adv-stats"></div>
 
-  <!-- Charts -->
+  
   <div class="prem-chart-grid">
     <div class="prem-chart-card">
       <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(244,114,182,.2),transparent)"></div>
@@ -974,7 +962,7 @@
     </div>
   </div>
 
-  <!-- All tests card -->
+  
   <div class="prem-table-card">
     <div class="prem-table-hdr" style="--bar-grad:linear-gradient(180deg,#f472b6,#7c6af7)">
       <span class="prem-table-title">
@@ -996,7 +984,7 @@
 <div class="page prem-page" id="page-compare">
 <div class="page-inner">
 
-  <!-- Compare hero banner -->
+  
   <div class="cmp-hero">
     <div>
       <div class="cmp-hero-title">
@@ -1122,7 +1110,7 @@
     </div>
   </div>
 
-  <!-- Filter bar -->
+  
   <div class="prem-filter-bar">
     <span class="prem-filter-label">Filter</span>
     <button class="fc active" data-group="hr-period" onclick="fltH('week',this)">This Week</button>
@@ -1136,10 +1124,10 @@
     </select>
   </div>
 
-  <!-- Stat cards -->
+  
   <div class="prem-stat-grid hrs-stat-grid" id="hr-stats"></div>
 
-  <!-- Charts -->
+  
   <div class="prem-chart-grid">
     <div class="prem-chart-card">
       <div class="prem-chart-glow"></div>
@@ -1200,8 +1188,6 @@
       </div>
     </div>
   </div>
-
-
 
 </div>
 </div>
@@ -1314,7 +1300,7 @@
     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px" id="bl-subj-streaks"></div>
   </div>
 
-  <!-- Filter bar -->
+  
   <div class="fr td-filter-row" style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:5px 8px;gap:5px;flex-wrap:nowrap;overflow:hidden;margin-bottom:10px">
     <button class="fc td-chip active" data-group="bl-subj" onclick="fltBl('subj','all',this)">All</button>
     <button class="fc td-chip td-chip-phy" data-group="bl-subj" onclick="fltBl('subj','physics',this)">
@@ -1347,10 +1333,10 @@
     </div>
   </div>
 
-  <!-- Overall progress hero -->
+  
   <div id="syl-overall-card" style="margin-bottom:12px"></div>
 
-  <!-- Filter bar -->
+  
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center">
     <!-- Subject filter -->
     <div class="syl-filter-bar" id="syl-subj-bar">
@@ -1385,9 +1371,20 @@
       <button class="syl-ftab" data-group="syl-chem-sub" onclick="fltChemSub('organic',this)">Organic</button>
       <button class="syl-ftab" data-group="syl-chem-sub" onclick="fltChemSub('inorganic',this)">Inorganic</button>
     </div>
+
+    <!-- Exam filter: Mains / Advanced -->
+    <div class="syl-filter-bar" id="syl-exam-bar">
+      <button class="syl-ftab active" data-group="syl-exam" onclick="fltSylExam('all',this)">All</button>
+      <button class="syl-ftab" data-group="syl-exam" onclick="fltSylExam('mains',this)">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Mains Only
+      </button>
+      <button class="syl-ftab syl-ftab-adv" data-group="syl-exam" onclick="fltSylExam('adv',this)">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 22 12 12 22 2 12"/></svg>Adv Only
+      </button>
+    </div>
   </div>
 
-  <!-- Chapter list -->
+  
   <div id="syl-list-wrap">
     <div id="syl-list"></div>
   </div>
@@ -1395,11 +1392,9 @@
 
 <!-- AI INSIGHTS PAGE -->
 
-<!-- AI INSIGHTS PAGE -->
-
 <div class="page" id="page-insights">
 
-  <!-- Loading State -->
+  
   <div id="insights-loading" class="ai-loading-wrap">
     <div class="ai-loading-spinner">
       <div class="ai-ls-ring"></div>
@@ -1422,7 +1417,7 @@
 
   <!-- Empty / Hero State -->
   <div id="insights-empty" class="ai-empty-wrap">
-    <!-- Floating particles -->
+    
     <div id="ai-particles"></div>
     <div class="ai-empty-orb">
       <div class="ai-empty-orb-ring3"></div>
@@ -1460,9 +1455,7 @@
   <div id="insights-content" style="display:none"></div>
 
 </div>
-<!-- ══════════════════════════════════════════
-     SETTINGS PAGE
-══════════════════════════════════════════ -->
+
 <div class="page" id="page-settings">
   <div class="ph"><div><div class="pt">Settings</div><div class="ps">Profile, data & preferences</div></div></div>
   <div class="settings-layout">
@@ -1987,7 +1980,6 @@
   </div>
 </div>
 
-
 <!-- MOBILE TESTS CHOICE PAGE (virtual page, mobile only) — INSIDE main -->
 <div id="mob-tests-choice-page" class="page" style="display:none">
   <div class="mob-tests-choice" style="display:flex">
@@ -2164,15 +2156,15 @@
       <div class="pmo-score-bar-wrap"><div class="pmo-score-bar-fill" id="at-score-bar" style="width:0%"></div></div>
       <div class="pmo-grid3">
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-phy">⚛ Physics</label>
+          <label class="pmo-label pmo-label-phy">Physics</label>
           <input type="number" class="pmo-input pmo-score-inp" id="at-phy" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
         </div>
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-chem">⚗ Chemistry</label>
+          <label class="pmo-label pmo-label-chem">Chemistry</label>
           <input type="number" class="pmo-input pmo-score-inp" id="at-chem" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
         </div>
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-math">∑ Maths</label>
+          <label class="pmo-label pmo-label-math">Maths</label>
           <input type="number" class="pmo-input pmo-score-inp" id="at-math" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_atAutoSum();clearFieldErr('at-phy','at-sum-err');clearFieldErr('at-chem','at-sum-err');clearFieldErr('at-math','at-sum-err')"/>
         </div>
       </div>
@@ -2287,9 +2279,9 @@
 
     <!-- Subject pills -->
     <div class="pmo-subj-pills" style="margin-bottom:14px">
-      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_lhSetSubj('physics',this)">⚛ Physics</button>
-      <button class="pmo-subj-pill pmo-subj-chem" onclick="_lhSetSubj('chemistry',this)">⚗ Chemistry</button>
-      <button class="pmo-subj-pill pmo-subj-math" onclick="_lhSetSubj('maths',this)">∑ Maths</button>
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_lhSetSubj('physics',this)">Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_lhSetSubj('chemistry',this)">Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_lhSetSubj('maths',this)">Maths</button>
     </div>
     <select class="fi" id="lh-subj" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
 
@@ -2370,9 +2362,9 @@
     </div>
 
     <div class="pmo-subj-pills" style="margin-bottom:14px">
-      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_tdSetSubj('physics',this)">⚛ Physics</button>
-      <button class="pmo-subj-pill pmo-subj-chem" onclick="_tdSetSubj('chemistry',this)">⚗ Chemistry</button>
-      <button class="pmo-subj-pill pmo-subj-math" onclick="_tdSetSubj('maths',this)">∑ Maths</button>
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_tdSetSubj('physics',this)">Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_tdSetSubj('chemistry',this)">Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_tdSetSubj('maths',this)">Maths</button>
     </div>
     <select class="fi" id="td-subj-i" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
 
@@ -2433,9 +2425,9 @@
     </div>
 
     <div class="pmo-subj-pills" style="margin-bottom:14px">
-      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_blSetSubj('physics',this)">⚛ Physics</button>
-      <button class="pmo-subj-pill pmo-subj-chem" onclick="_blSetSubj('chemistry',this)">⚗ Chemistry</button>
-      <button class="pmo-subj-pill pmo-subj-math" onclick="_blSetSubj('maths',this)">∑ Maths</button>
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_blSetSubj('physics',this)">Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_blSetSubj('chemistry',this)">Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_blSetSubj('maths',this)">Maths</button>
     </div>
     <select class="fi" id="bl-subj-i" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
 
@@ -2490,9 +2482,9 @@
     </div>
 
     <div class="pmo-subj-pills" style="margin-bottom:14px">
-      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_chSetSubj('physics',this)">⚛ Physics</button>
-      <button class="pmo-subj-pill pmo-subj-chem" onclick="_chSetSubj('chemistry',this)">⚗ Chemistry</button>
-      <button class="pmo-subj-pill pmo-subj-math" onclick="_chSetSubj('maths',this)">∑ Maths</button>
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_chSetSubj('physics',this)">Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_chSetSubj('chemistry',this)">Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_chSetSubj('maths',this)">Maths</button>
     </div>
     <select class="fi" id="ch-subj-i" onchange="toggleChemSection_modal()" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
 
@@ -2543,9 +2535,9 @@
     </div>
 
     <div class="pmo-subj-pills" style="margin-bottom:16px">
-      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_qlSetSubj('physics',this)">⚛ Physics</button>
-      <button class="pmo-subj-pill pmo-subj-chem" onclick="_qlSetSubj('chemistry',this)">⚗ Chemistry</button>
-      <button class="pmo-subj-pill pmo-subj-math" onclick="_qlSetSubj('maths',this)">∑ Maths</button>
+      <button class="pmo-subj-pill pmo-subj-phy active" onclick="_qlSetSubj('physics',this)">Physics</button>
+      <button class="pmo-subj-pill pmo-subj-chem" onclick="_qlSetSubj('chemistry',this)">Chemistry</button>
+      <button class="pmo-subj-pill pmo-subj-math" onclick="_qlSetSubj('maths',this)">Maths</button>
     </div>
     <select class="fi" id="ql-subj" style="display:none"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Maths</option></select>
 
@@ -2574,7 +2566,7 @@
     </button>
     <div class="pmo-header">
       <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(244,114,182,.1));border-color:rgba(124,106,247,.3);box-shadow:0 0 28px rgba(124,106,247,.25)">
-        <span style="font-size:22px;line-height:1">📊</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#hwt-icon-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="hwt-icon-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
       <div>
         <div class="pmo-title">How was your test?</div>
@@ -2590,15 +2582,15 @@
       <div class="pmo-score-bar-wrap"><div class="pmo-score-bar-fill" id="hwt-score-bar" style="width:0%"></div></div>
       <div class="pmo-grid3">
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-phy">⚛ Physics</label>
+          <label class="pmo-label pmo-label-phy">Physics</label>
           <input type="number" class="pmo-input pmo-score-inp" id="hwt-phy" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
         </div>
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-chem">⚗ Chemistry</label>
+          <label class="pmo-label pmo-label-chem">Chemistry</label>
           <input type="number" class="pmo-input pmo-score-inp" id="hwt-chem" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
         </div>
         <div class="pmo-field">
-          <label class="pmo-label pmo-label-math">∑ Maths</label>
+          <label class="pmo-label pmo-label-math">Maths</label>
           <input type="number" class="pmo-input pmo-score-inp" id="hwt-math" placeholder="0" min="0" max="999" oninput="if(this.value.length>3)this.value=this.value.slice(0,3);_hwtAutoSum()"/>
         </div>
       </div>
@@ -2829,79 +2821,28 @@
   <canvas id="mini-confetti" style="position:absolute;top:-40px;left:-40px;width:360px;height:220px;pointer-events:none"></canvas>
 </div>
 
-<!-- GRAND CELEBRATION OVERLAY -->
-<!-- GRAND CELEBRATION OVERLAY -->
 <div class="cel-grand-overlay" id="cel-overlay" onclick="closeCel()">
-  <!-- Full-screen particle canvas -->
+  
   <canvas id="confetti-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:901;width:100%;height:100%"></canvas>
 
-  <!-- Animated gradient aurora background -->
-  <div class="cel-aurora">
-    <div class="cel-aurora-orb cel-ao1"></div>
-    <div class="cel-aurora-orb cel-ao2"></div>
-    <div class="cel-aurora-orb cel-ao3"></div>
-    <div class="cel-aurora-orb cel-ao4"></div>
-  </div>
-
-  <!-- Geometric SVG ring layer -->
-  <svg class="cel-geo-rings" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:902">
-    <defs>
-      <linearGradient id="rg1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#a695ff" stop-opacity="0.5"/>
-        <stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="rg2" x1="100%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#f472b6" stop-opacity="0.4"/>
-        <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="rg3" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#34d399" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <circle cx="450" cy="450" r="340" fill="none" stroke="url(#rg1)" stroke-width="1" class="cel-ring cel-ring-1"/>
-    <circle cx="450" cy="450" r="270" fill="none" stroke="url(#rg2)" stroke-width="0.8" class="cel-ring cel-ring-2"/>
-    <circle cx="450" cy="450" r="200" fill="none" stroke="url(#rg3)" stroke-width="0.6" class="cel-ring cel-ring-3"/>
-    <!-- Rotating tick marks on outer ring -->
-    <g class="cel-ticks" transform="translate(450,450)">
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#a695ff" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#a695ff" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(30)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#f472b6" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(60)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#f472b6" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(90)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(120)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(150)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#34d399" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(180)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#34d399" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(210)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(240)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(270)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#a695ff" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(300)"/>
-      <line x1="0" y1="-340" x2="0" y2="-326" stroke="#a695ff" stroke-width="2" stroke-linecap="round" opacity="0.6" transform="rotate(330)"/>
-    </g>
-    <!-- Diamond accents at cardinal points -->
-    <polygon points="450,106 455,116 450,126 445,116" fill="url(#rg1)" opacity="0.7" class="cel-diamond"/>
-    <polygon points="794,450 784,455 774,450 784,445" fill="url(#rg2)" opacity="0.7" class="cel-diamond"/>
-    <polygon points="450,794 445,784 450,774 455,784" fill="url(#rg3)" opacity="0.7" class="cel-diamond"/>
-    <polygon points="106,450 116,445 126,450 116,455" fill="url(#rg1)" opacity="0.7" class="cel-diamond"/>
-  </svg>
-
-  <!-- Main card -->
+  
   <div class="cel-card" id="cel-box" onclick="event.stopPropagation()">
 
-    <!-- Animated gradient border -->
+    
     <div class="cel-card-border"></div>
 
-    <!-- Shimmer sweep -->
+    
     <div class="cel-card-shimmer"></div>
 
-    <!-- Top icon -->
+    
     <div class="cel-icon-stage" id="cel-icon-wrap">
-      <!-- Pulse rings -->
+      
       <div class="cel-pulse-ring cel-pr1"></div>
       <div class="cel-pulse-ring cel-pr2"></div>
       <div class="cel-pulse-ring cel-pr3"></div>
-      <!-- Icon container -->
+      
       <div class="cel-icon-core">
-        <!-- Trophy — Mains -->
+        
         <svg id="cel-svg-trophy" class="cel-svg-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="tg1" x1="4" y1="8" x2="52" y2="52" gradientUnits="userSpaceOnUse">
@@ -2915,21 +2856,21 @@
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-          <!-- Cup body -->
+          
           <path d="M14 10h28v12a14 14 0 0 1-28 0V10z" stroke="url(#tg1)" stroke-width="2.4" stroke-linejoin="round" fill="rgba(166,149,255,0.08)" filter="url(#tglow)"/>
-          <!-- Handles -->
+          
           <path d="M14 14H9a5 5 0 0 0 5 5v-5z" stroke="url(#tg1)" stroke-width="2.2" stroke-linejoin="round" fill="none"/>
           <path d="M42 14h5a5 5 0 0 1-5 5v-5z" stroke="url(#tg1)" stroke-width="2.2" stroke-linejoin="round" fill="none"/>
-          <!-- Stem + base -->
+          
           <path d="M28 36v8" stroke="url(#tg1)" stroke-width="2.4" stroke-linecap="round"/>
           <path d="M20 44h16" stroke="url(#tg1)" stroke-width="2.8" stroke-linecap="round"/>
-          <!-- Star inside cup -->
+          
           <path d="M28 16l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="url(#tg2)" stroke="none"/>
-          <!-- Shine lines -->
+          
           <line x1="22" y1="12" x2="22" y2="15" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
           <line x1="26" y1="11" x2="26" y2="13" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <!-- Diamond / Advanced -->
+        
         <svg id="cel-svg-star" class="cel-svg-icon" style="display:none" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="dg1" x1="4" y1="4" x2="52" y2="52" gradientUnits="userSpaceOnUse">
@@ -3039,92 +2980,128 @@
   </div>
 </div>
 
-
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// =========== CANONICAL SYLLABUS (always authoritative — never read from cache) ===========
+
 const CANONICAL_SYLLABUS = {
   physics:[
-    {id:101,name:'Units and Measurements',theory:false,practice:false,class:'11'},
-    {id:102,name:'Kinematics',theory:false,practice:false,class:'11'},
-    {id:103,name:'Laws of Motion',theory:false,practice:false,class:'11'},
-    {id:104,name:'Work, Energy and Power',theory:false,practice:false,class:'11'},
-    {id:105,name:'Rotational Motion',theory:false,practice:false,class:'11'},
-    {id:106,name:'Gravitation',theory:false,practice:false,class:'11'},
-    {id:107,name:'Properties of Bulk Matter',theory:false,practice:false,class:'11'},
-    {id:108,name:'Thermodynamics',theory:false,practice:false,class:'11'},
-    {id:109,name:'Kinetic Theory',theory:false,practice:false,class:'11'},
-    {id:110,name:'Oscillations and Waves',theory:false,practice:false,class:'11'},
-    {id:111,name:'Electrostatics',theory:false,practice:false,class:'12'},
-    {id:112,name:'Current Electricity',theory:false,practice:false,class:'12'},
-    {id:113,name:'Magnetic Effects of Current and Magnetism',theory:false,practice:false,class:'12'},
-    {id:114,name:'Electromagnetic Induction and Alternating Currents',theory:false,practice:false,class:'12'},
-    {id:115,name:'Electromagnetic Waves',theory:false,practice:false,class:'12'},
-    {id:116,name:'Ray Optics and Optical Instruments',theory:false,practice:false,class:'12'},
-    {id:117,name:'Wave Optics',theory:false,practice:false,class:'12'},
-    {id:118,name:'Dual Nature of Matter and Radiation',theory:false,practice:false,class:'12'},
-    {id:119,name:'Atoms',theory:false,practice:false,class:'12'},
-    {id:120,name:'Nuclei',theory:false,practice:false,class:'12'},
-    {id:121,name:'Semiconductor Electronics',theory:false,practice:false,class:'12'}
+    
+    {id:101,name:'Units and Measurements',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:102,name:'Mathematical Tools',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:103,name:'Motion in 1 Dimension',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:104,name:'Motion in 2 Dimension',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:105,name:'Laws of Motion',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:106,name:'Work Power Energy',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:107,name:'Center of Mass & Collision',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:108,name:'Rotational Motion',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    {id:109,name:'Gravitation',theory:false,practice:false,class:'11',unit:'Mechanics 1'},
+    
+    {id:110,name:'Mechanical Properties of Solids',theory:false,practice:false,class:'11',unit:'Mechanics 2'},
+    {id:111,name:'Mechanical Properties of Fluids',theory:false,practice:false,class:'11',unit:'Mechanics 2'},
+    {id:112,name:'Oscillations',theory:false,practice:false,class:'11',unit:'Mechanics 2'},
+    {id:113,name:'Waves and Sound',theory:false,practice:false,class:'11',unit:'Mechanics 2'},
+    
+    {id:114,name:'Thermal Properties of Matter',theory:false,practice:false,class:'11',unit:'Thermodynamics'},
+    {id:115,name:'Thermodynamics',theory:false,practice:false,class:'11',unit:'Thermodynamics'},
+    {id:116,name:'Kinetic Theory of Gases',theory:false,practice:false,class:'11',unit:'Thermodynamics'},
+    
+    {id:117,name:'Electric Charges and Fields',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:118,name:'Electrostatic Potential and Capacitance',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:119,name:'Current Electricity',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:120,name:'Moving Charges and Magnetism',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:121,name:'Magnetism and Matter',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:122,name:'Electromagnetic Induction',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    {id:123,name:'Alternating Current',theory:false,practice:false,class:'12',unit:'Electromagnetism'},
+    
+    {id:124,name:'Ray Optics',theory:false,practice:false,class:'12',unit:'Optics'},
+    {id:125,name:'Wave Optics',theory:false,practice:false,class:'12',unit:'Optics'},
+    
+    {id:126,name:'Dual Nature of Matter',theory:false,practice:false,class:'12',unit:'Modern Physics'},
+    {id:127,name:'Atomic Physics',theory:false,practice:false,class:'12',unit:'Modern Physics'},
+    {id:128,name:'Nuclear Physics',theory:false,practice:false,class:'12',unit:'Modern Physics'},
+    
+    {id:129,name:'Electromagnetic Waves',theory:false,practice:false,class:'12',unit:'Miscellaneous Physics'},
+    {id:130,name:'Semiconductor',theory:false,practice:false,class:'12',unit:'Miscellaneous Physics'}
   ],
   chemistry:[
-    {id:201,name:'Some Basic Concepts of Chemistry',theory:false,practice:false,section:'physical',class:'11'},
-    {id:202,name:'Structure of Atom',theory:false,practice:false,section:'physical',class:'11'},
-    {id:203,name:'States of Matter',theory:false,practice:false,section:'physical',class:'11'},
-    {id:204,name:'Thermodynamics',theory:false,practice:false,section:'physical',class:'11'},
-    {id:205,name:'Equilibrium',theory:false,practice:false,section:'physical',class:'11'},
-    {id:206,name:'Redox Reactions',theory:false,practice:false,section:'physical',class:'11'},
-    {id:207,name:'Solid State',theory:false,practice:false,section:'physical',class:'12'},
-    {id:208,name:'Solutions',theory:false,practice:false,section:'physical',class:'12'},
-    {id:209,name:'Electrochemistry',theory:false,practice:false,section:'physical',class:'12'},
-    {id:210,name:'Chemical Kinetics',theory:false,practice:false,section:'physical',class:'12'},
-    {id:211,name:'Surface Chemistry',theory:false,practice:false,section:'physical',class:'12'},
-    {id:212,name:'Classification of Elements and Periodicity',theory:false,practice:false,section:'inorganic',class:'11'},
-    {id:213,name:'Chemical Bonding and Molecular Structure',theory:false,practice:false,section:'inorganic',class:'11'},
-    {id:214,name:'Hydrogen',theory:false,practice:false,section:'inorganic',class:'11'},
-    {id:215,name:'s-Block Elements',theory:false,practice:false,section:'inorganic',class:'11'},
-    {id:216,name:'p-Block Elements (Group 13 & 14)',theory:false,practice:false,section:'inorganic',class:'11'},
-    {id:217,name:'p-Block Elements (Group 15 to 18)',theory:false,practice:false,section:'inorganic',class:'12'},
-    {id:218,name:'d- and f-Block Elements',theory:false,practice:false,section:'inorganic',class:'12'},
-    {id:219,name:'Coordination Compounds',theory:false,practice:false,section:'inorganic',class:'12'},
-    {id:220,name:'Some Basic Principles and Techniques',theory:false,practice:false,section:'organic',class:'11'},
-    {id:221,name:'Hydrocarbons',theory:false,practice:false,section:'organic',class:'11'},
-    {id:222,name:'Haloalkanes and Haloarenes',theory:false,practice:false,section:'organic',class:'12'},
-    {id:223,name:'Alcohols, Phenols and Ethers',theory:false,practice:false,section:'organic',class:'12'},
-    {id:224,name:'Aldehydes, Ketones and Carboxylic Acids',theory:false,practice:false,section:'organic',class:'12'},
-    {id:225,name:'Amines',theory:false,practice:false,section:'organic',class:'12'},
-    {id:226,name:'Biomolecules',theory:false,practice:false,section:'organic',class:'12'},
-    {id:227,name:'Polymers',theory:false,practice:false,section:'organic',class:'12'},
-    {id:228,name:'Chemistry in Everyday Life',theory:false,practice:false,section:'organic',class:'12'}
+    
+    {id:201,name:'Some Basic Concepts of Chemistry',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    {id:202,name:'Structure of Atom',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    {id:203,name:'Thermodynamics',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    {id:204,name:'Chemical Equilibrium',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    {id:205,name:'Ionic Equilibrium',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    {id:206,name:'Redox Reactions',theory:false,practice:false,section:'physical',class:'11',unit:'Physical Chemistry'},
+    
+    {id:207,name:'Classification of Elements',theory:false,practice:false,section:'inorganic',class:'11',unit:'Inorganic Chemistry'},
+    {id:208,name:'Chemical Bonding and Molecular Structure',theory:false,practice:false,section:'inorganic',class:'11',unit:'Inorganic Chemistry'},
+    {id:209,name:'p Block Elements',theory:false,practice:false,section:'inorganic',class:'11',unit:'Inorganic Chemistry'},
+    {id:210,name:'Hydrogen',theory:false,practice:false,section:'inorganic',class:'11',unit:'Inorganic Chemistry',adv:true},
+    {id:211,name:'s Block Elements',theory:false,practice:false,section:'inorganic',class:'11',unit:'Inorganic Chemistry',adv:true},
+    
+    {id:212,name:'General Organic Chemistry',theory:false,practice:false,section:'organic',class:'11',unit:'Organic Chemistry'},
+    {id:213,name:'Hydrocarbons',theory:false,practice:false,section:'organic',class:'11',unit:'Organic Chemistry'},
+    
+    {id:214,name:'Solutions',theory:false,practice:false,section:'physical',class:'12',unit:'Physical Chemistry'},
+    {id:215,name:'Electrochemistry',theory:false,practice:false,section:'physical',class:'12',unit:'Physical Chemistry'},
+    {id:216,name:'Chemical Kinetics',theory:false,practice:false,section:'physical',class:'12',unit:'Physical Chemistry'},
+    {id:217,name:'Surface Chemistry',theory:false,practice:false,section:'physical',class:'12',unit:'Physical Chemistry',adv:true},
+    {id:218,name:'Solid State',theory:false,practice:false,section:'physical',class:'12',unit:'Physical Chemistry',adv:true},
+    
+    {id:219,name:'d and f Block Elements',theory:false,practice:false,section:'inorganic',class:'12',unit:'Inorganic Chemistry'},
+    {id:220,name:'Coordination Compounds',theory:false,practice:false,section:'inorganic',class:'12',unit:'Inorganic Chemistry'},
+    {id:221,name:'p Block Elements (12th)',theory:false,practice:false,section:'inorganic',class:'12',unit:'Inorganic Chemistry'},
+    {id:222,name:'Practical Chemistry',theory:false,practice:false,section:'inorganic',class:'12',unit:'Inorganic Chemistry'},
+    {id:223,name:'General Principles & Isolation of Metals',theory:false,practice:false,section:'inorganic',class:'12',unit:'Inorganic Chemistry',adv:true},
+    
+    {id:224,name:'Haloalkanes and Haloarenes',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:225,name:'Alcohols Phenols and Ethers',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:226,name:'Aldehydes Ketones',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:227,name:'Carboxylic Acids Derivatives',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:228,name:'Amines',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:229,name:'Biomolecules',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry'},
+    {id:230,name:'Polymers',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry',adv:true},
+    {id:231,name:'Chemistry in Everyday Life',theory:false,practice:false,section:'organic',class:'12',unit:'Organic Chemistry',adv:true}
   ],
   maths:[
-    {id:301,name:'Sets',theory:false,practice:false,class:'11'},
-    {id:302,name:'Relations and Functions',theory:false,practice:false,class:'11'},
-    {id:303,name:'Trigonometric Functions',theory:false,practice:false,class:'11'},
-    {id:304,name:'Complex Numbers and Quadratic Equations',theory:false,practice:false,class:'11'},
-    {id:305,name:'Linear Inequalities',theory:false,practice:false,class:'11'},
-    {id:306,name:'Permutations and Combinations',theory:false,practice:false,class:'11'},
-    {id:307,name:'Binomial Theorem',theory:false,practice:false,class:'11'},
-    {id:308,name:'Sequences and Series',theory:false,practice:false,class:'11'},
-    {id:309,name:'Straight Lines',theory:false,practice:false,class:'11'},
-    {id:310,name:'Conic Sections',theory:false,practice:false,class:'11'},
-    {id:311,name:'Limits and Derivatives',theory:false,practice:false,class:'11'},
-    {id:312,name:'Statistics',theory:false,practice:false,class:'11'},
-    {id:313,name:'Probability',theory:false,practice:false,class:'11'},
-    {id:314,name:'Matrices & Determinants',theory:false,practice:false,class:'12'},
-    {id:315,name:'Relations and Functions',theory:false,practice:false,class:'12'},
-    {id:316,name:'Inverse Trigonometric Functions',theory:false,practice:false,class:'12'},
-    {id:317,name:'Continuity and Differentiability',theory:false,practice:false,class:'12'},
-    {id:318,name:'Applications of Derivatives',theory:false,practice:false,class:'12'},
-    {id:319,name:'Integrals',theory:false,practice:false,class:'12'},
-    {id:320,name:'Applications of Integrals',theory:false,practice:false,class:'12'},
-    {id:321,name:'Differential Equations',theory:false,practice:false,class:'12'},
-    {id:322,name:'Vector Algebra',theory:false,practice:false,class:'12'},
-    {id:323,name:'Three Dimensional Geometry',theory:false,practice:false,class:'12'},
-    {id:324,name:'Probability',theory:false,practice:false,class:'12'}
+    
+    {id:301,name:'Quadratic Equation',theory:false,practice:false,class:'11',unit:'Algebra'},
+    {id:302,name:'Complex Numbers',theory:false,practice:false,class:'11',unit:'Algebra'},
+    {id:303,name:'Permutations and Combinations',theory:false,practice:false,class:'11',unit:'Algebra'},
+    {id:304,name:'Binomial Theorem',theory:false,practice:false,class:'11',unit:'Algebra'},
+    {id:305,name:'Sequences and Series',theory:false,practice:false,class:'11',unit:'Algebra'},
+    {id:306,name:'Statistics',theory:false,practice:false,class:'11',unit:'Algebra'},
+    
+    {id:307,name:'Trigonometric Functions',theory:false,practice:false,class:'11',unit:'Trigonometry'},
+    {id:308,name:'Triangle',theory:false,practice:false,class:'11',unit:'Trigonometry',adv:true},
+
+    
+    {id:309,name:'Straight Lines',theory:false,practice:false,class:'11',unit:'Coordinate Geometry'},
+    {id:310,name:'Circle',theory:false,practice:false,class:'11',unit:'Coordinate Geometry'},
+    {id:311,name:'Parabola',theory:false,practice:false,class:'11',unit:'Coordinate Geometry'},
+    {id:312,name:'Ellipse',theory:false,practice:false,class:'11',unit:'Coordinate Geometry'},
+    {id:313,name:'Hyperbola',theory:false,practice:false,class:'11',unit:'Coordinate Geometry'},
+    
+    {id:314,name:'Limits and Derivatives',theory:false,practice:false,class:'11',unit:'Calculus'},
+    
+    {id:315,name:'Matrices',theory:false,practice:false,class:'12',unit:'Algebra'},
+    {id:316,name:'Determinants',theory:false,practice:false,class:'12',unit:'Algebra'},
+    {id:317,name:'Probability',theory:false,practice:false,class:'12',unit:'Algebra'},
+    
+    {id:318,name:'Inverse Trigonometric Functions',theory:false,practice:false,class:'12',unit:'Trigonometry'},
+    
+    {id:319,name:'Sets Relations & Functions',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:320,name:'Continuity and Differentiability',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:321,name:'Method of Differentiation',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:322,name:'Applications of Derivatives',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:323,name:'Indefinite Integration',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:324,name:'Definite Integration',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:325,name:'Application of Integrals',theory:false,practice:false,class:'12',unit:'Calculus'},
+    {id:326,name:'Differential Equations',theory:false,practice:false,class:'12',unit:'Calculus'},
+    
+    {id:327,name:'Vector Algebra',theory:false,practice:false,class:'12',unit:'Vectors & 3D'},
+    {id:328,name:'Three Dimensional Geometry',theory:false,practice:false,class:'12',unit:'Vectors & 3D'}
   ]
 };
 
-// Force-wipe old syllabus from localStorage right now, before S is even read
 (function(){
   try{
     const raw = localStorage.getItem('jt3');
@@ -3138,7 +3115,6 @@ const CANONICAL_SYLLABUS = {
   }catch(e){}
 })();
 
-// =========== STATE ===========
 let S = JSON.parse(localStorage.getItem('jt3')||'null') || {
   tests:[],hours:[],backlogs:[],todos:[],upcoming:[],
   syllabus:JSON.parse(JSON.stringify(CANONICAL_SYLLABUS)),
@@ -3147,7 +3123,7 @@ let S = JSON.parse(localStorage.getItem('jt3')||'null') || {
   subjBestStreaks:{physics:0,chemistry:0,maths:0},
   notifiedHWT:[]
 };
-const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylChemSub:'all',sylClass:'all'};
+const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylChemSub:'all',sylClass:'all',sylExam:'all'};
 const M={ov:'pct',mn:'pct',adv:'pct',cmp:'pct'};
 let CIs={};
 let undoStack=null;
@@ -3161,34 +3137,11 @@ function getJeeAdvDate()  { return new Date(getTargetYear()+'-05-17'); }
 const JEE_M=new Date('2027-01-20');
 const JEE_A=new Date('2027-05-17');
 
-const QUOTES=[
-  "Every hour of study today is a rank gained tomorrow. 🚀",
-  "IIT is not a dream — it's a destination. Keep moving. 🎯",
-  "Hard work beats talent when talent doesn't work hard. 💪",
-  "You didn't come this far to only come this far. Keep pushing.",
-  "The pain of studying is temporary. The pride of IIT is forever. 🏆",
-  "Small daily progress = massive yearly results. Trust the process.",
-  "Champions train when they don't feel like it. Be that champion.",
-  "Your future self is watching you right now. Don't let them down.",
-  "One more DPP. One more chapter. One rank higher. 📈",
-  "Stay consistent. The results will astonish you.",
-  "The rank list is written one solved problem at a time.",
-  "IIT doesn't care about yesterday. Show up today. 🔥",
-  "One focused hour beats three distracted ones.",
-  "You've already decided to crack JEE. Now just follow through.",
-  "The IITs are waiting for someone who refuses to quit. That's you.",
-];
-const QUOTES_MAIN=QUOTES;
-function setQuote(){
-  const q=QUOTES[new Date().getDay()%QUOTES.length];
-  const el=document.getElementById('dashboard-quote');
-  if(el)el.textContent='"'+q+'"';
-}
 function dismissNotif(id){dismissedNotifs.add(id);renderOvNotifs();}
 function renderOvNotifs(){
   const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);const tmrStr=tomorrow.toISOString().split('T')[0];
   const notifs=[];
-  // Dashboard: only test notifications — clicking goes to the upcoming tab
+  
   S.upcoming.filter(t=>t.date===tmrStr).forEach(t=>notifs.push({id:'tmr-'+t.id,c:'am',msg:`⏰ Test TOMORROW: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
   S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
   const visible=notifs.filter(n=>!dismissedNotifs.has(n.id));
@@ -3204,7 +3157,7 @@ function toast(msg, type='') {
   const msgEl = document.getElementById('toast-msg');
   const barEl = document.getElementById('toast-bar');
 
-  // Determine type from message heuristics if not set
+  
   if (!type) {
     const m = msg.toLowerCase();
     if (m.includes('saving') || m.includes('…')) type = 'saving';
@@ -3225,10 +3178,10 @@ function toast(msg, type='') {
 
   if (iconEl) iconEl.innerHTML = icons[type] || icons[''];
   if (msgEl) msgEl.textContent = msg;
-  // Reset bar animation
+  
   if (barEl) { barEl.style.animation = 'none'; barEl.offsetHeight; barEl.style.animation = ''; }
 
-  // On mobile, if undo bar is showing push toast above it
+  
   const ub = document.getElementById('undobar');
   const aboveUndo = ub && ub.classList.contains('show');
   t.className = 'toast show' + (type ? ' toast-' + type : '') + (aboveUndo ? ' above-undo' : '');
@@ -3242,7 +3195,7 @@ function toastTopWarn(msg, duration=6000) {
   const msgEl = document.getElementById('toast-top-warn-msg');
   if (!t || !msgEl) return;
   msgEl.textContent = msg;
-  // Reset bar animation
+  
   const bar = t.querySelector('.toast-bar');
   if (bar) { bar.style.animation='none'; bar.offsetHeight; bar.style.animationDuration=duration+'ms'; bar.style.animation='toastBarShrink '+duration+'ms linear forwards'; }
   t.classList.add('show');
@@ -3250,19 +3203,18 @@ function toastTopWarn(msg, duration=6000) {
   t._warnTimer = setTimeout(() => t.classList.remove('show'), duration);
 }
 function dc(id){if(CIs[id]){try{CIs[id].destroy();}catch(e){}delete CIs[id]}}
-// uC: update existing chart data in-place (no destroy/recreate = no lag)
-// Falls back to creating new chart if instance doesn't exist yet
+
 function uC(id, newData, newOptions){
   const chart = CIs[id];
   if(chart){
     try{
       chart.data = newData;
       if(newOptions) chart.options = newOptions;
-      chart.update('none'); // 'none' = skip animation on update = instant, smooth
+      chart.update('none'); 
       return chart;
     }catch(e){ dc(id); }
   }
-  return null; // caller should create new chart and assign to CIs[id]
+  return null; 
 }
 function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
 function pct(s,m){return m?(s/m*100).toFixed(1):0}
@@ -3271,25 +3223,21 @@ function sbgGoal(score, max, exam){
   const goal = exam==='advanced' ? getGoalAdv() : getGoalMains();
   const goalPct = (goal / max) * 100;
   const scorePct = (score / max) * 100;
-  if(scorePct >= goalPct) return 'bg';           // at or above goal → green
-  if(scorePct >= goalPct * 0.85) return 'ba';   // within 15% of goal → yellow/amber (close)
-  return 'br';                                   // below → red
+  if(scorePct >= goalPct) return 'bg';           
+  if(scorePct >= goalPct * 0.85) return 'ba';   
+  return 'br';                                   
 }
 function sc(s){return s==='physics'?'#60a5fa':s==='chemistry'?'#34d399':'#fbbf24'}
 function l7(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().split('T')[0]})}
 function dLeft(dt){const n=new Date();n.setHours(0,0,0,0);return Math.max(0,Math.ceil((dt-n)/86400000))}
 function sO(){return{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#7a7990',font:{size:9,family:"'DM Mono',monospace"}}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#7a7990',font:{size:9,family:"'DM Mono',monospace"}}}}}
 
-
-
-
-// =========== UNDO SYSTEM ===========
 function pushUndo(type, data, label, isDelete){
   undoStack={type,data};
   clearTimeout(undoTimer);
   const bar=document.getElementById('undobar');
   document.getElementById('undo-msg').textContent=label;
-  // Color: green for add/log actions, red for delete actions
+  
   const iconEl=document.getElementById('undo-icon');
   const prog=document.getElementById('undo-bar-progress');
   if(isDelete){
@@ -3301,7 +3249,7 @@ function pushUndo(type, data, label, isDelete){
     if(iconEl){iconEl.style.background='rgba(52,211,153,.15)';iconEl.style.color='#34d399';iconEl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';}
     if(prog)prog.style.background='linear-gradient(90deg,#34d399,#6ee7b7)';
   }
-  // Restart the progress bar animation
+  
   if(prog){prog.style.animation='none';void prog.offsetWidth;prog.style.animation='toastBarShrink 5s linear forwards';}
   bar.classList.add('show');
   undoTimer=setTimeout(()=>{bar.classList.remove('show','green');undoStack=null;},5000);
@@ -3322,41 +3270,27 @@ function doUndo(){
   toast('Undone ↩', 'success');navMarkDirty(null);renderAll();
 }
 
-// =========== CELEBRATION ===========
 let confAnim=null;
 let miniConfAnim=null;
 let celParticles=[];
 let miniParticles=[];
 let miniCelTimer=null;
 
-const MINI_EMOJIS=['🎊','✨','🌟','💫','⭐','🎈','🎀'];
-const GRAND_EMOJIS=['🎆','🎇','🏆','⭐','💥','✨','🎊','🌟','💫','🎉'];
-
 function celebrate(emoji,title,sub,grand=false){
   if(grand){
     const o=document.getElementById('cel-overlay');
     const $=id=>{const el=document.getElementById(id);return el||{textContent:'',style:{},innerHTML:'',classList:{add:()=>{},remove:()=>{}}};};
-
-    // Parse score from sub string e.g. "You scored 210/300 — you're on fire!"
     const scoreMatch=sub.match(/(\d+)\/(\d+)/);
     const scored=scoreMatch?parseInt(scoreMatch[1]):null;
     const maxScore=scoreMatch?parseInt(scoreMatch[2]):null;
     const pct=scored&&maxScore?Math.round(scored/maxScore*100):null;
     const isMains=title.toLowerCase().includes('mains')||emoji==='🏆';
-
-    // Icon
     document.getElementById('cel-svg-trophy').style.display=isMains?'block':'none';
     document.getElementById('cel-svg-star').style.display=isMains?'none':'block';
-
-    // Pill
     const pill=$('cel-pill');
     pill.querySelector('span').textContent=isMains?'MAINS GOAL CRUSHED':'ADVANCED GOAL CRUSHED';
-
-    // Title — extract the bold part
     const titleParts=title.split('!');
     $('cel-title').textContent=titleParts[0]+(titleParts.length>1?'!':'');
-
-    // Score
     if(scored&&maxScore){
       $('cel-score-wrap').style.display='block';
       $('cel-score-num').textContent=scored;
@@ -3366,20 +3300,14 @@ function celebrate(emoji,title,sub,grand=false){
     } else {
       $('cel-score-wrap').style.display='none';
     }
-
-    // Sub
     const subClean=sub.replace(/\d+\/\d+\s*—\s*/,'').replace(/\d+\/\d+/,'');
     $('cel-sub').textContent=subClean.trim()||'Incredible performance!';
-
-    // Stats
     if(pct) $('cel-stat-pct').textContent=pct+'%';
     $('cel-stat-exam').textContent=isMains?'Mains':'Advanced';
-
-    // Confetti + show
     o.classList.add('show');
     startConfetti(true);
     playSound(true);
-    if(navigator.vibrate)navigator.vibrate([100,50,100,50,200,50,300]);
+    if(navigator.vibrate)navigator.vibrate([100,50,200,50,300]);
   } else {
     const el=document.getElementById('mini-cel');
     const inner=document.getElementById('mini-cel-inner');
@@ -3390,7 +3318,6 @@ function celebrate(emoji,title,sub,grand=false){
     icon.textContent=emoji;
     titleEl.textContent=title;
     subEl.textContent=sub;
-    // Random accent
     const palettes=[
       ['rgba(52,211,153,.18)','1px solid rgba(52,211,153,.4)','#34d399'],
       ['rgba(124,106,247,.18)','1px solid rgba(166,149,255,.4)','#a695ff'],
@@ -3403,17 +3330,12 @@ function celebrate(emoji,title,sub,grand=false){
     inner.style.border=border;
     icon.style.background=bg;
     icon.style.boxShadow=`0 0 0 2px ${accent}50, 0 0 16px ${accent}40`;
-    // Mini confetti burst on the mini canvas
     launchMiniConfetti(accent);
-    // Floating emojis via absolute divs (appended to mini-cel temporarily)
-    launchMiniFloaters(el);
     el.style.display='block';
     el.style.animation='miniSlideIn .4s cubic-bezier(.34,1.56,.64,1) forwards';
     clearTimeout(miniCelTimer);
     playSound(false);
-    // Mini celebration: short vibration
     if(navigator.vibrate)navigator.vibrate([50,30,80]);
-    if(navigator.vibrate)navigator.vibrate([80,40,80]);
     miniCelTimer=setTimeout(()=>{
       el.style.animation='miniSlideOut .35s ease-in forwards';
       setTimeout(()=>{el.style.display='none';el.style.animation='';},360);
@@ -3427,7 +3349,7 @@ function launchMiniConfetti(accent){
   canvas.width=360;canvas.height=220;
   const ctx=canvas.getContext('2d');
   const cols=[accent,'#fff','#fbbf24',accent+'cc'];
-  const particles=Array.from({length:32},()=>({
+  const particles=Array.from({length:24},()=>({
     x:canvas.width/2+Math.random()*80-40,y:canvas.height/2+20,
     vx:(Math.random()-0.5)*6,vy:-(Math.random()*5+2),
     r:Math.random()*Math.PI*2,vr:(Math.random()-.5)*.2,
@@ -3448,40 +3370,6 @@ function launchMiniConfetti(accent){
     if(alive)af=requestAnimationFrame(frame);
   }
   frame();
-}
-
-function launchMiniFloaters(container){
-  // Remove old floaters
-  container.querySelectorAll('.mini-float').forEach(e=>e.remove());
-  const EMOJIS=['🎉','✨','🌟','🎊','💫','⭐','🔥','🎈'];
-  for(let i=0;i<7;i++){
-    const d=document.createElement('div');
-    d.className='mini-float';
-    d.textContent=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
-    const x=Math.random()*240;
-    const sz=10+Math.random()*10;
-    const dur=0.7+Math.random()*0.8;
-    const delay=i*0.05;
-    d.style.cssText=`position:absolute;bottom:8px;left:${x}px;font-size:${sz}px;pointer-events:none;z-index:2;animation:floatEmoji ${dur}s ease-out ${delay}s forwards;line-height:1`;
-    container.appendChild(d);
-    setTimeout(()=>d.remove(),(dur+delay)*1000+200);
-  }
-}
-
-function burstGrandEmojis(){
-  // Float many emojis from bottom of screen
-  for(let i=0;i<18;i++){
-    setTimeout(()=>{
-      const d=document.createElement('div');
-      d.textContent=GRAND_EMOJIS[Math.floor(Math.random()*GRAND_EMOJIS.length)];
-      const x=10+Math.random()*80;
-      const dur=1.2+Math.random()*1.4;
-      const sz=18+Math.random()*22;
-      d.style.cssText=`position:fixed;font-size:${sz}px;left:${x}vw;bottom:-40px;z-index:903;pointer-events:none;animation:floatUp ${dur}s ease-out forwards`;
-      document.body.appendChild(d);
-      setTimeout(()=>d.remove(),dur*1000+100);
-    },i*90);
-  }
 }
 
 function closeCel(){
@@ -3511,7 +3399,7 @@ ${shareUrl}
 
 #JEE2026 #JEEMains #JEEPreparation #JEETrack`;
 
-  // Try to capture the card as an image first
+  
   const card = document.getElementById('cel-box');
   let imageFile = null;
   if(card && window.html2canvas){
@@ -3551,22 +3439,14 @@ function fallbackShare(text,url){
 function startConfetti(grand){
   const canvas=document.getElementById('confetti-canvas');
   canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  canvas.style.willChange='transform';
   const ctx=canvas.getContext('2d');
-  const cols=grand
-    ?['#a695ff','#f472b6','#fbbf24','#34d399','#60a5fa','#fff','#ff6b6b','#4ecdc4']
-    :['#34d399','#a695ff','#fbbf24'];
-  const count=grand?300:0; // grand only — mini uses CSS
-  // Mix shapes: rectangles, circles, stars
+  const cols=['#a695ff','#f472b6','#fbbf24','#34d399','#60a5fa','#fff'];
+  const count=80;
   celParticles=Array.from({length:count},()=>{
-    const shape=Math.floor(Math.random()*3); // 0=rect 1=circle 2=star
-    return{x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height-200,w:grand?8+Math.random()*8:6,h:grand?12+Math.random()*10:9,c:cols[Math.floor(Math.random()*cols.length)],r:Math.random()*Math.PI*2,vx:(Math.random()-0.5)*(grand?5:2.5),vy:1.5+Math.random()*4,vr:(Math.random()-.5)*.15,shape,alpha:1,spin:0};
+    const shape=Math.floor(Math.random()*2);
+    return{x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height-100,w:6+Math.random()*6,h:10+Math.random()*8,c:cols[Math.floor(Math.random()*cols.length)],r:Math.random()*Math.PI*2,vx:(Math.random()-0.5)*4,vy:2+Math.random()*3,vr:(Math.random()-.5)*.12,shape,alpha:1};
   });
-  function drawStar(ctx,x,y,r,spikes,outerR,innerR){
-    let rot=Math.PI/2*3,step=Math.PI/spikes;
-    ctx.beginPath();ctx.moveTo(x,y-outerR);
-    for(let i=0;i<spikes;i++){ctx.lineTo(x+Math.cos(rot)*outerR,y+Math.sin(rot)*outerR);rot+=step;ctx.lineTo(x+Math.cos(rot)*innerR,y+Math.sin(rot)*innerR);rot+=step;}
-    ctx.lineTo(x,y-outerR);ctx.closePath();
-  }
   function frame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     let alive=false;
@@ -3576,8 +3456,7 @@ function startConfetti(grand){
       ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
       ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-(p.y/canvas.height)*1.2);
       if(p.shape===0){ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}
-      else if(p.shape===1){ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}
-      else{drawStar(ctx,0,0,0,4,p.w/2,p.w/4);ctx.fill();}
+      else{ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}
       ctx.restore();
     });
     if(alive)confAnim=requestAnimationFrame(frame);
@@ -3589,7 +3468,7 @@ function playSound(grand){
   try{
     const ac=new (window.AudioContext||window.webkitAudioContext)();
     if(grand){
-      // Triumphant fanfare: arpeggio + sustained chord + extra pop hits
+      
       const melody=[523,659,784,1047,1319,1568];
       melody.forEach((f,i)=>{
         const o=ac.createOscillator(),g=ac.createGain();
@@ -3600,7 +3479,7 @@ function playSound(grand){
         g.gain.exponentialRampToValueAtTime(.001,t+.6);
         o.start(t);o.stop(t+.65);
       });
-      // Harmony chord underneath
+      
       [523,659,784,1047].forEach(f=>{
         const o=ac.createOscillator(),g=ac.createGain();
         o.connect(g);g.connect(ac.destination);
@@ -3609,7 +3488,7 @@ function playSound(grand){
         g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+1.6);
         o.start(ac.currentTime+.55);o.stop(ac.currentTime+1.7);
       });
-      // Bass drum hit
+      
       const buf=ac.createBuffer(1,ac.sampleRate*.3,ac.sampleRate);
       const d=buf.getChannelData(0);
       for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)*.6;
@@ -3617,7 +3496,7 @@ function playSound(grand){
       src.buffer=buf;src.connect(g2);g2.connect(ac.destination);
       g2.gain.value=.7;src.start(ac.currentTime);
     } else {
-      // Cheerful mini pop: quick ascending notes
+      
       [523,659,784].forEach((f,i)=>{
         const o=ac.createOscillator(),g=ac.createGain();
         o.connect(g);g.connect(ac.destination);
@@ -3627,7 +3506,7 @@ function playSound(grand){
         g.gain.exponentialRampToValueAtTime(.001,t+.25);
         o.start(t);o.stop(t+.28);
       });
-      // Little sparkle high note
+      
       const o2=ac.createOscillator(),g2=ac.createGain();
       o2.connect(g2);g2.connect(ac.destination);
       o2.frequency.value=1568;o2.type='sine';
@@ -3638,8 +3517,6 @@ function playSound(grand){
   }catch(e){}
 }
 
-// =========== NAVIGATION ===========
-// ── Smooth number counter ──
 function animateNumber(el, target, durationOrSuffix=600, suffix=''){
   if(!el) return;
   let duration = 600;
@@ -3663,13 +3540,11 @@ function animateNumber(el, target, durationOrSuffix=600, suffix=''){
   requestAnimationFrame(update);
 }
 
-// ── Stagger list items ──
 function staggerItems(selector, parent){
   const els = parent ? parent.querySelectorAll(selector) : document.querySelectorAll(selector);
   els.forEach((el, i) => { el.style.animationDelay = `${i * 50}ms`; });
 }
 
-// ── Cached DOM refs & dirty flags for nav performance ──
 const _navCache={pages:null,niItems:null,mobItems:null,dirty:{}};
 function _navPages(){return _navCache.pages||(_navCache.pages=[...document.querySelectorAll('.page')])}
 function _navNi(){return _navCache.niItems||(_navCache.niItems=[...document.querySelectorAll('.ni')])}
@@ -3677,12 +3552,11 @@ function _mobNavItems(){return _navCache.mobItems||(_navCache.mobItems=[...docum
 function _setMobActive(el){_mobNavItems().forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');}
 function navMarkDirty(page){if(page){_navCache.dirty[page]=true;}else{Object.keys(_navCache.dirty).forEach(k=>_navCache.dirty[k]=true);}}
 
-// =========== ROUTER ===========
 const _routeMap = {
   '/':'overview', '/dashboard':'overview', '/mains':'mains', '/advanced':'advanced',
   '/compare':'compare', '/tests':'tests', '/hours':'hours', '/todo':'todo',
   '/backlog':'backlog', '/syllabus':'syllabus', '/insights':'insights', '/settings':'settings',
-  // Auth routes — handled by auth layer, not app nav
+  
   '/login':'__login__', '/onboarding':'__onboarding__',
 };
 const _pageToPath = {
@@ -3700,10 +3574,10 @@ const _settingsTabs = ['profile','study','goals','appearance','alerts','data','a
 function _handleRoute(){
   const path = window.location.pathname;
   const tab = new URLSearchParams(window.location.search).get('tab');
-  // Auth routes — don't try to nav into the app
+  
   if(path === '/login'){ showAuthScreen(); return; }
   if(path === '/onboarding'){
-    // Only show onboarding if user is logged in but not done; otherwise send to login
+    
     if(typeof currentUser !== 'undefined' && currentUser && typeof userProfile !== 'undefined' && !userProfile.onboarding_done){
       showOnboarding();
     } else {
@@ -3724,13 +3598,13 @@ function _handleRoute(){
 
 window.addEventListener('popstate', function(e) {
   const path = window.location.pathname;
-  // If the user presses back into /login or /onboarding while logged in, push them forward to dashboard
+  
   if ((path === '/login' || path === '/onboarding') && typeof currentUser !== 'undefined' && currentUser) {
     history.pushState({page:'overview'}, '', '/dashboard');
     _navInternal('overview', false);
     return;
   }
-  // If navigating back past the first page, push sentinel and stay on dashboard
+  
   if (!e.state && path === '/dashboard') {
     history.pushState({page:'overview'}, '', '/dashboard');
     _navInternal('overview', false);
@@ -3740,7 +3614,7 @@ window.addEventListener('popstate', function(e) {
 });
 
 function nav(page, _pushState){
-  // Push clean URL to browser history
+  
   const path = _pageToPath[page] || '/dashboard';
   if(_pushState !== false){
     history.pushState({page}, '', path);
@@ -3749,30 +3623,30 @@ function nav(page, _pushState){
 
   closeMobDrawer();
   syncMobNav(page);
-  // Clear topbar subtitle unless going to settings
+  
   if(page !== 'settings'){
     const subEl = document.getElementById('mob-page-sub');
     if(subEl){ subEl.textContent=''; subEl.style.display='none'; }
   }
-  // /tests route → show mobile tests choice screen
+  
   if(page === 'tests'){
     document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active','anim-done'); });
     const choicePage = document.getElementById('mob-tests-choice-page');
     if(choicePage){ choicePage.style.display='block'; choicePage.classList.add('active'); }
     document.title = 'JEETrack — Tests';
     updateMobTopbarTitle('tests-choice');
-    // Hide all FABs — tests page has none
+    
     ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{
       const el = document.getElementById(id);
       if(el) el.style.display = 'none';
     });
     return;
   }
-  // Hide tests choice screen if visible
+  
   const choicePage = document.getElementById('mob-tests-choice-page');
   if(choicePage){ choicePage.style.display='none'; choicePage.classList.remove('active'); }
 
-  // Switch page immediately — no timeout stutter
+  
   const targetId = 'page-'+page;
   _navPages().forEach(p=>{
     if(p.id===targetId){
@@ -3786,7 +3660,7 @@ function nav(page, _pushState){
   const map={overview:'dashboard',mains:'jee mains',advanced:'jee advanced',compare:'compare',hours:'study hours',todo:'to-do',backlog:'backlog',syllabus:'syllabus',insights:'ai',settings:'settings'};
   _navNi().forEach(n=>{n.classList.toggle('active', n.textContent.toLowerCase().trim().startsWith(map[page]||''));});
 
-  // Show the correct FAB on mobile, hide others
+  
   const isMob = window.innerWidth <= 768;
   const fabMap = {hours:'mob-fab-hours', todo:'mob-fab-todo', backlog:'mob-fab-backlog'};
   const activeFabId = fabMap[page] || null;
@@ -3795,8 +3669,8 @@ function nav(page, _pushState){
     if(el) el.style.display = (isMob && activeFabId === id) ? 'flex' : 'none';
   });
 
-  // Only re-render if data is dirty or page hasn't been rendered yet.
-  // Deferred to next rAF so the page flip paints first — keeps tap response instant.
+  
+  
   if(_navCache.dirty[page] !== false){
     const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,settings:renderSettings})[page];
     if(_renderFn){
@@ -3805,18 +3679,16 @@ function nav(page, _pushState){
     }
   }
 
-  // On mobile: when going to settings, reset tab strip to Profile active
+  
   if(page==='settings' && window.innerWidth<=768){
     document.querySelectorAll('.mob-settings-tab').forEach(b=>b.classList.remove('active'));
     document.querySelector('.mob-settings-tab')?.classList.add('active');
   }
 }
 
-// Internal nav used by router (doesn't push state again)
 function _navInternal(page, push){ nav(page, push); }
 function renderAll(){const active=document.querySelector('.page.active');if(active)eval('render'+active.id.replace('page-','').charAt(0).toUpperCase()+active.id.replace('page-','').slice(1).replace(/-([a-z])/g,g=>g[1].toUpperCase()))();}
 
-// =========== MODALS ===========
 const openM=function(id,preset){
   if(id==='resetConfirm'){try{document.getElementById('reset-confirm-input').value='';}catch(e){}}
   if(id==='addTest'){document.getElementById('at-date').value=td();if(preset)document.getElementById('at-exam').value=preset;toggleExam();}
@@ -3837,7 +3709,7 @@ const openM=function(id,preset){
   const el=document.getElementById('modal-'+id);
   if(!el)return;
   el.classList.add('open');
-  // Reset score bar + live pct when opening score modals
+  
   if(id==='addTest'){
     setTimeout(()=>{
       document.getElementById('at-score-bar').style.width='0%';
@@ -3856,7 +3728,7 @@ const openM=function(id,preset){
       document.getElementById('hwt-live-pct').textContent='—%';
     },50);
   }
-  // Backdrop click to close (skip for destructive modals)
+  
   if(id!=='resetConfirm'){
     el.onclick=function(e){if(e.target===el)closeM(id);};
   }
@@ -3895,7 +3767,7 @@ function _hwtUpdateBar(){
   document.getElementById('hwt-score-bar').style.width=pct+'%';
   document.getElementById('hwt-live-pct').textContent=mx?pct+'%':'—%';
 }
-// Subject pill setters
+
 function _lhSetSubj(v,btn){document.getElementById('lh-subj').value=v;document.querySelectorAll('#modal-logHours .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
 function _tdSetSubj(v,btn){document.getElementById('td-subj-i').value=v;document.querySelectorAll('#modal-addTodo .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
 function _blSetSubj(v,btn){document.getElementById('bl-subj-i').value=v;document.querySelectorAll('#modal-addBacklog .pmo-subj-pill').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
@@ -3907,10 +3779,7 @@ function _setPri(selId,val,btn,col){
   if(row)row.querySelectorAll('.pmo-pri-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-// Reset premium modal fields on open
 
-
-// =========== MODE TOGGLE ===========
 function setMode(page,m,el){
   M[page]=m;
   const tog=document.getElementById(page+'-mtog')||document.getElementById('cmp-mtog');
@@ -3919,7 +3788,6 @@ function setMode(page,m,el){
   ({ov:renderOvTrend,mn:renderMains,adv:renderAdv,cmp:renderCmp})[page]?.();
 }
 
-// =========== FILTERS ===========
 function flt(exam,key,val,el){
   F[exam][key]=val;
   if(el&&el.dataset&&el.dataset.group){
@@ -3937,7 +3805,6 @@ function fltH(val,el){
 function fltBl(k,v,el){F.backlog[k]=v;document.querySelectorAll(`[data-group="bl-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderBacklog();}
 function fltTd(k,v,el){F.todo[k]=v;document.querySelectorAll(`[data-group="td-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderTodo();}
 
-// =========== HELPERS ===========
 function getTests(exam){
   let t=S.tests.filter(x=>x.exam===exam);
   if(exam==='mains'){if(F.mains.session!=='all')t=t.filter(x=>x.session===F.mains.session);if(F.mains.type!=='all')t=t.filter(x=>x.type===F.mains.type);}
@@ -3964,32 +3831,30 @@ function updateBadges(){
   nb1.textContent=tdP;nb1.style.display=tdP?'':'none';
   nb2.textContent=blP;nb2.style.display=blP?'':'none';
 }
-// ── HWT Dismissed IDs — Supabase-backed, localStorage as fast cache ──────────
-// S.hwtDismissed is loaded from Supabase streaks.hwt_dismissed (JSONB array of ids)
-// localStorage key is used as an instant read cache so checkHWTNotifs() is synchronous.
+
 function _getHwtCacheKey(){return 'jt_hwt_dismissed_'+(currentUser?.id||'guest');}
 
 function _hwtIsDismissed(id){
-  // Check local cache first (instant)
+  
   try{
     const arr=JSON.parse(localStorage.getItem(_getHwtCacheKey())||'[]');
     if(arr.includes(id))return true;
   }catch(e){}
-  // Also check in-memory S.hwtDismissed (loaded from Supabase on login)
+  
   return Array.isArray(S.hwtDismissed)&&S.hwtDismissed.includes(id);
 }
 
 async function _hwtMarkDismissed(id){
-  // 1. Update in-memory state
+  
   if(!Array.isArray(S.hwtDismissed))S.hwtDismissed=[];
   if(!S.hwtDismissed.includes(id))S.hwtDismissed.push(id);
-  // 2. Update localStorage cache immediately (so same-device re-login is instant)
+  
   try{
     const key=_getHwtCacheKey();
     const arr=JSON.parse(localStorage.getItem(key)||'[]');
     if(!arr.includes(id)){arr.push(id);localStorage.setItem(key,JSON.stringify(arr));}
   }catch(e){}
-  // 3. Persist to Supabase streaks table (hwt_dismissed column) — cross-device sync
+  
   if(sb&&currentUser){
     try{
       await sb.from('streaks').upsert({
@@ -4003,18 +3868,18 @@ async function _hwtMarkDismissed(id){
 function checkHWTNotifs(){
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   const yd=yesterday.toISOString().split('T')[0];
-  // Find yesterday's upcoming tests that haven't been handled
+  
   const pending=S.upcoming.filter(t=>{
     if(t.date!==yd)return false;
-    // Already dismissed (logged or skipped) — checks both local cache + Supabase-loaded array
+    
     if(_hwtIsDismissed(t.id))return false;
-    // Already logged as a test score for that date+exam
+    
     if(S.tests.some(x=>x.date===t.date&&x.exam===t.exam))return false;
     return true;
   });
   if(!pending.length)return;
   const t=pending[0];
-  // Mark dismissed immediately (async — fires and continues)
+  
   _hwtMarkDismissed(t.id);
   if(!S.notifiedHWT.includes(t.id)){S.notifiedHWT.push(t.id);}
   document.getElementById('hwt-desc').textContent=`Yesterday you had: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''} — How did it go?`;
@@ -4023,8 +3888,6 @@ function checkHWTNotifs(){
   openM('howWasTest');
 }
 
-// =========== SAVE FUNCTIONS ===========
-// ── Field error helpers (upgraded with shake + pmo-input support) ──
 function clearFieldErr(fieldId, msgId){
   const f=document.getElementById(fieldId);
   if(f){f.classList.remove('fi-error','pmo-inp-error');}
@@ -4039,7 +3902,7 @@ function _shakeField(fieldId){
   const f=document.getElementById(fieldId);
   if(!f)return;
   f.classList.remove('pmo-inp-shake');
-  void f.offsetWidth; // reflow to restart animation
+  void f.offsetWidth; 
   f.classList.add('pmo-inp-shake');
   f.addEventListener('animationend',()=>f.classList.remove('pmo-inp-shake'),{once:true});
 }
@@ -4081,63 +3944,63 @@ function saveTest(){
   const date=document.getElementById('at-date').value;
   const defaultMax=exam==='advanced'?360:300;
 
-  // Clear all previous errors first
+  
   ['at-phy','at-chem','at-math'].forEach(id=>clearFieldErr(id,'at-sum-err'));
   clearFieldErr('at-total','at-total-err');
   clearPmoErr('at-date','at-date-err');
   const errMsgEl=document.getElementById('at-sum-err');
   if(errMsgEl){errMsgEl.textContent='';errMsgEl.classList.remove('show');}
 
-  // Validate: date required
+  
   if(!date){
     showFieldErr('at-date','at-date-err','Test date is required');
     return;
   }
-  // Validate: test type required
+  
   if(!document.getElementById('at-type').value){
     showFieldErr('at-type','at-type-err','Please select Partial or Full Syllabus');
     document.querySelector('.at-type-pill')?.closest('.pmo-pill-row')?.classList.add('field-error');
     return;
   }
-  // Validate: future date not allowed
+  
   if(date>td()){
     showFieldErr('at-date','at-date-err','Date cannot be in the future');
     return;
   }
-  // Validate: total required
+  
   if(!totalRaw && totalRaw!=='0'){
     showFieldErr('at-total','at-total-err','Total score is required');
     return;
   }
-  // Validate: total >= 0
+  
   if(total<0){
     showFieldErr('at-total','at-total-err','Score cannot be negative');
     return;
   }
-  // Validate: total <= max
+  
   if(total>max){
     showFieldErr('at-total','at-total-err',`Score (${total}) cannot exceed max (${max})`);
     _shakeField('at-total');
     return;
   }
-  // Validate: max sanity
+  
   if(max<=0){
     showFieldErr('at-total','at-total-err','Max score must be greater than 0');
     return;
   }
 
-  // Validate: subject scores — if any entered, check them
+  
   const anySubj=phy||chem||math;
   if(!anySubj){
     _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err','Enter at least one subject score');
     return;
   }
-  // Validate: no subject score can be negative (already clamped by min=0 but just in case)
+  
   if(phy<0||chem<0||math<0){
     _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err','Subject scores cannot be negative');
     return;
   }
-  // Validate: each subject score <= total
+  
   if(phy>total||chem>total||math>total){
     const culprits=[];
     if(phy>total)culprits.push('at-phy');
@@ -4146,7 +4009,7 @@ function saveTest(){
     _showGroupErr(culprits,'at-sum-err',`A subject score can't exceed total (${total})`);
     return;
   }
-  // Validate: each subject score <= max/3 (sanity cap per subject)
+  
   const perSubjMax=Math.ceil(max/3);
   if(phy>perSubjMax||chem>perSubjMax||math>perSubjMax){
     const culprits=[];
@@ -4156,7 +4019,7 @@ function saveTest(){
     _showGroupErr(culprits,'at-sum-err',`Subject score exceeds section max (~${perSubjMax})`);
     return;
   }
-  // Validate: subject sum === total
+  
   const subSum=phy+chem+math;
   if(subSum!==total){
     _showGroupErr(['at-phy','at-chem','at-math'],'at-sum-err',
@@ -4186,13 +4049,13 @@ function saveHWT(){
   const total=+totalRaw||0;
   const max=+document.getElementById('hwt-max').value||(exam==='advanced'?360:300);
 
-  // Clear previous errors
+  
   ['hwt-phy','hwt-chem','hwt-math'].forEach(id=>clearFieldErr(id,'hwt-sum-err'));
   clearFieldErr('hwt-total','hwt-total-err');
   const sumEl=document.getElementById('hwt-sum-err');
   if(sumEl){sumEl.textContent='';sumEl.classList.remove('show');}
 
-  // Validate: total required
+  
   if(!totalRaw && totalRaw!=='0'){
     showFieldErr('hwt-total','hwt-total-err','Total score is required');
     return;
@@ -4205,7 +4068,7 @@ function saveHWT(){
     showFieldErr('hwt-total','hwt-total-err',`Score (${total}) cannot exceed max (${max})`);
     return;
   }
-  // Validate subjects
+  
   const anySubj=phy||chem||math;
   if(!anySubj){
     _showGroupErr(['hwt-phy','hwt-chem','hwt-math'],'hwt-sum-err','Enter at least one subject score');
@@ -4417,7 +4280,6 @@ function updateBLStreaks(){
   else if(pending>0)S.backlogStreak=0;
 }
 
-// =========== RESET ===========
 function confirmReset(){openM('resetConfirm');}
 function doReset(){
   const val=document.getElementById('reset-confirm-input').value.trim();
@@ -4443,12 +4305,12 @@ function importData(input){
   reader.onload=async function(e){
     try{
       const parsed=JSON.parse(e.target.result);
-      // Validate it looks like JEETrack data
+      
       if(typeof parsed!=='object'||Array.isArray(parsed)){throw new Error('Invalid format');}
       if(!parsed.tests&&!parsed.hours&&!parsed.syllabus){throw new Error('This doesn\'t look like a JEETrack backup.');}
-      // Merge: keep existing keys if not in backup, apply backup data
+      
       S={...S,...parsed};
-      // Clamp streaks
+      
       if(S.backlogStreak>365)S.backlogStreak=0;
       if(S.backlogBestStreak>365)S.backlogBestStreak=0;
       await save();
@@ -4463,7 +4325,6 @@ function importData(input){
   reader.readAsText(file);
 }
 
-// =========== VIEW STATE ===========
 let mnView='scores';
 let advView='scores';
 function setMnView(v,el){
@@ -4484,7 +4345,6 @@ function fltSubjDd(exam,val){
   else renderAdv();
 }
 
-// =========== OVERVIEW ===========
 function renderOverview(){
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>b.date.localeCompare(a.date));
   const adv=S.tests.filter(t=>t.exam==='advanced').sort((a,b)=>b.date.localeCompare(a.date));
@@ -4501,12 +4361,11 @@ function renderOverview(){
   const tdP=S.todos.filter(t=>!t.done).length;
   animateNumber(document.getElementById('ov-td'),tdP);
   drawJeeDonut();
-  setQuote();
   renderOvNotifs();
-  // Subject bars
+  
   const bars=['physics','chemistry','maths'].map(s=>{const v=S.tests.map(t=>t[s]&&t.max?(t[s]/(t.max/3))*100:0).filter(v=>v>0);const avg=v.length?v.reduce((a,b)=>a+b,0)/v.length:0;return{s,avg:avg.toFixed(1)};});
   document.getElementById('ov-sbars').innerHTML=bars.map(b=>`<div class="bbar"><div class="bbh"><span style="font-weight:500">${cap(b.s)}</span><span style="font-family:'DM Mono',monospace;color:var(--mu)">${b.avg}%</span></div><div class="bbt"><div class="bbf" style="width:${b.avg}%;background:${sc(b.s)}"></div></div></div>`).join('');
-  // Today study
+  
   const th=S.hours.filter(h=>h.date===td());
   const tL=th.reduce((a,b)=>a+b.lecture,0),tP=th.reduce((a,b)=>a+b.practice,0),tR=th.reduce((a,b)=>a+b.revision,0);
   const tTotal=tL+tP+tR;
@@ -4518,12 +4377,12 @@ function renderOverview(){
   const svgRev=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`;
   document.getElementById('today-study').innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">${+tTotal.toFixed(1)}h today</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chip bb" style="display:inline-flex;align-items:center;gap:4px">${svgLec} Lec ${lPct}%</span><span class="chip bg" style="display:inline-flex;align-items:center;gap:4px">${svgPrac} Prac ${pPct}%</span><span class="chip bac" style="display:inline-flex;align-items:center;gap:4px">${svgRev} Rev ${rPct}%</span></div>${tTotal>0?`<div style="height:5px;border-radius:99px;overflow:hidden;display:flex;gap:1px"><div style="width:${lPct}%;background:#60a5fa;border-radius:99px 0 0 99px"></div><div style="width:${pPct}%;background:#34d399"></div><div style="width:${rPct}%;background:#a695ff;border-radius:0 99px 99px 0"></div></div>`:'<div style="font-size:11px;color:var(--mu)">Nothing logged yet today</div>'}`;
 
-  // Quick status
+  
   const nextT=S.upcoming.filter(t=>t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date))[0];
   const blSub=['physics','chemistry','maths'].map(s=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bd);font-size:12px"><span>${cap(s)}</span><span class="chip ${S.backlogs.filter(b=>b.subject===s&&!b.done).length>0?'br':'bg'}">${S.backlogs.filter(b=>b.subject===s&&!b.done).length} backlog</span></div>`).join('');
   document.getElementById('ov-qs').innerHTML=`${blSub}${nextT?`<div style="margin-top:7px;padding:5px 7px;background:rgba(96,165,250,.08);border-radius:5px;font-size:11px"><span style="color:var(--bl);font-weight:600">Next test</span><br>${cap(nextT.exam)} · ${fmt(nextT.date)}${nextT.venue?' @ '+nextT.venue:''}</div>`:'<div style="margin-top:7px;font-size:11px;color:var(--mu)">No tests scheduled</div>'}`;
   renderOvTrend();renderOvWeek();
-  // Syllabus overview
+  
   const subjs=['physics','chemistry','maths'];
   const sylHtml=subjs.map(s=>{
     const chs=S.syllabus[s]||[];
@@ -4535,7 +4394,7 @@ function renderOverview(){
   const allTotal2=subjs.flatMap(s=>S.syllabus[s]||[]).length;
   const ovPct=allTotal2?Math.round(allDone2/allTotal2*100):0;
   document.getElementById('ov-syl').innerHTML=`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:600">Overall</span><span class="chip ${ovPct===100?'bg':'bac'}">${ovPct}% · ${allDone2}/${allTotal2}</span></div><div class="bbt" style="height:7px"><div class="bbf" style="width:${ovPct}%;background:linear-gradient(90deg,#7c6af7,#f472b6)"></div></div></div>${sylHtml}`;
-  // Upcoming mini
+  
   const ups=S.upcoming.filter(t=>t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3);
   const tmrr=new Date();tmrr.setDate(tmrr.getDate()+1);const tmrrStr=tmrr.toISOString().split('T')[0];
   document.getElementById('ov-upcoming-mini').innerHTML=ups.length?ups.map(t=>{
@@ -4555,24 +4414,24 @@ function drawJeeDonut(){
   const cx=W/2,cy=W/2,r=W/2-10,total=730;
   const mFrac=Math.min(1,dm/total),aFrac=Math.min(1,da/total);
   const dlEl=document.getElementById('jee-dl');
-  // Animate arcs drawing in
+  
   let prog=0;
   const duration=900,startT=performance.now();
   function animate(now){
     prog=Math.min(1,(now-startT)/duration);
     const ease=1-Math.pow(1-prog,3);
     ctx.clearRect(0,0,W,W);
-    // bg ring
+    
     ctx.lineWidth=10;ctx.lineCap='butt';
     ctx.strokeStyle='rgba(255,255,255,0.06)';
     ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-    // Mains arc
+    
     ctx.strokeStyle='#7c6af7';ctx.lineCap='round';ctx.lineWidth=10;
     ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+mFrac*Math.PI*ease);ctx.stroke();
-    // Advanced arc
+    
     ctx.strokeStyle='#f472b6';ctx.lineCap='round';
     ctx.beginPath();ctx.arc(cx,cy,r,Math.PI/2,Math.PI/2+aFrac*Math.PI*ease);ctx.stroke();
-    // Animate center number (count up to dm)
+    
     dlEl.textContent=Math.round(dm*ease);
     if(prog<1)requestAnimationFrame(animate);
     else{dlEl.textContent=dm;}
@@ -4616,7 +4475,6 @@ function renderOvWeek(){
   }
 }
 
-// =========== MAINS ===========
 function renderMains(){
   const tests=getTests('mains');const m=M.mn;
   const sf=F.mains.subj;
@@ -4670,7 +4528,7 @@ function renderMains(){
       <div class="prem-stat-sub">across ${tests.length} test${tests.length!==1?'s':''}</div>
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,var(--am),#fde68a);width:${Math.min(100,+avg)}%"></div></div>
     </div>`;
-  // Trend
+  
   const mnTCData={labels:tests.map(t=>fmt(t.date)),datasets:sf==='all'?[
     {label:'Total',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#a695ff',backgroundColor:'rgba(166,149,255,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'},
     {label:'Physics',data:tests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
@@ -4679,14 +4537,14 @@ function renderMains(){
   ]:[{label:cap(sf),data:tests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
   const mnTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('mnTC',mnTCData,mnTCOpts)){const c1=document.getElementById('mnTC').getContext('2d');CIs['mnTC']=new Chart(c1,{type:'line',data:mnTCData,options:mnTCOpts});}
-  // Subject bar
+  
   const sAv=s=>{const v=tests.map(t=>scoreVal(t,m,s)).filter(v=>v>0);return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):0;};
   const subjs=['physics','chemistry','maths'];
   const isFiltered=sf!=='all';
   const mnSCData={labels:isFiltered?[cap(sf)]:['Physics','Chemistry','Maths'],datasets:[{label:'Avg',data:isFiltered?[sAv(sf)]:subjs.map(s=>sAv(s)),backgroundColor:isFiltered?[sc(sf)]:['#60a5fa','#34d399','#fbbf24'],borderRadius:5,barThickness:28}]};
   const mnSCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('mnSC',mnSCData,mnSCOpts)){const c2=document.getElementById('mnSC').getContext('2d');CIs['mnSC']=new Chart(c2,{type:'bar',data:mnSCData,options:mnSCOpts});}
-  // Notifs
+  
   const tmr=new Date();tmr.setDate(tmr.getDate()+1);const tmrStr=tmr.toISOString().split('T')[0];
   const notif=[];
   S.upcoming.filter(t=>t.exam==='mains'&&t.date===tmrStr).forEach(t=>notif.push({c:'am',msg:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Mains test tomorrow: ${t.session||''} ${t.venue?'@ '+t.venue:''}`}));
@@ -4706,7 +4564,7 @@ function renderMnUnified(){
   const tests=getTests('mains');const m=M.mn;
   const el=document.getElementById('mn-unified');
   if(mnView==='upcoming'){
-    // Only show upcoming (today + future), not past
+    
     const up=S.upcoming.filter(t=>t.exam==='mains'&&t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date));
     const logSVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
     el.innerHTML=up.length?up.map(t=>{
@@ -4726,7 +4584,6 @@ function renderMnUnified(){
   }
 }
 
-// =========== ADVANCED ===========
 function renderAdv(){
   const tests=getTests('advanced');const m=M.adv;
   const sf=F.advanced.subj;
@@ -4805,7 +4662,7 @@ function renderAdvUnified(){
   const tests=getTests('advanced');
   const el=document.getElementById('adv-unified');
   if(advView==='upcoming'){
-    // Only show upcoming (today + future), not past
+    
     const up=S.upcoming.filter(t=>t.exam==='advanced'&&t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date));
     const logSVG=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
     el.innerHTML=up.length?up.map(t=>{
@@ -4825,7 +4682,6 @@ function renderAdvUnified(){
   }
 }
 
-// =========== COMPARE ===========
 function renderCmp(){
   const m=M.cmp;
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>a.date.localeCompare(b.date));
@@ -4851,7 +4707,6 @@ function renderCmp(){
   if(!uC('cmpHC',cmpHCData,cmpHCOpts)){CIs['cmpHC']=new Chart(document.getElementById('cmpHC').getContext('2d'),{type:'bar',data:cmpHCData,options:cmpHCOpts});}
 }
 
-// =========== HOURS ===========
 function renderHours(){
   F.hours.subj=document.getElementById('hr-subj').value;
   const hrs=getHrs();
@@ -4920,14 +4775,14 @@ function renderHours(){
   const hrSCData={labels:['Physics','Chemistry','Maths'],datasets:[{label:'Hours',data:['physics','chemistry','maths'].map(s=>+hrs.filter(h=>h.subject===s).reduce((a,b)=>a+b.total,0).toFixed(1)),backgroundColor:['#60a5fa','#34d399','#fbbf24'],borderRadius:5,barThickness:28}]};
   const hrSCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrSC',hrSCData,hrSCOpts)){dc('hrSC');CIs['hrSC']=new Chart(document.getElementById('hrSC').getContext('2d'),{type:'bar',data:hrSCData,options:hrSCOpts});}
-  // Monthly avg chart
+  
   const months={};
   S.hours.forEach(h=>{if(!hF(h))return;const k=h.date.substring(0,7);if(!months[k]){months[k]={total:0,days:new Set(),max:0};}months[k].total+=h.total;months[k].days.add(h.date);const dayTot=S.hours.filter(x=>x.date===h.date&&hF(x)).reduce((a,b)=>a+b.total,0);months[k].max=Math.max(months[k].max,dayTot);});
   const mKeys=Object.keys(months).sort().slice(-6);
   const hrMCData={labels:mKeys.map(k=>{const[y,m2]=k.split('-');return new Date(y,m2-1).toLocaleDateString('en',{month:'short',year:'2-digit'});}),datasets:[{label:'Avg hrs/day',data:mKeys.map(k=>parseFloat((months[k].total/months[k].days.size).toFixed(1))),borderColor:'#a695ff',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'}]};
   const hrMCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>parseFloat(ctx.parsed.y.toFixed(1))+'h'}}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>parseFloat(v.toFixed(1))+'h'}}}};
   if(!uC('hrMC',hrMCData,hrMCOpts)){dc('hrMC');CIs['hrMC']=new Chart(document.getElementById('hrMC').getContext('2d'),{type:'line',data:hrMCData,options:hrMCOpts});}
-  // Heatmap
+  
   const hm=document.getElementById('hr-hm');hm.innerHTML='';
   const colors5=['#141a14','#1a3d2b','#1f6b41','#22a05a','#34d399'];
   Array.from({length:91},(_,i)=>{const d=new Date();d.setDate(d.getDate()-90+i);return d.toISOString().split('T')[0];}).forEach(d=>{
@@ -4937,10 +4792,8 @@ function renderHours(){
   });
 }
 
-
-// =========== TO-DO ===========
 function renderTodo(){
-  // Auto-remove completed tasks from previous day
+  
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const yd=yesterday.toISOString().split('T')[0];
   S.todos=S.todos.filter(t=>!(t.done&&t.doneDate&&t.doneDate<=yd));
   save();
@@ -4950,7 +4803,7 @@ function renderTodo(){
   const pct=total?Math.round(done/total*100):0;
   const circumference=2*Math.PI*18;
   const offset=circumference-(pct/100)*circumference;
-  // stat cards
+  
   document.getElementById('td-stats').innerHTML=`
     <div class="prem-stat">
       <div class="prem-stat-glow" style="background:rgba(248,113,113,.7)"></div>
@@ -5004,7 +4857,7 @@ function renderTodo(){
   else if(F.todo.status==='done')todos=todos.filter(t=>t.done);
   todos.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;const p={high:0,medium:1,low:2};return(p[a.priority]||1)-(p[b.priority]||1);});
 
-  // Section header
+  
   const listCount=todos.length;
   const headerHtml=listCount>0?`<div class="prem-section-head" style="margin-bottom:8px">
     <div class="prem-section-title">${F.todo.status==='done'?'Completed':'Active Tasks'}</div>
@@ -5059,7 +4912,6 @@ function renderTodo(){
   updateBadges();
 }
 
-// =========== BACKLOG ===========
 function renderBacklog(){
   const pending=S.backlogs.filter(b=>!b.done).length;
   document.getElementById('bl-total').textContent=pending;
@@ -5069,7 +4921,7 @@ function renderBacklog(){
   const total=S.backlogs.length,done=S.backlogs.filter(b=>b.done).length;
   document.getElementById('bl-rate').textContent=total?Math.round(done/total*100)+'%':'—';
 
-  //subject cards
+  
   const subjs=['physics','chemistry','maths'];
   const subjColors={'physics':'#60a5fa','chemistry':'#34d399','maths':'#fbbf24'};
   const subjBgColors={'physics':'rgba(96,165,250,.12)','chemistry':'rgba(52,211,153,.12)','maths':'rgba(251,191,36,.1)'};
@@ -5097,7 +4949,7 @@ function renderBacklog(){
     </div>`;
   }).join('');
 
-  // Celebrate banner
+  
   const celebEl=document.getElementById('bl-celebrate');
   if(pending===0&&S.backlogs.length>0){
     celebEl.style.display='';
@@ -5172,7 +5024,6 @@ function renderBacklog(){
   updateBadges();
 }
 
-// =========== SYLLABUS ===========
 function toggleChemOverview(){
   const detail=document.getElementById('chem-overview-detail');
   const arrow=document.getElementById('chem-overview-arrow');
@@ -5182,13 +5033,20 @@ function toggleChemOverview(){
   if(arrow)arrow.textContent=open?'▾':'▸';
 }
 
+function fltSylExam(v,el){
+  F.sylExam=v;
+  document.querySelectorAll('[data-group="syl-exam"]').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  renderSylList();
+}
 function fltSyl(v,el){
-  F.syl=v; F.sylChemSub='all';
+  F.syl=v; F.sylChemSub='all'; F.sylExam='all';
   document.querySelectorAll('[data-group="syl-subj"]').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
   const subfr=document.getElementById('syl-chem-subfr');
   if(subfr)subfr.style.display=v==='chemistry'?'inline-flex':'none';
   document.querySelectorAll('[data-group="syl-chem-sub"]').forEach((e,i)=>{e.classList.toggle('active',i===0);});
+  document.querySelectorAll('[data-group="syl-exam"]').forEach((e,i)=>{e.classList.toggle('active',i===0);});
   renderSylList();
 }
 function fltChemSub(v,el){
@@ -5221,7 +5079,7 @@ function renderSyl(){
   const C=2*Math.PI*38;
   const off=C-(overallPct/100)*C;
 
-  // Subject progress bar data
+  
   const subjData=subjs.map(s=>{
     const chs=S.syllabus[s]||[];
     const done=chs.filter(c=>c.theory&&c.practice).length;
@@ -5271,9 +5129,9 @@ function renderSyl(){
       </div>
     </div>`;
 
-  // Update per-subject bars in hero with chemistry dropdown
+  
   const secColors2={physical:'#60a5fa',inorganic:'#fbbf24',organic:'#34d399'};
-  // Re-render subject bars section to include chemistry dropdown
+  
   const subjBarsHTML=subjData.map(d=>{
     if(d.s==='chemistry'){
       const chemSubs=['physical','inorganic','organic'];
@@ -5325,13 +5183,15 @@ function chapterItemHTML(c,subjClass){
   const theoryIcon=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
   const practiceIcon=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
   const doneIcon=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--gn)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const starIcon=`<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
   const idx=c.id%100||c.id;
-  return`<div class="syl-chapter ${subjClass}${complete?' ch-complete':''}">
+  return`<div class="syl-chapter ${subjClass}${complete?' ch-complete':''}${c.adv?' ch-adv-only':''}">
     <div class="ch-num">${idx<=9?'0'+idx:idx}</div>
     <div class="ch-info">
       <div class="ch-name">${c.name}</div>
       <div class="ch-meta">
         <span class="ch-class-badge ch-class-${c.class||'11'}">Class ${c.class||'11'}</span>
+        ${c.adv?`<span class="ch-adv-badge">${starIcon}ADV</span>`:''}
         ${complete?`<span class="ch-done-badge">${doneIcon}Complete</span>`:''}
       </div>
     </div>
@@ -5351,19 +5211,25 @@ function chapterItemHTML(c,subjClass){
 function renderSylList(){
   if(!F.sylChemSub)F.sylChemSub='all';
   if(!F.sylClass)F.sylClass='all';
+  if(!F.sylExam)F.sylExam='all';
   const s=F.syl;
-  // Update tab active state for class filter
+  
   document.querySelectorAll('[data-group="syl-class"]').forEach(e=>e.classList.toggle('active',e.getAttribute('onclick')?.includes(`'${F.sylClass}'`)));
 
   const subfr=document.getElementById('syl-chem-subfr');
   if(subfr)subfr.style.display=s==='chemistry'?'inline-flex':'none';
 
   let allChs=S.syllabus[s]||[];
-  // Migrate old data that lacks class property
+  
   allChs.forEach(c=>{if(!c.class)c.class=(c.id<=210||c.id<=313)?'11':'12';});
 
-  // Apply class filter
-  const filtered=F.sylClass==='all'?allChs:allChs.filter(c=>c.class===F.sylClass);
+  
+  const clsFiltered=F.sylClass==='all'?allChs:allChs.filter(c=>c.class===F.sylClass);
+
+  
+  const filtered=(!F.sylExam||F.sylExam==='all')?clsFiltered
+    :F.sylExam==='mains'?clsFiltered.filter(c=>!c.adv)
+    :clsFiltered.filter(c=>c.adv);
 
   const sc2=(s2)=>s2==='physics'?'#60a5fa':s2==='chemistry'?'#34d399':'#fbbf24';
   const subjChClass=s==='physics'?'phy-ch':s==='chemistry'?'che-ch':'mat-ch';
@@ -5378,7 +5244,7 @@ function renderSylList(){
     return;
   }
 
-  // Chemistry: grouped sections
+  
   const secs=['physical','organic','inorganic'];
   const secColors3={physical:'#60a5fa',organic:'#34d399',inorganic:'#fbbf24'};
   const secLabels={physical:'Physical Chemistry',organic:'Organic Chemistry',inorganic:'Inorganic Chemistry'};
@@ -5428,7 +5294,6 @@ function renderSylList(){
     <div class="prem-empty-title">No chapters match</div><div class="prem-empty-sub">Try a different filter combination.</div></div>`;
 }
 
-
 function toggleChemSplit(e){
   e.stopPropagation();
   const rows=document.getElementById('chem-split-rows');
@@ -5441,22 +5306,21 @@ function toggleChemSplit(e){
 
 window.addEventListener('DOMContentLoaded',()=>{
   initSupabase();
-  // ── Passive touchstart on bottom nav for instant response (no 300ms click delay) ──
-  // We intercept touchstart to call the nav immediately, before the click fires.
-  // This eliminates the perceived lag on mobile tab switching.
+  
+  
+  
   document.querySelectorAll('.mob-nav-item').forEach(btn=>{
     let _touchMoved=false;
     btn.addEventListener('touchstart',()=>{_touchMoved=false;},{passive:true});
     btn.addEventListener('touchmove',()=>{_touchMoved=true;},{passive:true});
     btn.addEventListener('touchend',e=>{
-      if(_touchMoved)return; // ignore swipes
-      e.preventDefault(); // prevent the synthetic click delay
+      if(_touchMoved)return; 
+      e.preventDefault(); 
       btn.click();
     },{passive:false});
   });
 });
 
-// =========== MOBILE SIDEBAR (desktop only — hidden on mobile) ===========
 function toggleSidebar(){
   if(window.innerWidth>768){
     const sb=document.getElementById('sidebar');
@@ -5471,7 +5335,6 @@ function closeSidebar(){
   document.body.classList.remove('sb-open');
 }
 
-// ── Avatar Preview Popover ──
 function openAvMenu(){
   const overlay=document.getElementById('avMenuOverlay');
   const menu=document.getElementById('avMenu');
@@ -5499,23 +5362,23 @@ function openAvMenu(){
   }
   const tag=document.getElementById('avMenuTag');
   if(tag){const plan=localStorage.getItem('jt_plan')||'Free';tag.textContent=plan;}
-  // ── Populate quick stats from live S state ──
+  
   try {
-    // Hours this month (from S.hours, sum lecture+practice+revision)
+    
     const now = new Date();
     const monthHrs = (S.hours||[])
       .filter(h=>{ const d=new Date(h.date); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); })
       .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0),0);
     const hrsEl = document.getElementById('avStatHrs');
     if(hrsEl) hrsEl.textContent = monthHrs>0 ? (Number.isInteger(monthHrs)?monthHrs:monthHrs.toFixed(1))+'h' : '—';
-    // Latest mains score (from S.tests, most recent by date)
+    
     const mainTests = (S.tests||[]).filter(t=>t.exam==='mains').sort((a,b)=>b.date.localeCompare(a.date));
     const scoreEl = document.getElementById('avStatScore');
     if(scoreEl){
       if(mainTests.length){ const lt=mainTests[0]; scoreEl.textContent=lt.total+(lt.max?'/'+lt.max:''); }
       else scoreEl.textContent='—';
     }
-    // Backlog streak from S state
+    
     const stEl = document.getElementById('avStatStreak');
     if(stEl){ const streak=S.backlogStreak||0; stEl.textContent = streak>0 ? streak+'d' : '—'; }
   } catch(e){}
@@ -5529,7 +5392,6 @@ function closeAvMenu(){
   document.getElementById('mob-profile-btn')?.classList.remove('av-open');
 }
 
-// =========== MOBILE BOTTOM NAV ===========
 const MOB_PAGE_TITLES = {
   overview:'Dashboard', mains:'JEE Mains', advanced:'JEE Advanced',
   compare:'Compare', hours:'Study Hours', todo:'To-Do',
@@ -5540,7 +5402,7 @@ function updateMobTopbarTitle(page, sub){
   const el = document.getElementById('mob-page-title');
   const subEl = document.getElementById('mob-page-sub');
   if(!el) return;
-  // Icon colors matched to PC page headers exactly
+  
   const PAGE_ICONS = {
     todo: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
     backlog: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></svg>`,
@@ -5575,7 +5437,7 @@ function updateMobTopbarTitle(page, sub){
     if(sub){
       subEl.textContent = sub;
       subEl.style.display = '';
-      // Indent subtitle to align under title text, not under the icon
+      
       subEl.style.paddingLeft = icon ? '23px' : '0';
     } else {
       subEl.textContent = '';
@@ -5585,10 +5447,10 @@ function updateMobTopbarTitle(page, sub){
   }
 }
 function mobNavTo(page, el){
-  // Clear subtitle when navigating away from settings
+  
   const subEl = document.getElementById('mob-page-sub');
   if(subEl && page !== 'settings'){ subEl.textContent=''; subEl.style.display='none'; }
-  // "Tests" tab shows choice screen, not mains directly
+  
   if(page === 'mains' && window.innerWidth <= 768){
     _setMobActive(el);
     closeMobDrawer();
@@ -5601,7 +5463,7 @@ function mobNavTo(page, el){
   updateMobTopbarTitle(page);
 }
 function syncMobNav(page){
-  // todo, backlog, syllabus, settings all live under the 'more' drawer tab
+  
   const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',settings:'todo-tab'};
   _mobNavItems().forEach(b=>b.classList.remove('active'));
   const tab = navMap[page];
@@ -5611,7 +5473,7 @@ function syncMobNav(page){
   } else if(!tab || tab === 'todo-tab') {
     document.getElementById('mob-more-btn')?.classList.add('active');
   }
-  // For test sub-pages, always show "Tests" in topbar
+  
   const testPages = ['mains','advanced','compare'];
   if(testPages.includes(page)){
     updateMobTopbarTitle('tests-choice');
@@ -5620,13 +5482,12 @@ function syncMobNav(page){
   }
 }
 
-// ─── Tests Choice Screen ───
 function showMobTestsChoice(){
   history.pushState({page:'tests'}, '', '/tests');
   document.title = 'JEETrack — Tests';
-  // Hide all pages
+  
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  // Show the choice screen virtual page
+  
   const choice = document.getElementById('mob-tests-choice-page');
   if(choice){
     choice.style.display = 'block';
@@ -5638,23 +5499,22 @@ function mobGoTest(page){
   const choice = document.getElementById('mob-tests-choice-page');
   if(choice){ choice.style.display='none'; choice.classList.remove('active'); }
   nav(page);
-  // Keep "Tests" tab active
+  
   _mobNavItems().forEach(b=>b.classList.remove('active'));
   const mainsBtn = _mobNavItems().find(b=>b.dataset.page==='mains');
   if(mainsBtn) mainsBtn.classList.add('active');
-  // Always keep topbar showing "Tests" when inside any test sub-page
+  
   updateMobTopbarTitle('tests-choice');
 }
 
-// ─── Settings Mobile Tab Strip ───
 function mobSettingsTab(id, btn){
-  // Reuse existing showSettingsPanel but also update mobile tab strip
+  
   const sidebarBtn = document.querySelector(`.settings-nav-item[onclick*="'${id}'"]`);
   showSettingsPanel(id, sidebarBtn);
-  // Update mobile tab strip active state
+  
   document.querySelectorAll('.mob-settings-tab').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  // Update topbar subtitle to show current settings section
+  
   const el = document.getElementById('mob-page-title');
   if(el && window.innerWidth<=768){
     const settingsIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
@@ -5671,9 +5531,9 @@ function mobSettingsTab(id, btn){
     el.style.cssText = 'background:none;-webkit-text-fill-color:unset';
   }
 }
-// Drawer open/close
+
 function openMobDrawer(){
-  // Sync badges before opening
+  
   const todoBadge = document.getElementById('nb-todo');
   const drawerTodo = document.getElementById('drawer-badge-todo');
   if(todoBadge && drawerTodo){
@@ -5708,7 +5568,7 @@ function drawerNav(page){
   document.getElementById('mob-more-btn')?.classList.add('active');
   updateMobTopbarTitle(page);
 }
-// Swipe down to close drawer
+
 (function(){
   let startY=0,dragging=false;
   document.addEventListener('touchstart',e=>{
@@ -5722,19 +5582,15 @@ function drawerNav(page){
   },{passive:true});
 })();
 
-// Legacy stubs (kept for any inline calls)
 function setMobActive(el){ _setMobActive(el); closeMobDrawer(); }
 function toggleMobMore(){ openMobDrawer(); }
 function closeMobMore(){ closeMobDrawer(); }
 
-// =========== DASHBOARD GREETING ===========
-
-// Patch nav to handle insights page
 const _navOrig=nav;
 window._navOrig=_navOrig;
 nav=function(page, _pushState){
   if(page==='insights'){
-    // Push URL state
+    
     if(_pushState !== false){
       history.pushState({page:'insights'}, '', '/insights');
     }
@@ -5745,9 +5601,9 @@ nav=function(page, _pushState){
     document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
     document.getElementById('page-insights').classList.add('active');
     document.querySelectorAll('.ni').forEach(n=>{if(n.textContent.toLowerCase().includes('ai insight'))n.classList.add('active');});
-    // Hide all FABs — AI insights page has none
+    
     ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-    // Restore cached insights if available and not yet shown
+    
     const content=document.getElementById('insights-content');
     const empty=document.getElementById('insights-empty');
     if(content && empty && content.innerHTML.trim()===''){
@@ -5759,7 +5615,7 @@ nav=function(page, _pushState){
             renderInsights(data);
             content.style.display='block';
             empty.style.display='none';
-            // Show a subtle "cached" note on the timestamp line
+            
             const tsEl=content.querySelector('[data-insight-ts]');
             if(!tsEl){
               const note=content.querySelector('div[style*="text-align:center;font-size:10px"]');
@@ -5774,9 +5630,8 @@ nav=function(page, _pushState){
   }
 };
 
-// =========== AI INSIGHTS (OpenAI GPT-4) ===========
 async function generateInsights(){
-  // Check user is logged in — needed for edge function auth
+  
   if(!sb){toast('Sign in to use AI Insights', 'info');return;}
   const{data:{session}}=await sb.auth.getSession();
   if(!session){toast('Sign in to use AI Insights', 'info');return;}
@@ -5797,15 +5652,15 @@ async function generateInsights(){
   content.innerHTML='';
 
   const msgs=['Scanning your mock scores...','Analyzing study patterns...','Checking syllabus progress...','Detecting weak areas...','Comparing trends...','Building your action plan...','Finalizing insights...'];
-  // Step activation schedule: [stepId, tickIndex] — each step lights up at a specific tick
+  
   const stepSchedule=[[1,0],[2,2],[3,4],[4,6]];
-  // Reset all steps to inactive first
+  
   for(let s=1;s<=4;s++){const el=document.getElementById('ai-step-'+s);if(el){el.classList.remove('active','done');}}
   let mi=0;
   const msgInt=setInterval(()=>{
     if(loadingText)loadingText.textContent=msgs[Math.min(mi,msgs.length-1)];
     if(progressBar)progressBar.style.width=Math.min(90,(mi+1)*13)+'%';
-    // Activate steps on schedule and mark previous ones as done
+    
     stepSchedule.forEach(([sid,tick])=>{
       const el=document.getElementById('ai-step-'+sid);
       if(!el)return;
@@ -5815,14 +5670,14 @@ async function generateInsights(){
     mi++;
   },900);
 
-  // ---- Data computation ----
+  
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>a.date.localeCompare(b.date));
   const adv=S.tests.filter(t=>t.exam==='advanced').sort((a,b)=>a.date.localeCompare(b.date));
   const allTests=[...S.tests].sort((a,b)=>a.date.localeCompare(b.date));
   const subjs=['physics','chemistry','maths'];
   const avg=arr=>arr.length?(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1):'0';
 
-  // Score trend type
+  
   const scoreTrend=arr=>{
     if(arr.length<2)return'insufficient';
     const pcts=arr.map(t=>t.total/t.max*100);
@@ -5841,10 +5696,10 @@ async function generateInsights(){
   const mainsScores=mains.map(t=>+(t.total/t.max*100).toFixed(1));
   const advScores=adv.map(t=>+(t.total/t.max*100).toFixed(1));
 
-  // Subject avg scores
+  
   const sAvg=(arr,s)=>{const v=arr.filter(t=>t.max).map(t=>(t[s]/(t.max/3))*100);return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):0;};
 
-  // Hours
+  
   const totalH=S.hours.reduce((a,b)=>a+b.total,0)||0.001;
   const totalLec=S.hours.reduce((a,b)=>a+b.lecture,0);
   const totalPrac=S.hours.reduce((a,b)=>a+b.practice,0);
@@ -5853,7 +5708,7 @@ async function generateInsights(){
   const pracP=+(totalPrac/totalH*100).toFixed(0);
   const revP=+(totalRev/totalH*100).toFixed(0);
 
-  // Subject hours + per-subject split
+  
   const subjH=subjs.map(s=>{
     const sh=S.hours.filter(h=>h.subject===s);
     const ht=+sh.reduce((a,b)=>a+b.total,0).toFixed(1);
@@ -5866,7 +5721,7 @@ async function generateInsights(){
   const neglectedSubj=subjH.find(x=>x.total===minH)?.s||'';
   const mostStudied=subjH.find(x=>x.total===maxH)?.s||'';
 
-  // Efficiency: score per hour (higher = better ROI)
+  
   const effic=subjs.map(s=>{
     const score=sAvg(mains,s)||sAvg(adv,s);
     const hrs=subjH.find(x=>x.s===s)?.total||0.001;
@@ -5874,9 +5729,9 @@ async function generateInsights(){
   });
   const bestROI=effic.sort((a,b)=>b.roi-a.roi)[0]?.s||'';
   const worstROI=[...effic].sort((a,b)=>a.roi-b.roi)[0]?.s||'';
-  effic.sort((a,b)=>a.s.localeCompare(b.s)); // restore order
+  effic.sort((a,b)=>a.s.localeCompare(b.s)); 
 
-  // Consistency: last 3d, 7d, 14d
+  
   const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0];};
   const studiedInLast=n=>S.hours.filter(h=>h.date>=daysAgo(n)).map(h=>h.date);
   const days3=new Set(studiedInLast(3)).size;
@@ -5887,7 +5742,7 @@ async function generateInsights(){
   const hrs30=S.hours.filter(h=>h.date>=daysAgo(30)).reduce((a,b)=>a+b.total,0).toFixed(1);
   const consistencyType=days14>=11?'consistent':days14>=7?'moderate':days3===0?'breaking':'irregular';
 
-  // Syllabus
+  
   const sylDetail=subjs.map(s=>{
     const chs=S.syllabus[s]||[];
     const done=chs.filter(c=>c.theory&&c.practice).length;
@@ -5897,13 +5752,13 @@ async function generateInsights(){
   });
   const overallSylPct=Math.round(sylDetail.reduce((a,b)=>a+b.done,0)/Math.max(sylDetail.reduce((a,b)=>a+b.total,0),1)*100);
 
-  // Backlogs
+  
   const blPend=S.backlogs.filter(b=>!b.done);
   const blHigh=blPend.filter(b=>b.priority==='high').length;
   const blBySubj=subjs.map(s=>({s,n:blPend.filter(b=>b.subject===s).length}));
   const blCompRate=S.backlogs.length?Math.round(S.backlogs.filter(b=>b.done).length/S.backlogs.length*100):0;
 
-  // Task completion
+  
   const todoDone=S.todos.filter(t=>t.done).length;
   const todoPend=S.todos.filter(t=>!t.done).length;
   const todoRate=S.todos.length?Math.round(todoDone/S.todos.length*100):0;
@@ -5982,9 +5837,8 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
   "greenFlag": "1-2 sentences on the biggest genuine strength"
 }`;
 
-
   try {
-    // Call our secure edge function — Groq key never exposed to browser
+    
     const response=await fetch(`${SUPABASE_URL}/functions/v1/ai-insights`,{
       method:'POST',
       headers:{
@@ -6009,7 +5863,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
       insight=JSON.parse(cleaned);
     }catch(e){throw new Error('Could not parse AI response. Try again.');}
     renderInsights(insight);
-    // ── Low-data warning toast ──────────────────────────────────────
+    
     (function(){
       const hasTests = S.tests.length;
       const hasHours = S.hours.length;
@@ -6027,7 +5881,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
         setTimeout(()=>toastTopWarn('⚠️ Low data: '+tip, 7000), 600);
       }
     })();
-    // Persist insights so they survive page refresh
+    
     try{ localStorage.setItem('jt_ai_insights_'+(typeof currentUser!=='undefined'&&currentUser?.id||'guest'), JSON.stringify({data:insight, ts:Date.now()})); }catch(e){}
     content.style.display='block';
     empty.style.display='none';
@@ -6090,7 +5944,7 @@ function renderInsights(d){
     </button>
   </div>
 
-  <!-- Overall Verdict Card -->
+  
   <div class="ai-verdict-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
     <div style="flex:1;min-width:0;position:relative;z-index:1">
       <div class="ai-verdict-label">Overall Assessment</div>
@@ -6118,7 +5972,7 @@ function renderInsights(d){
     </div>
   </div>
 
-  <!-- Detailed Analysis -->
+  
   <div class="ai-section-label">Detailed Analysis</div>
   <div class="ai-ins-grid">
     ${insights.map(ins=>`
@@ -6134,7 +5988,7 @@ function renderInsights(d){
     `).join('')}
   </div>
 
-  <!-- Subject Report Card -->
+  
   <div class="ai-section-label">Subject Report Card</div>
   <div class="ai-subj-card">
     ${['physics','chemistry','maths'].map(s=>{
@@ -6159,7 +6013,7 @@ function renderInsights(d){
     }).join('')}
   </div>
 
-  <!-- Critical Fix + Strength -->
+  
   ${(d.redFlag||d.greenFlag)?`
   <div class="ai-section-label">Flags</div>
   <div class="ai-flag-grid">
@@ -6179,7 +6033,7 @@ function renderInsights(d){
     </div>`:''}
   </div>`:''}
 
-  <!-- Today's Action Plan -->
+  
   ${d.todayAction?.length?`
   <div class="ai-section-label">Today's Action Plan</div>
   <div class="ai-action-card">
@@ -6190,7 +6044,7 @@ function renderInsights(d){
       </div>`).join('')}
   </div>`:''}
 
-  <!-- Weekly Strategy -->
+  
   ${d.weeklyPlan?`
   <div class="ai-section-label">Weekly Strategy</div>
   <div class="ai-weekly-card">
@@ -6202,7 +6056,7 @@ function renderInsights(d){
   </div>`:''}
   `;
 
-  // Animate score bars after paint
+  
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     content.querySelectorAll('.ai-subj-bar-fill').forEach(el=>{
       const targetWidth = el.style.width;
