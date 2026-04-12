@@ -299,13 +299,21 @@ function showApp(name, email){
   // Sync notification toggles in settings
   const snt=document.getElementById('settings-notif-toggle');
   if(snt) snt.checked = localStorage.getItem('notif_enabled')==='1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-  // Show welcome/permissions modal only on dashboard page
+  // Re-render dashboard after a short delay so canvas elements (charts, donut) have
+  // their real pixel dimensions. On initial load the browser hasn't painted yet when
+  // the first renderOverview() fires (via rAF inside nav()), so offsetWidth is 0 and
+  // Chart.js / drawJeeDonut() produce blank output. 150 ms is enough for one paint
+  // cycle; navMarkDirty ensures the render actually runs even if dirty was cleared.
   setTimeout(() => {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id === 'page-overview') {
+      if(typeof navMarkDirty === 'function') navMarkDirty('overview');
+      if(typeof renderOverview === 'function') renderOverview();
+      checkWelcomeModal();
+    } else {
       checkWelcomeModal();
     }
-  }, 800);
+  }, 150);
 }
 
 function setDashGreeting(firstName){
