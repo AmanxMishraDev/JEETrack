@@ -3772,12 +3772,19 @@ function nav(page, _pushState){
   });
 
   // Only re-render if data is dirty or page hasn't been rendered yet.
-  // Deferred to next rAF so the page flip paints first — keeps tap response instant.
+  // For overview: use setTimeout(0) instead of rAF so the browser completes layout
+  // first — canvas elements (jeeDonut, ovTC, ovWC) need a non-zero offsetWidth.
+  // rAF fires before layout is committed, giving offsetWidth=0 on initial load which
+  // causes all charts to render blank. For all other pages rAF is fine.
   if(_navCache.dirty[page] !== false){
     const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,settings:renderSettings})[page];
     if(_renderFn){
       _navCache.dirty[page]=false;
-      requestAnimationFrame(()=>_renderFn());
+      if(page==='overview'){
+        setTimeout(()=>_renderFn(), 0);
+      } else {
+        requestAnimationFrame(()=>_renderFn());
+      }
     }
   }
 

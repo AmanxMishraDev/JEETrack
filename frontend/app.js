@@ -285,13 +285,16 @@ function showApp(name, email){
   // Mark all pages dirty so data loaded from Supabase is always reflected immediately
   if(typeof navMarkDirty === 'function') navMarkDirty(null);
   updateBadges();checkHWTNotifs();setQuote();
-  // Push a sentinel history entry so first back press navigates within app, not exits
-  // If the current URL is an auth route, redirect to /dashboard instead of staying on /login etc.
+  // Only redirect to /dashboard when actually on an auth route.
+  // Do NOT redirect just because history.state is null — that always happens on a hard
+  // refresh and was causing /mains, /hours etc. to be overwritten with /dashboard.
   const _authPaths = ['/login', '/onboarding', '/'];
   const _currentPath = window.location.pathname;
-  if (!history.state || _authPaths.includes(_currentPath)) {
-    const _destPath = _authPaths.includes(_currentPath) ? '/dashboard' : (_currentPath || '/dashboard');
-    history.replaceState({page: _routeMap[_destPath] || 'overview'}, '', _destPath);
+  if (_authPaths.includes(_currentPath)) {
+    history.replaceState({page: 'overview'}, '', '/dashboard');
+  } else if (!history.state) {
+    // Restore state object for current path without changing the URL
+    history.replaceState({page: _routeMap[_currentPath] || 'overview'}, '', _currentPath);
   }
   _handleRoute();
   localStorage.removeItem('groq_key');
@@ -299,21 +302,13 @@ function showApp(name, email){
   // Sync notification toggles in settings
   const snt=document.getElementById('settings-notif-toggle');
   if(snt) snt.checked = localStorage.getItem('notif_enabled')==='1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-  // Re-render dashboard after a short delay so canvas elements (charts, donut) have
-  // their real pixel dimensions. On initial load the browser hasn't painted yet when
-  // the first renderOverview() fires (via rAF inside nav()), so offsetWidth is 0 and
-  // Chart.js / drawJeeDonut() produce blank output. 150 ms is enough for one paint
-  // cycle; navMarkDirty ensures the render actually runs even if dirty was cleared.
+  // Show welcome/permissions modal only on dashboard page
   setTimeout(() => {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id === 'page-overview') {
-      if(typeof navMarkDirty === 'function') navMarkDirty('overview');
-      if(typeof renderOverview === 'function') renderOverview();
-      checkWelcomeModal();
-    } else {
       checkWelcomeModal();
     }
-  }, 150);
+  }, 800);
 }
 
 function setDashGreeting(firstName){
