@@ -1374,7 +1374,7 @@
     </div>
     <!-- Include ADV toggle -->
     <label class="syl-adv-toggle" title="Include JEE Advanced chapters">
-      <input type="checkbox" id="syl-adv-chk" onchange="toggleAdvInclude(this.checked)" checked>
+      <input type="checkbox" id="syl-adv-chk" onchange="toggleAdvInclude(this.checked)">
       <span class="syl-adv-track">
         <span class="syl-adv-thumb"></span>
       </span>
@@ -3129,7 +3129,7 @@ let S = JSON.parse(localStorage.getItem('jt3')||'null') || {
   subjBestStreaks:{physics:0,chemistry:0,maths:0},
   notifiedHWT:[]
 };
-const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:true,sylClass:'all'};
+const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:false,sylClass:'all'};
 const M={ov:'pct',mn:'pct',adv:'pct',cmp:'pct'};
 let CIs={};
 let undoStack=null;
@@ -3641,7 +3641,12 @@ function staggerItems(selector, parent){
 }
 
 // ── Cached DOM refs & dirty flags for nav performance ──
-const _navCache={pages:null,niItems:null,mobItems:null,dirty:{}};
+// Pre-populate dirty flags for every page so navMarkDirty(null) always marks them all.
+// Without this, navMarkDirty(null) iterates Object.keys(dirty) which is empty on first
+// load, leaving every page un-marked — causing the dashboard to render with zero-size
+// canvases before the browser has painted. The fix in showApp() handles the re-render,
+// but pre-populating here ensures the dirty system is correct from the start.
+const _navCache={pages:null,niItems:null,mobItems:null,dirty:{overview:true,mains:true,advanced:true,compare:true,hours:true,todo:true,backlog:true,syllabus:true,settings:true}};
 function _navPages(){return _navCache.pages||(_navCache.pages=[...document.querySelectorAll('.page')])}
 function _navNi(){return _navCache.niItems||(_navCache.niItems=[...document.querySelectorAll('.ni')])}
 function _mobNavItems(){return _navCache.mobItems||(_navCache.mobItems=[...document.querySelectorAll('.mob-nav-item')])}
@@ -5182,13 +5187,14 @@ function fltSyl(v,el){
 }
 
 function toggleSylUnit(subj,unit){
-  if(unitExpanded[subj]===undefined)unitExpanded[subj]={};
-  unitExpanded[subj][unit]=!(unitExpanded[subj][unit]!==false); // default open → toggle
+  if(!unitExpanded[subj])unitExpanded[subj]={};
+  // default is closed (undefined = false), toggle on click
+  unitExpanded[subj][unit]=!unitExpanded[subj][unit];
   renderSylList();
 }
 
 function renderSyl(){
-  const includeAdv = F.sylIncludeAdv !== false; // default true
+  const includeAdv = !!F.sylIncludeAdv; // default false
   const subjs=['physics','chemistry','maths'];
 
   // Respect ADV toggle for all stats
@@ -5284,7 +5290,7 @@ function chapterItemHTML(c,subjClass){
 
 function renderSylList(){
   const s=F.syl||'physics';
-  const includeAdv=F.sylIncludeAdv!==false;
+  const includeAdv=!!F.sylIncludeAdv;
   const units=SUBJ_UNITS[s]||[];
   const unitColors=UNIT_COLORS[s]||{};
   const subjChClass=s==='physics'?'phy-ch':s==='chemistry'?'che-ch':'mat-ch';
@@ -5304,7 +5310,7 @@ function renderSylList(){
     const done=chs.filter(c=>c.theory&&c.practice).length;
     const pct=chs.length?Math.round(done/chs.length*100):0;
     const col=unitColors[unit]||'#a695ff';
-    const isOpen=unitExpanded[s][unit]!==false; // default open
+    const isOpen=!!unitExpanded[s][unit]; // default closed (undefined = false)
     html+=`<div class="syl-unit">
       <div class="syl-unit-hd${isOpen?' open':''}" onclick="toggleSylUnit('${s}','${unit.replace(/'/g,"\\'")}')">
         <div class="syl-unit-hd-left">
