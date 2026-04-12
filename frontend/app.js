@@ -284,7 +284,7 @@ function showApp(name, email){
   // Navigate to the page matching the current URL, or default to dashboard
   // Mark all pages dirty so data loaded from Supabase is always reflected immediately
   if(typeof navMarkDirty === 'function') navMarkDirty(null);
-  updateBadges();checkHWTNotifs();setQuote();
+  updateBadges();checkHWTNotifs();if(typeof setQuote==='function')setQuote();
   // Only redirect to /dashboard when actually on an auth route.
   // Do NOT redirect just because history.state is null — that always happens on a hard
   // refresh and was causing /mains, /hours etc. to be overwritten with /dashboard.
