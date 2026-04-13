@@ -312,116 +312,137 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <button class="mob-land-cta-btn" id="mob-land-cta" onclick="mobileLandingShowAuth()">Get Started for Free →</button>
 
   <!-- FEATURES SECTION -->
-  <section id="features" style="padding:5rem 1.5rem;max-width:960px;margin:0 auto">
-    <div style="text-align:center;margin-bottom:3rem">
-      <div style="display:inline-block;background:rgba(124,106,247,.1);border:1px solid rgba(124,106,247,.25);border-radius:20px;padding:5px 16px;font-size:.72rem;font-weight:600;color:#a695ff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem">Features</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:#e8e8f0;margin-bottom:.75rem">Everything you need to crack JEE</h2>
-      <p style="color:#7a7990;font-size:.95rem;max-width:460px;margin:0 auto">Five powerful modules built for serious aspirants. No fluff, just what works.</p>
+  <section id="features" class="ls-section ls-section-center">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-purple">Features</div>
+      <h2 class="ls-h2">Everything you need to<br><em>crack JEE</em></h2>
+      <p class="ls-sub">Five powerful modules built for serious aspirants. No fluff, just what works.</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
-      <div style="background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem">
-        <div style="width:40px;height:40px;background:rgba(124,106,247,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-        <div style="font-weight:700;color:#e8e8f0;margin-bottom:.4rem">Mock Test Analytics</div>
-        <div style="font-size:.85rem;color:#7a7990;line-height:1.6">Log every JEE Mains and Advanced mock. Track subject-wise accuracy, score trends, and improvement over time.</div>
+    <div class="ls-features-grid">
+      <div class="ls-card ls-card-purple ls-reveal ls-reveal-delay-1">
+        <div class="ls-icon ls-icon-purple"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="ls-card-title">Mock Test Analytics</div>
+        <div class="ls-card-desc">Log every JEE Mains and Advanced mock. Track subject-wise accuracy, score trends, and improvement over time.</div>
       </div>
-      <div style="background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem">
-        <div style="width:40px;height:40px;background:rgba(244,114,182,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></div>
-        <div style="font-weight:700;color:#e8e8f0;margin-bottom:.4rem">AI Weekly Insights</div>
-        <div style="font-size:.85rem;color:#7a7990;line-height:1.6">Your personal AI coach analyzes scores, hours, and gaps every week — and tells you exactly what to fix.</div>
+      <div class="ls-card ls-card-pink ls-reveal ls-reveal-delay-2">
+        <div class="ls-icon ls-icon-pink"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fd79a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></div>
+        <div class="ls-card-title">AI Weekly Insights</div>
+        <div class="ls-card-desc">Your personal AI coach analyzes scores, hours, and gaps every week — and tells you exactly what to fix.</div>
       </div>
-      <div style="background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem">
-        <div style="width:40px;height:40px;background:rgba(52,211,153,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg></div>
-        <div style="font-weight:700;color:#e8e8f0;margin-bottom:.4rem">Study Hours Heatmap</div>
-        <div style="font-size:.85rem;color:#7a7990;line-height:1.6">Log lecture, practice, and revision hours daily. See your consistency heatmap and streaks across all subjects.</div>
+      <div class="ls-card ls-card-green ls-reveal ls-reveal-delay-3">
+        <div class="ls-icon ls-icon-green"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg></div>
+        <div class="ls-card-title">Study Hours Heatmap</div>
+        <div class="ls-card-desc">Log lecture, practice, and revision hours daily. See your consistency heatmap and streaks across all subjects.</div>
       </div>
-      <div style="background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem">
-        <div style="width:40px;height:40px;background:rgba(251,191,36,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-        <div style="font-weight:700;color:#e8e8f0;margin-bottom:.4rem">Full Syllabus Tracker</div>
-        <div style="font-size:.85rem;color:#7a7990;line-height:1.6">Map every chapter of Physics, Chemistry, and Maths. Mark theory and practice separately. Never lose track of what's left.</div>
+      <div class="ls-card ls-card-yellow ls-reveal ls-reveal-delay-2">
+        <div class="ls-icon ls-icon-yellow"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <div class="ls-card-title">Full Syllabus Tracker</div>
+        <div class="ls-card-desc">Map every chapter of Physics, Chemistry, and Maths. Mark theory and practice separately. Never lose track of what's left.</div>
       </div>
-      <div style="background:#13131a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem">
-        <div style="width:40px;height:40px;background:rgba(96,165,250,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-        <div style="font-weight:700;color:#e8e8f0;margin-bottom:.4rem">Zero Backlog System</div>
-        <div style="font-size:.85rem;color:#7a7990;line-height:1.6">Log skipped chapters and unsolved DPPs. Clear them daily, build your streak, and make sure nothing falls through the cracks.</div>
+      <div class="ls-card ls-card-blue ls-reveal ls-reveal-delay-3">
+        <div class="ls-icon ls-icon-blue"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="ls-card-title">Zero Backlog System</div>
+        <div class="ls-card-desc">Log skipped chapters and unsolved DPPs. Clear them daily, build your streak, and make sure nothing slips.</div>
       </div>
-      <div style="background:linear-gradient(135deg,rgba(124,106,247,.1),rgba(166,149,255,.05));border:1px solid rgba(124,106,247,.2);border-radius:16px;padding:1.5rem;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
-        <div style="font-size:1.8rem;margin-bottom:.5rem">🆓</div>
-        <div style="font-weight:700;color:#a695ff;margin-bottom:.3rem">100% Free</div>
-        <div style="font-size:.85rem;color:#7a7990">All features, forever free. No premium plans, no paywalls.</div>
+      <div class="ls-card ls-card-free ls-reveal ls-reveal-delay-4">
+        <div class="ls-free-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="ls-free-label">Always Free</div>
+        <div class="ls-card-desc">Every feature, forever free. No plans, no paywalls, no catch.</div>
+        <div class="ls-free-dots">
+          <span></span><span></span><span></span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- HOW IT WORKS SECTION -->
-  <section id="how-it-works" style="padding:4rem 1.5rem;max-width:760px;margin:0 auto">
-    <div style="text-align:center;margin-bottom:3rem">
-      <div style="display:inline-block;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:20px;padding:5px 16px;font-size:.72rem;font-weight:600;color:#34d399;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem">How it works</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:#e8e8f0">Up and running in 2 minutes</h2>
+  <section id="how-it-works" class="ls-section ls-section-center">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-green">How it works</div>
+      <h2 class="ls-h2">Up and running in<br><em>2 minutes</em></h2>
     </div>
-    <div style="display:flex;flex-direction:column;gap:0">
-      <div style="display:flex;gap:1.5rem;align-items:flex-start;padding-bottom:2rem;position:relative">
-        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c6af7,#a695ff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff">1</div>
-          <div style="width:2px;height:100%;background:rgba(124,106,247,.2);margin-top:8px"></div>
+    <div class="ls-steps">
+      <div class="ls-step ls-reveal ls-reveal-delay-1">
+        <div class="ls-step-left">
+          <div class="ls-step-num ls-step-num-1">1</div>
+          <div class="ls-step-line"></div>
         </div>
-        <div style="padding-top:6px">
-          <div style="font-weight:700;color:#e8e8f0;margin-bottom:.3rem">Create your free account</div>
-          <div style="font-size:.88rem;color:#7a7990;line-height:1.6">Sign up with Google or email. Takes 10 seconds. No credit card needed.</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:1.5rem;align-items:flex-start;padding-bottom:2rem;position:relative">
-        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#f472b6,#fb7185);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff">2</div>
-          <div style="width:2px;height:100%;background:rgba(244,114,182,.2);margin-top:8px"></div>
-        </div>
-        <div style="padding-top:6px">
-          <div style="font-weight:700;color:#e8e8f0;margin-bottom:.3rem">Complete quick onboarding</div>
-          <div style="font-size:.88rem;color:#7a7990;line-height:1.6">Tell us your class, target year, and coaching. JEETrack calibrates your dashboard accordingly.</div>
+        <div class="ls-step-body">
+          <div class="ls-step-title">Create your free account</div>
+          <div class="ls-step-desc">Sign up with Google or email. Takes 10 seconds. No credit card needed.</div>
         </div>
       </div>
-      <div style="display:flex;gap:1.5rem;align-items:flex-start;padding-bottom:2rem">
-        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#34d399,#2dd4bf);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff">3</div>
-          <div style="width:2px;height:100%;background:rgba(52,211,153,.2);margin-top:8px"></div>
+      <div class="ls-step ls-reveal ls-reveal-delay-2">
+        <div class="ls-step-left">
+          <div class="ls-step-num ls-step-num-2">2</div>
+          <div class="ls-step-line"></div>
         </div>
-        <div style="padding-top:6px">
-          <div style="font-weight:700;color:#e8e8f0;margin-bottom:.3rem">Log your first mock test</div>
-          <div style="font-size:.88rem;color:#7a7990;line-height:1.6">Enter your scores for JEE Mains or Advanced. See your subject-wise breakdown instantly.</div>
+        <div class="ls-step-body">
+          <div class="ls-step-title">Complete quick onboarding</div>
+          <div class="ls-step-desc">Tell us your class, target year, and coaching. JEETrack calibrates your dashboard accordingly.</div>
         </div>
       </div>
-      <div style="display:flex;gap:1.5rem;align-items:flex-start">
-        <div style="flex-shrink:0">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#fbbf24,#f97316);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff">4</div>
+      <div class="ls-step ls-reveal ls-reveal-delay-3">
+        <div class="ls-step-left">
+          <div class="ls-step-num ls-step-num-3">3</div>
+          <div class="ls-step-line"></div>
         </div>
-        <div style="padding-top:6px">
-          <div style="font-weight:700;color:#e8e8f0;margin-bottom:.3rem">Track, improve, repeat</div>
-          <div style="font-size:.88rem;color:#7a7990;line-height:1.6">Log study hours, clear backlogs, complete your syllabus, and get AI insights every week. Watch your scores climb.</div>
+        <div class="ls-step-body">
+          <div class="ls-step-title">Log your first mock test</div>
+          <div class="ls-step-desc">Enter your scores for JEE Mains or Advanced. See your subject-wise breakdown instantly.</div>
+        </div>
+      </div>
+      <div class="ls-step ls-reveal ls-reveal-delay-4">
+        <div class="ls-step-left">
+          <div class="ls-step-num ls-step-num-4">4</div>
+        </div>
+        <div class="ls-step-body">
+          <div class="ls-step-title">Track, improve, repeat</div>
+          <div class="ls-step-desc">Log study hours, clear backlogs, complete your syllabus, get AI insights every week. Watch your scores climb.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ABOUT SECTION -->
-  <section id="about" style="padding:4rem 1.5rem;max-width:760px;margin:0 auto;text-align:center">
-    <div style="display:inline-block;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:20px;padding:5px 16px;font-size:.72rem;font-weight:600;color:#fbbf24;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.5rem">About</div>
-    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:#e8e8f0;margin-bottom:1rem">Built by a JEE aspirant,<br>for JEE aspirants</h2>
-    <p style="color:#7a7990;font-size:.95rem;line-height:1.8;max-width:580px;margin:0 auto 1.5rem">JEETrack was born out of frustration with scattered spreadsheets and notes. We built the tool we wished existed — one place to track everything, stay consistent, and actually know if you're on track to hit your target score.</p>
-    <p style="color:#7a7990;font-size:.95rem;line-height:1.8;max-width:580px;margin:0 auto">It's free, it's fast, and it's built specifically for the JEE pattern. No generic study apps. Just JEE.</p>
+  <section id="about" class="ls-section ls-section-center">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-yellow">About</div>
+      <h2 class="ls-h2">Built by a JEE aspirant,<br>for <em>JEE aspirants</em></h2>
+    </div>
+    <div class="ls-about-box ls-reveal ls-reveal-delay-1">
+      <p class="ls-about-text">JEETrack was born out of frustration with scattered spreadsheets and notes. We built the tool we wished existed — one place to track everything, stay consistent, and actually know if you're on track to hit your target score.</p>
+      <p class="ls-about-text">It's free, it's fast, and it's built specifically for the JEE pattern. No generic study apps. Just JEE.</p>
+    </div>
   </section>
 
+  <!-- CTA BAND -->
+  <div class="ls-cta-band ls-reveal">
+    <div class="ls-cta-band-title">Ready to get serious about JEE?</div>
+    <div class="ls-cta-band-sub">Join aspirants already tracking their prep on JEETrack.</div>
+    <button class="ls-cta-btn" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});landingOpenAuth('signup')">
+      Start Tracking for Free →
+    </button>
+  </div>
+
   <!-- FOOTER -->
-  <footer style="border-top:1px solid rgba(255,255,255,.07);padding:2rem 1.5rem;text-align:center">
-    <a href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1rem;text-decoration:none">
-      <div style="width:26px;height:26px;background:linear-gradient(135deg,#7c6af7,#a695ff);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;color:#fff">J</div>
-      <span style="font-family:'Syne',sans-serif;font-weight:700;color:#e8e8f0;font-size:.95rem">JEE<span style="background:linear-gradient(135deg,#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Track</span></span>
+  <footer class="ls-footer">
+    <a href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" class="ls-footer-logo">
+      <div class="ls-footer-logo-mark">J</div>
+      <span class="ls-footer-logo-text">JEE<span>Track</span></span>
     </a>
-    <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem">
-      <a href="#features" onclick="landScrollTo('features');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">Features</a>
-      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">How it works</a>
-      <a href="/faq" style="color:#7a7990;font-size:.85rem;text-decoration:none">FAQ</a>
-      <a href="#about" onclick="landScrollTo('about');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">About</a>
+    <div class="ls-footer-links">
+      <a href="#features" onclick="landScrollTo('features');return false;">Features</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;">How it works</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="/faq">FAQ</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="#about" onclick="landScrollTo('about');return false;">About</a>
     </div>
-    <p style="color:#4a4a5a;font-size:.78rem">© 2025 JEETrack · Built for JEE aspirants across India</p>
+    <div class="ls-footer-copy">© 2026 JEETrack · Built for JEE aspirants across India</div>
   </footer>
 
 </div>

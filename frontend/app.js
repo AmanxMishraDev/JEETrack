@@ -230,6 +230,7 @@ function showAuthScreen(){
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
+  setTimeout(_initScrollReveal, 150);
   history.replaceState({page:'login'}, '', '/login');
   document.title = 'JEETrack — Sign In';
   setTimeout(initLandingStarField, 50);
@@ -934,6 +935,22 @@ function goSlide(n, fromAuto) {
 }
 
 function _activateSlide(n) { goSlide(n, false); }
+
+function _initScrollReveal() {
+  const root = document.getElementById('landing');
+  if (!root) return;
+  const els = root.querySelectorAll('.ls-reveal');
+  if (!els.length) return;
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('ls-visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { root: root, threshold: 0.12 });
+  els.forEach(function(el) { obs.observe(el); });
+}
 
 function landScrollTo(id) {
   const el = document.getElementById(id);
