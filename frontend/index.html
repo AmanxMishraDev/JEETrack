@@ -12,9 +12,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+
 </head>
 <body>
 
@@ -3329,8 +3329,6 @@ function celebrate(emoji,title,sub,grand=false){
     
     o.classList.add('show');
     startConfetti(true);
-    
-    setTimeout(prepareShareImage, 800);
     playSound(true);
     if(navigator.vibrate)navigator.vibrate([100,50,100,50,200,50,300]);
   } else {
@@ -3446,37 +3444,14 @@ function closeCel(){
 }
 
 
-let _cachedShareImage = null;
-let _shareImageReady = false;
-
-async function prepareShareImage(){
-  _cachedShareImage = null;
-  _shareImageReady = false;
-  const card = document.getElementById('cel-box');
-  if(!card || !window.html2canvas) { _shareImageReady = true; return; }
-  try{
-    const isMobile = window.innerWidth < 768;
-    const canvas = await html2canvas(card, {
-      backgroundColor: '#0e0a1e',
-      scale: isMobile ? 1.5 : 2,
-      useCORS: true,
-      logging: false
-    });
-    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-    _cachedShareImage = new File([blob], 'jeetrack-score.png', {type:'image/png'});
-  }catch(e){ _cachedShareImage = null; }
-  _shareImageReady = true;
-}
-
 async function shareScore(){
   const scoreNum=document.getElementById('cel-score-num')?.textContent||'';
-  const scoreMax=document.getElementById('cel-score-max')?.textContent||'300';
   const examPill=document.getElementById('cel-pill')?.querySelector('span')?.textContent||'';
   const isMains=examPill.toLowerCase().includes('mains');
   const examLabel=isMains?'JEE Mains':'JEE Advanced';
   const examMax=isMains?'300':'360';
   const goal=isMains?getGoalMains():getGoalAdv();
-  const shareUrl='https://jeetrack.vercel.app';
+  const shareUrl='https://jeetrack.in';
   const shareText=
 `🏆 I scored ${scoreNum}/${examMax} in ${examLabel}!
 
@@ -3487,27 +3462,9 @@ ${shareUrl}
 
 #JEE2026 #JEEMains #JEEPreparation #JEETrack`;
 
-  
-  let imageFile = null;
-  if(_shareImageReady){
-    imageFile = _cachedShareImage;
-  } else if(window.html2canvas){
-    
-    const btn=document.querySelector('.cel-share');
-    const origHTML=btn?btn.innerHTML:'';
-    if(btn){btn.innerHTML='<span>Preparing…</span>';btn.disabled=true;}
-    await prepareShareImage();
-    imageFile = _cachedShareImage;
-    if(btn){btn.innerHTML=origHTML;btn.disabled=false;}
-  }
-
   if(navigator.share){
     try{
-      const shareData = {title:`JEETrack — ${examLabel} Goal Crushed! 🏆`, text:shareText, url:shareUrl};
-      if(imageFile && navigator.canShare && navigator.canShare({files:[imageFile]})){
-        shareData.files = [imageFile];
-      }
-      await navigator.share(shareData);
+      await navigator.share({title:`JEETrack — ${examLabel} Goal Crushed! 🏆`, text:shareText, url:shareUrl});
     }catch(e){if(e.name!=='AbortError')fallbackShare(shareText,shareUrl);}
   } else {
     fallbackShare(shareText,shareUrl);
