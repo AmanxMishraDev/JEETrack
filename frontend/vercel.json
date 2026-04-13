@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/faq", "destination": "/faq.html" },
+    { "source": "/((?!sitemap\\.xml|faq\\.html|robots\\.txt|google.*\\.html|icon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
   ]
 }
