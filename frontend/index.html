@@ -182,9 +182,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="slide-progress-bar"><div class="slide-progress-fill" id="slide-fill"></div></div>
       </div>
 
-      
-      <button class="mob-land-cta-btn" id="mob-land-cta" onclick="mobileLandingShowAuth()">Get Started for Free →</button>
-
       <div class="land-stats" style="margin-top:2.5rem">
         <div class="land-stat">
           <div class="land-stat-num">5</div>
@@ -310,6 +307,9 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       </div>
     </div>
   </div>
+
+  <!-- MOBILE FAB - direct child of #landing so it's never clipped -->
+  <button class="mob-land-cta-btn" id="mob-land-cta" onclick="mobileLandingShowAuth()">Get Started for Free →</button>
 
   <!-- FEATURES SECTION -->
   <section id="features" style="padding:5rem 1.5rem;max-width:960px;margin:0 auto">
@@ -2079,7 +2079,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
                 </div>
                 <div>
                   <div style="font-size:13px;font-weight:700;color:var(--tx)">We'd love your feedback!</div>
-                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello!</div>
+                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello 👋</div>
                 </div>
               </div>
               <div style="font-size:12px;color:var(--mu);line-height:1.7">JEETrack is actively being improved. Your feedback directly shapes what gets built next. Don't hesitate — even a one-line message helps!</div>
