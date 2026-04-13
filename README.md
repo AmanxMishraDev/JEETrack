@@ -105,6 +105,8 @@ Cron        pg_cron (Supabase)
 ```
 jeetrack/
 ├── frontend/                     # Static PWA — deployed to Vercel
+│   ├── api/
+│   │   └── config.js             # Serverless function — serves env vars to frontend
 │   ├── index.html                # App shell & markup
 │   ├── styles.css                # All styles
 │   ├── app.js                    # All application logic
@@ -143,12 +145,14 @@ cd JEETrack
 
 ### 3 · Configure the frontend
 
-Open `frontend/app.js` and fill in your credentials at the top:
+Credentials are **never hardcoded** in source code. The frontend fetches them at runtime from a Vercel serverless function (`/api/config`) which reads them from environment variables set in your Vercel dashboard.
 
-```js
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
-```
+Go to your Vercel project → **Settings → Environment Variables** and add:
+
+| Variable | Value |
+|---|---|
+| `SUPABASE_URL` | `https://your-project.supabase.co` |
+| `SUPABASE_ANON_KEY` | `your-anon-key` |
 
 ### 4 · Deploy to Vercel
 
@@ -186,14 +190,23 @@ supabase functions deploy monthly-report
 
 ## 🔐 Environment Variables
 
-| Variable | Where | Description |
-|---|---|---|
-| `GROQ_API_KEY` | Supabase secrets | Groq API key for AI insights |
-| `RESEND_API_KEY` | Supabase secrets | Resend key for email reports |
-| `FROM_EMAIL` | Supabase secrets | Sender address for reports |
-| `APP_URL` | Supabase secrets | Your Vercel deployment URL (for CORS) |
-| `SUPABASE_URL` | Auto-injected | Available inside Edge Functions |
-| `SUPABASE_ANON_KEY` | Auto-injected | Available inside Edge Functions |
+### Vercel Dashboard (Project → Settings → Environment Variables)
+
+| Variable | Description |
+|---|---|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_ANON_KEY` | Your Supabase anon/public key |
+
+These are served to the frontend securely at runtime via the `/api/config` serverless function — credentials are never stored in source code.
+
+### Supabase Secrets (Edge Functions)
+
+| Variable | Description |
+|---|---|
+| `GROQ_API_KEY` | Groq API key for AI insights |
+| `RESEND_API_KEY` | Resend key for email reports |
+| `FROM_EMAIL` | Sender address for reports |
+| `APP_URL` | Your Vercel deployment URL (for CORS) |
 
 ---
 
