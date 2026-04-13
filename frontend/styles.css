@@ -1105,7 +1105,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-btn-primary:hover::before{opacity:1}
 .land-btn-primary:active,.land-btn-ghost:active{transform:scale(.97) translateY(0)}
 
-.land-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1}
+.land-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;height:1px}
 .land-left{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;padding:3rem 4.5rem;overflow:hidden}
 
 .land-grid-bg{
@@ -3951,11 +3951,6 @@ select.fc.adv-fc {
 @keyframes pmoSlideUp { from{opacity:0;transform:translateY(24px) scale(.97)} to{opacity:1;transform:none} }
 @keyframes pmoSheetUp { from{transform:translateY(100%)} to{transform:none} }
 
-/* ============================================================
-   LANDING PAGE — SECTIONS (Features / How it works / About / Footer)
-   ============================================================ */
-
-/* Scroll-reveal base */
 .ls-reveal {
   opacity: 0;
   transform: translateY(32px);
@@ -3968,7 +3963,6 @@ select.fc.adv-fc {
 .ls-reveal-delay-4 { transition-delay: .4s; }
 .ls-reveal-delay-5 { transition-delay: .5s; }
 
-/* Section shared */
 .ls-section {
   max-width: 980px;
   margin: 0 auto;
@@ -3977,7 +3971,6 @@ select.fc.adv-fc {
 }
 .ls-section-center { text-align: center; }
 
-/* Section divider glow */
 .ls-section::before {
   content: '';
   position: absolute;
@@ -3987,7 +3980,6 @@ select.fc.adv-fc {
   pointer-events: none;
 }
 
-/* Pill badge */
 .ls-pill {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 5px 16px;
@@ -4008,7 +4000,6 @@ select.fc.adv-fc {
 .ls-pill-green  { background: rgba(52,211,153,.1);  border: 1px solid rgba(52,211,153,.25);  color: #34d399; }
 .ls-pill-yellow { background: rgba(251,191,36,.1);  border: 1px solid rgba(251,191,36,.25);  color: #fbbf24; }
 
-/* Section heading */
 .ls-h2 {
   font-family: 'Syne', sans-serif;
   font-size: clamp(1.9rem, 4vw, 2.6rem);
@@ -4027,7 +4018,6 @@ select.fc.adv-fc {
   max-width: 500px; margin: 0 auto;
 }
 
-/* ---- FEATURE CARDS ---- */
 .ls-features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -4044,9 +4034,10 @@ select.fc.adv-fc {
   padding: 1.75rem;
   position: relative; overflow: hidden;
   cursor: default;
+  display: flex; flex-direction: column; align-items: flex-start;
   transition: border-color .35s, transform .35s cubic-bezier(.34,1,.64,1), box-shadow .35s;
 }
-/* glow orb inside card */
+
 .ls-card::before {
   content: '';
   position: absolute;
@@ -4088,7 +4079,8 @@ select.fc.adv-fc {
 .ls-icon {
   width: 44px; height: 44px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1.2rem; position: relative; z-index: 1;
+  margin-bottom: 1rem; position: relative; z-index: 1;
+  flex-shrink: 0;
   transition: transform .3s cubic-bezier(.34,1,.64,1);
 }
 .ls-card:hover .ls-icon { transform: scale(1.12) rotate(-4deg); }
@@ -4111,10 +4103,9 @@ select.fc.adv-fc {
 .ls-free-emoji { font-size: 2rem; margin-bottom: .6rem; }
 .ls-free-label { font-weight: 700; color: #a29bfe; margin-bottom: .3rem; font-size: 15px; }
 
-/* ---- HOW IT WORKS ---- */
 .ls-steps { display: flex; flex-direction: column; margin-top: 3rem; }
 .ls-step {
-  display: flex; gap: 1.5rem; align-items: flex-start;
+  display: flex; gap: 1rem; align-items: flex-start;
   padding-bottom: 2.5rem; position: relative;
 }
 .ls-step:last-child { padding-bottom: 0; }
@@ -4139,11 +4130,10 @@ select.fc.adv-fc {
   width: 1px; flex: 1; margin-top: 6px; min-height: 40px;
   background: linear-gradient(180deg, rgba(255,255,255,.1), transparent);
 }
-.ls-step-body { padding-top: 8px; }
+.ls-step-body { padding-top: 6px; }
 .ls-step-title { font-weight: 700; color: #e8e8f0; margin-bottom: .35rem; font-size: 15px; }
 .ls-step-desc  { font-size: 13.5px; color: rgba(255,255,255,.35); line-height: 1.75; }
 
-/* ---- ABOUT ---- */
 .ls-about-box {
   background: rgba(255,255,255,.025);
   border: 1px solid rgba(255,255,255,.07);
@@ -4179,7 +4169,6 @@ select.fc.adv-fc {
 }
 .ls-about-text:last-child { margin-bottom: 0; }
 
-/* ---- FOOTER ---- */
 .ls-footer {
   border-top: 1px solid rgba(255,255,255,.06);
   padding: 2.5rem 2rem;
@@ -4227,7 +4216,6 @@ select.fc.adv-fc {
 .ls-footer-sep { color: rgba(255,255,255,.1); font-size: 12px; }
 .ls-footer-copy { color: rgba(255,255,255,.15); font-size: 11.5px; }
 
-/* ---- CTA BAND ---- */
 .ls-cta-band {
   background: linear-gradient(135deg, rgba(108,92,231,.12), rgba(253,121,168,.08));
   border: 1px solid rgba(162,155,254,.15);
@@ -4275,7 +4263,6 @@ select.fc.adv-fc {
 }
 .ls-cta-btn:active { transform: scale(.97); }
 
-/* Mobile tweaks */
 @media(max-width: 768px) {
   .ls-section { padding: 4rem 1.2rem; }
   .ls-features-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -4283,7 +4270,6 @@ select.fc.adv-fc {
   .ls-cta-band { margin: 0 1rem 4rem; padding: 2.2rem 1.5rem; }
 }
 
-/* Premium free card */
 .ls-free-icon {
   width: 48px; height: 48px; border-radius: 14px;
   background: linear-gradient(135deg, rgba(108,92,231,.2), rgba(162,155,254,.1));
