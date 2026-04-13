@@ -115,15 +115,15 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
   <div class="land-stars" id="land-stars"></div>
   <nav class="land-nav">
-    <div class="land-nav-logo">
+    <a class="land-nav-logo" href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" style="text-decoration:none;color:inherit">
       <div class="land-nav-logo-mark">J</div>
       JEE<span>Track</span>
-    </div>
+    </a>
     <div class="land-nav-links">
-      <a href="#features">Features</a>
-      <a href="#how-it-works">How it works</a>
+      <a href="#features" onclick="landScrollTo('features');return false;">Features</a>
+      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;">How it works</a>
       <a href="/faq">FAQ</a>
-      <a href="#about">About</a>
+      <a href="#about" onclick="landScrollTo('about');return false;">About</a>
     </div>
     <div class="land-nav-cta land-nav-cta-btns">
       <button class="land-btn-ghost land-nav-desktop-only" onclick="landingOpenAuth('login')">Sign In</button>
@@ -411,15 +411,15 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
   <!-- FOOTER -->
   <footer style="border-top:1px solid rgba(255,255,255,.07);padding:2rem 1.5rem;text-align:center">
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1rem">
+    <a href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1rem;text-decoration:none">
       <div style="width:26px;height:26px;background:linear-gradient(135deg,#7c6af7,#a695ff);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;color:#fff">J</div>
-      <span style="font-family:'Syne',sans-serif;font-weight:700;color:#e8e8f0;font-size:.95rem">JEE<span style="color:#a695ff">Track</span></span>
-    </div>
+      <span style="font-family:'Syne',sans-serif;font-weight:700;color:#e8e8f0;font-size:.95rem">JEE<span style="background:linear-gradient(135deg,#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Track</span></span>
+    </a>
     <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem">
-      <a href="#features" style="color:#7a7990;font-size:.85rem;text-decoration:none">Features</a>
-      <a href="#how-it-works" style="color:#7a7990;font-size:.85rem;text-decoration:none">How it works</a>
+      <a href="#features" onclick="landScrollTo('features');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">Features</a>
+      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">How it works</a>
       <a href="/faq" style="color:#7a7990;font-size:.85rem;text-decoration:none">FAQ</a>
-      <a href="#about" style="color:#7a7990;font-size:.85rem;text-decoration:none">About</a>
+      <a href="#about" onclick="landScrollTo('about');return false;" style="color:#7a7990;font-size:.85rem;text-decoration:none">About</a>
     </div>
     <p style="color:#4a4a5a;font-size:.78rem">© 2025 JEETrack · Built for JEE aspirants across India</p>
   </footer>
@@ -2079,7 +2079,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
                 </div>
                 <div>
                   <div style="font-size:13px;font-weight:700;color:var(--tx)">We'd love your feedback!</div>
-                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello 👋</div>
+                  <div style="font-size:11px;color:var(--mu);margin-top:1px">Bug reports, feature requests, or just a hello!</div>
                 </div>
               </div>
               <div style="font-size:12px;color:var(--mu);line-height:1.7">JEETrack is actively being improved. Your feedback directly shapes what gets built next. Don't hesitate — even a one-line message helps!</div>
