@@ -991,7 +991,6 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   position:fixed;inset:0;
   background:#020208;
   z-index:9998;display:flex;flex-direction:column;overflow-y:auto;
-  scroll-snap-type:y mandatory;
 }
 #landing.hidden{display:none!important}
 
@@ -1106,7 +1105,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-btn-primary:hover::before{opacity:1}
 .land-btn-primary:active,.land-btn-ghost:active{transform:scale(.97) translateY(0)}
 
-.land-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;height:1px;min-height:calc(100vh - 68px);scroll-snap-align:start;}
+.land-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;height:1px;min-height:calc(100vh - 68px);}
 .land-left{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;padding:3rem 4.5rem;overflow:hidden}
 
 .land-grid-bg{
@@ -1446,7 +1445,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-right{width:420px}
 }
 @media(max-width:768px){
-  #landing{position:relative;height:auto;flex-direction:column;overflow-y:auto;background:#020208;min-height:100vh;scroll-snap-type:none}
+  #landing{position:relative;height:auto;flex-direction:column;overflow-y:auto;background:#020208;min-height:100vh}
   .land-nav{padding:0 1.2rem;height:58px}
   .land-nav-cta-btns{display:none!important}
   .land-body{flex-direction:column;overflow:visible;background:transparent}
