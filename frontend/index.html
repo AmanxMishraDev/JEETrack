@@ -6,12 +6,69 @@
 <meta name="theme-color" content="#0a0a0f"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<title>JEETrack</title>
+<title>JEETrack — JEE Preparation Tracker | Mock Tests, Syllabus & AI Insights</title>
+<meta name="description" content="JEETrack is the ultimate JEE preparation tracker. Log mock test scores, track study hours, manage your syllabus, clear backlogs, and get AI-powered weekly insights — all in one free app."/>
+<meta name="keywords" content="JEE tracker, JEE preparation app, JEE mock test tracker, JEE Mains tracker, JEE Advanced tracker, JEE syllabus tracker, JEE study planner, JEE score tracker, JEE AI insights, JEE 2025, JEE 2026"/>
+<meta name="author" content="JEETrack"/>
+<link rel="canonical" href="https://jeetrack.in"/>
+
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jeetrack.in"/>
+<meta property="og:title" content="JEETrack — JEE Preparation Tracker | Mock Tests, Syllabus & AI Insights"/>
+<meta property="og:description" content="Track mock test scores, study hours, syllabus progress, and get AI-powered weekly analysis. Built for serious JEE aspirants. Free to use."/>
+<meta property="og:image" content="https://jeetrack.in/icon-512.png"/>
+<meta property="og:site_name" content="JEETrack"/>
+<meta property="og:locale" content="en_IN"/>
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:url" content="https://jeetrack.in"/>
+<meta name="twitter:title" content="JEETrack — JEE Preparation Tracker"/>
+<meta name="twitter:description" content="Track mock test scores, study hours, syllabus progress, and get AI-powered weekly analysis. Built for serious JEE aspirants. Free to use."/>
+<meta name="twitter:image" content="https://jeetrack.in/icon-512.png"/>
+
+<meta name="robots" content="index, follow"/>
+<link rel="sitemap" type="application/xml" href="https://jeetrack.in/sitemap.xml"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "JEETrack",
+  "url": "https://jeetrack.in",
+  "description": "JEETrack is a free JEE preparation tracker for mock test scores, study hours, syllabus management, and AI-powered weekly insights.",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "featureList": [
+    "JEE Mains & Advanced mock test tracking",
+    "Subject-wise score analytics",
+    "Study hours heatmap",
+    "Full syllabus tracker",
+    "Backlog management",
+    "AI weekly insights"
+  ]
+}
+</script>
+
+<link rel="icon" type="image/svg+xml" href="logo.svg"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+window._chartJsUrl='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+window._jsPdfUrl='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+window.ensureChartJs=function(){return loadScript(window._chartJsUrl);};
+window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
+</script>
 
   <link rel="stylesheet" href="styles.css">
 
@@ -65,6 +122,7 @@
     <div class="land-nav-links">
       <a href="#">Features</a>
       <a href="#">How it works</a>
+      <a href="/faq">FAQ</a>
       <a href="#">About</a>
     </div>
     <div class="land-nav-cta land-nav-cta-btns">
@@ -4359,7 +4417,8 @@ function fltSubjDd(exam,val){
   else renderAdv();
 }
 
-function renderOverview(){
+function renderOverview(){ensureChartJs().then(function(){_renderOverview();});}
+function _renderOverview(){
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>b.date.localeCompare(a.date));
   const adv=S.tests.filter(t=>t.exam==='advanced').sort((a,b)=>b.date.localeCompare(a.date));
   const ml=mains[0];
@@ -4489,7 +4548,8 @@ function renderOvWeek(){
   }
 }
 
-function renderMains(){
+function renderMains(){ensureChartJs().then(function(){_renderMains();});}
+function _renderMains(){
   const tests=getTests('mains');const m=M.mn;
   const sf=F.mains.subj;
   const scoreList=sf==='all'?tests.map(t=>scoreVal(t,m,null)):tests.map(t=>scoreVal(t,m,sf));
@@ -4598,7 +4658,8 @@ function renderMnUnified(){
   }
 }
 
-function renderAdv(){
+function renderAdv(){ensureChartJs().then(function(){_renderAdv();});}
+function _renderAdv(){
   const tests=getTests('advanced');const m=M.adv;
   const sf=F.advanced.subj;
   const scoreList=sf==='all'?tests.map(t=>scoreVal(t,m,null)):tests.map(t=>scoreVal(t,m,sf));
@@ -4696,7 +4757,8 @@ function renderAdvUnified(){
   }
 }
 
-function renderCmp(){
+function renderCmp(){ensureChartJs().then(function(){_renderCmp();});}
+function _renderCmp(){
   const m=M.cmp;
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>a.date.localeCompare(b.date));
   const adv=S.tests.filter(t=>t.exam==='advanced').sort((a,b)=>a.date.localeCompare(b.date));
