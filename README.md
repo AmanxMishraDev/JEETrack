@@ -13,7 +13,7 @@
 
 <br/>
 
-[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.vercel.app-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.vercel.app)
+[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.in-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.in)
 
 <br/>
 
@@ -262,7 +262,7 @@ git checkout -b feature/your-feature-name
 <br/>
 <br/>
 
-[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.vercel.app-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.vercel.app)
+[![Launch App](https://img.shields.io/badge/⚡%20Launch%20App-jeetrack.in-6366f1?style=for-the-badge&logoColor=white)](https://jeetrack.in)
 
 <br/>
 

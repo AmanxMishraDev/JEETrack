@@ -12,24 +12,33 @@ const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-const ALLOWED_ORIGIN = Deno.env.get("APP_URL") || "https://jeetracklive.netlify.app";
+const ALLOWED_ORIGINS = [
+  Deno.env.get("APP_URL") || "https://jeetrack.in",
+  "https://jeetrack.in",
+  "https://www.jeetrack.in",
+  "https://jeetrack.vercel.app",
+];
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-  "Access-Control-Allow-Headers": "authorization, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Content-Type": "application/json",
-};
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Headers": "authorization, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
+  };
+}
 
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { headers: getCorsHeaders(req) });
   }
 
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405, headers: corsHeaders,
+      status: 405, headers: getCorsHeaders(req),
     });
   }
 
@@ -37,7 +46,7 @@ serve(async (req) => {
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: corsHeaders,
+      status: 401, headers: getCorsHeaders(req),
     });
   }
 
@@ -47,7 +56,7 @@ serve(async (req) => {
   const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
   if (authErr || !user) {
     return new Response(JSON.stringify({ error: "Invalid session. Please sign in again." }), {
-      status: 401, headers: corsHeaders,
+      status: 401, headers: getCorsHeaders(req),
     });
   }
 
@@ -61,12 +70,12 @@ serve(async (req) => {
     }
     if (prompt.length > 8000) {
       return new Response(JSON.stringify({ error: "Prompt too long" }), {
-        status: 400, headers: corsHeaders,
+        status: 400, headers: getCorsHeaders(req),
       });
     }
   } catch {
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
-      status: 400, headers: corsHeaders,
+      status: 400, headers: getCorsHeaders(req),
     });
   }
 
@@ -100,18 +109,18 @@ serve(async (req) => {
       console.error("Groq error:", errBody);
       return new Response(
         JSON.stringify({ error: { message: "AI service unavailable. Try again." } }),
-        { status: 502, headers: corsHeaders }
+        { status: 502, headers: getCorsHeaders(req) }
       );
     }
 
     const data = await groqRes.json();
-    return new Response(JSON.stringify(data), { headers: corsHeaders });
+    return new Response(JSON.stringify(data), { headers: getCorsHeaders(req) });
 
   } catch (e) {
     console.error("Unexpected error:", e);
     return new Response(
       JSON.stringify({ error: { message: "Something went wrong. Please try again." } }),
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: getCorsHeaders(req) }
     );
   }
 });
