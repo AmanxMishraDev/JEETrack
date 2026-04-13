@@ -4220,6 +4220,11 @@ select.fc.adv-fc {
 .ls-footer-sep { color: rgba(255,255,255,.1); font-size: 12px; }
 .ls-footer-copy { color: rgba(255,255,255,.15); font-size: 11.5px; }
 
+.ls-cta-section {
+  width: 100%;
+  padding: 0 2rem 5rem;
+  box-sizing: border-box;
+}
 .ls-cta-band {
   background: linear-gradient(135deg, rgba(108,92,231,.12), rgba(253,121,168,.08));
   border: 1px solid rgba(162,155,254,.15);
@@ -4228,8 +4233,8 @@ select.fc.adv-fc {
   text-align: center;
   position: relative; overflow: hidden;
   max-width: 700px;
-  width: calc(100% - 4rem);
-  margin: 0 auto 5rem;
+  width: 100%;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 .ls-cta-band::before {
@@ -4272,7 +4277,8 @@ select.fc.adv-fc {
   .ls-section { padding: 4rem 1.2rem; }
   .ls-features-grid { grid-template-columns: 1fr; gap: 10px; }
   .ls-about-box { padding: 2rem 1.5rem; }
-  .ls-cta-band { width: calc(100% - 2rem); padding: 2.2rem 1.5rem; }
+  .ls-cta-section { padding: 0 1rem 4rem; }
+  .ls-cta-band { padding: 2.2rem 1.5rem; }
 }
 
 .ls-free-icon {
