@@ -1,8 +1,4 @@
-// ============================================================
-// Supabase credentials are loaded at runtime from /api/config
-// Set SUPABASE_URL and SUPABASE_ANON_KEY in your Vercel dashboard
-// under Project → Settings → Environment Variables.
-// ============================================================
+
 
 let SUPABASE_URL = null;
 let SUPABASE_ANON_KEY = null;
@@ -11,29 +7,22 @@ let sb = null;
 let currentUser = null;
 let isSaving = false;
 let saveQueue = false;
-let _appInitialized = false; // prevents getSession + onAuthStateChange SIGNED_IN both calling showApp
+let _appInitialized = false; 
 
-// Decide whether onboarding should be shown.
-// Rules:
-//   - DB loaded and onboarding_done === true  → never show
-//   - DB loaded and onboarding_done === false → always show (trigger guarantees row exists)
-//   - DB error / unreachable                 → DON'T show; send to app safely
-// Note: 'new_user' (no row) should never happen anymore since the Postgres trigger
-// automatically creates a profile row with onboarding_done=false on every signup.
 function _shouldShowOnboarding(userId, profileStatus) {
-  if (profileStatus === 'error' || profileStatus === 'no_client') return false; // DB unreachable — don't block user
-  if (userProfile.onboarding_done) return false;  // DB confirmed done
-  return true;                                     // Row exists, onboarding not done
+  if (profileStatus === 'error' || profileStatus === 'no_client') return false; 
+  if (userProfile.onboarding_done) return false;  
+  return true;                                     
 }
 
 async function initSupabase(){
-  // Safety net: force dismiss splash after 6s no matter what
+  
   let _authResolved = false;
   const _splashSafetyTimer = setTimeout(() => {
     if(!_authResolved) showAuthScreen();
   }, 6000);
 
-  // ── Load credentials from Vercel serverless config endpoint ──
+  
   try {
     const res = await fetch('/api/config');
     if(res.ok){
@@ -46,7 +35,7 @@ async function initSupabase(){
   }
 
   if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
-    // Offline / demo mode — use localStorage only
+    
     const saved = localStorage.getItem('jt3');
     if(saved){ try{ const p=JSON.parse(saved); if(p&&!p.backlogStreak||p.backlogStreak>365) p.backlogStreak=0; if(p&&(!p.backlogBestStreak||p.backlogBestStreak>365)) p.backlogBestStreak=0; S=p; }catch(e){} }
     _authResolved = true;
@@ -63,12 +52,12 @@ async function initSupabase(){
       detectSessionInUrl: true
     }
   });
-  // Check existing session first (for page refresh)
+  
   sb.auth.getSession().then(({ data: { session } }) => {
     _authResolved = true;
     clearTimeout(_splashSafetyTimer);
     if(session?.user){
-      if(_appInitialized) return; // onAuthStateChange already handled this
+      if(_appInitialized) return; 
       _appInitialized = true;
       currentUser = session.user;
       loadUserData().then(async () => {
@@ -79,7 +68,7 @@ async function initSupabase(){
           document.getElementById('landing').classList.add('hidden');
           showOnboarding();
         } else {
-          // Cache done state locally so next load on this device is instant
+          
           const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showApp(name, session.user.email);
           registerPushNotifications();
@@ -90,7 +79,7 @@ async function initSupabase(){
       setTimeout(initSlideshow, 100);
     }
   });
-  // Listen for future auth changes
+  
   sb.auth.onAuthStateChange((event, session) => {
     if(event === 'SIGNED_OUT'){
       _appInitialized = false;
@@ -99,7 +88,7 @@ async function initSupabase(){
       showAuthScreen();
       setTimeout(initSlideshow, 100);
     } else if(event === 'SIGNED_IN' && session?.user){
-      if(_appInitialized) return; // getSession already handled this
+      if(_appInitialized) return; 
       _appInitialized = true;
       currentUser = session.user;
       loadUserData().then(async () => {
@@ -119,7 +108,6 @@ async function initSupabase(){
   });
 }
 
-// ===== AUTH TAB =====
 let authTab = 'login';
 function switchAuthTab(tab){
   authTab = tab;
@@ -128,12 +116,12 @@ function switchAuthTab(tab){
   if(authBtn) authBtn.textContent = tab==='login' ? 'Sign In' : 'Create Account';
   const nameField = document.getElementById('auth-name-field');
   if(nameField) nameField.style.display = tab==='signup' ? '' : 'none';
-  // Update landing form title/sub
+  
   const ft = document.getElementById('land-form-title');
   const fs = document.getElementById('land-form-sub');
   if(ft) ft.textContent = tab==='login' ? 'Welcome back' : 'Create your account';
   if(fs) fs.textContent = tab==='login' ? 'Sign in to continue your JEE prep' : 'Start your JEE tracking journey';
-  // Show forgot password only on login tab
+  
   const fw=document.getElementById('auth-forgot-wrap');
   if(fw)fw.style.display=tab==='login'?'block':'none';
   hideAuthMsg();
@@ -181,11 +169,11 @@ async function doAuth(){
     } else {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
       if(error) throw error;
-      // onAuthStateChange will handle the redirect
+      
     }
   }catch(e){
     let msg = e.message || 'Something went wrong. Try again.';
-    // Clean up verbose Supabase password policy messages
+    
     if (msg.toLowerCase().includes('password') && (msg.toLowerCase().includes('character') || msg.toLowerCase().includes('least') || msg.toLowerCase().includes('uppercase') || msg.toLowerCase().includes('lowercase') || msg.toLowerCase().includes('symbol') || msg.toLowerCase().includes('number') || msg.toLowerCase().includes('digit'))) {
       msg = 'Password must be 6+ chars with a number & symbol.';
     }
@@ -203,20 +191,20 @@ async function doGoogleAuth(){
 
 async function signOut(){
   if(sb){
-    await sb.auth.signOut({ scope: 'local' }); // local scope — signs out this device only
+    await sb.auth.signOut({ scope: 'local' }); 
   }
-  // Clear per-user localStorage data before nulling currentUser
+  
   if(currentUser?.id){
     const uid = currentUser.id;
     localStorage.removeItem('jt_ai_insights_'+uid);
     localStorage.removeItem('jt_goal_mains_'+uid);
     localStorage.removeItem('jt_goal_adv_'+uid);
   }
-  // Also clear legacy non-user-specific keys just in case
+  
   localStorage.removeItem('jt_ai_insights');
   localStorage.removeItem('jt_goal_mains');
   localStorage.removeItem('jt_goal_adv');
-  // Clear AI insights DOM so the next account starts fresh
+  
   const insContent = document.getElementById('insights-content');
   const insEmpty   = document.getElementById('insights-empty');
   if(insContent){ insContent.innerHTML=''; insContent.style.display='none'; }
@@ -239,7 +227,7 @@ function showAuthScreen(){
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='none';
-  // Reset URL to /login so the browser reflects the logged-out state
+  
   history.replaceState({page:'login'}, '', '/login');
   document.title = 'JEETrack — Sign In';
   setTimeout(initLandingStarField, 50);
@@ -261,48 +249,48 @@ function showApp(name, email){
   const mobAv=document.getElementById('mob-avatar');
   if(sbAv)document.getElementById('sb-avatar-initials').textContent=initials;
   if(mobAv)mobAv.textContent=initials;
-  // Sync avatar menu header
+  
   const elName=document.getElementById('avMenuName');
   const elEmail=document.getElementById('avMenuEmail');
   const elInit=document.getElementById('avMenuInitials');
   if(elName)elName.textContent=displayName;
   if(elEmail)elEmail.textContent=email||'';
   if(elInit)elInit.textContent=initials;
-  // Load avatar from localStorage first, then fall back to Supabase URL
+  
   const localAvatar = localStorage.getItem('jt_avatar');
   if(localAvatar){
     _applyAvatarImage(localAvatar);
   } else if(userProfile.avatar_url){
     _applyAvatarImage(userProfile.avatar_url);
   }
-  // Update settings fields
+  
   if(document.getElementById('settings-name-display'))document.getElementById('settings-name-display').textContent=displayName;
   if(document.getElementById('settings-email-display'))document.getElementById('settings-email-display').textContent=email||'';
   if(document.getElementById('settings-email-ro'))document.getElementById('settings-email-ro').textContent=email||'';
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
   setDashGreeting(displayName.split(' ')[0]);
-  // Navigate to the page matching the current URL, or default to dashboard
-  // Mark all pages dirty so data loaded from Supabase is always reflected immediately
+  
+  
   if(typeof navMarkDirty === 'function') navMarkDirty(null);
   updateBadges();checkHWTNotifs();if(typeof setQuote==='function')setQuote();
-  // Only redirect to /dashboard when actually on an auth route.
-  // Do NOT redirect just because history.state is null — that always happens on a hard
-  // refresh and was causing /mains, /hours etc. to be overwritten with /dashboard.
+  
+  
+  
   const _authPaths = ['/login', '/onboarding', '/'];
   const _currentPath = window.location.pathname;
   if (_authPaths.includes(_currentPath)) {
     history.replaceState({page: 'overview'}, '', '/dashboard');
   } else if (!history.state) {
-    // Restore state object for current path without changing the URL
+    
     history.replaceState({page: _routeMap[_currentPath] || 'overview'}, '', _currentPath);
   }
   _handleRoute();
   localStorage.removeItem('groq_key');
   if(localStorage.getItem('notif_enabled')==='1')document.getElementById('notif-bell-btn')?.classList.add('active');
-  // Sync notification toggles in settings
+  
   const snt=document.getElementById('settings-notif-toggle');
   if(snt) snt.checked = localStorage.getItem('notif_enabled')==='1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-  // Show welcome/permissions modal only on dashboard page
+  
   setTimeout(() => {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id === 'page-overview') {
@@ -322,7 +310,6 @@ function setDashGreeting(firstName){
   if(del) del.textContent=`${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 
-// ===== PROFILE MODAL =====
 function openProfile(){
   if(window.innerWidth>768) closeSidebar();
   const name = document.getElementById('sb-username')?.textContent || '';
@@ -331,7 +318,7 @@ function openProfile(){
   document.getElementById('profile-avatar-lg').textContent = initials;
   document.getElementById('profile-name-disp').textContent = name || 'Guest';
   document.getElementById('profile-email-disp').textContent = email || 'Offline mode';
-  // Stats
+  
   const totalH = S.hours.reduce((a,b)=>a+b.total,0);
   const mains = S.tests.filter(t=>t.exam==='mains');
   const lastM = mains.length ? mains[mains.length-1] : null;
@@ -348,7 +335,7 @@ function openProfile(){
       <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--am)">${S.backlogStreak}d</div>
       <div style="font-size:9.5px;color:var(--mu);margin-top:2px">BL Streak</div>
     </div>`;
-  // Notification button state
+  
   const nb = document.getElementById('notif-toggle-btn');
   const isOn = localStorage.getItem('notif_enabled')==='1';
   const BELL_SVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
@@ -358,7 +345,6 @@ function openProfile(){
   openM('profile');
 }
 
-// ── EMAIL REPORT PREFERENCE ──
 async function toggleEmailReport(enabled){
   const track=document.getElementById('email-report-track');
   const thumb=document.getElementById('email-report-thumb');
@@ -394,7 +380,7 @@ async function loadEmailReportPref(){
     if(thumb)thumb.style.transform=isOn?'translateX(18px)':'translateX(0)';
   }catch(e){}
 }
-// Update last_active_at on every save
+
 async function updateActivity(){
   if(!sb||!currentUser)return;
   try{
@@ -406,13 +392,12 @@ async function updateActivity(){
   }catch(e){}
 }
 
-// ===== SYLLABUS MIGRATION =====
 function migrateSyllabus(saved){
   const subjs=['physics','chemistry','maths'];
   subjs.forEach(s=>{
     const canonical=CANONICAL_SYLLABUS[s].map(c=>({...c}));
     const old=saved.syllabus?.[s]||[];
-    // Build lookup by name (lowercased) for progress carry-over
+    
     const oldByName={};
     old.forEach(c=>{ oldByName[c.name.toLowerCase().trim()]={theory:c.theory||false,practice:c.practice||false}; });
     canonical.forEach(c=>{
@@ -424,7 +409,6 @@ function migrateSyllabus(saved){
   return saved;
 }
 
-// ===== DEFAULT STATE =====
 function getDefaultState(){
   return{tests:[],hours:[],backlogs:[],todos:[],upcoming:[],
     syllabus:JSON.parse(JSON.stringify(CANONICAL_SYLLABUS)),
@@ -433,7 +417,6 @@ function getDefaultState(){
     subjBestStreaks:{physics:0,chemistry:0,maths:0},notifiedHWT:[],hwtDismissed:[]};
 }
 
-// ===== LOAD FROM SUPABASE =====
 async function loadUserData(){
   if(!sb || !currentUser){
     const saved = localStorage.getItem('jt3');
@@ -473,9 +456,9 @@ async function loadUserData(){
       S.lastBLClear = streaks.data.last_clear;
       S.subjStreaks = streaks.data.subj_streaks||{physics:0,chemistry:0,maths:0};
       S.subjBestStreaks = streaks.data.subj_best_streaks||{physics:0,chemistry:0,maths:0};
-      // Load cross-device HWT dismissed list
+      
       S.hwtDismissed = streaks.data.hwt_dismissed||[];
-      // Sync into localStorage cache so checkHWTNotifs() reads it instantly
+      
       try{
         const cacheKey='jt_hwt_dismissed_'+uid;
         const localArr=JSON.parse(localStorage.getItem(cacheKey)||'[]');
@@ -491,9 +474,8 @@ async function loadUserData(){
   }
 }
 
-// ===== SAVE =====
 async function save(){
-  // Clamp streaks before saving
+  
   if(S.backlogStreak > 365) S.backlogStreak = 0;
   if(S.backlogBestStreak > 365) S.backlogBestStreak = 0;
   localStorage.setItem('jt3', JSON.stringify(S));
@@ -522,7 +504,6 @@ async function dbDelete(table, id){
   try{ await sb.from(table).delete().eq('id',id).eq('user_id',currentUser.id); }catch(e){}
 }
 
-// ===== PDF EXPORT (dark theme) =====
 async function exportPDF(){
   toast('Generating PDF…', 'saving');
   const { jsPDF } = window.jspdf;
@@ -531,11 +512,11 @@ async function exportPDF(){
   const dateStr = new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
   const userName = document.getElementById('sb-username')?.textContent?.trim() || 'Student';
 
-  // Dark background on all pages
+  
   const bgPage = () => { doc.setFillColor(10,10,15); doc.rect(0,0,W,297,'F'); };
   bgPage();
 
-  // Header
+  
   doc.setFillColor(17,17,24);
   doc.rect(0,0,W,28,'F');
   doc.setDrawColor(124,106,247,0.4);
@@ -572,7 +553,7 @@ async function exportPDF(){
     y += 7;
   };
 
-  // Scores
+  
   hd('Mock Test Performance', [124,106,247]);
   const mains=S.tests.filter(t=>t.exam==='mains'); const adv=S.tests.filter(t=>t.exam==='advanced');
   rw('Total Mains Tests', mains.length);
@@ -581,7 +562,7 @@ async function exportPDF(){
   if(adv.length){ const l=adv[adv.length-1]; rw('Latest Advanced',`${l.total}/${l.max}`,[166,149,255]); }
   y += 4;
 
-  // Hours
+  
   hd('Study Hours', [96,165,250]);
   const tH=S.hours.reduce((a,b)=>a+b.total,0), tL=S.hours.reduce((a,b)=>a+b.lecture,0), tP=S.hours.reduce((a,b)=>a+b.practice,0), tR=S.hours.reduce((a,b)=>a+b.revision,0);
   rw('Total Hours Logged', `${tH.toFixed(1)}h`, [96,165,250]);
@@ -590,7 +571,7 @@ async function exportPDF(){
   ['physics','chemistry','maths'].forEach(s => rw(s[0].toUpperCase()+s.slice(1), `${S.hours.filter(h=>h.subject===s).reduce((a,b)=>a+b.total,0).toFixed(1)}h`));
   y += 4;
 
-  // Syllabus
+  
   hd('Syllabus Progress', [52,211,153]);
   const allChs=['physics','chemistry','maths'].flatMap(s=>S.syllabus[s]||[]);
   const done=allChs.filter(c=>c.theory&&c.practice).length;
@@ -598,14 +579,14 @@ async function exportPDF(){
   [{s:'physics',c:[96,165,250]},{s:'chemistry',c:[52,211,153]},{s:'maths',c:[251,191,36]}].forEach(({s,c})=>{ const ch=S.syllabus[s]||[]; const d=ch.filter(x=>x.theory&&x.practice).length; pb(s[0].toUpperCase()+s.slice(1), ch.length?Math.round(d/ch.length*100):0, c); });
   y += 4;
 
-  // Streaks
+  
   hd('Streaks & Tasks', [251,191,36]);
   rw('No-Backlog Streak',`${S.backlogStreak} days`,[251,191,36]);
   rw('Best Streak',`${S.backlogBestStreak} days`);
   rw('Pending Backlogs', S.backlogs.filter(b=>!b.done).length);
   rw('Pending To-Dos', S.todos.filter(t=>!t.done).length);
 
-  // Footer
+  
   const pgs = doc.internal.getNumberOfPages();
   for(let i=1;i<=pgs;i++){
     doc.setPage(i);
@@ -617,21 +598,20 @@ async function exportPDF(){
   toast('PDF downloaded ✓', 'success');
 }
 
-// ===== PUSH NOTIFICATIONS =====
 async function registerPushNotifications(){
   if(!('serviceWorker' in navigator) || !('Notification' in window)) return;
   try{
     const reg = await navigator.serviceWorker.register('sw.js');
-    // IMPORTANT: Never auto-prompt for permission here — this runs on every login/signup.
-    // Only proceed silently if permission is already granted by the user.
+    
+    
     if(Notification.permission !== 'granted') return;
     localStorage.setItem('notif_enabled','1');
     document.getElementById('notif-bell-btn')?.classList.add('active');
-    // Update profile button if open
+    
     const nb2=document.getElementById('notif-toggle-btn');
     const BELL_SVG2='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
     if(nb2){nb2.innerHTML=BELL_SVG2+' Notifications On';nb2.classList.add('notif-btn-on');}
-    // Test-tomorrow reminder
+    
     const tmr=new Date(); tmr.setDate(tmr.getDate()+1); const tmrStr=tmr.toISOString().split('T')[0];
     const tmrTests=S.upcoming.filter(t=>t.date===tmrStr);
     if(tmrTests.length) reg.showNotification('JEETrack — Test Tomorrow! 📋',{body:`${tmrTests.length} test${tmrTests.length>1?'s':''} scheduled tomorrow. Be prepared!`,icon:'icon-192.png',tag:'test-reminder',vibrate:[200,100,200]});
@@ -639,7 +619,7 @@ async function registerPushNotifications(){
     if(pendTodos>0) reg.showNotification('JEETrack — Tasks Pending ✅',{body:`You have ${pendTodos} to-do task${pendTodos>1?'s':''} pending. Stay on track!`,icon:'icon-192.png',tag:'todo-reminder'});
     const pendBL=S.backlogs.filter(b=>!b.done).length;
     if(pendBL>0) reg.showNotification('JEETrack — Backlogs Pending 📌',{body:`${pendBL} backlog item${pendBL>1?'s':''} still pending. Clear them today!`,icon:'icon-192.png',tag:'backlog-reminder'});
-    // Daily 8 PM reminder
+    
     const now2=new Date(), r8=new Date(); r8.setHours(20,0,0,0); if(r8<=now2) r8.setDate(r8.getDate()+1);
     setTimeout(function remind(){
       if(localStorage.getItem('notif_enabled')==='1' && Notification.permission==='granted'){
@@ -655,7 +635,7 @@ async function registerPushNotifications(){
 async function toggleNotifications(){
   if(!('Notification' in window)){
     toast('Notifications not supported on this browser', 'warning');
-    // Revert checkbox to reflect reality
+    
     const snt = document.getElementById('settings-notif-toggle');
     if (snt) snt.checked = false;
     return;
@@ -668,21 +648,21 @@ async function toggleNotifications(){
   const BELL_OFF='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Enable Notifications';
 
   if(isOn){
-    // Turn OFF
+    
     localStorage.removeItem('notif_enabled');
     document.getElementById('notif-bell-btn')?.classList.remove('active');
     if(nb){nb.innerHTML=BELL_OFF;nb.classList.remove('notif-btn-on');}
     if(snt) snt.checked = false;
     toast('Notifications disabled', 'info');
   } else {
-    // Turn ON — must request browser permission exactly like the welcome modal does
+    
     if(Notification.permission === 'denied'){
       toast('Notifications blocked — enable in browser settings', 'warning');
-      if(snt) snt.checked = false; // revert — can't enable while blocked
+      if(snt) snt.checked = false; 
       return;
     }
 
-    if(snt) snt.disabled = true; // prevent double-clicks while prompting
+    if(snt) snt.disabled = true; 
 
     const perm = await Notification.requestPermission();
 
@@ -690,7 +670,7 @@ async function toggleNotifications(){
 
     if(perm === 'granted'){
       localStorage.setItem('notif_enabled', '1');
-      // Register service worker
+      
       try { await navigator.serviceWorker.register('sw.js'); } catch(e) {}
       document.getElementById('notif-bell-btn')?.classList.add('active');
       const BELL_SVG2 = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
@@ -698,7 +678,7 @@ async function toggleNotifications(){
       if(snt) snt.checked = true;
       toast('Notifications enabled 🔔', 'success');
     } else {
-      // User dismissed or denied — revert checkbox
+      
       localStorage.removeItem('notif_enabled');
       if(nb){nb.innerHTML=BELL_OFF;nb.classList.remove('notif-btn-on');}
       if(snt) snt.checked = false;
@@ -707,10 +687,6 @@ async function toggleNotifications(){
   }
 }
 
-
-// ══════════════════════════════════════════════
-// USER PROFILE STATE
-// ══════════════════════════════════════════════
 let userProfile = {
   username: '', class_year: '', study_mode: '', coaching: '',
   target_year: '', avatar_url: '', onboarding_done: false
@@ -724,17 +700,17 @@ async function loadUserProfile() {
       .eq('user_id', currentUser.id).single();
     if (data) {
       userProfile = { ...userProfile, ...data };
-      // Cache target year so countdown uses correct year even before profile fully loads
+      
       if (data.target_year) localStorage.setItem('jt_target_year', data.target_year);
-      // Sync email toggle in settings
+      
       const et = document.getElementById('settings-email-toggle');
       if (et) et.checked = data.email_reports === 'monthly';
-      // Sync goals from Supabase into local cache (Supabase is source of truth)
+      
       if (data.goal_mains) localStorage.setItem(_goalKey('goal_mains'), data.goal_mains);
       if (data.goal_adv)   localStorage.setItem(_goalKey('goal_adv'),   data.goal_adv);
       return 'loaded';
     }
-    // No row found — brand new user who hasn't completed onboarding yet
+    
     if (error?.code === 'PGRST116') return 'new_user';
     return 'error';
   } catch(e) { return 'error'; }
@@ -753,12 +729,8 @@ async function saveUserProfile(fields) {
   } catch(e) { toast('Could not save — check connection', 'error'); }
 }
 
-// ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-// WELCOME / PERMISSIONS MODAL
-// ══════════════════════════════════════════════
 async function checkWelcomeModal() {
-  // Only show if at least one permission is missing
+  
   const notifOn = localStorage.getItem('notif_enabled') === '1' && Notification.permission === 'granted';
   let emailOn = false;
   if (sb && currentUser) {
@@ -767,20 +739,20 @@ async function checkWelcomeModal() {
       emailOn = data?.email_reports === 'monthly';
     } catch(e) {}
   }
-  // If both are already on, never show
+  
   if (notifOn && emailOn) return;
 
-  // Clean up legacy onboarding flag if present
+  
   localStorage.removeItem('jt_show_perm_after_onboarding');
 
-  // Always show if any permission is missing — every boot, every login, every signup
+  
   _openWelcomeModal(notifOn, emailOn);
 }
 
 function _openWelcomeModal(notifOn, emailOn) {
   const mo = document.getElementById('modal-welcome');
   if (!mo) return;
-  // Start at the first incomplete step
+  
   const startStep = notifOn ? 2 : 1;
   _wmGoStep(startStep);
   mo.classList.add('open');
@@ -809,7 +781,7 @@ async function welcomeEnableNotif() {
     return;
   }
 
-  // If already denied by browser, inform user and skip
+  
   if (Notification.permission === 'denied') {
     if (btn) { btn.disabled = false; btn.innerHTML = '🚫 Blocked by browser'; }
     toast('Notifications blocked — enable in browser settings', 'warning');
@@ -820,7 +792,7 @@ async function welcomeEnableNotif() {
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
     localStorage.setItem('notif_enabled', '1');
-    // Register SW and activate bell
+    
     try {
       await navigator.serviceWorker.register('sw.js');
     } catch(e) {}
@@ -833,7 +805,7 @@ async function welcomeEnableNotif() {
     toast('Notifications enabled 🔔', 'success');
     setTimeout(() => _wmGoStep(2), 500);
   } else {
-    // User dismissed or denied during prompt
+    
     if (btn) { btn.disabled = false; btn.textContent = 'Blocked — skip'; }
     localStorage.removeItem('notif_enabled');
     toast('Permission denied — enable in browser settings', 'warning');
@@ -853,28 +825,26 @@ async function welcomeEnableEmail() {
 function closeWelcomeModal() {
   const mo = document.getElementById('modal-welcome');
   if (mo) mo.classList.remove('open');
-  // Reset for next time
+  
   const nb = document.getElementById('wm-notif-btn');
   const eb = document.getElementById('wm-email-btn');
   if (nb) { nb.disabled = false; nb.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Enable'; }
   if (eb) { eb.disabled = false; eb.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Enable'; }
 }
 
-// LANDING PAGE — PREMIUM STAR FIELD + ANIMATIONS
-// ══════════════════════════════════════════════
 function initLandingStarField() {
   const container = document.getElementById('land-stars');
   if (!container) return;
   container.innerHTML = '';
   const count = 90;
-  // Glow color palette for variety
+  
   const glowColors = [
-    'rgba(162,155,254,.95)', // purple
-    'rgba(253,121,168,.85)', // pink
-    'rgba(96,165,250,.85)',  // blue
-    'rgba(52,211,153,.75)',  // teal
-    'rgba(251,191,36,.75)',  // amber
-    'rgba(255,255,255,.9)',  // white
+    'rgba(162,155,254,.95)', 
+    'rgba(253,121,168,.85)', 
+    'rgba(96,165,250,.85)',  
+    'rgba(52,211,153,.75)',  
+    'rgba(251,191,36,.75)',  
+    'rgba(255,255,255,.9)',  
   ];
   for (let i = 0; i < count; i++) {
     const star = document.createElement('div');
@@ -886,7 +856,7 @@ function initLandingStarField() {
     const dur = 3 + Math.random() * 6;
     const minO = 0.05 + Math.random() * 0.15;
     const maxO = 0.3 + Math.random() * 0.6;
-    // Larger stars get stronger glow; tiny stars minimal glow
+    
     const glowSize = size > 1.5 ? (2 + size * 1.8).toFixed(1) : (1 + size).toFixed(1);
     const gc = glowColors[Math.floor(Math.random() * glowColors.length)];
     star.style.cssText = `
@@ -899,29 +869,27 @@ function initLandingStarField() {
   }
 }
 
-// LANDING PAGE SLIDESHOW
-// ══════════════════════════════════════════════
 let slideIdx = 0, slideTimer = null, slideInterval = null;
 const SLIDE_DURATION = 4500;
 
 function initSlideshow() {
   const wrap = document.getElementById('slides-wrap');
   if (!wrap) return;
-  // Clear any existing timers
+  
   if (slideTimer) { clearTimeout(slideTimer); slideTimer = null; }
   if (slideInterval) { clearInterval(slideInterval); slideInterval = null; }
   wrap.querySelectorAll('.slide').forEach(s => { s.classList.remove('active'); s.classList.remove('exiting'); });
   slideIdx = 0;
-  // Activate first slide immediately
+  
   const slides = wrap.querySelectorAll('.slide');
   const dots = document.querySelectorAll('#slide-dots .slide-dot');
   if (slides.length) {
     slides[0].classList.add('active');
     dots.forEach((d, i) => d.classList.toggle('active', i === 0));
   }
-  // Start progress bar
+  
   _startProgressBar();
-  // Use setInterval for reliable auto-advance (not affected by page visibility issues)
+  
   slideInterval = setInterval(() => {
     goSlide(slideIdx + 1, true);
   }, SLIDE_DURATION);
@@ -945,35 +913,31 @@ function goSlide(n, fromAuto) {
   n = ((n % slides.length) + slides.length) % slides.length;
   if (n === slideIdx && fromAuto) return;
 
-  // Deactivate old with exit animation
+  
   slides[slideIdx]?.classList.remove('active');
-  // Activate new
+  
   slides[n].classList.add('active');
   dots.forEach((d, i) => d.classList.toggle('active', i === n));
   slideIdx = n;
 
-  // Reset progress bar
+  
   _startProgressBar();
 
-  // If manual click: reset the interval so we don't double-advance
+  
   if (!fromAuto) {
     if (slideInterval) { clearInterval(slideInterval); }
     slideInterval = setInterval(() => { goSlide(slideIdx + 1, true); }, SLIDE_DURATION);
   }
 }
 
-// keep for backward compat
 function _activateSlide(n) { goSlide(n, false); }
 
-// ══════════════════════════════════════════════
-// LANDING AUTH PANEL TOGGLE
-// ══════════════════════════════════════════════
 function landingOpenAuth(tab) {
   const hero = document.getElementById('land-hero-cta');
   const form = document.getElementById('land-auth-form');
   if (!hero || !form) return;
 
-  // On mobile: show the right panel as a full-screen overlay first, then switch to form
+  
   if (window.innerWidth <= 768) {
     const panel = document.querySelector('.land-right');
     if (panel && !panel.classList.contains('mob-visible')) {
@@ -984,7 +948,7 @@ function landingOpenAuth(tab) {
     }
   }
 
-  // Animate out hero, in form
+  
   hero.style.opacity = '0';
   hero.style.transform = 'translateY(-10px)';
   hero.style.transition = 'opacity .22s ease, transform .22s ease';
@@ -998,14 +962,13 @@ function landingOpenAuth(tab) {
   }, 220);
 }
 
-// Mobile: show login cards as full-screen page
 function mobileLandingShowAuth() {
   const panel = document.querySelector('.land-right');
   if (!panel) return;
   panel.classList.add('mob-visible');
-  // Lock body scroll
+  
   document.body.style.overflow = 'hidden';
-  // Hide the mobile CTA button so it doesn't show through
+  
   const cta = document.getElementById('mob-land-cta');
   if (cta) cta.style.display = 'none';
 }
@@ -1027,11 +990,11 @@ function landingCloseAuth() {
   });
   setTimeout(() => { hero.style.transition = ''; }, 320);
 
-  // On mobile: if we're in the form view within the overlay, go back to overlay's hero state
-  // If in the hero state of the overlay, close the overlay entirely
+  
+  
   if (window.innerWidth <= 768) {
-    // If form was showing, just show hero inside overlay (already done above)
-    // Nothing extra needed — the overlay stays open showing the hero CTA
+    
+    
   }
 }
 
@@ -1041,17 +1004,13 @@ function closeMobAuthOverlay() {
   document.body.style.overflow = '';
   const cta = document.getElementById('mob-land-cta');
   if (cta) cta.style.display = '';
-  // Reset to hero state
+  
   const hero = document.getElementById('land-hero-cta');
   const form = document.getElementById('land-auth-form');
   if (hero) { hero.style.display = 'flex'; hero.style.opacity = '1'; hero.style.transform = 'none'; }
   if (form) form.classList.remove('show');
 }
 
-// ══════════════════════════════════════════════
-// COACHING INSTITUTES LIST
-// ══════════════════════════════════════════════
-// Coaching options by mode: online, offline, hybrid (shows both), self (no coaching shown)
 const COACHING_BY_MODE = {
   online: [
     { id: 'pw_online',      name: 'PW Online',        sub: 'Physics Wallah' },
@@ -1075,12 +1034,12 @@ const COACHING_BY_MODE = {
     { id: 'other_offline',  name: 'Other Offline',     sub: 'Any other institute' },
   ],
 };
-// hybrid = both merged deduplicated
+
 COACHING_BY_MODE.hybrid = [
   ...COACHING_BY_MODE.online,
   ...COACHING_BY_MODE.offline.filter(o=>!COACHING_BY_MODE.online.find(n=>n.id===o.id)),
 ];
-// Flat list for settings selects (all)
+
 const COACHING_LIST = [
   ...COACHING_BY_MODE.online,
   ...COACHING_BY_MODE.offline.filter(o=>!COACHING_BY_MODE.online.find(n=>n.id===o.id)),
@@ -1095,7 +1054,7 @@ function updateCoachingGrid() {
   if (!section || !grid) return;
 
   if (mode === 'self') {
-    // Hide coaching section, auto-set to self
+    
     section.style.display = 'none';
     obData.coaching = 'self';
     return;
@@ -1110,7 +1069,7 @@ function updateCoachingGrid() {
       <div class="ob-opt-sub">${c.sub}</div>
     </div>`
   ).join('');
-  // Reset coaching if previous selection no longer valid
+  
   if (obData.coaching && !list.find(c=>c.id===obData.coaching)) {
     obData.coaching = '';
   }
@@ -1139,18 +1098,15 @@ function toggleCustomCoaching() {
   if (row) row.style.display = (val==='other_online'||val==='other_offline') ? '' : 'none';
 }
 
-// ══════════════════════════════════════════════
-// ONBOARDING
-// ══════════════════════════════════════════════
 let obData = { name: '', class_year: '', mode: '', coaching: '', year: '', avatarDataUrl: '' };
 
 function showOnboarding() {
   document.getElementById('landing').classList.add('hidden');
   document.getElementById('onboarding').classList.add('show');
-  // Set URL to /onboarding so it's bookmarkable and reflects state
+  
   history.replaceState({page:'onboarding'}, '', '/onboarding');
   document.title = 'JEETrack — Setup Profile';
-  // Hide coaching section until mode is picked
+  
   const cs = document.getElementById('coaching-section');
   if (cs) cs.style.display = 'none';
   const nameEl = document.getElementById('ob-name');
@@ -1158,7 +1114,7 @@ function showOnboarding() {
     nameEl.value = currentUser.user_metadata.full_name;
     updateObInitials();
   }
-  // Start premium background canvas
+  
   setTimeout(initOnboardingCanvas, 50);
 }
 
@@ -1175,7 +1131,7 @@ function handleObPhoto(input) {
   const reader = new FileReader();
   reader.onload = e => {
     obData.avatarDataUrl = e.target.result;
-    // Instantly save to localStorage so it persists
+    
     try { localStorage.setItem('jt_avatar', e.target.result); } catch(_) {}
     const img = document.getElementById('ob-av-img');
     if (img) { img.src = e.target.result; img.style.display = 'block'; }
@@ -1221,7 +1177,7 @@ async function selectObPresetAvatar(svgUrl, label) {
     reader.onload = e => {
       const dataUrl = e.target.result;
       obData.avatarDataUrl = dataUrl;
-      // Instantly save to localStorage so it persists
+      
       try { localStorage.setItem('jt_avatar', dataUrl); } catch(_) {}
       const img = document.getElementById('ob-av-img');
       if (img) { img.src = dataUrl; img.style.display = 'block'; }
@@ -1264,7 +1220,7 @@ function _obClearHint(step) {
     hint.textContent = '';
     hint.style.display = 'none';
   }
-  // Also clear any shake animation on the card inner
+  
   const inner = document.querySelector(`#ob-step-${step} .ob-card-inner`);
   if (inner) inner.style.animation = 'none';
 }
@@ -1283,7 +1239,7 @@ function obNext(step) {
       inp.style.borderColor = 'rgba(248,113,113,.6)';
       inp.style.boxShadow = '0 0 0 3px rgba(248,113,113,.12)';
       inp.placeholder = 'Please enter your name';
-      // Shake the card inner too
+      
       const inner = document.querySelector('#ob-step-0 .ob-card-inner');
       if (inner) { inner.style.animation = 'none'; void inner.offsetWidth; inner.style.animation = 'obShake .38s cubic-bezier(.36,.07,.19,.97)'; }
       inp.focus();
@@ -1303,7 +1259,7 @@ function obNext(step) {
       _obShakeStep(2, 'Please select a study mode to continue');
       return;
     }
-    // If mode requires coaching but none selected, require it
+    
     if (obData.mode !== 'self' && !obData.coaching) {
       _obShakeStep(2, 'Please select your coaching institute');
       return;
@@ -1318,12 +1274,12 @@ function obNext(step) {
   const nextStep = step + 1;
   document.getElementById(`ob-step-${step}`).classList.remove('active');
   document.getElementById(`ob-step-${nextStep}`)?.classList.add('active');
-  // Update premium progress bar - stops exactly at each dot
-  // Dots are at: 0% (step0), 33.33% (step1), 66.66% (step2), 100% (step3)
+  
+  
   const pcts = [0, 33.33, 66.66, 100];
   const fill = document.getElementById('ob-progress-fill');
   if (fill) fill.style.width = pcts[nextStep] + '%';
-  // Update step labels
+  
   for (let i = 0; i < 4; i++) {
     const lbl = document.getElementById(`ob-lbl-${i}`);
     if (!lbl) continue;
@@ -1336,7 +1292,7 @@ function obNext(step) {
 function _obShakeStep(step, msg) {
   const card = document.querySelector(`#ob-step-${step} .ob-card-shell`)||document.querySelector(`#ob-step-${step}`);
   if (!card) return;
-  // Show inline error hint
+  
   let hint = document.getElementById(`ob-hint-${step}`);
   if (!hint) {
     hint = document.createElement('div');
@@ -1348,12 +1304,12 @@ function _obShakeStep(step, msg) {
   }
   hint.textContent = '⚠ ' + msg;
   hint.style.display = '';
-  // Shake animation on card inner
+  
   const inner = document.querySelector(`#ob-step-${step} .ob-card-inner`) || card;
   inner.style.animation = 'none';
   void inner.offsetWidth;
   inner.style.animation = 'obShake .38s cubic-bezier(.36,.07,.19,.97)';
-  // Auto-hide after delay
+  
   clearTimeout(hint._hideTimer);
   hint._hideTimer = setTimeout(() => {
     if(hint) { hint.textContent = ''; hint.style.display = 'none'; }
@@ -1365,16 +1321,16 @@ function obBack(step) {
   document.getElementById(`ob-step-${step}`).classList.remove('active');
   const prevStep = step - 1;
   document.getElementById(`ob-step-${prevStep}`)?.classList.add('active');
-  // Clear any lingering error state on the step we're going back to
+  
   const prevInner = document.querySelector(`#ob-step-${prevStep} .ob-card-inner`);
   if (prevInner) prevInner.style.animation = 'none';
   const prevHint = document.getElementById(`ob-hint-${prevStep}`);
   if (prevHint) { prevHint.textContent = ''; prevHint.style.display = 'none'; }
-  // Update premium progress bar
+  
   const pcts = [0, 33.33, 66.66, 100];
   const fill = document.getElementById('ob-progress-fill');
   if (fill) fill.style.width = pcts[prevStep] + '%';
-  // Update step labels
+  
   for (let i = 0; i < 4; i++) {
     const lbl = document.getElementById(`ob-lbl-${i}`);
     if (!lbl) continue;
@@ -1399,9 +1355,9 @@ async function finishOnboarding() {
     target_year: obData.year || '2027',
     onboarding_done: true,
   };
-  // Cache target year locally so countdown works immediately
+  
   localStorage.setItem('jt_target_year', fields.target_year);
-  // Upload avatar if provided
+  
   if (obData.avatarDataUrl && sb && currentUser) {
     try {
       const res = await fetch(obData.avatarDataUrl);
@@ -1414,17 +1370,14 @@ async function finishOnboarding() {
     } catch(e) {}
   }
   await saveUserProfile(fields);
-  // Mark that we just finished onboarding — show perm modal once on dashboard
+  
   localStorage.setItem('jt_show_perm_after_onboarding', '1');
-  // Load user data before showing app so dashboard isn't empty on first login
+  
   await loadUserData();
-  // Now show the app
+  
   showApp(fields.username, currentUser?.email || '');
 }
 
-// ══════════════════════════════════════════════
-// ONBOARDING BACKGROUND CANVAS (floating particles)
-// ══════════════════════════════════════════════
 function initOnboardingCanvas() {
   const canvas = document.getElementById('ob-bg-canvas');
   if (!canvas) return;
@@ -1452,7 +1405,7 @@ function initOnboardingCanvas() {
       if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      // Glow via shadow
+      
       ctx.shadowColor = p.color + '0.9)';
       ctx.shadowBlur = p.r * 4;
       ctx.fillStyle = p.color + p.alpha.toFixed(2) + ')';
@@ -1466,7 +1419,7 @@ function initOnboardingCanvas() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
   });
-  // Cleanup when onboarding is hidden
+  
   const ob = document.getElementById('onboarding');
   const obs = new MutationObserver(() => {
     if (!ob.classList.contains('show')) { cancelAnimationFrame(af); obs.disconnect(); }
@@ -1474,18 +1427,15 @@ function initOnboardingCanvas() {
   obs.observe(ob, { attributes: true, attributeFilter: ['class'] });
 }
 
-// ══════════════════════════════════════════════
-// SETTINGS PAGE
-// ══════════════════════════════════════════════
 function showSettingsPanel(id, btn) {
   document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById(`sp-${id}`)?.classList.add('active');
   btn?.classList.add('active');
-  // Push URL: /settings?tab=profile etc
+  
   history.pushState({page:'settings',tab:id}, '', `/settings?tab=${id}`);
   document.title = `JEETrack — Settings · ${id.charAt(0).toUpperCase()+id.slice(1)}`;
-  // Update subtitle
+  
   const subtitles = {
     profile: 'Profile',
     study: 'Study Info',
@@ -1497,10 +1447,10 @@ function showSettingsPanel(id, btn) {
   };
   const sub = document.querySelector('#page-settings .ps');
   if (sub) sub.textContent = subtitles[id] || 'Profile, data & preferences';
-  // Load dynamic content
+  
   if (id === 'study') { buildSettingsCoachingSelect(); loadStudySettings(); setTimeout(()=>initSettingsDirtyTracking(),100); }
   if (id === 'alerts') { loadAlertsSettings(); }
-  // On mobile: update topbar — "Settings" as title, section name as subtitle
+  
   if(window.innerWidth <= 768){
     const names={profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data & Backup',account:'Account',feedback:'Feedback'};
     updateMobTopbarTitle('settings', names[id] || '');
@@ -1508,8 +1458,8 @@ function showSettingsPanel(id, btn) {
 }
 
 function renderSettings() {
-  // Called when settings page is navigated to
-  loadGoalSettings(); // populate goal fields from actual saved values
+  
+  loadGoalSettings(); 
   const name = userProfile.username || document.getElementById('sb-username')?.textContent || '';
   const email = document.getElementById('sb-email')?.textContent || '';
   const initials = name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'A';
@@ -1518,26 +1468,26 @@ function renderSettings() {
   if (document.getElementById('settings-email-display')) document.getElementById('settings-email-display').textContent = email;
   if (document.getElementById('settings-email-ro')) document.getElementById('settings-email-ro').textContent = email;
   if (document.getElementById('settings-name-input')) document.getElementById('settings-name-input').value = name;
-  // Photo — prefer localStorage (persists offline & instantly), fall back to Supabase URL
+  
   const _cachedAv = localStorage.getItem('jt_avatar') || userProfile.avatar_url;
   if (_cachedAv) {
     const img = document.getElementById('settings-av-img');
     if (img) { img.src = _cachedAv; img.style.display = 'block'; }
     const initEl = document.getElementById('settings-av-initials');
     if (initEl) initEl.style.display = 'none';
-    // Restore remove button
+    
     const rb = document.getElementById('settings-av-remove-btn');
     if (rb) rb.style.display = 'flex';
   } else {
-    // No avatar — ensure initials visible and remove button hidden
+    
     const initEl = document.getElementById('settings-av-initials');
     if (initEl) initEl.style.display = '';
     const rb = document.getElementById('settings-av-remove-btn');
     if (rb) rb.style.display = 'none';
   }
-  // Activate first panel — this will also call updateMobTopbarTitle('settings','Profile') on mobile
+  
   showSettingsPanel('profile', document.querySelector('.settings-nav-item'));
-  // On mobile: also reset tab strip
+  
   if(window.innerWidth <= 768){
     document.querySelectorAll('.mob-settings-tab').forEach(b=>b.classList.remove('active'));
     document.querySelector('.mob-settings-tab')?.classList.add('active');
@@ -1556,7 +1506,7 @@ function loadStudySettings() {
 
 function loadAlertsSettings() {
   const snt = document.getElementById('settings-notif-toggle');
-  // Notification is truly "on" only if both our flag AND browser permission are granted
+  
   const notifReallyOn = localStorage.getItem('notif_enabled') === '1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   if (snt) snt.checked = notifReallyOn;
   loadEmailReportPref().then(() => {
@@ -1570,7 +1520,7 @@ async function saveProfileSettings() {
   const name = document.getElementById('settings-name-input')?.value.trim();
   if (!name) { toast('Enter a display name', 'warning'); return; }
   await saveUserProfile({ username: name });
-  // Update UI everywhere
+  
   const initials = name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'A';
   document.getElementById('sb-username').textContent = name;
   document.getElementById('sb-avatar').textContent = initials;
@@ -1578,7 +1528,7 @@ async function saveProfileSettings() {
   document.getElementById('settings-name-display').textContent = name;
   document.getElementById('settings-av-initials').textContent = initials;
   setDashGreeting(name.split(' ')[0]);
-  // toast handled by wrapper
+  
 }
 
 async function saveStudySettings() {
@@ -1591,37 +1541,36 @@ async function saveStudySettings() {
     coaching: coaching === 'other' ? (custom || 'other') : (coaching || ''),
     target_year: targetYear,
   });
-  // Cache target year locally so donut works offline/immediately
+  
   if (targetYear) localStorage.setItem('jt_target_year', targetYear);
-  // Redraw the time donut so it reflects the new target year on this device
+  
   drawJeeDonut();
-  // toast handled by wrapper
+  
 }
 
-// ── Avatar helpers ─────────────────────────────────────────────────────────
 function _applyAvatarImage(src) {
   if (!src) return;
-  // Sidebar avatar
+  
   const sbImg = document.getElementById('sb-avatar-img');
   const sbInit = document.getElementById('sb-avatar-initials');
   if (sbImg) { sbImg.src = src; sbImg.style.display = 'block'; }
   if (sbInit) sbInit.style.display = 'none';
-  // Mobile topbar avatar
+  
   const mobImg = document.getElementById('mob-avatar-img');
   const mobInit = document.getElementById('mob-avatar');
   if (mobImg) { mobImg.src = src; mobImg.style.display = 'block'; }
   if (mobInit) mobInit.style.display = 'none';
-  // Settings panel avatar
+  
   const sAvImg = document.getElementById('settings-av-img');
   const sAvInit = document.getElementById('settings-av-initials');
   if (sAvImg) { sAvImg.src = src; sAvImg.style.display = 'block'; }
   if (sAvInit) sAvInit.style.display = 'none';
-  // Avatar menu header
+  
   const avMenuImg = document.getElementById('avMenuImg');
   const avMenuInit = document.getElementById('avMenuInitials');
   if (avMenuImg) { avMenuImg.src = src; avMenuImg.style.display = 'block'; }
   if (avMenuInit) avMenuInit.style.display = 'none';
-  // Show trash button in settings
+  
   const rb = document.getElementById('settings-av-remove-btn');
   if (rb) rb.style.display = 'flex';
 }
@@ -1635,7 +1584,7 @@ function _clearAvatarImage() {
     const el = document.getElementById(id);
     if (el) el.style.display = '';
   });
-  // Hide trash button in settings
+  
   const rb = document.getElementById('settings-av-remove-btn');
   if (rb) rb.style.display = 'none';
 }
@@ -1650,7 +1599,7 @@ function removeAvatar() {
 }
 
 const PRESET_AVATARS = [
-  // Geometric / abstract SVG avatars (inline data URIs)
+  
   { id:'av1', label:'Cosmos',   svg: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='32' fill='#1e1b4b'/><circle cx='32' cy='24' r='11' fill='#7c6af7'/><ellipse cx='32' cy='52' rx='18' ry='10' fill='#7c6af7' opacity='.5'/><circle cx='22' cy='20' r='2.5' fill='#a695ff'/><circle cx='42' cy='28' r='1.8' fill='#f472b6'/></svg>` },
   { id:'av2', label:'Ember',    svg: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='32' fill='#1c0f0a'/><polygon points='32,8 48,50 32,42 16,50' fill='#f97316'/><polygon points='32,8 40,50 32,38 24,50' fill='#fbbf24'/><circle cx='32' cy='28' r='5' fill='#fef3c7'/></svg>` },
   { id:'av3', label:'Void',     svg: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='32' fill='#0f172a'/><circle cx='32' cy='32' r='18' fill='none' stroke='#60a5fa' stroke-width='2.5'/><circle cx='32' cy='32' r='10' fill='none' stroke='#3b82f6' stroke-width='1.5'/><circle cx='32' cy='32' r='4' fill='#60a5fa'/><line x1='14' y1='32' x2='50' y2='32' stroke='#60a5fa' stroke-width='1' opacity='.4'/><line x1='32' y1='14' x2='32' y2='50' stroke='#60a5fa' stroke-width='1' opacity='.4'/></svg>` },
@@ -1671,7 +1620,7 @@ function openPresetAvatarPicker() {
   if (!picker || !grid) return;
   const isOpen = picker.style.display !== 'none';
   if (isOpen) { picker.style.display = 'none'; return; }
-  // Build grid if empty
+  
   if (!grid.children.length) {
     grid.innerHTML = '';
     PRESET_AVATARS.forEach(av => {
@@ -1695,7 +1644,7 @@ function openPresetAvatarPicker() {
 }
 
 async function selectPresetAvatar(svgUrl, label) {
-  // Convert SVG blob URL to data URL for persistence
+  
   try {
     const res = await fetch(svgUrl);
     const blob = await res.blob();
@@ -1704,10 +1653,10 @@ async function selectPresetAvatar(svgUrl, label) {
       const dataUrl = e.target.result;
       localStorage.setItem('jt_avatar', dataUrl);
       _applyAvatarImage(dataUrl);
-      // Close picker
+      
       const picker = document.getElementById('preset-avatar-picker');
       if (picker) picker.style.display = 'none';
-      // Try save to Supabase
+      
       if (sb && currentUser) {
         try {
           const imgBlob = await (await fetch(dataUrl)).blob();
@@ -1728,12 +1677,12 @@ async function selectPresetAvatar(svgUrl, label) {
 
 function handleSettingsPhoto(input) {
   const file = input.files[0]; if (!file) return;
-  // Compress if > 300KB
+  
   const maxSize = 300 * 1024;
   const reader = new FileReader();
   reader.onload = async e => {
     let dataUrl = e.target.result;
-    // Compress via canvas if too large
+    
     if (file.size > maxSize) {
       try {
         const img = new Image();
@@ -1747,10 +1696,10 @@ function handleSettingsPhoto(input) {
         dataUrl = canvas.toDataURL('image/jpeg', 0.82);
       } catch(_) {}
     }
-    // Always persist to localStorage so avatar survives refresh
-    try { localStorage.setItem('jt_avatar', dataUrl); } catch(_) { /* quota */ }
+    
+    try { localStorage.setItem('jt_avatar', dataUrl); } catch(_) {  }
     _applyAvatarImage(dataUrl);
-    // Upload to Supabase Storage
+    
     if (sb && currentUser) {
       try {
         const res = await fetch(dataUrl);
@@ -1772,11 +1721,6 @@ function handleSettingsPhoto(input) {
   reader.readAsDataURL(file);
 }
 
-// ══════════════════════════════════════════════
-// PATCH: nav() to handle settings page + landing
-// ══════════════════════════════════════════════
-// Note: _navOrig already declared above; settings routing handled via nav map below
-
 async function doReset(){
   const val = document.getElementById('reset-confirm-input')?.value.trim();
   if(val !== 'DELETE'){ toast('Type DELETE to confirm', 'warning'); return; }
@@ -1792,9 +1736,6 @@ async function doReset(){
   setTimeout(() => location.reload(), 800);
 }
 
-// ══════════════════════════════════════════════
-// APPEARANCE SETTINGS
-// ══════════════════════════════════════════════
 const THEME_PRESETS = {
   midnight: { bg:'#0a0a0f', sf:'#111118', sf2:'#18181f', sf3:'#1e1e28', tx:'#f0eff5', mu:'#7a7990', mu2:'#4a4960', bd:'rgba(255,255,255,0.07)', bd2:'rgba(255,255,255,0.12)' },
   amoled:   { bg:'#000000', sf:'#0d0d0d', sf2:'#111111', sf3:'#181818', tx:'#f5f5f5', mu:'#6b6b80', mu2:'#404050', bd:'rgba(255,255,255,0.06)', bd2:'rgba(255,255,255,0.10)' },
@@ -1831,20 +1772,20 @@ function applyAccent(ac, ac2) {
 }
 
 function applyFontSize(s) {
-  // Remove any previous override
+  
   document.getElementById('jt-fs-override')?.remove();
   const htmlSizes = { sm: '12px', md: '14px', lg: '15.5px' };
   const base = htmlSizes[s] || '14px';
-  // Set on <html> so rem units scale too
+  
   document.documentElement.style.fontSize = base;
   document.body.style.fontSize = base;
-  // Inject a blanket override for all hardcoded px font-sizes via scaling
+  
   const ratios = { sm: 0.857, md: 1, lg: 1.107 };
   const ratio = ratios[s] || 1;
   if (s !== 'md') {
     const style = document.createElement('style');
     style.id = 'jt-fs-override';
-    // Scale every element's font-size relative to its parent using em cascade
+    
     style.textContent = `
       .main, .sb, .md, .mo, .toast, .undobar, .cel-overlay {
         font-size: ${base} !important;
@@ -1876,11 +1817,11 @@ function applyDensity(d) {
 function applyRadius(r, silent) {
   const vals  = { sharp: '4px',  rounded: '12px', pill: '20px' };
   const svals = { sharp: '3px',  rounded: '8px',  pill: '14px' };
-  const mvals = { sharp: '6px',  rounded: '14px', pill: '22px' }; // modals
-  const bvals = { sharp: '4px',  rounded: '8px',  pill: '99px' }; // buttons/chips
+  const mvals = { sharp: '6px',  rounded: '14px', pill: '22px' }; 
+  const bvals = { sharp: '4px',  rounded: '8px',  pill: '99px' }; 
   document.documentElement.style.setProperty('--r',  vals[r]);
   document.documentElement.style.setProperty('--rs', svals[r]);
-  // Apply to all modals, cards, buttons, inputs, chips, toasts that use hardcoded radii
+  
   const prev = document.getElementById('jt-radius-override');
   prev?.remove();
   const style = document.createElement('style');
@@ -1918,7 +1859,6 @@ function resetAppearance() {
   location.reload();
 }
 
-// ── Goal Settings ──────────────────────────────────────────────────────────
 function _goalKey(name){ const uid=currentUser?.id||'guest'; return 'jt_'+name+'_'+uid; }
 function getGoalMains(){ return parseInt(localStorage.getItem(_goalKey('goal_mains'))||'200',10); }
 function getGoalAdv()  { return parseInt(localStorage.getItem(_goalKey('goal_adv'))  ||'150',10); }
@@ -1926,7 +1866,7 @@ function getGoalAdv()  { return parseInt(localStorage.getItem(_goalKey('goal_adv
 async function saveGoalSettings(){
   const gm=Math.max(1,Math.min(300,parseInt(document.getElementById('goal-mains').value)||200));
   const ga=Math.max(1,Math.min(360,parseInt(document.getElementById('goal-adv').value)||150));
-  // Save to local cache
+  
   localStorage.setItem(_goalKey('goal_mains'),gm);
   localStorage.setItem(_goalKey('goal_adv'),ga);
   document.getElementById('goal-mains').value=gm;
@@ -1934,7 +1874,7 @@ async function saveGoalSettings(){
   updateGoalsPreview();
   navMarkDirty('overview');navMarkDirty('mains');navMarkDirty('advanced');
   renderOverview();
-  // Persist to Supabase so goals sync across devices
+  
   if(sb && currentUser){
     try{
       await sb.from('user_preferences').upsert({
@@ -1945,7 +1885,7 @@ async function saveGoalSettings(){
       },{onConflict:'user_id'});
     }catch(e){ console.warn('Could not save goals to Supabase',e); }
   }
-  // toast handled by wrapper
+  
 }
 
 function updateGoalsPreview(){
@@ -1970,55 +1910,54 @@ function loadGoalSettings(){
   if(gmi)gmi.value=gm;
   if(gai)gai.value=ga;
   updateGoalsPreview();
-  // Live preview on input change
+  
   ['goal-mains','goal-adv'].forEach(id=>{
     document.getElementById(id)?.addEventListener('input',updateGoalsPreview);
   });
 }
 
 function loadAppearanceSettings() {
-  // Theme
+  
   const theme = localStorage.getItem('jt_theme') || 'midnight';
   if (theme !== 'midnight') applyThemePreset(theme);
   document.getElementById('theme-' + theme)?.classList.add('active');
-  // Accent
+  
   const ac = localStorage.getItem('jt_accent');
   if (ac && ACCENT_PRESETS[ac]) { applyAccent(ac, ACCENT_PRESETS[ac]); }
   else { document.querySelector('.accent-dot[data-color="#7c6af7"]')?.classList.add('active'); }
-  // Font size
+  
   const fs = localStorage.getItem('jt_fontsize') || 'md';
   applyFontSize(fs);
-  // Density
+  
   const dn = localStorage.getItem('jt_density') || 'normal';
   if (dn !== 'normal') applyDensity(dn);
   document.getElementById('density-' + dn)?.classList.add('active');
-  // Radius
+  
   const rr = localStorage.getItem('jt_radius') || 'rounded';
   applyRadius(rr, true);
-  // Sidebar blur
+  
   const blur = localStorage.getItem('jt_sbblur') === '1';
   if (blur) { applySidebarBlur(true); document.getElementById('settings-sidebar-blur').checked = true; }
-  // Sidebar gradient
+  
   const grad = localStorage.getItem('jt_sbgrad') === '1';
   if (grad) { applySidebarGradient(true); document.getElementById('settings-sidebar-gradient').checked = true; }
 }
 
-// ── Settings Dirty Tracking ─────────────────────────────────────────────────
 function initSettingsDirtyTracking() {
-  // Profile panel
+  
   const nameInput = document.getElementById('settings-name-input');
   if (nameInput) {
     nameInput.addEventListener('input', () => markSettingsDirty('profile-save-btn'));
   }
 
-  // Study panel — watch all selects
+  
   ['settings-class','settings-year','settings-mode','settings-coaching','settings-custom-coaching'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', () => markSettingsDirty('study-save-btn'));
     if (el && el.tagName === 'INPUT') el.addEventListener('input', () => markSettingsDirty('study-save-btn'));
   });
 
-  // Goals panel
+  
   ['goal-mains','goal-adv'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', () => markSettingsDirty('goals-save-btn'));
@@ -2040,7 +1979,6 @@ function resetSettingsDirty(btnId) {
   btn.classList.remove('dirty');
 }
 
-// Patch saveProfileSettings to show saving state
 const _origSaveProfile = saveProfileSettings;
 saveProfileSettings = async function() {
   const btn = document.getElementById('profile-save-btn');
@@ -2052,7 +1990,6 @@ saveProfileSettings = async function() {
   toast('Profile saved ✓', 'success');
 };
 
-// Patch saveStudySettings to show saving state
 const _origSaveStudy = saveStudySettings;
 saveStudySettings = async function() {
   const btn = document.getElementById('study-save-btn');
@@ -2064,7 +2001,6 @@ saveStudySettings = async function() {
   toast('Study info saved ✓', 'success');
 };
 
-// Patch saveGoalSettings to show saving state
 const _origSaveGoals = saveGoalSettings;
 saveGoalSettings = function() {
   const btn = document.getElementById('goals-save-btn');
@@ -2079,9 +2015,9 @@ saveGoalSettings = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSupabase(); // ← boot: authenticate & load data, then hide splash
+  initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
-  // Drag-and-drop avatar upload
+  
   const dropzone = document.getElementById('settings-avatar-dropzone');
   if (dropzone) {
     dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
@@ -2096,13 +2032,13 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = ev => {
           const dataUrl = ev.target.result;
           localStorage.setItem('jt_avatar', dataUrl);
-          // Update all avatar previews in settings
+          
           const avatarPreviews = document.querySelectorAll('.settings-avatar-preview, .avatar-preview, #settings-avatar-img');
           avatarPreviews.forEach(img => {
             if (img.tagName === 'IMG') img.src = dataUrl;
             else img.style.backgroundImage = `url(${dataUrl})`;
           });
-          // Update sidebar avatar if present
+          
           const sidebarAvatar = document.getElementById('sidebar-avatar');
           if (sidebarAvatar) {
             if (sidebarAvatar.tagName === 'IMG') sidebarAvatar.src = dataUrl;
@@ -2117,7 +2053,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toast('Please drop an image file (JPG, PNG, etc.)', 'error');
       }
     });
-    // Also support click-to-upload via hidden file input
+    
     const avatarFileInput = document.getElementById('settings-avatar-file');
     if (avatarFileInput) {
       dropzone.addEventListener('click', () => avatarFileInput.click());
@@ -2148,7 +2084,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── Feedback ────────────────────────────────────────────────────────────────
 function updateFbBtn() {
   const subj = document.getElementById('fb-subject')?.value.trim() || '';
   const msg  = document.getElementById('fb-message')?.value.trim() || '';
@@ -2165,7 +2100,7 @@ async function sendFeedback() {
   if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
   try {
-    // Try saving to Supabase feedback table if it exists
+    
     let saved = false;
     if (sb && currentUser) {
       try {
@@ -2180,7 +2115,7 @@ async function sendFeedback() {
       } catch(e) {}
     }
 
-    // Always open mailto as fallback/primary delivery
+    
     if (!saved) {
       const mailtoUrl = `mailto:aman@jeetrack.app?subject=${encodeURIComponent('[JEETrack Feedback] ' + subj)}&body=${encodeURIComponent(msg + '\n\n— Sent from JEETrack\nUser: ' + (currentUser?.email || 'anonymous'))}`;
       window.open(mailtoUrl, '_blank');
