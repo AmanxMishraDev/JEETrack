@@ -227,7 +227,7 @@ function showAuthScreen(){
   document.getElementById('landing').classList.remove('hidden');
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='none';
-  
+  setTimeout(_initLandFabScroll, 100);
   history.replaceState({page:'login'}, '', '/login');
   document.title = 'JEETrack — Sign In';
   setTimeout(initLandingStarField, 50);
@@ -506,6 +506,7 @@ async function dbDelete(table, id){
 
 async function exportPDF(){
   toast('Generating PDF…', 'saving');
+  await window.ensureJsPdf();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   const W=210, mg=15, cW=W-2*mg; let y=mg;
@@ -931,6 +932,35 @@ function goSlide(n, fromAuto) {
 }
 
 function _activateSlide(n) { goSlide(n, false); }
+
+function landScrollTo(id) {
+  const el = document.getElementById(id);
+  const container = document.getElementById('landing');
+  if (!el || !container) return;
+  const offset = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 64;
+  container.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
+function _initLandFabScroll() {
+  const container = document.getElementById('landing');
+  const fab = document.getElementById('mob-land-cta');
+  if (!container || !fab) return;
+  let lastScroll = 0;
+  let hidden = false;
+  container.addEventListener('scroll', function() {
+    const curr = container.scrollTop;
+    if (curr > lastScroll && curr > 80 && !hidden) {
+      fab.style.transform = 'translateY(120%)';
+      fab.style.opacity = '0';
+      hidden = true;
+    } else if (curr < lastScroll && hidden) {
+      fab.style.transform = 'translateY(0)';
+      fab.style.opacity = '1';
+      hidden = false;
+    }
+    lastScroll = curr;
+  }, { passive: true });
+}
 
 function landingOpenAuth(tab) {
   const hero = document.getElementById('land-hero-cta');
