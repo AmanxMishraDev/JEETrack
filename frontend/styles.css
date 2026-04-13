@@ -991,6 +991,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   position:fixed;inset:0;
   background:#020208;
   z-index:9998;display:flex;flex-direction:column;overflow-y:auto;
+  overflow-x:hidden;
 }
 #landing.hidden{display:none!important}
 
@@ -1105,7 +1106,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-btn-primary:hover::before{opacity:1}
 .land-btn-primary:active,.land-btn-ghost:active{transform:scale(.97) translateY(0)}
 
-.land-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;height:1px;min-height:calc(100vh - 68px);}
+.land-body{flex-shrink:0;display:flex;overflow:hidden;position:relative;z-index:1;height:calc(100vh - 68px);}
 .land-left{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;padding:3rem 4.5rem;overflow:hidden}
 
 .land-grid-bg{
