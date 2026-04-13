@@ -1,9 +1,4 @@
-// =====================================================
-// JEETrack — AI Insights Edge Function
-// File: supabase/functions/ai-insights/index.ts
-//
-// Deploy: supabase functions deploy ai-insights
-// =====================================================
+
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -31,7 +26,7 @@ function getCorsHeaders(req: Request) {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
+  
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: getCorsHeaders(req) });
   }
@@ -42,7 +37,7 @@ serve(async (req) => {
     });
   }
 
-  // ── Verify user is authenticated ──
+  
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -60,7 +55,7 @@ serve(async (req) => {
     });
   }
 
-  // ── Get prompt from request ──
+  
   let prompt: string;
   try {
     const body = await req.json();
@@ -79,7 +74,7 @@ serve(async (req) => {
     });
   }
 
-  // ── Call Groq — key stays on server ──
+  
   try {
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",

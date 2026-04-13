@@ -1,16 +1,4 @@
-// =====================================================
-// JEETrack Monthly Report Edge Function
-// File: supabase/functions/monthly-report/index.ts
-//
-// Deploy: supabase functions deploy monthly-report
-// Schedule (in Supabase Dashboard → Database → Cron Jobs):
-//   Name: monthly-report
-//   Schedule: 0 9 1 * *   (1st of every month at 9 AM UTC = 2:30 PM IST)
-//   Command: select net.http_post(
-//     url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/monthly-report',
-//     headers := '{"Authorization": "Bearer YOUR_SERVICE_ROLE_KEY"}'::jsonb
-//   );
-// =====================================================
+
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -21,11 +9,10 @@ const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const FROM_EMAIL = Deno.env.get("FROM_EMAIL") || "reports@jeetrack.app";
 const APP_URL = Deno.env.get("APP_URL") || "https://jeetrack.app";
 
-// Inactive threshold: don't send if user hasn't opened app in 20 days
 const INACTIVE_DAYS = 20;
 
 serve(async (req) => {
-  // Security: only allow POST with service role auth
+  
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.includes("Bearer")) {
     return new Response("Unauthorized", { status: 401 });
@@ -33,7 +20,7 @@ serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-  // Get month range for the previous month
+  
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const monthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
@@ -41,7 +28,7 @@ serve(async (req) => {
   const monthEndStr = monthEnd.toISOString().split("T")[0];
   const monthName = monthStart.toLocaleString("en-IN", { month: "long", year: "numeric" });
 
-  // Find users who: want monthly reports, are active, haven't got report this month
+  
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - INACTIVE_DAYS);
 
@@ -63,7 +50,7 @@ serve(async (req) => {
   let sent = 0, skipped = 0, failed = 0;
 
   for (const pref of activeUsers) {
-    // Skip if already sent this month
+    
     if (pref.report_last_sent_at) {
       const lastSent = new Date(pref.report_last_sent_at);
       if (lastSent.getMonth() === now.getMonth() - 1 && lastSent.getFullYear() === now.getFullYear()) {
@@ -75,7 +62,7 @@ serve(async (req) => {
     const userId = pref.user_id;
 
     try {
-      // Fetch user email from auth.users
+      
       const { data: userData } = await supabase.auth.admin.getUserById(userId);
       const email = userData?.user?.email;
       const name = userData?.user?.user_metadata?.full_name ||
@@ -83,7 +70,7 @@ serve(async (req) => {
 
       if (!email) { skipped++; continue; }
 
-      // Fetch all user data for the month
+      
       const [testsRes, hoursRes, backlogsRes, sylRes] = await Promise.all([
         supabase.from("tests").select("*").eq("user_id", userId)
           .gte("date", monthStartStr).lte("date", monthEndStr),
@@ -98,16 +85,16 @@ serve(async (req) => {
       const backlogs = backlogsRes.data || [];
       const syllabus = sylRes.data || [];
 
-      // Calculate stats
+      
       const stats = calculateStats(tests, hours, backlogs, syllabus, monthStartStr, monthEndStr);
 
-      // Generate PDF as base64
+      
       const pdfBase64 = generateReportPDF(name, monthName, stats, tests, hours);
 
-      // Generate email HTML
+      
       const emailHtml = generateEmailHTML(name, monthName, stats, APP_URL);
 
-      // Send via Resend
+      
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -127,7 +114,7 @@ serve(async (req) => {
       });
 
       if (res.ok) {
-        // Update last sent timestamp
+        
         await supabase.from("user_preferences")
           .update({ report_last_sent_at: now.toISOString(), updated_at: now.toISOString() })
           .eq("user_id", userId);
@@ -149,16 +136,15 @@ serve(async (req) => {
   );
 });
 
-// ── STATS CALCULATION ──
 function calculateStats(tests: any[], hours: any[], backlogs: any[], syllabus: any[], monthStart: string, monthEnd: string) {
-  // Tests
+  
   const mainsTests = tests.filter(t => t.exam === "mains");
   const advTests = tests.filter(t => t.exam === "advanced");
   const allScores = tests.map(t => t.max ? (t.total / t.max) * 100 : 0);
   const bestScore = allScores.length ? Math.max(...allScores) : 0;
   const avgScore = allScores.length ? allScores.reduce((a, b) => a + b, 0) / allScores.length : 0;
 
-  // Hours
+  
   const totalHours = hours.reduce((a: number, b: any) => a + (b.total || 0), 0);
   const lectureHours = hours.reduce((a: number, b: any) => a + (b.lecture || 0), 0);
   const practiceHours = hours.reduce((a: number, b: any) => a + (b.practice || 0), 0);
@@ -166,12 +152,12 @@ function calculateStats(tests: any[], hours: any[], backlogs: any[], syllabus: a
   const studyDays = new Set(hours.map((h: any) => h.date)).size;
   const avgHoursPerDay = studyDays ? (totalHours / studyDays).toFixed(1) : "0";
 
-  // Best study day
+  
   const dayMap: { [key: string]: number } = {};
   hours.forEach((h: any) => { dayMap[h.date] = (dayMap[h.date] || 0) + (h.total || 0); });
   const bestDayTotal = Object.values(dayMap).length ? Math.max(...Object.values(dayMap)) : 0;
 
-  // Syllabus
+  
   const subjectProgress: { [key: string]: { done: number; total: number } } = {
     physics: { done: 0, total: 0 },
     chemistry: { done: 0, total: 0 },
@@ -185,7 +171,7 @@ function calculateStats(tests: any[], hours: any[], backlogs: any[], syllabus: a
     }
   });
 
-  // Backlogs
+  
   const pendingBacklogs = backlogs.filter((b: any) => !b.done).length;
   const clearedBacklogs = backlogs.filter((b: any) => b.done).length;
 
@@ -197,15 +183,13 @@ function calculateStats(tests: any[], hours: any[], backlogs: any[], syllabus: a
   };
 }
 
-// ── PDF GENERATION (using pure JavaScript, no external libs) ──
-// Generates a simple text-based PDF using raw PDF syntax
 function generateReportPDF(name: string, month: string, stats: any, tests: any[], hours: any[]): string {
-  // Simple PDF structure - readable by all PDF viewers
+  
   const lines: string[] = [];
 
   const addLine = (text: string) => lines.push(text);
 
-  // PDF Header
+  
   const content = [
     `JEETrack Monthly Report`,
     `${month}`,
@@ -250,7 +234,7 @@ function generateReportPDF(name: string, month: string, stats: any, tests: any[]
     `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
   ];
 
-  // Recent tests section
+  
   if (tests.length > 0) {
     content.push(``, `🎯 TEST HISTORY THIS MONTH`, `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     tests.slice(0, 10).forEach((t: any) => {
@@ -259,10 +243,10 @@ function generateReportPDF(name: string, month: string, stats: any, tests: any[]
     });
   }
 
-  // Build minimal valid PDF
+  
   const textContent = content.join("\n");
 
-  // Encode to base64 PDF using raw PDF syntax
+  
   const pdfLines: string[] = [];
   const streamContent = content.map((line, i) => `BT /F1 11 Tf 50 ${750 - i * 16} Td (${line.replace(/[()\\]/g, "\\$&")}) Tj ET`).join("\n");
 
@@ -290,7 +274,7 @@ startxref
 ${350 + streamLen}
 %%EOF`;
 
-  // Convert to base64
+  
   const encoder = new TextEncoder();
   const bytes = encoder.encode(pdf);
   let binary = "";
@@ -300,7 +284,6 @@ ${350 + streamLen}
   return btoa(binary);
 }
 
-// ── EMAIL HTML TEMPLATE ──
 function generateEmailHTML(name: string, month: string, stats: any, appUrl: string): string {
   const phyPct = stats.syllabus.physics.total ? Math.round(stats.syllabus.physics.done / stats.syllabus.physics.total * 100) : 0;
   const chePct = stats.syllabus.chemistry.total ? Math.round(stats.syllabus.chemistry.done / stats.syllabus.chemistry.total * 100) : 0;
