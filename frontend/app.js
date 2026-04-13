@@ -224,7 +224,9 @@ function hideSplash(){
 
 function showAuthScreen(){
   hideSplash();
-  document.getElementById('landing').classList.remove('hidden');
+  const landingEl = document.getElementById('landing');
+  landingEl.classList.remove('hidden');
+  landingEl.scrollTop = 0;
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
@@ -942,17 +944,18 @@ function landScrollTo(id) {
 }
 
 function _initLandFabScroll() {
-  const container = document.getElementById('landing');
   const fab = document.getElementById('mob-land-cta');
-  if (!container || !fab) return;
+  if (!fab) return;
   let lastScroll = 0;
   let ticking = false;
-  container.addEventListener('scroll', function() {
+
+  function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(function() {
-      const curr = container.scrollTop;
-      if (curr > lastScroll + 10 && curr > 100) {
+      const isMobile = window.innerWidth <= 768;
+      const curr = isMobile ? window.scrollY : document.getElementById('landing').scrollTop;
+      if (curr > lastScroll + 10 && curr > 80) {
         fab.style.transform = 'translateY(160%)';
         fab.style.opacity = '0';
       } else if (curr < lastScroll - 10) {
@@ -962,7 +965,11 @@ function _initLandFabScroll() {
       lastScroll = curr;
       ticking = false;
     });
-  }, { passive: true });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  const landingEl = document.getElementById('landing');
+  if (landingEl) landingEl.addEventListener('scroll', onScroll, { passive: true });
 }
 
 function landingOpenAuth(tab) {
