@@ -151,21 +151,33 @@
   .nav-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-family: var(--font-head);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
     text-decoration: none;
   }
   .nav-logo-mark {
-    width: 28px; height: 28px;
-    background: linear-gradient(135deg, var(--purple), var(--purple-light));
-    border-radius: 8px;
+    width: 32px; height: 32px;
+    background: linear-gradient(145deg, #6c5ce7, #a29bfe, #fd79a8);
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; font-weight: 800; color: #fff;
+    font-size: 14px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 4px 22px rgba(108,92,231,.55), 0 1px 4px rgba(0,0,0,.5);
+    position: relative; overflow: hidden; flex-shrink: 0;
   }
-  .nav-logo span { background: linear-gradient(135deg,#a29bfe,#fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-logo-mark::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.25) 0%, transparent 60%);
+    border-radius: inherit;
+  }
+  .nav-logo-text { color: #fff; }
+  .nav-logo-track { background: linear-gradient(135deg,#a29bfe,#fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  @media (max-width: 640px) {
+    .nav-cta-desktop { display: none !important; }
+  }
   .nav-cta {
     background: linear-gradient(135deg, var(--purple), var(--purple-light));
     color: #fff;
@@ -225,7 +237,7 @@
     line-height: 1.15;
     margin-bottom: 1rem;
   }
-  .hero h1 em { color: var(--purple-light); font-style: normal; }
+  .hero h1 em { background: linear-gradient(135deg, #a29bfe, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; }
   .hero p {
     color: var(--muted);
     font-size: 1rem;
@@ -337,9 +349,9 @@
 <nav>
   <a href="https://jeetrack.in" class="nav-logo">
     <div class="nav-logo-mark">J</div>
-    JEE<span>Track</span>
+    <span class="nav-logo-text">JEE<span class="nav-logo-track">Track</span></span>
   </a>
-  <a href="https://jeetrack.in" class="nav-cta">Get Started Free →</a>
+  <a href="https://jeetrack.in" class="nav-cta nav-cta-desktop">Get Started Free →</a>
 </nav>
 
 <section class="hero">
