@@ -946,19 +946,22 @@ function _initLandFabScroll() {
   const fab = document.getElementById('mob-land-cta');
   if (!container || !fab) return;
   let lastScroll = 0;
-  let hidden = false;
+  let ticking = false;
   container.addEventListener('scroll', function() {
-    const curr = container.scrollTop;
-    if (curr > lastScroll && curr > 80 && !hidden) {
-      fab.style.transform = 'translateY(120%)';
-      fab.style.opacity = '0';
-      hidden = true;
-    } else if (curr < lastScroll && hidden) {
-      fab.style.transform = 'translateY(0)';
-      fab.style.opacity = '1';
-      hidden = false;
-    }
-    lastScroll = curr;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function() {
+      const curr = container.scrollTop;
+      if (curr > lastScroll + 10 && curr > 100) {
+        fab.style.transform = 'translateY(160%)';
+        fab.style.opacity = '0';
+      } else if (curr < lastScroll - 10) {
+        fab.style.transform = 'translateY(0)';
+        fab.style.opacity = '1';
+      }
+      lastScroll = curr;
+      ticking = false;
+    });
   }, { passive: true });
 }
 
@@ -996,9 +999,6 @@ function mobileLandingShowAuth() {
   const panel = document.querySelector('.land-right');
   if (!panel) return;
   panel.classList.add('mob-visible');
-  
-  document.body.style.overflow = 'hidden';
-  
   const cta = document.getElementById('mob-land-cta');
   if (cta) cta.style.display = 'none';
 }
@@ -1033,8 +1033,7 @@ function closeMobAuthOverlay() {
   if (panel) panel.classList.remove('mob-visible');
   document.body.style.overflow = '';
   const cta = document.getElementById('mob-land-cta');
-  if (cta) cta.style.display = '';
-  
+  if (cta) { cta.style.display = ''; cta.style.transform = ''; cta.style.opacity = ''; }
   const hero = document.getElementById('land-hero-cta');
   const form = document.getElementById('land-auth-form');
   if (hero) { hero.style.display = 'flex'; hero.style.opacity = '1'; hero.style.transform = 'none'; }
