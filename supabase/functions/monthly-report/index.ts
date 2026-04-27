@@ -184,103 +184,182 @@ function calculateStats(tests: any[], hours: any[], backlogs: any[], syllabus: a
 }
 
 function generateReportPDF(name: string, month: string, stats: any, tests: any[], hours: any[]): string {
-  
-  const lines: string[] = [];
+  // PDF uses only ASCII-safe characters — no emoji, no unicode box-drawing
+  // Colors: background black (0,0,0), accent purple (0.58,0.42,0.97),
+  //         green (0.2,0.83,0.6), yellow (0.98,0.75,0.14), red (0.97,0.53,0.53)
+  //         section label gray (0.47,0.47,0.56), white text (0.94,0.94,0.96)
 
-  const addLine = (text: string) => lines.push(text);
+  const W = 595, H = 842;
+  const ops: string[] = [];
 
-  
-  const content = [
-    `JEETrack Monthly Report`,
-    `${month}`,
-    ``,
-    `Student: ${name}`,
-    `Generated: ${new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}`,
-    ``,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    ``,
-    `📊 TEST PERFORMANCE`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `Tests Taken:     ${stats.tests.total}`,
-    `JEE Mains:       ${stats.tests.mains}`,
-    `JEE Advanced:    ${stats.tests.adv}`,
-    `Best Score:      ${stats.tests.bestScore}%`,
-    `Average Score:   ${stats.tests.avgScore}%`,
-    ``,
-    `⏱  STUDY HOURS`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `Total Hours:     ${stats.hours.total}h`,
-    `Active Days:     ${stats.hours.studyDays}`,
-    `Avg Per Day:     ${stats.hours.avgPerDay}h`,
-    `Best Day:        ${stats.hours.bestDay}h`,
-    `Lecture:         ${stats.hours.lecture}h`,
-    `Practice:        ${stats.hours.practice}h`,
-    `Revision:        ${stats.hours.revision}h`,
-    ``,
-    `📚 SYLLABUS PROGRESS`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `Physics:         ${stats.syllabus.physics.done}/${stats.syllabus.physics.total} chapters (${stats.syllabus.physics.total ? Math.round(stats.syllabus.physics.done / stats.syllabus.physics.total * 100) : 0}%)`,
-    `Chemistry:       ${stats.syllabus.chemistry.done}/${stats.syllabus.chemistry.total} chapters (${stats.syllabus.chemistry.total ? Math.round(stats.syllabus.chemistry.done / stats.syllabus.chemistry.total * 100) : 0}%)`,
-    `Maths:           ${stats.syllabus.maths.done}/${stats.syllabus.maths.total} chapters (${stats.syllabus.maths.total ? Math.round(stats.syllabus.maths.done / stats.syllabus.maths.total * 100) : 0}%)`,
-    ``,
-    `📌 BACKLOGS`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `Pending:         ${stats.backlogs.pending}`,
-    `Cleared:         ${stats.backlogs.cleared}`,
-    ``,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-    `JEETrack — Your JEE preparation companion`,
-    `Crafted by Aman Mishra`,
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+  // ── helpers ──────────────────────────────────────────────────────────────
+  const safe = (s: string) =>
+    s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+
+  // filled rectangle  rg = non-stroking color
+  const rect = (x: number, y: number, w: number, h: number, r: number, g: number, b: number) =>
+    `${r} ${g} ${b} rg ${x} ${y} ${w} ${h} re f`;
+
+  // text at absolute position, size, rgb
+  const txt = (x: number, y: number, size: number, r: number, g: number, b: number, s: string) =>
+    `BT /F1 ${size} Tf ${r} ${g} ${b} rg ${x} ${y} Td (${safe(s)}) Tj ET`;
+
+  const txtB = (x: number, y: number, size: number, r: number, g: number, b: number, s: string) =>
+    `BT /F2 ${size} Tf ${r} ${g} ${b} rg ${x} ${y} Td (${safe(s)}) Tj ET`;
+
+  // horizontal rule
+  const hrule = (y: number, r = 0.18, g = 0.18, b = 0.22) =>
+    `${r} ${g} ${b} RG 1 w 40 ${y} m 555 ${y} l S`;
+
+  // progress bar  (filled track + fill)
+  const bar = (x: number, y: number, w: number, pct: number, r: number, g: number, b: number) => [
+    `0.12 0.12 0.16 rg ${x} ${y} ${w} 7 re f`,
+    `${r} ${g} ${b} rg ${x} ${y} ${Math.round(w * Math.min(pct, 100) / 100)} 7 re f`,
+  ].join("\n");
+
+  // stat card  (dark box + label + big number + sub)
+  const card = (x: number, y: number, w: number, h: number,
+    label: string, value: string, sub: string,
+    vr: number, vg: number, vb: number) => [
+    rect(x, y, w, h, 0.067, 0.067, 0.094),
+    txt(x + 12, y + h - 18, 8, 0.47, 0.47, 0.56, label.toUpperCase()),
+    txtB(x + 12, y + h - 44, 22, vr, vg, vb, value),
+    txt(x + 12, y + 10, 8, 0.47, 0.47, 0.56, sub),
+  ].join("\n");
+
+  // ── black background ─────────────────────────────────────────────────────
+  ops.push(rect(0, 0, W, H, 0.04, 0.04, 0.06));
+
+  // ── header band ──────────────────────────────────────────────────────────
+  ops.push(rect(0, H - 80, W, 80, 0.067, 0.067, 0.094));
+  ops.push(txtB(40, H - 38, 22, 0.94, 0.94, 0.96, "JEETrack"));
+  ops.push(txtB(130, H - 38, 22, 0.58, 0.42, 0.97, "Monthly Report"));
+  ops.push(txt(40, H - 58, 10, 0.47, 0.47, 0.56, month));
+  ops.push(txt(40, H - 72, 9, 0.47, 0.47, 0.56,
+    `Student: ${name}   |   Generated: ${new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}`));
+
+  // ── stat cards row ────────────────────────────────────────────────────────
+  const cardY = H - 175, cardH = 80, cw = 118, gap = 9, cx0 = 40;
+  ops.push(card(cx0,           cardY, cw, cardH, "Tests Taken",  `${stats.tests.total}`,          `Mains: ${stats.tests.mains}  Adv: ${stats.tests.adv}`,   0.58, 0.42, 0.97));
+  ops.push(card(cx0+cw+gap,    cardY, cw, cardH, "Study Hours",  `${stats.hours.total}h`,         `${stats.hours.studyDays} days  ${stats.hours.avgPerDay}h/day`, 0.2, 0.83, 0.6));
+  ops.push(card(cx0+(cw+gap)*2,cardY, cw, cardH, "Best Score",   `${stats.tests.bestScore}%`,     `Avg: ${stats.tests.avgScore}%`,                          0.98, 0.75, 0.14));
+  ops.push(card(cx0+(cw+gap)*3,cardY, cw, cardH, "Backlogs",
+    `${stats.backlogs.pending}`,
+    `pending  ${stats.backlogs.cleared} cleared`,
+    stats.backlogs.pending > 0 ? 0.97 : 0.2,
+    stats.backlogs.pending > 0 ? 0.53 : 0.83,
+    stats.backlogs.pending > 0 ? 0.53 : 0.6));
+
+  // ── hours breakdown ───────────────────────────────────────────────────────
+  let cy = H - 230;
+  ops.push(txtB(40, cy, 10, 0.58, 0.42, 0.97, "HOURS BREAKDOWN"));
+  ops.push(hrule(cy - 6));
+  cy -= 22;
+
+  const totalH = parseFloat(stats.hours.total) || 1;
+  const hRows: [string, string, number, number, number, number][] = [
+    ["Lecture",  `${stats.hours.lecture}h`,  parseFloat(stats.hours.lecture)  / totalH * 100, 0.38, 0.65, 0.98],
+    ["Practice", `${stats.hours.practice}h`, parseFloat(stats.hours.practice) / totalH * 100, 0.2,  0.83, 0.6 ],
+    ["Revision", `${stats.hours.revision}h`, parseFloat(stats.hours.revision) / totalH * 100, 0.58, 0.42, 0.97],
   ];
+  for (const [label, val, pct, r, g, b] of hRows) {
+    ops.push(txt(40,  cy, 9, r, g, b, label));
+    ops.push(txt(490, cy, 9, 0.94, 0.94, 0.96, val));
+    ops.push(bar(40, cy - 14, 515, pct, r, g, b));
+    cy -= 30;
+  }
 
-  
+  // ── syllabus progress ─────────────────────────────────────────────────────
+  cy -= 10;
+  ops.push(txtB(40, cy, 10, 0.58, 0.42, 0.97, "SYLLABUS PROGRESS"));
+  ops.push(hrule(cy - 6));
+  cy -= 22;
+
+  const sylRows: [string, number, number, number, number, number][] = [
+    ["Physics",   stats.syllabus.physics.done,   stats.syllabus.physics.total,   0.38, 0.65, 0.98],
+    ["Chemistry", stats.syllabus.chemistry.done, stats.syllabus.chemistry.total, 0.2,  0.83, 0.6 ],
+    ["Maths",     stats.syllabus.maths.done,     stats.syllabus.maths.total,     0.98, 0.75, 0.14],
+  ];
+  for (const [label, done, total, r, g, b] of sylRows) {
+    const pct = total ? Math.round(done / total * 100) : 0;
+    ops.push(txt(40, cy, 9, r, g, b, label));
+    ops.push(txt(490, cy, 9, 0.94, 0.94, 0.96, `${done}/${total}  ${pct}%`));
+    ops.push(bar(40, cy - 14, 515, pct, r, g, b));
+    cy -= 30;
+  }
+
+  // ── test history ──────────────────────────────────────────────────────────
   if (tests.length > 0) {
-    content.push(``, `🎯 TEST HISTORY THIS MONTH`, `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    tests.slice(0, 10).forEach((t: any) => {
-      const pct = t.max ? ((t.total / t.max) * 100).toFixed(1) : "—";
-      content.push(`${t.date}  ${t.exam === "mains" ? "Mains" : "Adv  "}  ${t.total}/${t.max}  (${pct}%)`);
+    cy -= 10;
+    ops.push(txtB(40, cy, 10, 0.58, 0.42, 0.97, "TEST HISTORY THIS MONTH"));
+    ops.push(hrule(cy - 6));
+    cy -= 20;
+
+    // header row
+    ops.push(txt(40,  cy, 8, 0.47, 0.47, 0.56, "DATE"));
+    ops.push(txt(160, cy, 8, 0.47, 0.47, 0.56, "EXAM"));
+    ops.push(txt(260, cy, 8, 0.47, 0.47, 0.56, "SCORE"));
+    ops.push(txt(380, cy, 8, 0.47, 0.47, 0.56, "PERCENT"));
+    cy -= 16;
+
+    tests.slice(0, 8).forEach((t: any, idx: number) => {
+      if (cy < 60) return;
+      const pct = t.max ? ((t.total / t.max) * 100).toFixed(1) : "N/A";
+      const rowBg = idx % 2 === 0 ? 0.055 : 0.045;
+      ops.push(rect(40, cy - 4, 515, 16, rowBg, rowBg, rowBg + 0.01));
+      ops.push(txt(44,  cy, 8, 0.94, 0.94, 0.96, t.date || ""));
+      ops.push(txt(164, cy, 8, t.exam === "mains" ? 0.58 : 0.98, t.exam === "mains" ? 0.42 : 0.75, t.exam === "mains" ? 0.97 : 0.14, t.exam === "mains" ? "Mains" : "Advanced"));
+      ops.push(txt(264, cy, 8, 0.94, 0.94, 0.96, `${t.total}/${t.max}`));
+      ops.push(txt(384, cy, 8, parseFloat(pct) >= 60 ? 0.2 : parseFloat(pct) >= 40 ? 0.98 : 0.97,
+                                parseFloat(pct) >= 60 ? 0.83 : parseFloat(pct) >= 40 ? 0.75 : 0.53,
+                                parseFloat(pct) >= 60 ? 0.6  : parseFloat(pct) >= 40 ? 0.14 : 0.53,
+                                `${pct}%`));
+      cy -= 18;
     });
   }
 
-  
-  const textContent = content.join("\n");
+  // ── footer ────────────────────────────────────────────────────────────────
+  ops.push(rect(0, 0, W, 36, 0.067, 0.067, 0.094));
+  ops.push(txt(40, 13, 8, 0.47, 0.47, 0.56,
+    "JEETrack  -  Your JEE preparation companion  |  Built by Aman Mishra  |  jeetrack.in"));
 
-  
-  const pdfLines: string[] = [];
-  const streamContent = content.map((line, i) => `BT /F1 11 Tf 50 ${750 - i * 16} Td (${line.replace(/[()\\]/g, "\\$&")}) Tj ET`).join("\n");
+  // ── assemble PDF ──────────────────────────────────────────────────────────
+  const stream = ops.join("\n");
+  const streamBytes = new TextEncoder().encode(stream);
+  const streamLen = streamBytes.length;
 
-  const stream = streamContent;
-  const streamLen = new TextEncoder().encode(stream).length;
+  // We build each object as a string, track byte offsets for xref
+  const obj1 = "1 0 obj\n<</Type /Catalog /Pages 2 0 R>>\nendobj\n";
+  const obj2 = "2 0 obj\n<</Type /Pages /Kids [3 0 R] /Count 1>>\nendobj\n";
+  const obj3 = `3 0 obj\n<</Type /Page /MediaBox [0 0 ${W} ${H}] /Parent 2 0 R\n` +
+    `/Resources <</Font <</F1 <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>>\n` +
+    `/F2 <</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold>> >> >> /Contents 4 0 R>>\nendobj\n`;
+  const obj4 = `4 0 obj\n<</Length ${streamLen}>>\nstream\n${stream}\nendstream\nendobj\n`;
 
-  const pdf = `%PDF-1.4
-1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj
-2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj
-3 0 obj<</Type/Page/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</Font<</F1<</Type/Font/Subtype/Type1/BaseFont/Courier>>>>>>>>>/Contents 4 0 R>>endobj
-4 0 obj<</Length ${streamLen}>>
-stream
-${stream}
-endstream
-endobj
-xref
-0 5
-0000000000 65535 f
-0000000009 00000 n
-0000000058 00000 n
-0000000115 00000 n
-0000000274 00000 n
-trailer<</Size 5/Root 1 0 R>>
-startxref
-${350 + streamLen}
-%%EOF`;
+  const header = "%PDF-1.4\n";
+  const off1 = header.length;
+  const off2 = off1 + obj1.length;
+  const off3 = off2 + obj2.length;
+  const off4 = off3 + obj3.length;
+  const xrefOffset = off4 + obj4.length;
 
-  
+  const pad = (n: number) => n.toString().padStart(10, "0");
+  const xref =
+    "xref\n0 5\n" +
+    "0000000000 65535 f \n" +
+    `${pad(off1)} 00000 n \n` +
+    `${pad(off2)} 00000 n \n` +
+    `${pad(off3)} 00000 n \n` +
+    `${pad(off4)} 00000 n \n`;
+
+  const trailer = `trailer\n<</Size 5 /Root 1 0 R>>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+  const pdfText = header + obj1 + obj2 + obj3 + obj4 + xref + trailer;
+
   const encoder = new TextEncoder();
-  const bytes = encoder.encode(pdf);
+  const bytes = encoder.encode(pdfText);
   let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 }
 
