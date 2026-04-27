@@ -2170,7 +2170,7 @@ async function sendFeedback() {
 
     
     if (!saved) {
-      const mailtoUrl = `mailto:aman@jeetrack.app?subject=${encodeURIComponent('[JEETrack Feedback] ' + subj)}&body=${encodeURIComponent(msg + '\n\n— Sent from JEETrack\nUser: ' + (currentUser?.email || 'anonymous'))}`;
+      const mailtoUrl = `mailto:support@jeetrack.com?subject=${encodeURIComponent('[JEETrack Feedback] ' + subj)}&body=${encodeURIComponent(msg + '\n\n— Sent from JEETrack\nUser: ' + (currentUser?.email || 'anonymous'))}`;
       window.open(mailtoUrl, '_blank');
     }
 
@@ -2179,7 +2179,7 @@ async function sendFeedback() {
     if (document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
     if (btn) { btn.textContent = 'Sent ✓'; setTimeout(() => { if(btn){ btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; btn.disabled = false; } }, 2500); }
   } catch(e) {
-    toast('Could not send — please email aman@jeetrack.app directly', 'error');
+    toast('Could not send — please email support@jeetrack.in directly', 'error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; }
   }
 }
