@@ -3923,7 +3923,11 @@ function nav(page, _pushState){
     const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,settings:renderSettings})[page];
     if(_renderFn){
       _navCache.dirty[page]=false;
-      setTimeout(()=>_renderFn(), 0);
+      if(page==='overview'){
+        setTimeout(()=>_renderFn(), 0);
+      } else {
+        requestAnimationFrame(()=>_renderFn());
+      }
     }
   }
 

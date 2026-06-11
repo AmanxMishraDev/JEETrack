@@ -26,7 +26,7 @@ body.sb-open{overflow:hidden!important}
 .wm strong{display:block;font-family:'Syne',sans-serif;font-size:11px;color:var(--mu);font-weight:600;margin-bottom:1px}
 .ns{margin-bottom:1.25rem}
 .nl{font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--mu2);text-transform:uppercase;padding:0 .4rem;margin-bottom:.4rem}
-.ni{display:flex;align-items:center;gap:7px;padding:.45rem .6rem;border-radius:var(--rs);cursor:pointer;transition:all .18s;font-size:12.5px;color:var(--mu);border:none;background:none;width:100%;text-align:left;position:relative}
+.ni{display:flex;align-items:center;gap:7px;padding:.45rem .6rem;border-radius:var(--rs);cursor:pointer;transition:all .18s;font-size:12.5px;color:var(--mu);border:none;background:none;width:100%;text-align:left;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .ni:hover{background:var(--sf2);color:var(--tx);transform:translateX(2px)}
 .ni.active{background:linear-gradient(135deg,rgba(124,106,247,.15),rgba(166,149,255,.08));color:var(--ac2);font-weight:500;box-shadow:0 2px 14px rgba(124,106,247,.18),inset 0 1px 0 rgba(166,149,255,.1)}
 .ni .ico{display:inline-flex;align-items:center;font-size:14px;width:17px;text-align:center}

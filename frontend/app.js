@@ -2071,6 +2071,21 @@ saveGoalSettings = function() {
 document.addEventListener('DOMContentLoaded', () => {
   initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
+
+  // Fix mobile nav lag — fire on touchstart instead of waiting for click (removes 300ms delay)
+  setTimeout(() => {
+    document.querySelectorAll('.mob-nav-item').forEach(btn => {
+      btn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        const page = this.dataset.page;
+        if (this.id === 'mob-more-btn') {
+          openMobDrawer();
+        } else if (page) {
+          mobNavTo(page, this);
+        }
+      }, { passive: false });
+    });
+  }, 1000); // wait for DOM to be fully ready
   
   const dropzone = document.getElementById('settings-avatar-dropzone');
   if (dropzone) {
