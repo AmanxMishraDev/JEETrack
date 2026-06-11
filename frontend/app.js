@@ -233,7 +233,8 @@ function showAuthScreen(){
   setTimeout(_initScrollReveal, 150);
   history.replaceState({page:'login'}, '', '/login');
   document.title = 'JEETrack — Sign In';
-  setTimeout(initLandingStarField, 50);
+  // Disabled: star/particle field was causing lag on lower-end devices
+  // setTimeout(initLandingStarField, 50);
   setTimeout(initSlideshow, 100);
 }
 

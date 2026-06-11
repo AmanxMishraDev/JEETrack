@@ -5481,19 +5481,6 @@ function toggleChemSplit(e){
 
 window.addEventListener('DOMContentLoaded',()=>{
   initSupabase();
-  
-  
-  
-  document.querySelectorAll('.mob-nav-item').forEach(btn=>{
-    let _touchMoved=false;
-    btn.addEventListener('touchstart',()=>{_touchMoved=false;},{passive:true});
-    btn.addEventListener('touchmove',()=>{_touchMoved=true;},{passive:true});
-    btn.addEventListener('touchend',e=>{
-      if(_touchMoved)return; 
-      e.preventDefault(); 
-      btn.click();
-    },{passive:false});
-  });
 });
 
 function toggleSidebar(){
