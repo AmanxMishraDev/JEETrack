@@ -26,7 +26,7 @@ body.sb-open{overflow:hidden!important}
 .wm strong{display:block;font-family:'Syne',sans-serif;font-size:11px;color:var(--mu);font-weight:600;margin-bottom:1px}
 .ns{margin-bottom:1.25rem}
 .nl{font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--mu2);text-transform:uppercase;padding:0 .4rem;margin-bottom:.4rem}
-.ni{display:flex;align-items:center;gap:7px;padding:.45rem .6rem;border-radius:var(--rs);cursor:pointer;transition:all .18s;font-size:12.5px;color:var(--mu);border:none;background:none;width:100%;text-align:left;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.ni{display:flex;align-items:center;gap:7px;padding:.45rem .6rem;border-radius:var(--rs);cursor:pointer;transition:all .18s;font-size:12.5px;color:var(--mu);border:none;background:none;width:100%;text-align:left;position:relative}
 .ni:hover{background:var(--sf2);color:var(--tx);transform:translateX(2px)}
 .ni.active{background:linear-gradient(135deg,rgba(124,106,247,.15),rgba(166,149,255,.08));color:var(--ac2);font-weight:500;box-shadow:0 2px 14px rgba(124,106,247,.18),inset 0 1px 0 rgba(166,149,255,.1)}
 .ni .ico{display:inline-flex;align-items:center;font-size:14px;width:17px;text-align:center}
@@ -510,6 +510,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(10,10,15,.98);border-top:1px solid rgba(255,255,255,.06);padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom));flex-direction:row;justify-content:space-around;align-items:flex-start;will-change:transform;transform:translateZ(0);-webkit-transform:translateZ(0)}
 
 .mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.25rem .3rem .2rem;border-radius:12px;border:none;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:9.5px;font-weight:500;transition:color .2s;min-width:52px;position:relative;-webkit-tap-highlight-color:transparent;outline:none;touch-action:manipulation}
+.mob-nav-item::before{content:'';position:absolute;top:-12px;left:0;right:0;bottom:-8px;}
 .mob-nav-item:active .mico{transform:scale(.85);transition:transform .1s}
 .mob-nav-item .mico{display:flex;align-items:center;justify-content:center;width:40px;height:28px;border-radius:14px;position:relative;transition:transform .2s cubic-bezier(.34,1.4,.64,1)}
 .mni-pill{position:absolute;inset:0;border-radius:14px;background:rgba(124,106,247,.14);opacity:0;transform:scale(.7);transition:opacity .2s,transform .22s cubic-bezier(.34,1.4,.64,1)}
