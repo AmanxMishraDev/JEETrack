@@ -1636,6 +1636,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Generate Insights
       </button>
+      <div id="ai-usage-bar" style="margin-top:12px;display:none">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px">
+          <span id="ai-usage-dots" style="display:flex;gap:5px"></span>
+          <span id="ai-usage-label" style="font-size:11px;color:var(--mu)"></span>
+        </div>
+        <div id="ai-reset-label" style="font-size:10px;color:var(--mu);opacity:.6;text-align:center"></div>
+      </div>
     </div>
 
     <div class="ai-feature-pills">
@@ -2815,6 +2822,47 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="pmo-btn-save" onclick="saveHWT()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Log Score
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Contextual Review Modal (shared, content injected by JS) ── -->
+<div class="mo" id="modal-reviewPrompt" onclick="if(event.target===this)closeReviewModal()">
+  <div class="pmo" style="max-width:420px">
+    <div class="pmo-glow pmo-glow-violet"></div>
+    <button class="pmo-close" onclick="closeReviewModal()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" id="rev-icon-wrap" style="background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(251,191,36,.1));border-color:rgba(124,106,247,.3);box-shadow:0 0 28px rgba(124,106,247,.25)">
+        <span id="rev-icon" style="font-size:22px;line-height:1">ICON</span>
+      </div>
+      <div>
+        <div class="pmo-title" id="rev-title">Quick feedback?</div>
+        <div class="pmo-sub" id="rev-sub">How is this feature working for you?</div>
+      </div>
+    </div>
+    <div style="margin:18px 0 10px">
+      <div style="font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:10px">Rate this feature</div>
+      <div id="review-stars" style="display:flex;gap:8px">
+        <span class="rev-star" data-v="1" onclick="setReviewStar(1)">STAR</span>
+        <span class="rev-star" data-v="2" onclick="setReviewStar(2)">STAR</span>
+        <span class="rev-star" data-v="3" onclick="setReviewStar(3)">STAR</span>
+        <span class="rev-star" data-v="4" onclick="setReviewStar(4)">STAR</span>
+        <span class="rev-star" data-v="5" onclick="setReviewStar(5)">STAR</span>
+      </div>
+    </div>
+    <div class="pmo-field" style="margin-top:14px">
+      <label class="pmo-label">Anything to share? <span style="opacity:.5;font-weight:400">(optional)</span></label>
+      <textarea id="review-text" class="pmo-input" rows="3" maxlength="300" placeholder="What is working? What could be better?" style="resize:none;line-height:1.5;font-family:inherit"></textarea>
+    </div>
+    <div style="font-size:11px;color:var(--mu);margin-top:6px;opacity:.7">Goes directly to the developer</div>
+    <div class="pmo-footer" style="margin-top:16px">
+      <button class="pmo-btn-cancel" onclick="closeReviewModal()">Maybe later</button>
+      <button class="pmo-btn-save" id="review-submit-btn" onclick="submitReview()" disabled style="opacity:.4;cursor:not-allowed">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        Send Review
       </button>
     </div>
   </div>
@@ -4277,7 +4325,7 @@ function saveTest(){
   }
 
   const e={id:Date.now(),exam,session:null,paper:exam==='advanced'?document.getElementById('at-paper').value:null,type:document.getElementById('at-type').value,date,total,max,physics:phy,chemistry:chem,maths:math,notes:document.getElementById('at-notes').value};
-  S.tests.push(e);save();closeM('addTest');
+  S.tests.push(e);save();closeM('addTest');maybeShowReviewPrompt();
   pushUndo('test',e,'Test score added',false);
   const gm=getGoalMains(),ga=getGoalAdv();
   if(e.exam==='mains'&&e.total>=gm) setTimeout(()=>celebrate('🏆',`LEGENDARY! ${gm}+ in Mains!`,`You scored ${e.total}/${e.max} — you're on fire!`,true),300);
@@ -4380,7 +4428,7 @@ function saveHours(){
   }
   ['lh-l','lh-p','lh-r'].forEach(id=>clearFieldErr(id,'lh-hrs-err'));
   const e={id:Date.now(),date:document.getElementById('lh-date').value,subject:document.getElementById('lh-subj').value,lecture:l,practice:p,revision:r,total:+(l+p+r).toFixed(1)};
-  S.hours.push(e);save();closeM('logHours');
+  S.hours.push(e);save();closeM('logHours');maybeShowHoursReview();
   pushUndo('hours',e,'Hours logged ✓',false);
   navMarkDirty('hours');navMarkDirty('overview');
   renderHours();renderOverview();
@@ -4520,7 +4568,7 @@ function toggleChapter(id,field){
   ch[field]=!ch[field];save();
   if(ch.theory&&ch.practice)celebrate('📚','Chapter Complete!',`${ch.name} — theory & practice done!`);
   navMarkDirty('syllabus');navMarkDirty('overview');
-  renderSyl();
+  renderSyl();maybeShowSyllabusReview();
 }
 function updateBLStreaks(){
   const pending=S.backlogs.filter(b=>!b.done).length;
@@ -5762,6 +5810,7 @@ nav=function(page, _pushState){
     
     ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
     
+    updateAiUsageUI();
     const content=document.getElementById('insights-content');
     const empty=document.getElementById('insights-empty');
     if(content && empty && content.innerHTML.trim()===''){
@@ -5793,6 +5842,13 @@ async function generateInsights(){
   if(!sb){toast('Sign in to use AI Insights', 'info');return;}
   const{data:{session}}=await sb.auth.getSession();
   if(!session){toast('Sign in to use AI Insights', 'info');return;}
+
+  // ── Weekly limit check ──
+  if(!_aiCanGenerate()){
+    const days=_aiDaysUntilReset();
+    toast(`Weekly limit reached (3/3) — resets in ${days} day${days===1?'':'s'} 🔄`, 'info');
+    return;
+  }
 
   const btn=document.getElementById('insights-btn');
   const loading=document.getElementById('insights-loading');
@@ -6043,7 +6099,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
     try{ localStorage.setItem('jt_ai_insights_'+(typeof currentUser!=='undefined'&&currentUser?.id||'guest'), JSON.stringify({data:insight, ts:Date.now()})); }catch(e){}
     content.style.display='block';
     empty.style.display='none';
-    toast('Insights ready 🧠', 'success');
+    _aiIncrementUsage();updateAiUsageUI();toast('Insights ready 🧠', 'success');maybeShowAiReview();
   }catch(err){
     clearInterval(msgInt);
     loading.style.display='none';

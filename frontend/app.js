@@ -2199,3 +2199,230 @@ async function sendFeedback() {
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Feedback'; }
   }
 }
+
+/* ── Contextual Review System ── */
+// Each feature has its own localStorage key and context config
+const REVIEW_CONFIGS = {
+  test: {
+    key: 'jt_rev_test',
+    icon: '📊',
+    title: "You're logging like a pro! 🔥",
+    sub: '3 tests logged — how useful is the Test Tracker?',
+    subject: 'Test Tracker Review',
+    placeholder: 'Is the score breakdown helpful? Anything missing?'
+  },
+  hours: {
+    key: 'jt_rev_hours',
+    icon: '⏱️',
+    title: 'Great consistency! 💪',
+    sub: '10 study sessions logged — how is the Hours Tracker?',
+    subject: 'Hours Tracker Review',
+    placeholder: 'Is logging study hours useful? What would make it better?'
+  },
+  syllabus: {
+    key: 'jt_rev_syllabus',
+    icon: '📚',
+    title: 'Halfway there! 🎯',
+    sub: '50% syllabus complete — how is the Syllabus Tracker?',
+    subject: 'Syllabus Tracker Review',
+    placeholder: 'Is chapter tracking helping your prep? Any suggestions?'
+  },
+  ai: {
+    key: 'jt_rev_ai',
+    icon: '🧠',
+    title: 'How were your AI Insights?',
+    sub: 'Were the insights useful for your preparation?',
+    subject: 'AI Insights Review',
+    placeholder: 'Were the insights accurate? What would you improve?'
+  }
+};
+
+let _reviewRating = 0;
+let _reviewContext = null; // which feature is being reviewed
+
+function _openReviewModal(type) {
+  const cfg = REVIEW_CONFIGS[type];
+  if (!cfg) return;
+  // Check if permanently done (submitted) or snoozed (3-day cooldown)
+  const stored = localStorage.getItem(cfg.key);
+  if (stored === 'submitted') return;
+  if (stored) {
+    try {
+      const { snoozedAt } = JSON.parse(stored);
+      const daysSince = (Date.now() - snoozedAt) / (1000 * 60 * 60 * 24);
+      if (daysSince < 3) return; // still in 3-day snooze
+    } catch(e) { return; } // malformed — play safe
+  }
+
+  _reviewRating = 0;
+  _reviewContext = type;
+
+  // Inject context-specific content
+  document.getElementById('rev-icon').textContent = cfg.icon;
+  document.getElementById('rev-title').textContent = cfg.title;
+  document.getElementById('rev-sub').textContent = cfg.sub;
+  const ta = document.getElementById('review-text');
+  ta.value = '';
+  ta.placeholder = cfg.placeholder;
+
+  _renderReviewStars(0);
+  const btn = document.getElementById('review-submit-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; btn.style.cursor = 'not-allowed'; }
+
+  document.getElementById('modal-reviewPrompt').classList.add('open');
+}
+
+// ── Trigger: after 3rd test ──
+function maybeShowReviewPrompt() {
+  if (localStorage.getItem(REVIEW_CONFIGS.test.key)) return;
+  if (!S || !S.tests || S.tests.length < 3) return;
+  setTimeout(() => _openReviewModal('test'), 500);
+}
+
+// ── Trigger: after 10th hours session ──
+function maybeShowHoursReview() {
+  if (localStorage.getItem(REVIEW_CONFIGS.hours.key)) return;
+  if (!S || !S.hours || S.hours.length < 10) return;
+  setTimeout(() => _openReviewModal('hours'), 500);
+}
+
+// ── Trigger: after syllabus hits 50% ──
+function maybeShowSyllabusReview() {
+  if (localStorage.getItem(REVIEW_CONFIGS.syllabus.key)) return;
+  const all = ['physics','chemistry','maths'].flatMap(s => S.syllabus[s] || []);
+  if (!all.length) return;
+  const done = all.filter(c => c.theory && c.practice).length;
+  const pct = Math.round(done / all.length * 100);
+  if (pct < 50) return;
+  setTimeout(() => _openReviewModal('syllabus'), 500);
+}
+
+// ── Trigger: after AI insights generated ──
+function maybeShowAiReview() {
+  if (localStorage.getItem(REVIEW_CONFIGS.ai.key)) return;
+  setTimeout(() => _openReviewModal('ai'), 1500); // slight delay after insights render
+}
+
+// ── Star UI ──
+function setReviewStar(val) {
+  _reviewRating = val;
+  _renderReviewStars(val);
+  const btn = document.getElementById('review-submit-btn');
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+}
+
+function _renderReviewStars(val) {
+  document.querySelectorAll('.rev-star').forEach(s => {
+    s.classList.toggle('active', +s.dataset.v <= val);
+  });
+}
+
+// ── Close ──
+function closeReviewModal() {
+  document.getElementById('modal-reviewPrompt').classList.remove('open');
+  if (_reviewContext) {
+    // Snooze for 3 days — not permanent dismiss
+    localStorage.setItem(REVIEW_CONFIGS[_reviewContext].key, JSON.stringify({ snoozedAt: Date.now() }));
+    _reviewContext = null;
+  }
+}
+
+// ── Submit ──
+async function submitReview() {
+  if (!_reviewRating || !_reviewContext) return;
+  const cfg = REVIEW_CONFIGS[_reviewContext];
+  const btn = document.getElementById('review-submit-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.6'; }
+
+  const text = (document.getElementById('review-text').value || '').trim();
+  const uid = currentUser?.id || null;
+
+  try {
+    await sb.from('feedback').insert({
+      user_id: uid,
+      subject: `${cfg.icon} ${_reviewRating}/5 — ${cfg.subject}`,
+      message: text || '(no comment)',
+      rating: _reviewRating,
+      created_at: new Date().toISOString()
+    });
+  } catch(e) {
+    console.warn('Review insert failed:', e);
+  }
+
+  localStorage.setItem(cfg.key, 'submitted');
+  const rating = _reviewRating;
+  document.getElementById('modal-reviewPrompt').classList.remove('open');
+  _reviewContext = null;
+  setTimeout(() => toast(`Thanks for the ${rating}★ review! 🙏`, 'success'), 300);
+}
+
+/* ── AI Insights Weekly Limit (3 per week, resets Sunday midnight) ── */
+const AI_LIMIT_KEY = 'jt_ai_weekly';
+const AI_WEEKLY_MAX = 3;
+
+function _getAiWeekKey() {
+  // Returns "YYYY-Www" — unique per calendar week (Mon-Sun)
+  const now = new Date();
+  const jan1 = new Date(now.getFullYear(), 0, 1);
+  const week = Math.ceil(((now - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+
+function _getAiUsage() {
+  try {
+    const raw = localStorage.getItem(AI_LIMIT_KEY);
+    if (!raw) return { week: _getAiWeekKey(), count: 0 };
+    const parsed = JSON.parse(raw);
+    // If stored week != current week → auto reset (Sunday has passed)
+    if (parsed.week !== _getAiWeekKey()) return { week: _getAiWeekKey(), count: 0 };
+    return parsed;
+  } catch(e) { return { week: _getAiWeekKey(), count: 0 }; }
+}
+
+function _aiCanGenerate() {
+  return _getAiUsage().count < AI_WEEKLY_MAX;
+}
+
+function _aiIncrementUsage() {
+  const usage = _getAiUsage();
+  usage.count = (usage.count || 0) + 1;
+  usage.week = _getAiWeekKey();
+  localStorage.setItem(AI_LIMIT_KEY, JSON.stringify(usage));
+}
+
+function _aiDaysUntilReset() {
+  // Days until next Sunday midnight
+  const now = new Date();
+  const daysUntilSun = (7 - now.getDay()) % 7 || 7;
+  return daysUntilSun;
+}
+
+function updateAiUsageUI() {
+  const bar = document.getElementById('ai-usage-bar');
+  const dotsEl = document.getElementById('ai-usage-dots');
+  const labelEl = document.getElementById('ai-usage-label');
+  const resetEl = document.getElementById('ai-reset-label');
+  const btn = document.getElementById('insights-btn');
+  if (!bar || !dotsEl || !labelEl) return;
+
+  const usage = _getAiUsage();
+  const used = usage.count;
+  const remaining = AI_WEEKLY_MAX - used;
+
+  // Render dots — filled = used, empty = available
+  dotsEl.innerHTML = Array.from({length: AI_WEEKLY_MAX}, (_, i) =>
+    `<span style="width:8px;height:8px;border-radius:50%;background:${i < used ? 'var(--ac)' : 'rgba(255,255,255,0.12)'};display:inline-block;transition:background .3s"></span>`
+  ).join('');
+
+  if (remaining <= 0) {
+    labelEl.textContent = 'Weekly limit reached';
+    if (resetEl) resetEl.textContent = `Resets in ${_aiDaysUntilReset()} day${_aiDaysUntilReset()===1?'':'s'} (Sunday)`;
+    if (btn) { btn.disabled = true; btn.style.opacity = '.45'; btn.style.cursor = 'not-allowed'; }
+  } else {
+    labelEl.textContent = `${remaining} of ${AI_WEEKLY_MAX} left this week`;
+    if (resetEl) resetEl.textContent = `Resets every Sunday`;
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+  }
+
+  bar.style.display = 'block';
+}
