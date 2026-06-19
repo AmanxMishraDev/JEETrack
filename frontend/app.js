@@ -2243,15 +2243,24 @@ let _reviewContext = null; // which feature is being reviewed
 function _openReviewModal(type) {
   const cfg = REVIEW_CONFIGS[type];
   if (!cfg) return;
-  // Check if permanently done (submitted) or snoozed (3-day cooldown)
+  // Check cooldown/dismiss logic
   const stored = localStorage.getItem(cfg.key);
-  if (stored === 'submitted') return;
-  if (stored) {
+  const isRecurring = type === 'test' || type === 'hours';
+  if (stored === 'submitted') {
+    if (!isRecurring) return; // syllabus/ai: permanent dismiss after submit
+    // For recurring: check 3-day cooldown after last submission
     try {
-      const { snoozedAt } = JSON.parse(stored);
-      const daysSince = (Date.now() - snoozedAt) / (1000 * 60 * 60 * 24);
-      if (daysSince < 3) return; // still in 3-day snooze
-    } catch(e) { return; } // malformed — play safe
+      const { submittedAt } = JSON.parse(stored === 'submitted' ? '{}' : stored);
+      // 'submitted' string means old format — treat as 3 days ago cooldown reset
+    } catch(e) {}
+  }
+  if (stored && stored !== 'submitted') {
+    try {
+      const parsed = JSON.parse(stored);
+      const ts = parsed.snoozedAt || parsed.submittedAt || 0;
+      const daysSince = (Date.now() - ts) / (1000 * 60 * 60 * 24);
+      if (daysSince < 3) return; // still in cooldown
+    } catch(e) { return; }
   }
 
   _reviewRating = 0;
@@ -2275,12 +2284,18 @@ function _openReviewModal(type) {
 // ── Trigger: after 3rd test ──
 function maybeShowReviewPrompt() {
   if (!S || !S.tests || S.tests.length < 3) return;
+  // Trigger at 3rd test, then every 5 after (3, 8, 13, 18, 23...)
+  const n = S.tests.length;
+  if (n !== 3 && (n - 3) % 5 !== 0) return;
   setTimeout(() => _openReviewModal('test'), 500);
 }
 
-// ── Trigger: after 10th hours session ──
+// ── Trigger: after 10th hours session, then every 5 ──
 function maybeShowHoursReview() {
   if (!S || !S.hours || S.hours.length < 10) return;
+  // Trigger at 10th session, then every 5 after (10, 15, 20, 25...)
+  const n = S.hours.length;
+  if (n !== 10 && (n - 10) % 5 !== 0) return;
   setTimeout(() => _openReviewModal('hours'), 500);
 }
 
@@ -2340,7 +2355,7 @@ async function submitReview() {
   try {
     await sb.from('feedback').insert({
       user_id: uid,
-      subject: `${cfg.icon} ${_reviewRating}/5 — ${cfg.subject}`,
+      subject: `${_reviewRating}/5 — ${cfg.subject}`,
       message: text || '(no comment)',
       rating: _reviewRating,
       created_at: new Date().toISOString()
@@ -2349,7 +2364,11 @@ async function submitReview() {
     console.warn('Review insert failed:', e);
   }
 
-  localStorage.setItem(cfg.key, 'submitted');
+  // Recurring types store timestamp so cooldown works; others store 'submitted' permanently
+  const isRecurringType = _reviewContext === 'test' || _reviewContext === 'hours';
+  localStorage.setItem(cfg.key, isRecurringType 
+    ? JSON.stringify({ submittedAt: Date.now() }) 
+    : 'submitted');
   const rating = _reviewRating;
   document.getElementById('modal-reviewPrompt').classList.remove('open');
   _reviewContext = null;
