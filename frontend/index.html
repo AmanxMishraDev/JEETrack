@@ -5803,7 +5803,6 @@ nav=function(page, _pushState){
     
     ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
     
-    updateAiUsageUI();
     const content=document.getElementById('insights-content');
     const empty=document.getElementById('insights-empty');
     if(content && empty && content.innerHTML.trim()===''){
@@ -6092,7 +6091,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
     try{ localStorage.setItem('jt_ai_insights_'+(typeof currentUser!=='undefined'&&currentUser?.id||'guest'), JSON.stringify({data:insight, ts:Date.now()})); }catch(e){}
     content.style.display='block';
     empty.style.display='none';
-    _aiIncrementUsage();updateAiUsageUI();toast('Insights ready 🧠', 'success');maybeShowAiReview();
+    _aiIncrementUsage();toast('Insights ready 🧠', 'success');maybeShowAiReview();
   }catch(err){
     clearInterval(msgInt);
     loading.style.display='none';
