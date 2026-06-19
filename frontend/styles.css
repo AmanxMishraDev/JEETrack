@@ -4309,16 +4309,22 @@ select.fc.adv-fc {
 
 /* ── Review Modal Stars ── */
 .rev-star {
-  font-size: 32px;
-  color: var(--mu);
+  display: inline-flex;
   cursor: pointer;
-  transition: color .15s, transform .15s;
-  opacity: .35;
+  transition: transform .15s;
   user-select: none;
 }
-.rev-star.active, .rev-star.hover {
-  color: #fbbf24;
-  opacity: 1;
+.rev-star svg {
+  stroke: rgba(255,255,255,0.2);
+  fill: none;
+  transition: stroke .15s, fill .15s, transform .15s;
+}
+.rev-star.active svg {
+  stroke: #fbbf24;
+  fill: #fbbf24;
+}
+.rev-star:hover svg {
+  stroke: #fbbf24;
+  fill: rgba(251,191,36,0.3);
   transform: scale(1.15);
 }
-.rev-star:hover { transform: scale(1.2); }

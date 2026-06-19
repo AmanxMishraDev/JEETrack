@@ -2205,31 +2205,31 @@ async function sendFeedback() {
 const REVIEW_CONFIGS = {
   test: {
     key: 'jt_rev_test',
-    icon: '📊',
-    title: "You're logging like a pro! 🔥",
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#rg1)" stroke-width="1.8" stroke-linecap="round"><defs><linearGradient id="rg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+    title: "You\'re logging like a pro!",
     sub: '3 tests logged — how useful is the Test Tracker?',
     subject: 'Test Tracker Review',
     placeholder: 'Is the score breakdown helpful? Anything missing?'
   },
   hours: {
     key: 'jt_rev_hours',
-    icon: '⏱️',
-    title: 'Great consistency! 💪',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#rg2)" stroke-width="1.8" stroke-linecap="round"><defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#a695ff"/></linearGradient></defs><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    title: 'Great consistency!',
     sub: '10 study sessions logged — how is the Hours Tracker?',
     subject: 'Hours Tracker Review',
     placeholder: 'Is logging study hours useful? What would make it better?'
   },
   syllabus: {
     key: 'jt_rev_syllabus',
-    icon: '📚',
-    title: 'Halfway there! 🎯',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#rg3)" stroke-width="1.8" stroke-linecap="round"><defs><linearGradient id="rg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    title: 'Halfway there!',
     sub: '50% syllabus complete — how is the Syllabus Tracker?',
     subject: 'Syllabus Tracker Review',
     placeholder: 'Is chapter tracking helping your prep? Any suggestions?'
   },
   ai: {
     key: 'jt_rev_ai',
-    icon: '🧠',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#rg4)" stroke-width="1.8" stroke-linecap="round"><defs><linearGradient id="rg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
     title: 'How were your AI Insights?',
     sub: 'Were the insights useful for your preparation?',
     subject: 'AI Insights Review',
@@ -2258,7 +2258,7 @@ function _openReviewModal(type) {
   _reviewContext = type;
 
   // Inject context-specific content
-  document.getElementById('rev-icon').textContent = cfg.icon;
+  document.getElementById('rev-icon').innerHTML = cfg.icon;
   document.getElementById('rev-title').textContent = cfg.title;
   document.getElementById('rev-sub').textContent = cfg.sub;
   const ta = document.getElementById('review-text');
@@ -2274,21 +2274,18 @@ function _openReviewModal(type) {
 
 // ── Trigger: after 3rd test ──
 function maybeShowReviewPrompt() {
-  if (localStorage.getItem(REVIEW_CONFIGS.test.key)) return;
   if (!S || !S.tests || S.tests.length < 3) return;
   setTimeout(() => _openReviewModal('test'), 500);
 }
 
 // ── Trigger: after 10th hours session ──
 function maybeShowHoursReview() {
-  if (localStorage.getItem(REVIEW_CONFIGS.hours.key)) return;
   if (!S || !S.hours || S.hours.length < 10) return;
   setTimeout(() => _openReviewModal('hours'), 500);
 }
 
 // ── Trigger: after syllabus hits 50% ──
 function maybeShowSyllabusReview() {
-  if (localStorage.getItem(REVIEW_CONFIGS.syllabus.key)) return;
   const all = ['physics','chemistry','maths'].flatMap(s => S.syllabus[s] || []);
   if (!all.length) return;
   const done = all.filter(c => c.theory && c.practice).length;
@@ -2424,5 +2421,5 @@ function updateAiUsageUI() {
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
   }
 
-  bar.style.display = 'block';
+  bar.style.display = 'flex';
 }
