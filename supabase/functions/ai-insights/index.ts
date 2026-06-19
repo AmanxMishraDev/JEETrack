@@ -12,6 +12,7 @@ const ALLOWED_ORIGINS = [
   "https://jeetrack.in",
   "https://www.jeetrack.in",
   "https://jeetrack.vercel.app",
+  "https://development.jeetrack.in",
 ];
 
 function getCorsHeaders(req: Request) {

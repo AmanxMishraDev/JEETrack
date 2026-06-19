@@ -2310,7 +2310,10 @@ function setReviewStar(val) {
 
 function _renderReviewStars(val) {
   document.querySelectorAll('.rev-star').forEach(s => {
-    s.classList.toggle('active', +s.dataset.v <= val);
+    const sv = +s.dataset.v;
+    s.classList.remove('active', 'active-last');
+    if (sv < val) s.classList.add('active');
+    else if (sv === val) s.classList.add('active', 'active-last');
   });
 }
 
@@ -2394,32 +2397,3 @@ function _aiDaysUntilReset() {
   return daysUntilSun;
 }
 
-function updateAiUsageUI() {
-  const bar = document.getElementById('ai-usage-bar');
-  const dotsEl = document.getElementById('ai-usage-dots');
-  const labelEl = document.getElementById('ai-usage-label');
-  const resetEl = document.getElementById('ai-reset-label');
-  const btn = document.getElementById('insights-btn');
-  if (!bar || !dotsEl || !labelEl) return;
-
-  const usage = _getAiUsage();
-  const used = usage.count;
-  const remaining = AI_WEEKLY_MAX - used;
-
-  // Render dots — filled = used, empty = available
-  dotsEl.innerHTML = Array.from({length: AI_WEEKLY_MAX}, (_, i) =>
-    `<span style="width:8px;height:8px;border-radius:50%;background:${i < used ? 'var(--ac)' : 'rgba(255,255,255,0.12)'};display:inline-block;transition:background .3s"></span>`
-  ).join('');
-
-  if (remaining <= 0) {
-    labelEl.textContent = 'Weekly limit reached';
-    if (resetEl) resetEl.textContent = `Resets in ${_aiDaysUntilReset()} day${_aiDaysUntilReset()===1?'':'s'} (Sunday)`;
-    if (btn) { btn.disabled = true; btn.style.opacity = '.45'; btn.style.cursor = 'not-allowed'; }
-  } else {
-    labelEl.textContent = `${remaining} of ${AI_WEEKLY_MAX} left this week`;
-    if (resetEl) resetEl.textContent = `Resets every Sunday`;
-    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
-  }
-
-  bar.style.display = 'flex';
-}

@@ -1636,13 +1636,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Generate Insights
       </button>
-      <div id="ai-usage-bar" style="margin-top:10px;display:none;flex-direction:column;align-items:center;gap:4px">
-        <div style="display:flex;gap:6px;align-items:center">
-          <span id="ai-usage-dots" style="display:flex;gap:5px"></span>
-          <span id="ai-usage-label" style="font-size:11px;color:var(--mu)"></span>
-        </div>
-        <span id="ai-reset-label" style="font-size:10px;color:var(--mu);opacity:.55"></span>
-      </div>
     </div>
 
     <div class="ai-feature-pills">
@@ -2845,12 +2838,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
     <div style="margin:18px 0 10px">
       <div style="font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:10px">Rate this feature</div>
-      <div id="review-stars" style="display:flex;gap:8px">
-        <span class="rev-star" data-v="1" onclick="setReviewStar(1)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <span class="rev-star" data-v="2" onclick="setReviewStar(2)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <span class="rev-star" data-v="3" onclick="setReviewStar(3)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <span class="rev-star" data-v="4" onclick="setReviewStar(4)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <span class="rev-star" data-v="5" onclick="setReviewStar(5)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <div id="review-stars" style="display:flex;gap:4px;justify-content:center">
+        <span class="rev-star" data-v="1" onclick="setReviewStar(1)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="rev-star" data-v="2" onclick="setReviewStar(2)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="rev-star" data-v="3" onclick="setReviewStar(3)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="rev-star" data-v="4" onclick="setReviewStar(4)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="rev-star" data-v="5" onclick="setReviewStar(5)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
       </div>
     </div>
     <div class="pmo-field" style="margin-top:14px">

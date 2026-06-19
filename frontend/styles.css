@@ -4311,20 +4311,41 @@ select.fc.adv-fc {
 .rev-star {
   display: inline-flex;
   cursor: pointer;
-  transition: transform .15s;
   user-select: none;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color: transparent;
 }
 .rev-star svg {
-  stroke: rgba(255,255,255,0.2);
-  fill: none;
-  transition: stroke .15s, fill .15s, transform .15s;
+  width: 40px;
+  height: 40px;
+  stroke: rgba(255,255,255,0.18);
+  fill: transparent;
+  transition: stroke .2s ease, fill .2s ease, filter .2s ease;
+  filter: none;
+}
+.rev-star:hover svg {
+  stroke: #fbbf24;
+  fill: rgba(251,191,36,0.15);
+  filter: drop-shadow(0 0 6px rgba(251,191,36,0.5));
+}
+.rev-star:hover {
+  transform: scale(1.2);
 }
 .rev-star.active svg {
   stroke: #fbbf24;
   fill: #fbbf24;
+  filter: drop-shadow(0 0 8px rgba(251,191,36,0.6));
 }
-.rev-star:hover svg {
-  stroke: #fbbf24;
-  fill: rgba(251,191,36,0.3);
-  transform: scale(1.15);
+.rev-star.active-last svg {
+  fill: #fbbf24;
+  stroke: #fde68a;
+  filter: drop-shadow(0 0 12px rgba(251,191,36,0.9));
+}
+.rev-star.active-last {
+  animation: starPop .35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes starPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
 }

@@ -232,8 +232,8 @@ function generateReportPDF(name: string, month: string, stats: any, tests: any[]
 
   // ── header band ──────────────────────────────────────────────────────────
   ops.push(rect(0, H - 80, W, 80, 0.067, 0.067, 0.094));
-  ops.push(txtB(40, H - 38, 22, 0.94, 0.94, 0.96, "JEETrack"));
-  ops.push(txtB(130, H - 38, 22, 0.58, 0.42, 0.97, "Monthly Report"));
+  ops.push(txtB(40, H - 38, 20, 0.94, 0.94, 0.96, "JEETrack"));
+  ops.push(txtB(155, H - 38, 20, 0.58, 0.42, 0.97, "Monthly Report"));
   ops.push(txt(40, H - 58, 10, 0.47, 0.47, 0.56, month));
   ops.push(txt(40, H - 72, 9, 0.47, 0.47, 0.56,
     `Student: ${name}   |   Generated: ${new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}`));
