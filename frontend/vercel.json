@@ -1,4 +1,12 @@
 {
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/admin",
+      "permanent": false,
+      "has": [{ "type": "host", "value": "admin.jeetrack.in" }]
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/faq", "destination": "/faq.html" },
