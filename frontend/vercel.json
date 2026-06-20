@@ -3,5 +3,15 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/faq", "destination": "/faq.html" },
     { "source": "/((?!faq\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/admin",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://admin.jeetrack.in" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
   ]
 }

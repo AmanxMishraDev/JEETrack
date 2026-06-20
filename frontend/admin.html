@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JEETrack Admin</title>
+<style>
+:root{
+  --bg:#0b0d14;--card:#13151f;--card2:#1a1d2a;--border:#232637;
+  --accent:#7c6dff;--accent2:#ff6b9d;--green:#22c55e;--yellow:#f59e0b;
+  --red:#ef4444;--cyan:#06b6d4;--text:#e8eaf6;--muted:#6b7280;
+  --ph:#f54e00;--sidebar:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:360px;text-align:center;}
+.login-box .logo{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;color:#fff;margin:0 auto 1rem;}
+.login-box h2{font-size:1.2rem;margin-bottom:.4rem;}
+.login-box p{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;}
+.login-input{width:100%;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;outline:none;margin-bottom:1rem;transition:border .2s;}
+.login-input:focus{border-color:var(--accent);}
+.login-btn{width:100%;padding:.75rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.login-btn:hover{opacity:.88;}
+.login-err{color:var(--red);font-size:.8rem;margin-top:.75rem;display:none;}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar);background:var(--card);border-right:1px solid var(--border);display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;}
+.sb-logo{display:flex;align-items:center;gap:.6rem;padding:1.2rem 1rem;border-bottom:1px solid var(--border);}
+.sb-logo-dot{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;}
+.sb-logo span{font-weight:700;font-size:.95rem;}
+.sb-badge{font-size:.65rem;background:#1e1a35;color:var(--accent);padding:.15rem .4rem;border-radius:99px;border:1px solid var(--accent);}
+nav{flex:1;padding:.75rem .5rem;overflow-y:auto;}
+.nav-section{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;padding:.5rem .6rem .3rem;margin-top:.5rem;}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--muted);transition:all .15s;margin-bottom:.15rem;}
+.nav-item:hover{background:var(--card2);color:var(--text);}
+.nav-item.active{background:#2a2545;color:var(--accent);}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.sb-bottom{padding:.75rem .5rem;border-top:1px solid var(--border);}
+.logout-btn{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--red);transition:all .15s;width:100%;}
+.logout-btn:hover{background:#2a1a1a;}
+
+/* MAIN */
+#main{margin-left:var(--sidebar);flex:1;display:none;flex-direction:column;min-height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:var(--card);position:sticky;top:0;z-index:5;}
+.topbar h2{font-size:1rem;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:.75rem;}
+.range-btns{display:flex;gap:.3rem;}
+.rbtn{padding:.3rem .7rem;border-radius:99px;font-size:.75rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.rbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.refresh-btn{padding:.35rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
+.refresh-btn:hover{background:var(--border);}
+.refresh-btn svg{width:12px;height:12px;}
+
+/* CONTENT */
+.content{padding:1.25rem 1.5rem;}
+.section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:.75rem;}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.85rem;margin-bottom:1.5rem;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;}
+.stat-label{font-size:.72rem;color:var(--muted);margin-bottom:.35rem;font-weight:500;}
+.stat-value{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1;}
+.stat-sub{font-size:.68rem;color:var(--muted);margin-top:.3rem;}
+.stat-icon{font-size:1.2rem;margin-bottom:.4rem;}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
+.card h3{font-size:.82rem;font-weight:600;margin-bottom:.9rem;}
+
+/* BAR CHART */
+.bar-chart{display:flex;flex-direction:column;gap:.55rem;}
+.bar-row{display:flex;align-items:center;gap:.65rem;}
+.bar-label{font-size:.72rem;color:var(--muted);width:130px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;background:var(--border);border-radius:99px;height:7px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+.bar-count{font-size:.7rem;color:var(--muted);width:32px;text-align:right;flex-shrink:0;}
+
+/* LINE CHART */
+.line-wrap{position:relative;height:110px;margin-top:.5rem;}
+.line-wrap svg{width:100%;height:100%;}
+
+/* FUNNEL */
+.funnel{display:flex;flex-direction:column;gap:.5rem;}
+.f-step{display:flex;align-items:center;gap:.6rem;}
+.f-n{font-size:.68rem;color:var(--muted);width:14px;text-align:center;}
+.f-track{flex:1;background:var(--border);border-radius:99px;height:20px;overflow:hidden;}
+.f-fill{height:100%;border-radius:99px;display:flex;align-items:center;padding-left:.6rem;transition:width .7s ease;}
+.f-fill span{font-size:.68rem;font-weight:600;color:#fff;white-space:nowrap;}
+.f-pct{font-size:.68rem;color:var(--muted);width:36px;text-align:right;}
+.f-drop{font-size:.65rem;color:var(--red);width:48px;text-align:right;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.78rem;}
+th{text-align:left;color:var(--muted);font-weight:600;padding:.5rem .75rem;border-bottom:1px solid var(--border);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+td{padding:.55rem .75rem;border-bottom:1px solid #1a1d2a;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.pill{display:inline-block;padding:.12rem .5rem;border-radius:99px;font-size:.65rem;font-weight:600;}
+.pill-green{background:#0f2a1a;color:var(--green);}
+.pill-red{background:#2a0f0f;color:var(--red);}
+.pill-yellow{background:#2a210f;color:var(--yellow);}
+.pill-blue{background:#0f1a2a;color:var(--cyan);}
+.pill-purple{background:#1a0f2a;color:var(--accent);}
+
+/* ACTION BTNS */
+.action-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
+.action-card h3{font-size:.82rem;font-weight:600;margin-bottom:.3rem;}
+.action-card p{font-size:.75rem;color:var(--muted);margin-bottom:.9rem;line-height:1.5;}
+.action-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.85;}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:hover{opacity:.85;}
+.btn-yellow{background:var(--yellow);color:#000;}
+.btn-yellow:hover{opacity:.85;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{opacity:.85;}
+.action-result{font-size:.75rem;margin-top:.6rem;padding:.5rem .75rem;border-radius:6px;display:none;}
+.result-ok{background:#0f2a1a;color:var(--green);border:1px solid #1a4a2a;}
+.result-err{background:#2a0f0f;color:var(--red);border:1px solid #4a1a1a;}
+
+/* USER DETAIL MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:none;align-items:center;justify-content:center;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:600px;max-width:95vw;max-height:80vh;overflow-y:auto;padding:1.5rem;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:.25rem;}
+
+/* LOADING / EMPTY */
+.loading{text-align:center;padding:2rem;color:var(--muted);}
+.spinner{width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .75rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.no-data{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;font-size:.8rem;font-weight:500;z-index:200;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;}
+
+/* DAU LABELS */
+.dau-labels{display:flex;justify-content:space-between;margin-top:.3rem;}
+.dau-labels span{font-size:.62rem;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="logo">JT</div>
+    <h2>Admin Dashboard</h2>
+    <p>JEETrack internal analytics — authorized access only</p>
+    <input class="login-input" type="password" id="pwd-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-err" id="login-err">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-dot">JT</div>
+    <div>
+      <div style="display:flex;align-items:center;gap:.4rem;"><span>JEETrack</span><span class="sb-badge">Admin</span></div>
+      <div style="font-size:.65rem;color:var(--muted);">admin.jeetrack.in</div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item active" onclick="showPage('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" onclick="showPage('features',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Feature Analytics
+    </div>
+    <div class="nav-item" onclick="showPage('funnel',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Funnel
+    </div>
+    <div class="nav-item" onclick="showPage('dau',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      DAU Trend
+    </div>
+    <div class="nav-section">Users</div>
+    <div class="nav-item" onclick="showPage('users',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users
+    </div>
+    <div class="nav-item" onclick="showPage('db',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      DB Stats
+    </div>
+    <div class="nav-section">Controls</div>
+    <div class="nav-item" onclick="showPage('actions',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Admin Actions
+    </div>
+  </nav>
+  <div class="sb-bottom">
+    <button class="logout-btn" onclick="doLogout()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div class="topbar">
+    <h2 id="page-title">Overview</h2>
+    <div class="topbar-right">
+      <div class="range-btns">
+        <button class="rbtn active" onclick="setRange(7,this)">7D</button>
+        <button class="rbtn" onclick="setRange(30,this)">30D</button>
+        <button class="rbtn" onclick="setRange(90,this)">90D</button>
+      </div>
+      <button class="refresh-btn" onclick="loadCurrentPage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW PAGE -->
+    <div class="page active" id="page-overview">
+      <div class="section-title">Key Metrics</div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📄 Page Views by Section</h3>
+          <div class="bar-chart" id="pages-chart"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <h3>📚 Subject Tracking (Chapters)</h3>
+          <div class="bar-chart" id="subject-chart"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>📝 Mains vs Advanced</h3>
+          <div class="bar-chart" id="exam-chart"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <h3>📊 DAU (Last 7 Days)</h3>
+          <div class="line-wrap" id="dau-mini"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES PAGE -->
+    <div class="page" id="page-features">
+      <div class="section-title">Feature Usage</div>
+      <div class="card" style="margin-bottom:1.25rem;">
+        <h3>🏆 All Features — Event Count</h3>
+        <div class="bar-chart" id="features-chart"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- FUNNEL PAGE -->
+    <div class="page" id="page-funnel">
+      <div class="section-title">User Journey Funnel (Last 90 Days)</div>
+      <div class="card">
+        <h3>🎯 Signup → Engagement Funnel</h3>
+        <div class="funnel" id="funnel-steps"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- DAU PAGE -->
+    <div class="page" id="page-dau">
+      <div class="section-title">Daily Active Users</div>
+      <div class="card">
+        <h3>📈 DAU Trend</h3>
+        <div class="line-wrap" style="height:200px;" id="dau-big"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="dau-labels" id="dau-labels"></div>
+      </div>
+    </div>
+
+    <!-- USERS PAGE -->
+    <div class="page" id="page-users">
+      <div class="section-title">All Users</div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Class</th><th>Target</th>
+                <th>Coaching</th><th>Joined</th><th>Last Active</th>
+                <th>Email Reports</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table">
+              <tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-top:1rem;">
+          <button class="action-btn btn-primary" onclick="loadUsers(Math.max(0,_userPage-1))" id="prev-btn" disabled>← Prev</button>
+          <span id="page-info" style="font-size:.78rem;color:var(--muted);"></span>
+          <button class="action-btn btn-primary" onclick="loadUsers(_userPage+1)" id="next-btn">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DB STATS PAGE -->
+    <div class="page" id="page-db">
+      <div class="section-title">Supabase Database Stats</div>
+      <div class="stats-grid" id="db-stats-grid">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ACTIONS PAGE -->
+    <div class="page" id="page-actions">
+      <div class="section-title">Admin Controls</div>
+      <div class="grid-2">
+
+        <div class="action-card">
+          <h3>📧 Monthly Report Email</h3>
+          <p>Trigger the monthly progress report email to all users who have email reports enabled and were active in the last 20 days.</p>
+          <button class="action-btn btn-green" onclick="triggerAction('trigger_monthly','result-monthly')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Monthly Reports
+          </button>
+          <div class="action-result" id="result-monthly"></div>
+        </div>
+
+        <div class="action-card">
+          <h3>⭐ Review Request Email</h3>
+          <p>Send a review/feedback request email to active users. Helps collect ratings and testimonials from engaged users.</p>
+          <button class="action-btn btn-yellow" onclick="triggerAction('trigger_review','result-review')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Send Review Emails
+          </button>
+          <div class="action-result" id="result-review"></div>
+        </div>
+
+        <div class="action-card">
+          <h3>🔄 Force Data Refresh</h3>
+          <p>Reload all analytics data from PostHog and Supabase. Use this if dashboard seems stale.</p>
+          <button class="action-btn btn-primary" onclick="loadAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
+            Refresh All Data
+          </button>
+        </div>
+
+        <div class="action-card">
+          <h3>🔐 Session Info</h3>
+          <p>Your current admin session details.</p>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">
+            <div>Domain: <span style="color:var(--text);">admin.jeetrack.in</span></div>
+            <div>PostHog Project: <span style="color:var(--text);">478522</span></div>
+            <div>Session: <span style="color:var(--green);">Active ✓</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">User Details</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const API_BASE = '/api/admin';
+let _token = null;
+let _days = 7;
+let _userPage = 0;
+let _currentPage = 'overview';
+
+// ── AUTH ─────────────────────────────────────────────────────
+async function doLogin() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch(`${API_BASE}?action=login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Wrong password');
+    _token = data.token;
+    sessionStorage.setItem('jt_admin_token', _token);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main').style.display = 'flex';
+    loadAll();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('jt_admin_token');
+  _token = null;
+  location.reload();
+}
+
+// ── API CALL ─────────────────────────────────────────────────
+async function api(action, extra = '') {
+  const res = await fetch(`${API_BASE}?action=${action}&days=${_days}${extra}`, {
+    headers: { 'Authorization': `Bearer ${_token}` }
+  });
+  if (res.status === 401) { doLogout(); throw new Error('Session expired'); }
+  if (!res.ok) throw new Error(`API error ${res.status}`);
+  return res.json();
+}
+
+async function apiPost(action, body = {}) {
+  const res = await fetch(`${API_BASE}?action=${action}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${_token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (res.status === 401) { doLogout(); throw new Error('Session expired'); }
+  return res.json();
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+function showPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  el.classList.add('active');
+  _currentPage = page;
+  const titles = { overview:'Overview', features:'Feature Analytics', funnel:'User Funnel',
+    dau:'DAU Trend', users:'Users', db:'DB Stats', actions:'Admin Actions' };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  loadCurrentPage();
+}
+
+function loadCurrentPage() {
+  const loaders = {
+    overview: loadOverview,
+    features: loadFeatures,
+    funnel:   loadFunnel,
+    dau:      loadDAU,
+    users:    () => loadUsers(0),
+    db:       loadDBStats,
+    actions:  () => {},
+  };
+  (loaders[_currentPage] || (() => {}))();
+}
+
+function setRange(days, btn) {
+  _days = days;
+  document.querySelectorAll('.rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadCurrentPage();
+}
+
+function loadAll() { loadCurrentPage(); }
+
+// ── OVERVIEW ─────────────────────────────────────────────────
+async function loadOverview() {
+  loadStats();
+  loadPagesChart();
+  loadSubjectChart();
+  loadExamChart();
+  loadDAUMini();
+}
+
+async function loadStats() {
+  const el = document.getElementById('stats-grid');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('stats');
+    el.innerHTML = [
+      { label:'Total Users',      value: fmt(d.totalUsers),    sub:'All time',           icon:'👥' },
+      { label:'Active Users',     value: fmt(d.activeUsers),   sub:`Last ${_days} days`, icon:'🟢' },
+      { label:'Mock Tests',       value: fmt(d.mockTests),     sub:`Last ${_days} days`, icon:'📝' },
+      { label:'Study Hours',      value: fmt(d.studyHours),    sub:`Last ${_days} days`, icon:'⏱️' },
+      { label:'AI Insights',      value: fmt(d.aiInsights),    sub:`Last ${_days} days`, icon:'🤖' },
+      { label:'Chapters Marked',  value: fmt(d.chapters),      sub:`Last ${_days} days`, icon:'📚' },
+      { label:'Backlogs Added',   value: fmt(d.backlogs),      sub:`Last ${_days} days`, icon:'🔴' },
+      { label:'Todos Added',      value: fmt(d.todos),         sub:`Last ${_days} days`, icon:'✅' },
+      { label:'Page Views',       value: fmt(d.pageViews),     sub:`Last ${_days} days`, icon:'👁️' },
+      { label:'Feedbacks',        value: fmt(d.feedbacks),     sub:`Last ${_days} days`, icon:'💬' },
+      { label:'PDF Exports',      value: fmt(d.exports),       sub:`Last ${_days} days`, icon:'📄' },
+      { label:'Onboardings',      value: fmt(d.onboardings),   sub:`Last ${_days} days`, icon:'🎉' },
+    ].map(s => `
+      <div class="stat">
+        <div class="stat-icon">${s.icon}</div>
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-value">${s.value}</div>
+        <div class="stat-sub">${s.sub}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = `<div class="no-data">Error: ${e.message}</div>`;
+  }
+}
+
+async function loadPagesChart() {
+  const el = document.getElementById('pages-chart');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('pages');
+    const max = Math.max(...data.map(d => d.count), 1);
+    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6','#f97316','#14b8a6','#6b7280'];
+    const pageLabels = { overview:'Dashboard', mains:'Mains Tests', advanced:'Adv Tests',
+      hours:'Study Hours', insights:'AI Insights', backlog:'Backlog',
+      todo:'To-Do', syllabus:'Syllabus', compare:'Compare', settings:'Settings' };
+    el.innerHTML = data.filter(d => d.count > 0).map((d, i) => `
+      <div class="bar-row">
+        <div class="bar-label">${pageLabels[d.page] || d.page}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
+        <div class="bar-count">${fmt(d.count)}</div>
+      </div>
+    `).join('') || '<div class="no-data">No data yet</div>';
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+async function loadSubjectChart() {
+  const el = document.getElementById('subject-chart');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('subjects');
+    const max = Math.max(...data.map(d => d.count), 1);
+    const cfg = { physics:{color:'#7c6dff',icon:'⚛️'}, chemistry:{color:'#22c55e',icon:'🧪'}, maths:{color:'#f59e0b',icon:'📐'} };
+    el.innerHTML = data.map(d => `
+      <div class="bar-row">
+        <div class="bar-label">${cfg[d.subject]?.icon || ''} ${d.subject[0].toUpperCase()+d.subject.slice(1)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${cfg[d.subject]?.color||'#7c6dff'}"></div></div>
+        <div class="bar-count">${fmt(d.count)}</div>
+      </div>
+    `).join('');
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+async function loadExamChart() {
+  const el = document.getElementById('exam-chart');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('exams');
+    const max = Math.max(...data.map(d => d.count), 1);
+    const cfg = { mains:{color:'#7c6dff',label:'📋 JEE Mains'}, advanced:{color:'#f59e0b',label:'🏆 JEE Advanced'} };
+    el.innerHTML = data.map(d => `
+      <div class="bar-row">
+        <div class="bar-label">${cfg[d.exam]?.label || d.exam}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${cfg[d.exam]?.color||'#7c6dff'}"></div></div>
+        <div class="bar-count">${fmt(d.count)}</div>
+      </div>
+    `).join('');
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+async function loadDAUMini() {
+  const el = document.getElementById('dau-mini');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('dau');
+    el.innerHTML = renderLineChart(d.values, d.labels, 110);
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+// ── FEATURES ─────────────────────────────────────────────────
+async function loadFeatures() {
+  const el = document.getElementById('features-chart');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('features');
+    const max = Math.max(...data.map(d => d.count), 1);
+    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6','#f97316','#14b8a6','#a3a3a3','#84cc16','#f43f5e','#3b82f6','#10b981','#fb923c'];
+    el.innerHTML = data.filter(d => d.count >= 0).map((d, i) => `
+      <div class="bar-row">
+        <div class="bar-label">${d.event}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
+        <div class="bar-count">${fmt(d.count)}</div>
+      </div>
+    `).join('') || '<div class="no-data">No events yet</div>';
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+// ── FUNNEL ───────────────────────────────────────────────────
+async function loadFunnel() {
+  const el = document.getElementById('funnel-steps');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('funnel');
+    const max = Math.max(...data.map(d => d.count), 1);
+    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6'];
+    el.innerHTML = data.map((d, i) => {
+      const pct = max > 0 ? (d.count/max*100).toFixed(0) : 0;
+      const drop = i > 0 && data[i-1].count > 0
+        ? `-${((1-d.count/data[i-1].count)*100).toFixed(0)}%` : '';
+      return `
+        <div class="f-step">
+          <div class="f-n">${i+1}</div>
+          <div class="f-track">
+            <div class="f-fill" style="width:${pct}%;background:${colors[i]};">
+              <span>${d.label} (${fmt(d.count)})</span>
+            </div>
+          </div>
+          <div class="f-pct">${pct}%</div>
+          <div class="f-drop">${drop}</div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+// ── DAU ──────────────────────────────────────────────────────
+async function loadDAU() {
+  const el = document.getElementById('dau-big');
+  const labelsEl = document.getElementById('dau-labels');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('dau');
+    el.innerHTML = renderLineChart(d.values, d.labels, 200);
+    // Show first + last label
+    const labels = d.labels || [];
+    if (labels.length > 1) {
+      labelsEl.innerHTML = `<span>${fmtDate(labels[0])}</span><span>${fmtDate(labels[labels.length-1])}</span>`;
+    }
+  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+}
+
+// ── USERS ────────────────────────────────────────────────────
+async function loadUsers(page = 0) {
+  _userPage = page;
+  const tbody = document.getElementById('users-table');
+  tbody.innerHTML = '<tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api(`users&page=${page}`);
+    const users = d.users || [];
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="9"><div class="no-data">No users found</div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td><strong>${esc(u.name)}</strong></td>
+        <td style="color:var(--muted)">${esc(u.email)}</td>
+        <td>${u.class ? `<span class="pill pill-blue">${u.class}</span>` : '—'}</td>
+        <td>${u.target_year || '—'}</td>
+        <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(u.coaching || '—')}</td>
+        <td style="color:var(--muted);white-space:nowrap;">${fmtDate(u.created_at)}</td>
+        <td style="color:var(--muted);white-space:nowrap;">${fmtDate(u.last_active)}</td>
+        <td>${u.email_reports === 'monthly'
+          ? '<span class="pill pill-green">Monthly ✓</span>'
+          : '<span class="pill pill-red">Off</span>'}</td>
+        <td>
+          <button class="action-btn btn-primary" style="padding:.25rem .6rem;font-size:.7rem;" onclick="viewUser('${esc(u.id)}','${esc(u.name)}')">
+            View
+          </button>
+        </td>
+      </tr>
+    `).join('');
+    document.getElementById('prev-btn').disabled = page === 0;
+    document.getElementById('next-btn').disabled = !d.next;
+    document.getElementById('page-info').textContent = `Page ${page+1} · ${d.count || ''} total`;
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data">Error: ${e.message}</div></td></tr>`;
+  }
+}
+
+async function viewUser(id, name) {
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-body').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  document.getElementById('user-modal').style.display = 'flex';
+  try {
+    const d = await api(`user_detail&distinct_id=${encodeURIComponent(id)}`);
+    const events = d.events || [];
+    document.getElementById('modal-body').innerHTML = `
+      <div class="section-title" style="margin-bottom:.5rem;">Recent Events (last 50)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Event</th><th>Time</th><th>Properties</th></tr></thead>
+          <tbody>
+            ${events.length ? events.map(e => `
+              <tr>
+                <td><strong>${e.event}</strong></td>
+                <td style="color:var(--muted);white-space:nowrap;">${fmtDate(e.timestamp)}</td>
+                <td style="color:var(--muted);font-size:.7rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;">
+                  ${Object.entries(e.properties || {})
+                    .filter(([k]) => !k.startsWith('$'))
+                    .map(([k,v]) => `${k}: ${v}`)
+                    .join(', ') || '—'}
+                </td>
+              </tr>
+            `).join('') : '<tr><td colspan="3"><div class="no-data">No events found</div></td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('modal-body').innerHTML = `<div class="no-data">Error: ${e.message}</div>`;
+  }
+}
+
+function closeModal() {
+  document.getElementById('user-modal').style.display = 'none';
+}
+
+// ── DB STATS ─────────────────────────────────────────────────
+async function loadDBStats() {
+  const el = document.getElementById('db-stats-grid');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('db_stats');
+    el.innerHTML = [
+      { label:'Total Tests Rows',    value: fmt(d.totalTests),     icon:'📝', sub:'In DB' },
+      { label:'Total Hours Rows',    value: fmt(d.totalHours),     icon:'⏱️', sub:'In DB' },
+      { label:'Total Backlogs',      value: fmt(d.totalBacklogs),  icon:'🔴', sub:'In DB' },
+      { label:'Total Todos',         value: fmt(d.totalTodos),     icon:'✅', sub:'In DB' },
+      { label:'Syllabus Rows',       value: fmt(d.totalSyllabus),  icon:'📚', sub:'In DB' },
+      { label:'Email Reports ON',    value: fmt(d.emailReportsOn), icon:'📧', sub:'Users subscribed' },
+      { label:'Active (7d)',         value: fmt(d.activeUsers7d),  icon:'🟢', sub:'Last 7 days' },
+      { label:'Total in Prefs',      value: fmt(d.totalPrefs),     icon:'👥', sub:'Users with prefs' },
+    ].map(s => `
+      <div class="stat">
+        <div class="stat-icon">${s.icon}</div>
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-value">${s.value}</div>
+        <div class="stat-sub">${s.sub}</div>
+      </div>
+    `).join('');
+  } catch(e) { el.innerHTML = `<div class="no-data">Error: ${e.message}</div>`; }
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────
+async function triggerAction(action, resultId) {
+  const resultEl = document.getElementById(resultId);
+  resultEl.style.display = 'none';
+  showToast('Triggering... please wait');
+  try {
+    const d = await apiPost(action);
+    resultEl.className = 'action-result result-ok';
+    resultEl.textContent = `✓ Success: ${JSON.stringify(d.result || d)}`;
+    resultEl.style.display = 'block';
+    showToast('Done! ✓');
+  } catch(e) {
+    resultEl.className = 'action-result result-err';
+    resultEl.textContent = `✗ Error: ${e.message}`;
+    resultEl.style.display = 'block';
+    showToast('Error: ' + e.message);
+  }
+}
+
+// ── LINE CHART ────────────────────────────────────────────────
+function renderLineChart(values, labels, height) {
+  if (!values || !values.length) return '<div class="no-data">No data</div>';
+  const w = 600; const h = height - 20;
+  const max = Math.max(...values, 1);
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * w;
+    const y = h - (v / max) * h;
+    return `${x},${y}`;
+  });
+  const area = `M ${pts.join(' L ')} L ${w},${h} L 0,${h} Z`;
+  return `
+    <svg viewBox="0 0 ${w} ${height}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7c6dff" stop-opacity=".3"/>
+          <stop offset="100%" stop-color="#7c6dff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${area}" fill="url(#g)"/>
+      <polyline points="${pts.join(' ')}" fill="none" stroke="#7c6dff" stroke-width="2" stroke-linejoin="round"/>
+    </svg>
+  `;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function fmt(n) {
+  if (!n) return '0';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'k';
+  return String(Math.round(n));
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' }); }
+  catch { return d; }
+}
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+// Check existing session
+const saved = sessionStorage.getItem('jt_admin_token');
+if (saved) {
+  _token = saved;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main').style.display = 'flex';
+  loadAll();
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+});
+
+// Close modal on overlay click
+document.getElementById('user-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
