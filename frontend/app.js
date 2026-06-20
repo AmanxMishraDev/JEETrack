@@ -2243,24 +2243,30 @@ let _reviewContext = null; // which feature is being reviewed
 function _openReviewModal(type) {
   const cfg = REVIEW_CONFIGS[type];
   if (!cfg) return;
-  // Check cooldown/dismiss logic
+
   const stored = localStorage.getItem(cfg.key);
   const isRecurring = type === 'test' || type === 'hours';
-  if (stored === 'submitted') {
-    if (!isRecurring) return; // syllabus/ai: permanent dismiss after submit
-    // For recurring: check 3-day cooldown after last submission
-    try {
-      const { submittedAt } = JSON.parse(stored === 'submitted' ? '{}' : stored);
-      // 'submitted' string means old format — treat as 3 days ago cooldown reset
-    } catch(e) {}
-  }
-  if (stored && stored !== 'submitted') {
+
+  if (stored) {
+    // Non-recurring types (syllabus, ai): any stored value = permanently done
+    if (!isRecurring) {
+      // Check if permanent flag set
+      try {
+        const p = JSON.parse(stored);
+        if (p.permanent) return;
+      } catch(e) { return; } // old string format — treat as permanent
+      return;
+    }
+
+    // Recurring types (test, hours): check 3-day cooldown from last action
     try {
       const parsed = JSON.parse(stored);
       const ts = parsed.snoozedAt || parsed.submittedAt || 0;
       const daysSince = (Date.now() - ts) / (1000 * 60 * 60 * 24);
-      if (daysSince < 3) return; // still in cooldown
-    } catch(e) { return; }
+      if (daysSince < 3) return; // still in cooldown — don't show
+    } catch(e) {
+      // Malformed or old 'submitted' string — treat as expired, allow showing
+    }
   }
 
   _reviewRating = 0;
@@ -2311,7 +2317,7 @@ function maybeShowSyllabusReview() {
 
 // ── Trigger: after AI insights generated ──
 function maybeShowAiReview() {
-  if (localStorage.getItem(REVIEW_CONFIGS.ai.key)) return;
+  // _openReviewModal handles the guard internally for ai type
   setTimeout(() => _openReviewModal('ai'), 1500); // slight delay after insights render
 }
 
@@ -2364,11 +2370,11 @@ async function submitReview() {
     console.warn('Review insert failed:', e);
   }
 
-  // Recurring types store timestamp so cooldown works; others store 'submitted' permanently
+  // Recurring: store timestamp for 3-day cooldown. Others: permanent dismiss.
   const isRecurringType = _reviewContext === 'test' || _reviewContext === 'hours';
-  localStorage.setItem(cfg.key, isRecurringType 
-    ? JSON.stringify({ submittedAt: Date.now() }) 
-    : 'submitted');
+  localStorage.setItem(cfg.key, isRecurringType
+    ? JSON.stringify({ submittedAt: Date.now() })
+    : JSON.stringify({ submittedAt: Date.now(), permanent: true }));
   const rating = _reviewRating;
   document.getElementById('modal-reviewPrompt').classList.remove('open');
   _reviewContext = null;
