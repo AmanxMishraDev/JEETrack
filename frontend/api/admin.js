@@ -167,11 +167,12 @@ export default async function handler(req, res) {
         totalHours,
         totalBacklogs,
         totalTodos,
+        totalChapters,
+        totalFeedbacks,
         prefs,
         activeUsers,
         aiInsights,
         pageViews,
-        feedbacks,
         onboardings,
       ] = await Promise.all([
         // Supabase: real user count from user_preferences
@@ -181,27 +182,28 @@ export default async function handler(req, res) {
         sbCount('hours').catch(() => 0),
         sbCount('backlogs').catch(() => 0),
         sbCount('todos').catch(() => 0),
+        sbCount('syllabus').catch(() => 0),        // chapters marked (syllabus table)
+        sbCount('feedback').catch(() => 0),         // feedback table (no 's')
         // Supabase: active users in window
         sbQuery(`user_preferences?select=user_id,last_active_at&last_active_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        // PostHog: behavioral events (these DO have data)
+        // PostHog: behavioral events
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: '$pageview', math: 'dau' }] }).catch(() => null),
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'total' }] }).catch(() => null),
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'page_viewed', math: 'total' }] }).catch(() => null),
-        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'feedback_submitted', math: 'total' }] }).catch(() => null),
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'onboarding_completed', math: 'total' }] }).catch(() => null),
       ]);
 
       return res.status(200).json({
         totalUsers,
         activeUsers:  prefs.length || maxResult(activeUsers),
-        mockTests:    totalTests,      // Supabase actual count
-        studyHours:   totalHours,      // Supabase actual count
+        mockTests:    totalTests,
+        studyHours:   totalHours,
         aiInsights:   sumResults(aiInsights),
-        chapters:     0,               // no separate table, skip or count from syllabus
-        backlogs:     totalBacklogs,   // Supabase actual count
-        todos:        totalTodos,      // Supabase actual count
+        chapters:     totalChapters,
+        backlogs:     totalBacklogs,
+        todos:        totalTodos,
         pageViews:    sumResults(pageViews),
-        feedbacks:    sumResults(feedbacks),
+        feedbacks:    totalFeedbacks,
         exports:      0,
         onboardings:  sumResults(onboardings),
       });
@@ -369,30 +371,202 @@ export default async function handler(req, res) {
       });
     }
 
+    // ── DEMOGRAPHICS ─────────────────────────────────────────
+    // Aggregates class + coaching distribution from PostHog persons
+    if (action === 'demographics') {
+      // Fetch all persons (up to 250 — paginate if needed)
+      const [p1, p2, p3, p4, p5] = await Promise.all([
+        phPersons(100, 0),
+        phPersons(100, 100),
+        phPersons(100, 200),
+        phPersons(100, 300),
+        phPersons(100, 400),
+      ]);
+      const all = [
+        ...(p1?.results||[]),
+        ...(p2?.results||[]),
+        ...(p3?.results||[]),
+        ...(p4?.results||[]),
+        ...(p5?.results||[]),
+      ];
+      const total = all.length;
+
+      const classCount = {}, coachingCount = {}, yearCount = {};
+      all.forEach(person => {
+        const props = person.properties || {};
+        const cls     = props.class     || 'Unknown';
+        const coaching = props.coaching || 'Unknown';
+        const year    = props.target_year || 'Unknown';
+        classCount[cls]      = (classCount[cls]      || 0) + 1;
+        coachingCount[coaching] = (coachingCount[coaching] || 0) + 1;
+        yearCount[year]      = (yearCount[year]      || 0) + 1;
+      });
+
+      const toArr = (obj) => Object.entries(obj)
+        .map(([label, count]) => ({ label, count, pct: total ? Math.round((count/total)*100) : 0 }))
+        .sort((a, b) => b.count - a.count);
+
+      return res.status(200).json({
+        total,
+        classes:   toArr(classCount),
+        coachings: toArr(coachingCount),
+        years:     toArr(yearCount),
+      });
+    }
+
     // ── USER DETAIL ───────────────────────────────────────────
     if (action === 'user_detail') {
       const { distinct_id } = req.query;
       if (!distinct_id) return res.status(400).json({ error: 'distinct_id required' });
 
-      const events = await phPersonEvents(distinct_id);
-      const eventList = (events?.results || []).map(e => ({
-        event:      e.event,
-        timestamp:  e.timestamp,
-        properties: e.properties,
-      }));
-
-      // Per-user Supabase stats
-      const [userTests, userHours, userBacklogs, userTodos] = await Promise.all([
-        sbCount('tests', `user_id=eq.${distinct_id}`).catch(() => 0),
-        sbCount('hours', `user_id=eq.${distinct_id}`).catch(() => 0),
+      // Fetch everything in parallel
+      const [
+        testsData, hoursData, syllabus, backlogs, todos, feedbacks, streaks, prefs, aiCount
+      ] = await Promise.all([
+        sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
+        sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
+        sbCount('syllabus', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbCount('backlogs', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbCount('todos', `user_id=eq.${distinct_id}`).catch(() => 0),
+        sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
+        sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
+        sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
+        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: '-90d' }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'total', properties: [{ key: 'distinct_id', value: distinct_id, operator: 'exact', type: 'person' }] }] }).catch(() => null),
       ]);
 
+      // Compute test stats
+      const totalTests = testsData.length;
+      const mainsTests = testsData.filter(t => t.exam === 'mains');
+      const advTests   = testsData.filter(t => t.exam === 'advanced');
+      const avgTotal   = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.total || 0), 0) / totalTests) : 0;
+      const bestScore  = totalTests ? Math.max(...testsData.map(t => t.total || 0)) : 0;
+      const avgPhysics = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.physics || 0), 0) / totalTests) : 0;
+      const avgChem    = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.chemistry || 0), 0) / totalTests) : 0;
+      const avgMaths   = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.maths || 0), 0) / totalTests) : 0;
+
+      // Compute study hours stats
+      const totalHoursCount = hoursData.length;
+      const totalHoursTime  = hoursData.reduce((s, h) => s + (h.total || 0), 0);
+      const physHours = hoursData.filter(h => h.subject === 'physics').reduce((s, h) => s + (h.total || 0), 0);
+      const chemHours = hoursData.filter(h => h.subject === 'chemistry').reduce((s, h) => s + (h.total || 0), 0);
+      const mathHours = hoursData.filter(h => h.subject === 'maths').reduce((s, h) => s + (h.total || 0), 0);
+
+      // Consistency: unique dates with activity in last 30 days
+      const last30 = new Date(); last30.setDate(last30.getDate() - 30);
+      const activeDates = new Set(hoursData.filter(h => h.date && new Date(h.date) > last30).map(h => h.date));
+      const consistencyScore = activeDates.size; // days active out of last 30
+
       return res.status(200).json({
-        events: eventList,
-        userStats: { tests: userTests, hours: userHours, backlogs: userBacklogs, todos: userTodos }
+        tests: {
+          total: totalTests,
+          mains: mainsTests.length,
+          advanced: advTests.length,
+          avgScore: avgTotal,
+          bestScore,
+          avgPhysics, avgChem, avgMaths,
+          recent: testsData.slice(0, 5).map(t => ({
+            exam: t.exam, date: t.date, total: t.total, max: t.max,
+            physics: t.physics, chemistry: t.chemistry, maths: t.maths
+          })),
+        },
+        hours: {
+          totalEntries: totalHoursCount,
+          totalTime: Math.round(totalHoursTime * 10) / 10,
+          physics: Math.round(physHours * 10) / 10,
+          chemistry: Math.round(chemHours * 10) / 10,
+          maths: Math.round(mathHours * 10) / 10,
+        },
+        syllabus, backlogs, todos,
+        aiInsights: sumResults(aiCount),
+        consistency: { activeDaysLast30: consistencyScore },
+        streak: streaks[0] || {},
+        feedback: feedbacks,
+        pref: prefs[0] || {},
       });
+    }
+
+    // ── LEADERBOARD ───────────────────────────────────────────
+    if (action === 'leaderboard') {
+      const metric = req.query.metric || 'avgScore'; // avgScore | bestScore | totalTests | totalHours
+
+      // Get all users with prefs (name/email)
+      const prefs = await sbQuery('user_preferences?select=user_id,last_active_at').catch(() => []);
+      const userIds = prefs.map(p => p.user_id);
+
+      if (!userIds.length) return res.status(200).json({ leaderboard: [] });
+
+      // Fetch all tests and hours
+      const [allTests, allHours, phPersonsData] = await Promise.all([
+        sbQuery('tests?select=user_id,total,physics,chemistry,maths,exam,date').catch(() => []),
+        sbQuery('hours?select=user_id,total,subject,date').catch(() => []),
+        phPersons(100, 0).catch(() => ({ results: [] })),
+      ]);
+
+      // Build name map from PostHog
+      const nameMap = {};
+      (phPersonsData?.results || []).forEach(p => {
+        const uid = p.distinct_ids?.[0];
+        if (uid) {
+          nameMap[uid] = {
+            name:  p.properties?.name || p.properties?.$name || 'Anonymous',
+            email: p.properties?.email || p.properties?.$email || '',
+          };
+        }
+      });
+
+      // Group tests by user
+      const userTestMap = {};
+      allTests.forEach(t => {
+        if (!userTestMap[t.user_id]) userTestMap[t.user_id] = [];
+        userTestMap[t.user_id].push(t);
+      });
+
+      // Group hours by user
+      const userHoursMap = {};
+      allHours.forEach(h => {
+        if (!userHoursMap[h.user_id]) userHoursMap[h.user_id] = [];
+        userHoursMap[h.user_id].push(h);
+      });
+
+      // Build leaderboard entries
+      const entries = prefs.map(p => {
+        const uid   = p.user_id;
+        const tests = userTestMap[uid] || [];
+        const hours = userHoursMap[uid] || [];
+        const info  = nameMap[uid] || {};
+        const totalHrsTime = hours.reduce((s, h) => s + (h.total || 0), 0);
+        const avgScore  = tests.length ? Math.round(tests.reduce((s, t) => s + (t.total || 0), 0) / tests.length) : 0;
+        const bestScore = tests.length ? Math.max(...tests.map(t => t.total || 0)) : 0;
+
+        // Consistency: unique active days (hours entries) last 30 days
+        const last30 = new Date(); last30.setDate(last30.getDate() - 30);
+        const activeDays = new Set(hours.filter(h => h.date && new Date(h.date) > last30).map(h => h.date)).size;
+
+        return {
+          user_id:     uid,
+          name:        info.name  || 'Anonymous',
+          email:       info.email || '',
+          totalTests:  tests.length,
+          avgScore,
+          bestScore,
+          totalHours:  Math.round(totalHrsTime * 10) / 10,
+          activeDays,   // consistency metric
+          last_active: p.last_active_at,
+        };
+      }).filter(e => e.totalTests > 0 || e.totalHours > 0); // only users with data
+
+      // Sort by requested metric
+      const sortKey = {
+        avgScore:   (a, b) => b.avgScore   - a.avgScore,
+        bestScore:  (a, b) => b.bestScore  - a.bestScore,
+        totalTests: (a, b) => b.totalTests - a.totalTests,
+        totalHours: (a, b) => b.totalHours - a.totalHours,
+        consistency:(a, b) => b.activeDays - a.activeDays,
+      }[metric] || ((a, b) => b.avgScore - a.avgScore);
+
+      entries.sort(sortKey);
+
+      return res.status(200).json({ leaderboard: entries.slice(0, 50) });
     }
 
     // ── TRIGGER MONTHLY REPORT ────────────────────────────────
@@ -409,11 +583,13 @@ export default async function handler(req, res) {
 
     // ── SUPABASE DB STATS ─────────────────────────────────────
     if (action === 'db_stats') {
-      const [tests, hours, backlogs, todos, prefs] = await Promise.all([
+      const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([
         sbCount('tests').catch(() => 0),
         sbCount('hours').catch(() => 0),
         sbCount('backlogs').catch(() => 0),
         sbCount('todos').catch(() => 0),
+        sbCount('syllabus').catch(() => 0),
+        sbCount('feedback').catch(() => 0),
         sbQuery('user_preferences?select=user_id,email_reports,last_active_at').catch(() => []),
       ]);
 
@@ -422,11 +598,12 @@ export default async function handler(req, res) {
       const active7d = prefs.filter(p => p.last_active_at && new Date(p.last_active_at) > cutoff).length;
 
       return res.status(200).json({
-        totalTests:    tests,
-        totalHours:    hours,
-        totalBacklogs: backlogs,
-        totalTodos:    todos,
-        totalSyllabus: 0,
+        totalTests:     tests,
+        totalHours:     hours,
+        totalBacklogs:  backlogs,
+        totalTodos:     todos,
+        totalSyllabus:  syllabus,
+        totalFeedbacks: feedbackCount,
         emailReportsOn: emailOn,
         activeUsers7d:  active7d,
         totalPrefs:     prefs.length,
