@@ -3,154 +3,381 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>JEETrack Admin</title>
+<title>JEETrack Admin — Control Panel</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#0b0d14;--card:#13151f;--card2:#1a1d2a;--border:#232637;
-  --accent:#7c6dff;--accent2:#ff6b9d;--green:#22c55e;--yellow:#f59e0b;
-  --red:#ef4444;--cyan:#06b6d4;--text:#e8eaf6;--muted:#6b7280;
-  --ph:#f54e00;--sidebar:220px;
+  --bg:#0a0a0f;--sf:#111118;--sf2:#15151d;--sf3:#1c1c27;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --tx:#f0eff5;--mu:#8b8aa0;--mu2:#56546b;
+  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;
+  --gn:#34d399;--gd:rgba(52,211,153,.12);
+  --am:#fbbf24;--ad:rgba(251,191,36,.1);
+  --rd:#f87171;--rdm:rgba(248,113,113,.1);
+  --bl:#60a5fa;--bld:rgba(96,165,250,.1);
+  --tl:#2dd4bf;
+  --r:14px;--rs:10px;--rl:18px;
+  --sidebar:236px;
+  --grad:linear-gradient(135deg,#7c6af7,#f472b6);
+  --grad-soft:linear-gradient(135deg,rgba(124,106,247,.15),rgba(244,114,182,.10));
+  --ease:cubic-bezier(.34,1.1,.64,1);
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;display:flex;font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% -10%, rgba(124,106,247,.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(244,114,182,.07) 0%, transparent 55%);
+}
+.num,.sp,td.num{font-family:'Space Grotesk',sans-serif}
+::selection{background:rgba(124,106,247,.35)}
+a{color:inherit}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;}
-.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:360px;text-align:center;}
-.login-box .logo{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;color:#fff;margin:0 auto 1rem;}
-.login-box h2{font-size:1.2rem;margin-bottom:.4rem;}
-.login-box p{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;}
-.login-input{width:100%;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;outline:none;margin-bottom:1rem;transition:border .2s;}
-.login-input:focus{border-color:var(--accent);}
-.login-btn{width:100%;padding:.75rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;}
-.login-btn:hover{opacity:.88;}
-.login-err{color:var(--red);font-size:.8rem;margin-top:.75rem;display:none;}
+/* scrollbar */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
 
-/* SIDEBAR */
-#sidebar{width:var(--sidebar);background:var(--card);border-right:1px solid var(--border);display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;}
-.sb-logo{display:flex;align-items:center;gap:.6rem;padding:1.2rem 1rem;border-bottom:1px solid var(--border);}
-.sb-logo-dot{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;}
-.sb-logo span{font-weight:700;font-size:.95rem;}
-.sb-badge{font-size:.65rem;background:#1e1a35;color:var(--accent);padding:.15rem .4rem;border-radius:99px;border:1px solid var(--accent);}
-nav{flex:1;padding:.75rem .5rem;overflow-y:auto;}
-.nav-section{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;padding:.5rem .6rem .3rem;margin-top:.5rem;}
-.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--muted);transition:all .15s;margin-bottom:.15rem;}
-.nav-item:hover{background:var(--card2);color:var(--text);}
-.nav-item.active{background:#2a2545;color:var(--accent);}
-.nav-item svg{width:15px;height:15px;flex-shrink:0;}
-.sb-bottom{padding:.75rem .5rem;border-top:1px solid var(--border);}
-.logout-btn{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;color:var(--red);transition:all .15s;width:100%;}
-.logout-btn:hover{background:#2a1a1a;}
+/* ── BRAND LOGO (matches index.html .logo) ───────────────── */
+.brand{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--tx);display:inline-flex;align-items:baseline;gap:.05em;line-height:1;white-space:nowrap}
+.brand .b2{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-badge{font-size:.6rem;font-weight:700;background:rgba(124,106,247,.14);color:var(--ac2);padding:.18rem .5rem;border-radius:99px;border:1px solid rgba(124,106,247,.35);letter-spacing:.04em;text-transform:uppercase;margin-left:.5rem;vertical-align:middle}
 
-/* MAIN */
-#main{margin-left:var(--sidebar);flex:1;display:none;flex-direction:column;min-height:100vh;}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;border-bottom:1px solid var(--border);background:var(--card);position:sticky;top:0;z-index:5;}
-.topbar h2{font-size:1rem;font-weight:700;}
-.topbar-right{display:flex;align-items:center;gap:.75rem;}
-.range-btns{display:flex;gap:.3rem;}
-.rbtn{padding:.3rem .7rem;border-radius:99px;font-size:.75rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
-.rbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.refresh-btn{padding:.35rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
-.refresh-btn:hover{background:var(--border);}
-.refresh-btn svg{width:12px;height:12px;}
+/* ── LOGIN ────────────────────────────────────────────────── */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;overflow:hidden}
+#login-screen::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 45% at 20% 15%, rgba(124,106,247,.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(244,114,182,.13) 0%, transparent 60%);
+  animation:loginGlow 10s ease-in-out infinite alternate;
+}
+@keyframes loginGlow{0%{opacity:.7}100%{opacity:1}}
+.login-box{
+  position:relative;z-index:1;
+  background:linear-gradient(160deg,rgba(26,26,36,.96),rgba(14,14,20,.98));
+  border:1px solid rgba(124,106,247,.22);border-radius:22px;
+  padding:2.6rem 2.3rem 2.1rem;width:380px;max-width:92vw;text-align:center;
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.03) inset;
+  animation:loginIn .55s var(--ease);
+}
+@keyframes loginIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.login-box .brand{font-size:1.55rem;display:flex;justify-content:center;margin-bottom:1.4rem}
+.login-box h2{font-size:1.05rem;font-weight:700;margin-bottom:.35rem;color:var(--tx)}
+.login-box p{color:var(--mu);font-size:.8rem;margin-bottom:1.7rem;line-height:1.5}
+.login-input{width:100%;padding:.8rem 1rem;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:.92rem;font-family:inherit;outline:none;margin-bottom:1rem;transition:border-color .2s,box-shadow .2s}
+.login-input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(124,106,247,.14)}
+.login-btn{width:100%;padding:.85rem;background:var(--grad);color:#fff;border:none;border-radius:var(--rs);font-size:.92rem;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s;box-shadow:0 6px 22px rgba(124,106,247,.35)}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,106,247,.5)}
+.login-btn:active{transform:translateY(0)}
+.login-err{color:var(--rd);font-size:.78rem;margin-top:.9rem;display:none;background:var(--rdm);border:1px solid rgba(248,113,113,.25);border-radius:8px;padding:.5rem .7rem}
 
-/* CONTENT */
-.content{padding:1.25rem 1.5rem;}
-.section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:.75rem;}
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+#sidebar{
+  width:var(--sidebar);background:var(--sf);border-right:1px solid var(--bd);
+  display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:20;
+}
+.sb-logo{display:flex;flex-direction:column;gap:.15rem;padding:1.35rem 1.1rem 1.15rem;border-bottom:1px solid var(--bd)}
+.sb-logo .brand{font-size:1.15rem}
+.sb-logo-sub{font-size:.66rem;color:var(--mu);font-family:'DM Sans',sans-serif}
+nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
+.nav-section{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);font-weight:700;padding:.85rem .65rem .4rem}
+.nav-section:first-child{padding-top:.3rem}
+.nav-item{
+  display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--rs);
+  cursor:pointer;font-size:.825rem;font-weight:500;color:var(--mu);transition:all .16s var(--ease);
+  margin-bottom:.15rem;position:relative;
+}
+.nav-item:hover{background:var(--sf2);color:var(--tx);transform:translateX(2px)}
+.nav-item.active{background:var(--grad-soft);color:var(--ac2);font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:-.65rem;top:22%;bottom:22%;width:3px;border-radius:0 3px 3px 0;background:var(--grad);box-shadow:0 0 8px rgba(124,106,247,.6)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.nav-item .nav-tag{margin-left:auto;font-size:.6rem;font-weight:700;background:rgba(244,114,182,.16);color:var(--pk);padding:.1rem .4rem;border-radius:99px}
+.sb-bottom{padding:.85rem .65rem;border-top:1px solid var(--bd)}
+.logout-btn{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--rs);cursor:pointer;font-size:.825rem;font-weight:500;color:var(--rd);transition:all .16s var(--ease);width:100%;border:none;background:none;font-family:inherit}
+.logout-btn:hover{background:rgba(248,113,113,.08)}
 
-/* STAT CARDS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.85rem;margin-bottom:1.5rem;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;}
-.stat-label{font-size:.72rem;color:var(--muted);margin-bottom:.35rem;font-weight:500;}
-.stat-value{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1;}
-.stat-sub{font-size:.68rem;color:var(--muted);margin-top:.3rem;}
-.stat-icon{font-size:1.2rem;margin-bottom:.4rem;}
+/* ── MAIN ─────────────────────────────────────────────────── */
+#main{margin-left:var(--sidebar);flex:1;display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;min-width:0;width:0}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.75rem;
+  border-bottom:1px solid var(--bd);background:rgba(17,17,24,.78);backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:9;
+}
+.topbar-left{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.topbar h2{font-size:1.08rem;font-weight:700;font-family:'Syne',sans-serif}
+.topbar-sub{font-size:.74rem;color:var(--mu)}
+.topbar-right{display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+.range-btns{display:flex;gap:.25rem;background:var(--sf2);padding:.2rem;border-radius:99px;border:1px solid var(--bd)}
+.rbtn{padding:.32rem .75rem;border-radius:99px;font-size:.74rem;font-weight:600;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .16s var(--ease);font-family:inherit}
+.rbtn.active{background:var(--grad);color:#fff;box-shadow:0 2px 10px rgba(124,106,247,.4)}
+.icon-btn{
+  padding:.5rem;border-radius:var(--rs);border:1px solid var(--bd);background:var(--sf2);color:var(--tx);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .16s var(--ease);
+}
+.icon-btn:hover{background:var(--sf3);border-color:var(--bd2);transform:rotate(-8deg)}
+.icon-btn svg{width:14px;height:14px}
 
-/* GRID LAYOUTS */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+/* ── CONTENT ──────────────────────────────────────────────── */
+.content{padding:1.5rem 1.75rem 3rem;max-width:1440px;width:100%;overflow-x:hidden}
+.section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--mu2);font-weight:700;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
+.section-title .line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
 
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
-.card h3{font-size:.82rem;font-weight:600;margin-bottom:.9rem;}
+/* ── STAT CARDS ───────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:.9rem;margin-bottom:1.75rem}
+.stat{
+  background:linear-gradient(165deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:var(--r);
+  padding:1.1rem 1.2rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s var(--ease),box-shadow .2s;
+  animation:cardIn .5s var(--ease) backwards;
+}
+.stat:hover{border-color:rgba(124,106,247,.28);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.stat::after{content:'';position:absolute;top:-30%;right:-20%;width:90px;height:90px;border-radius:50%;background:var(--stat-glow,rgba(124,106,247,.12));filter:blur(20px);pointer-events:none}
+.stat-icon-wrap{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;margin-bottom:.65rem;background:var(--stat-bg,rgba(124,106,247,.14))}
+.stat-label{font-size:.72rem;color:var(--mu);margin-bottom:.3rem;font-weight:500}
+.stat-value{font-size:1.65rem;font-weight:700;letter-spacing:-.02em;line-height:1;font-family:'Space Grotesk',sans-serif}
+.stat-sub{font-size:.68rem;color:var(--mu2);margin-top:.35rem}
 
-/* BAR CHART */
-.bar-chart{display:flex;flex-direction:column;gap:.55rem;}
-.bar-row{display:flex;align-items:center;gap:.65rem;}
-.bar-label{font-size:.72rem;color:var(--muted);width:130px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bar-track{flex:1;background:var(--border);border-radius:99px;height:7px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:99px;transition:width .6s ease;}
-.bar-count{font-size:.7rem;color:var(--muted);width:32px;text-align:right;flex-shrink:0;}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.stats-grid .stat:nth-child(1){animation-delay:.02s}.stats-grid .stat:nth-child(2){animation-delay:.05s}
+.stats-grid .stat:nth-child(3){animation-delay:.08s}.stats-grid .stat:nth-child(4){animation-delay:.11s}
+.stats-grid .stat:nth-child(5){animation-delay:.14s}.stats-grid .stat:nth-child(6){animation-delay:.17s}
+.stats-grid .stat:nth-child(7){animation-delay:.2s}.stats-grid .stat:nth-child(8){animation-delay:.23s}
+.stats-grid .stat:nth-child(9){animation-delay:.26s}.stats-grid .stat:nth-child(10){animation-delay:.29s}
+.stats-grid .stat:nth-child(11){animation-delay:.32s}.stats-grid .stat:nth-child(12){animation-delay:.35s}
 
-/* LINE CHART */
-.line-wrap{position:relative;height:110px;margin-top:.5rem;}
-.line-wrap svg{width:100%;height:100%;}
+/* ── GRID LAYOUTS ─────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.4rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.4rem}
+.grid-main-side{display:grid;grid-template-columns:1.6fr 1fr;gap:1rem;margin-bottom:1.4rem}
+@media(max-width:980px){.grid-2,.grid-3,.grid-main-side{grid-template-columns:1fr}}
 
-/* FUNNEL */
-.funnel{display:flex;flex-direction:column;gap:.5rem;}
-.f-step{display:flex;align-items:center;gap:.6rem;}
-.f-n{font-size:.68rem;color:var(--muted);width:14px;text-align:center;}
-.f-track{flex:1;background:var(--border);border-radius:99px;height:20px;overflow:hidden;}
-.f-fill{height:100%;border-radius:99px;display:flex;align-items:center;padding-left:.6rem;transition:width .7s ease;}
-.f-fill span{font-size:.68rem;font-weight:600;color:#fff;white-space:nowrap;}
-.f-pct{font-size:.68rem;color:var(--muted);width:36px;text-align:right;}
-.f-drop{font-size:.65rem;color:var(--red);width:48px;text-align:right;}
+/* ── CARDS ────────────────────────────────────────────────── */
+.card{
+  background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem 1.3rem;
+  transition:border-color .2s,box-shadow .2s;
+}
+.card:hover{border-color:rgba(124,106,247,.16)}
+.card h3{font-size:.85rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;font-family:'Syne',sans-serif}
+.card h3 .ic{font-size:.95rem}
+.card-foot{font-size:.7rem;color:var(--mu2);margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--bd)}
 
-/* TABLE */
-.table-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:.78rem;}
-th{text-align:left;color:var(--muted);font-weight:600;padding:.5rem .75rem;border-bottom:1px solid var(--border);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
-td{padding:.55rem .75rem;border-bottom:1px solid #1a1d2a;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(255,255,255,.015);}
-.pill{display:inline-block;padding:.12rem .5rem;border-radius:99px;font-size:.65rem;font-weight:600;}
-.pill-green{background:#0f2a1a;color:var(--green);}
-.pill-red{background:#2a0f0f;color:var(--red);}
-.pill-yellow{background:#2a210f;color:var(--yellow);}
-.pill-blue{background:#0f1a2a;color:var(--cyan);}
-.pill-purple{background:#1a0f2a;color:var(--accent);}
+/* ── BAR CHART ────────────────────────────────────────────── */
+.bar-chart{display:flex;flex-direction:column;gap:.65rem}
+.bar-row{display:flex;align-items:center;gap:.7rem}
+.bar-label{font-size:.74rem;color:var(--mu);width:128px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:var(--sf3);border-radius:99px;height:8px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width .7s var(--ease);background:var(--grad)}
+.bar-count{font-size:.72rem;color:var(--mu);width:34px;text-align:right;flex-shrink:0;font-family:'Space Grotesk',sans-serif}
 
-/* ACTION BTNS */
-.action-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
-.action-card h3{font-size:.82rem;font-weight:600;margin-bottom:.3rem;}
-.action-card p{font-size:.75rem;color:var(--muted);margin-bottom:.9rem;line-height:1.5;}
-.action-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{opacity:.85;}
-.btn-green{background:var(--green);color:#000;}
-.btn-green:hover{opacity:.85;}
-.btn-yellow{background:var(--yellow);color:#000;}
-.btn-yellow:hover{opacity:.85;}
-.btn-red{background:var(--red);color:#fff;}
-.btn-red:hover{opacity:.85;}
-.action-result{font-size:.75rem;margin-top:.6rem;padding:.5rem .75rem;border-radius:6px;display:none;}
-.result-ok{background:#0f2a1a;color:var(--green);border:1px solid #1a4a2a;}
-.result-err{background:#2a0f0f;color:var(--red);border:1px solid #4a1a1a;}
+/* ── LINE CHART ───────────────────────────────────────────── */
+.line-wrap{position:relative;height:115px;margin-top:.5rem}
+.line-wrap svg{width:100%;height:100%}
 
-/* USER DETAIL MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:none;align-items:center;justify-content:center;}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;width:600px;max-width:95vw;max-height:80vh;overflow-y:auto;padding:1.5rem;}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:.25rem;}
+/* ── FUNNEL ───────────────────────────────────────────────── */
+.funnel{display:flex;flex-direction:column;gap:.55rem}
+.f-step{display:flex;align-items:center;gap:.65rem}
+.f-n{font-size:.68rem;color:var(--mu2);width:16px;text-align:center;font-weight:700}
+.f-track{flex:1;background:var(--sf3);border-radius:99px;height:22px;overflow:hidden}
+.f-fill{height:100%;border-radius:99px;display:flex;align-items:center;padding-left:.65rem;transition:width .8s var(--ease)}
+.f-fill span{font-size:.7rem;font-weight:600;color:#fff;white-space:nowrap}
+.f-pct{font-size:.7rem;color:var(--mu);width:38px;text-align:right;font-family:'Space Grotesk',sans-serif}
+.f-drop{font-size:.66rem;color:var(--rd);width:50px;text-align:right}
 
-/* LOADING / EMPTY */
-.loading{text-align:center;padding:2rem;color:var(--muted);}
-.spinner{width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .75rem;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.no-data{text-align:center;padding:1.5rem;color:var(--muted);font-size:.8rem;}
+/* ── TABLE ────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:var(--rs)}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+th{text-align:left;color:var(--mu);font-weight:600;padding:.6rem .8rem;border-bottom:1px solid var(--bd);font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:default}
+th.sortable{cursor:pointer;user-select:none;transition:color .15s}
+th.sortable:hover{color:var(--ac2)}
+th.sortable .arrow{opacity:.4;margin-left:.2rem}
+th.sortable.sorted .arrow{opacity:1;color:var(--ac2)}
+td{padding:.65rem .8rem;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover td{background:rgba(255,255,255,.02)}
+.row-click{cursor:pointer}
+.pill{display:inline-flex;align-items:center;gap:.25rem;padding:.16rem .55rem;border-radius:99px;font-size:.66rem;font-weight:600;white-space:nowrap}
+.pill-green{background:var(--gd);color:var(--gn)}
+.pill-red{background:var(--rdm);color:var(--rd)}
+.pill-yellow{background:var(--ad);color:var(--am)}
+.pill-blue{background:var(--bld);color:var(--bl)}
+.pill-purple{background:rgba(124,106,247,.14);color:var(--ac2)}
+.pill-pink{background:rgba(244,114,182,.14);color:var(--pk)}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:8px;font-size:.72rem;font-weight:800;font-family:'Space Grotesk',sans-serif;background:var(--sf3);color:var(--mu)}
+.rank-badge.r1{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1306}
+.rank-badge.r2{background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#1a1d24}
+.rank-badge.r3{background:linear-gradient(135deg,#f0a37c,#d97757);color:#231308}
+.user-cell{display:flex;align-items:center;gap:.6rem}
+.avatar{width:30px;height:30px;border-radius:9px;background:var(--grad-soft);color:var(--ac2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0;font-family:'Syne',sans-serif}
 
-/* TOAST */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;font-size:.8rem;font-weight:500;z-index:200;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;}
-.toast.show{transform:translateY(0);opacity:1;}
+/* ── FILTER BAR ───────────────────────────────────────────── */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.1rem;align-items:center}
+.fselect,.fsearch{
+  background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);
+  padding:.55rem .85rem;font-size:.79rem;font-family:inherit;outline:none;transition:border-color .15s;
+}
+.fselect:focus,.fsearch:focus{border-color:var(--ac)}
+.fsearch{flex:1;min-width:180px}
+.fselect{cursor:pointer;min-width:140px}
+.filter-clear{font-size:.74rem;color:var(--ac2);cursor:pointer;padding:.55rem .5rem;font-weight:600}
+.filter-clear:hover{text-decoration:underline}
 
-/* PAGES */
-.page{display:none;}
-.page.active{display:block;}
+/* ── ACTION BTNS ──────────────────────────────────────────── */
+.action-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem 1.3rem}
+.action-card h3{font-size:.85rem;font-weight:700;margin-bottom:.35rem;font-family:'Syne',sans-serif}
+.action-card p{font-size:.76rem;color:var(--mu);margin-bottom:1rem;line-height:1.55}
+.action-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.05rem;border-radius:var(--rs);font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .18s var(--ease);font-family:inherit}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 16px rgba(124,106,247,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(124,106,247,.45)}
+.btn-green{background:linear-gradient(135deg,#34d399,#10b981);color:#06281c}
+.btn-green:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(52,211,153,.35)}
+.btn-yellow{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#2a1a02}
+.btn-yellow:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(251,191,36,.35)}
+.btn-red{background:linear-gradient(135deg,#f87171,#ef4444);color:#fff}
+.btn-red:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(248,113,113,.35)}
+.btn-ghost{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
+.btn-ghost:hover{background:var(--sf3)}
+.btn-sm{padding:.32rem .7rem;font-size:.72rem;border-radius:7px}
+.action-result{font-size:.76rem;margin-top:.75rem;padding:.6rem .8rem;border-radius:8px;display:none}
+.result-ok{background:var(--gd);color:var(--gn);border:1px solid rgba(52,211,153,.25)}
+.result-err{background:var(--rdm);color:var(--rd);border:1px solid rgba(248,113,113,.25)}
 
-/* DAU LABELS */
-.dau-labels{display:flex;justify-content:space-between;margin-top:.3rem;}
-.dau-labels span{font-size:.62rem;color:var(--muted);}
+/* ── LEADERBOARD / PODIUM ────────────────────────────────────*/
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-bottom:1.4rem}
+.podium-card{
+  position:relative;border-radius:var(--r);padding:1.2rem 1rem 1.1rem;text-align:center;overflow:hidden;
+  border:1px solid var(--bd);background:linear-gradient(165deg,var(--sf),var(--sf2));
+  transition:transform .2s var(--ease);
+}
+.podium-card:hover{transform:translateY(-3px)}
+.podium-card.gold{order:2;border-color:rgba(251,191,36,.35);background:linear-gradient(165deg,rgba(251,191,36,.1),var(--sf2))}
+.podium-card.silver{order:1}
+.podium-card.bronze{order:3;border-color:rgba(217,119,87,.3)}
+.podium-rank{font-size:1.6rem;margin-bottom:.4rem}
+.podium-avatar{width:52px;height:52px;border-radius:14px;margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;font-family:'Syne',sans-serif;background:var(--grad-soft);color:var(--ac2)}
+.podium-card.gold .podium-avatar{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#2a1a02}
+.podium-name{font-weight:700;font-size:.85rem;margin-bottom:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.podium-meta{font-size:.68rem;color:var(--mu);margin-bottom:.5rem}
+.podium-score{font-size:1.3rem;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--ac2)}
+.podium-score-label{font-size:.62rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.05em}
+@media(max-width:700px){.podium{grid-template-columns:1fr;}.podium-card{order:0!important}}
+
+/* ── DISTRIBUTION DONUT/BAR ───────────────────────────────── */
+.dist-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
+.dist-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.dist-label{font-size:.78rem;flex:1;color:var(--tx)}
+.dist-pct{font-size:.78rem;font-weight:700;color:var(--mu);font-family:'Space Grotesk',sans-serif;width:48px;text-align:right}
+.dist-track{flex:2;background:var(--sf3);border-radius:99px;height:7px;overflow:hidden}
+.dist-fill{height:100%;border-radius:99px;transition:width .7s var(--ease)}
+
+/* ── STREAK FLAME LIST ───────────────────────────────────────*/
+.streak-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.streak-row:last-child{border-bottom:none}
+.streak-fire{font-size:1.1rem;width:28px;text-align:center}
+.streak-days{font-weight:800;font-size:1rem;font-family:'Space Grotesk',sans-serif;color:var(--am);width:46px}
+
+/* ── KPI HERO ROW (consistency/leaderboard top callouts) ─────*/
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:1.4rem}
+.kpi-card{
+  border-radius:var(--r);padding:1.2rem 1.3rem;position:relative;overflow:hidden;
+  border:1px solid var(--bd);background:linear-gradient(150deg,rgba(124,106,247,.1),var(--sf));
+}
+.kpi-card.alt{background:linear-gradient(150deg,rgba(244,114,182,.1),var(--sf))}
+.kpi-card .kpi-label{font-size:.72rem;color:var(--mu);margin-bottom:.5rem;font-weight:600}
+.kpi-card .kpi-name{font-size:1.05rem;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:.15rem}
+.kpi-card .kpi-sub{font-size:.72rem;color:var(--ac2);font-weight:600}
+
+/* ── USER DETAIL MODAL ───────────────────────────────────────*/
+.modal-overlay{position:fixed;inset:0;background:rgba(5,5,8,.78);backdrop-filter:blur(6px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal{
+  background:linear-gradient(165deg,var(--sf),#0d0d13);border:1px solid var(--bd2);border-radius:var(--rl);
+  width:720px;max-width:96vw;max-height:88vh;overflow-y:auto;padding:0;
+  box-shadow:0 50px 120px rgba(0,0,0,.6);animation:modalIn .3s var(--ease);
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem;
+  border-bottom:1px solid var(--bd);position:sticky;top:0;background:rgba(17,17,24,.92);backdrop-filter:blur(10px);z-index:2;
+}
+.modal-header-info{display:flex;align-items:center;gap:.8rem;min-width:0}
+.modal-avatar{width:42px;height:42px;border-radius:12px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;font-family:'Syne',sans-serif;flex-shrink:0}
+.modal-header h3{font-size:.98rem;font-weight:700;font-family:'Syne',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-header-sub{font-size:.74rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-close{background:var(--sf2);border:1px solid var(--bd);color:var(--mu);cursor:pointer;font-size:1rem;width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:var(--sf3);color:var(--tx)}
+.modal-body{padding:1.4rem 1.5rem 1.6rem}
+.modal-tabs{display:flex;gap:.3rem;margin-bottom:1.2rem;border-bottom:1px solid var(--bd);padding-bottom:0}
+.modal-tab{padding:.55rem .9rem;font-size:.78rem;font-weight:600;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.modal-tab:hover{color:var(--tx)}
+.modal-tab.active{color:var(--ac2);border-bottom-color:var(--ac)}
+.modal-pane{display:none}
+.modal-pane.active{display:block;animation:fadeIn .25s var(--ease)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.mini-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem;margin-bottom:1.1rem}
+.mini-stat{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:.8rem .9rem}
+.mini-stat-label{font-size:.65rem;color:var(--mu);margin-bottom:.25rem}
+.mini-stat-value{font-size:1.2rem;font-weight:700;font-family:'Space Grotesk',sans-serif}
+.subject-bar-mini{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.subject-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.subject-bar-mini .lbl{font-size:.72rem;color:var(--mu);width:64px;flex-shrink:0}
+.subject-bar-mini .trk{flex:1;height:6px;background:var(--sf3);border-radius:99px;overflow:hidden}
+.subject-bar-mini .fil{height:100%;border-radius:99px;transition:width .6s var(--ease)}
+.subject-bar-mini .pctval{font-size:.7rem;width:34px;text-align:right;color:var(--mu);font-family:'Space Grotesk',sans-serif}
+
+/* ── LOADING / EMPTY ──────────────────────────────────────── */
+.loading{text-align:center;padding:2.2rem;color:var(--mu)}
+.spinner{width:26px;height:26px;border:2.5px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .8rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.no-data{text-align:center;padding:1.8rem;color:var(--mu);font-size:.82rem}
+.no-data .emoji{font-size:1.6rem;display:block;margin-bottom:.4rem;opacity:.6}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;background:rgba(28,28,39,.96);backdrop-filter:blur(14px);
+  border:1px solid var(--bd2);border-radius:12px;padding:.8rem 1.1rem;font-size:.82rem;font-weight:500;
+  z-index:200;transform:translateY(20px) scale(.96);opacity:0;transition:all .3s var(--ease);pointer-events:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+.toast.show{transform:translateY(0) scale(1);opacity:1}
+
+/* ── PAGES ────────────────────────────────────────────────── */
+.page{display:none}
+.page.active{display:block;animation:pageIn .35s var(--ease)}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── DAU LABELS ───────────────────────────────────────────── */
+.dau-labels{display:flex;justify-content:space-between;margin-top:.4rem}
+.dau-labels span{font-size:.64rem;color:var(--mu2)}
+
+/* ── PAGINATION ───────────────────────────────────────────── */
+.pagination{display:flex;align-items:center;gap:.85rem;margin-top:1.1rem}
+.page-info{font-size:.78rem;color:var(--mu)}
+
+/* ── MOBILE ───────────────────────────────────────────────── */
+.mobile-topbar{display:none}
+@media(max-width:880px){
+  :root{--sidebar:0px}
+  #sidebar{transform:translateX(-100%);transition:transform .25s var(--ease);width:236px;z-index:60}
+  #sidebar.open{transform:translateX(0);box-shadow:30px 0 60px rgba(0,0,0,.5)}
+  #main{margin-left:0}
+  .mobile-topbar{display:flex}
+  .grid-2,.grid-3,.grid-main-side,.podium,.kpi-row{grid-template-columns:1fr}
+  .content{padding:1.1rem 1rem 3rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
+.sb-overlay.show{display:block}
 </style>
 </head>
 <body>
@@ -158,23 +385,21 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="logo">JT</div>
-    <h2>Admin Dashboard</h2>
-    <p>JEETrack internal analytics — authorized access only</p>
-    <input class="login-input" type="password" id="pwd-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="brand">JEE<span class="b2">Track</span></div>
+    <h2>Admin Control Panel</h2>
+    <p>JEETrack internal analytics &amp; operations — authorized access only</p>
+    <input class="login-input" type="password" id="pwd-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"/>
     <button class="login-btn" onclick="doLogin()">Sign In</button>
     <div class="login-err" id="login-err">Wrong password. Try again.</div>
   </div>
 </div>
 
 <!-- SIDEBAR -->
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar(false)"></div>
 <div id="sidebar">
   <div class="sb-logo">
-    <div class="sb-logo-dot">JT</div>
-    <div>
-      <div style="display:flex;align-items:center;gap:.4rem;"><span>JEETrack</span><span class="sb-badge">Admin</span></div>
-      <div style="font-size:.65rem;color:var(--muted);">admin.jeetrack.in</div>
-    </div>
+    <div class="brand">JEE<span class="b2">Track</span><span class="brand-badge">Admin</span></div>
+    <div class="sb-logo-sub">admin.jeetrack.in</div>
   </div>
   <nav>
     <div class="nav-section">Analytics</div>
@@ -194,19 +419,37 @@ tr:hover td{background:rgba(255,255,255,.015);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
       DAU Trend
     </div>
-    <div class="nav-section">Users</div>
+    <div class="nav-section">Students</div>
     <div class="nav-item" onclick="showPage('users',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Users
+      All Users
     </div>
+    <div class="nav-item" onclick="showPage('leaderboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1 4 4 0 0 0 4 4M17 6h3a1 1 0 0 1 1 1 4 4 0 0 1-4 4"/></svg>
+      Leaderboard
+    </div>
+    <div class="nav-item" onclick="showPage('consistency',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 1 1-12 0c0-1.5.7-3 1.5-4.2"/></svg>
+      Consistency
+      <span class="nav-tag">New</span>
+    </div>
+    <div class="nav-item" onclick="showPage('demographics',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.35-4.35"/><circle cx="10" cy="10" r="7"/><path d="M10 7v6M7 10h6" stroke-opacity="0"/></svg>
+      Segmentation
+    </div>
+    <div class="nav-section">System</div>
     <div class="nav-item" onclick="showPage('db',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
       DB Stats
     </div>
-    <div class="nav-section">Controls</div>
     <div class="nav-item" onclick="showPage('actions',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
       Admin Actions
+    </div>
+    <div class="nav-item" onclick="showPage('email',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email Composer
+      <span class="nav-tag">New</span>
     </div>
   </nav>
   <div class="sb-bottom">
@@ -220,16 +463,23 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <!-- MAIN CONTENT -->
 <div id="main">
   <div class="topbar">
-    <h2 id="page-title">Overview</h2>
+    <div class="topbar-left">
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <button class="icon-btn mobile-topbar" onclick="toggleSidebar(true)" style="padding:.45rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h2 id="page-title">Overview</h2>
+      </div>
+      <div class="topbar-sub" id="page-sub">Platform-wide snapshot</div>
+    </div>
     <div class="topbar-right">
-      <div class="range-btns">
+      <div class="range-btns" id="range-btns">
         <button class="rbtn active" onclick="setRange(7,this)">7D</button>
         <button class="rbtn" onclick="setRange(30,this)">30D</button>
         <button class="rbtn" onclick="setRange(90,this)">90D</button>
       </div>
-      <button class="refresh-btn" onclick="loadCurrentPage()">
+      <button class="icon-btn" onclick="loadCurrentPage()" title="Refresh">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
-        Refresh
       </button>
     </div>
   </div>
@@ -238,27 +488,27 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
     <!-- OVERVIEW PAGE -->
     <div class="page active" id="page-overview">
-      <div class="section-title">Key Metrics</div>
+      <div class="section-title">Key Metrics<span class="line"></span></div>
       <div class="stats-grid" id="stats-grid">
         <div class="loading"><div class="spinner"></div></div>
       </div>
       <div class="grid-2">
         <div class="card">
-          <h3>📄 Page Views by Section</h3>
+          <h3><span class="ic">📄</span>Page Views by Section</h3>
           <div class="bar-chart" id="pages-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
         <div class="card">
-          <h3>📚 Subject Tracking (Chapters)</h3>
+          <h3><span class="ic">📚</span>Subject Tracking (Chapters)</h3>
           <div class="bar-chart" id="subject-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
       </div>
       <div class="grid-2">
         <div class="card">
-          <h3>📝 Mains vs Advanced</h3>
+          <h3><span class="ic">📝</span>Mains vs Advanced</h3>
           <div class="bar-chart" id="exam-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
         <div class="card">
-          <h3>📊 DAU (Last 7 Days)</h3>
+          <h3><span class="ic">📊</span>DAU (Last 7 Days)</h3>
           <div class="line-wrap" id="dau-mini"><div class="loading"><div class="spinner"></div></div></div>
         </div>
       </div>
@@ -266,61 +516,164 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
     <!-- FEATURES PAGE -->
     <div class="page" id="page-features">
-      <div class="section-title">Feature Usage</div>
-      <div class="card" style="margin-bottom:1.25rem;">
-        <h3>🏆 All Features — Event Count</h3>
+      <div class="section-title">Feature Usage<span class="line"></span></div>
+      <div class="card" style="margin-bottom:1.4rem">
+        <h3><span class="ic">🏆</span>All Features — Event Count</h3>
         <div class="bar-chart" id="features-chart"><div class="loading"><div class="spinner"></div></div></div>
       </div>
     </div>
 
     <!-- FUNNEL PAGE -->
     <div class="page" id="page-funnel">
-      <div class="section-title">User Journey Funnel (Last 90 Days)</div>
+      <div class="section-title">User Journey Funnel (Last 90 Days)<span class="line"></span></div>
       <div class="card">
-        <h3>🎯 Signup → Engagement Funnel</h3>
+        <h3><span class="ic">🎯</span>Signup → Engagement Funnel</h3>
         <div class="funnel" id="funnel-steps"><div class="loading"><div class="spinner"></div></div></div>
       </div>
     </div>
 
     <!-- DAU PAGE -->
     <div class="page" id="page-dau">
-      <div class="section-title">Daily Active Users</div>
+      <div class="section-title">Daily Active Users<span class="line"></span></div>
       <div class="card">
-        <h3>📈 DAU Trend</h3>
-        <div class="line-wrap" style="height:200px;" id="dau-big"><div class="loading"><div class="spinner"></div></div></div>
+        <h3><span class="ic">📈</span>DAU Trend</h3>
+        <div class="line-wrap" style="height:210px" id="dau-big"><div class="loading"><div class="spinner"></div></div></div>
         <div class="dau-labels" id="dau-labels"></div>
       </div>
     </div>
 
     <!-- USERS PAGE -->
     <div class="page" id="page-users">
-      <div class="section-title">All Users</div>
-      <div class="card">
+      <div class="section-title">All Users — Full Profile Data<span class="line"></span></div>
+      <div class="filter-bar">
+        <input class="fsearch" id="user-search" placeholder="Search by name or email…" oninput="debounceUserSearch()"/>
+        <select class="fselect" id="filter-class" onchange="loadUsers(0)">
+          <option value="">All Classes</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+          <option value="dropper">Dropper</option>
+          <option value="other">Other</option>
+        </select>
+        <select class="fselect" id="filter-coaching" onchange="loadUsers(0)">
+          <option value="">All Coaching Institutes</option>
+        </select>
+        <span class="filter-clear" onclick="clearUserFilters()">Clear filters</span>
+      </div>
+      <div class="card" style="padding:0">
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Name</th><th>Email</th><th>Class</th><th>Target</th>
-                <th>Coaching</th><th>Joined</th><th>Last Active</th>
-                <th>Email Reports</th><th>Actions</th>
+                <th class="sortable" data-sort="name" onclick="setUserSort('name')">Student <span class="arrow">↕</span></th>
+                <th>Class</th>
+                <th>Coaching</th>
+                <th>Target Yr</th>
+                <th class="sortable sorted" data-sort="created_at" onclick="setUserSort('created_at')">Joined <span class="arrow">↓</span></th>
+                <th class="sortable" data-sort="last_active" onclick="setUserSort('last_active')">Last Active <span class="arrow">↕</span></th>
+                <th>Reports</th>
+                <th>Profile</th>
               </tr>
             </thead>
             <tbody id="users-table">
+              <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" style="padding:0 1.3rem 1.2rem">
+          <button class="action-btn btn-ghost btn-sm" onclick="loadUsers(Math.max(0,_userPage-1))" id="prev-btn" disabled>← Prev</button>
+          <span class="page-info" id="page-info"></span>
+          <button class="action-btn btn-ghost btn-sm" onclick="loadUsers(_userPage+1)" id="next-btn">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD PAGE -->
+    <div class="page" id="page-leaderboard">
+      <div class="section-title">Test Leaderboard<span class="line"></span></div>
+      <div class="filter-bar">
+        <select class="fselect" id="leaderboard-metric" onchange="loadLeaderboard()" style="min-width:220px">
+          <option value="avgScore">Sort by Average Marks</option>
+          <option value="avgScorePct">Sort by Average %</option>
+          <option value="bestScore">Sort by Best Score</option>
+          <option value="totalTests">Sort by Tests Attempted</option>
+          <option value="totalHours">Sort by Study Hours</option>
+          <option value="consistency">Sort by Active Days (30d)</option>
+        </select>
+      </div>
+      <div id="podium-wrap"></div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th><th>Student</th><th>Class</th><th>Tests</th>
+                <th>Avg Marks</th><th>Avg %</th><th>Best Score</th><th>Study Hrs</th><th>Active Days</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-table">
               <tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>
             </tbody>
           </table>
         </div>
-        <div style="display:flex;align-items:center;gap:.75rem;margin-top:1rem;">
-          <button class="action-btn btn-primary" onclick="loadUsers(Math.max(0,_userPage-1))" id="prev-btn" disabled>← Prev</button>
-          <span id="page-info" style="font-size:.78rem;color:var(--muted);"></span>
-          <button class="action-btn btn-primary" onclick="loadUsers(_userPage+1)" id="next-btn">Next →</button>
+      </div>
+    </div>
+
+    <!-- CONSISTENCY PAGE -->
+    <div class="page" id="page-consistency">
+      <div class="section-title">Consistency Analytics<span class="line"></span></div>
+      <div class="kpi-row" id="consistency-kpis">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+      <div class="grid-main-side">
+        <div class="card">
+          <h3><span class="ic">📈</span>Daily Active Students</h3>
+          <div class="line-wrap" style="height:170px" id="consistency-dau"><div class="loading"><div class="spinner"></div></div></div>
         </div>
+        <div class="card">
+          <h3><span class="ic">🔥</span>Longest Streaks</h3>
+          <div id="streak-list"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:.3rem">Full Consistency Ranking<span class="line"></span></div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th><th>Student</th><th>Current Streak</th><th>Longest Streak</th>
+                <th>Active Days (30d)</th><th>Total Active Days</th><th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="consistency-table">
+              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMOGRAPHICS / SEGMENTATION PAGE -->
+    <div class="page" id="page-demographics">
+      <div class="section-title">User Segmentation<span class="line"></span></div>
+      <div class="grid-2">
+        <div class="card">
+          <h3><span class="ic">🎓</span>Distribution by Class</h3>
+          <div id="class-dist"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <h3><span class="ic">🏫</span>Distribution by Coaching Institute</h3>
+          <div id="coaching-dist"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ic">📅</span>Distribution by Target JEE Year</h3>
+        <div id="year-dist"><div class="loading"><div class="spinner"></div></div></div>
       </div>
     </div>
 
     <!-- DB STATS PAGE -->
     <div class="page" id="page-db">
-      <div class="section-title">Supabase Database Stats</div>
+      <div class="section-title">Supabase Database Stats<span class="line"></span></div>
       <div class="stats-grid" id="db-stats-grid">
         <div class="loading"><div class="spinner"></div></div>
       </div>
@@ -328,7 +681,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
     <!-- ACTIONS PAGE -->
     <div class="page" id="page-actions">
-      <div class="section-title">Admin Controls</div>
+      <div class="section-title">Admin Controls<span class="line"></span></div>
       <div class="grid-2">
 
         <div class="action-card">
@@ -363,32 +716,201 @@ tr:hover td{background:rgba(255,255,255,.015);}
         <div class="action-card">
           <h3>🔐 Session Info</h3>
           <p>Your current admin session details.</p>
-          <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">
-            <div>Domain: <span style="color:var(--text);">admin.jeetrack.in</span></div>
-            <div>PostHog Project: <span style="color:var(--text);">478522</span></div>
-            <div>Session: <span style="color:var(--green);">Active ✓</span></div>
+          <div style="font-size:.78rem;color:var(--mu);line-height:1.85">
+            <div>Domain: <span style="color:var(--tx)">admin.jeetrack.in</span></div>
+            <div>PostHog Project: <span style="color:var(--tx)">478522</span></div>
+            <div>Session: <span style="color:var(--gn)">Active ✓</span></div>
           </div>
         </div>
 
       </div>
-    </div>
+    </div><!-- /page-actions -->
+
+    <!-- ══ EMAIL COMPOSER ══════════════════════════════════ -->
+    <div class="page" id="page-email">
+      <div class="section-title">Email Composer<span class="line"></span></div>
+      <div class="email-composer">
+
+        <!-- LEFT — Compose -->
+        <div>
+          <div class="compose-card" style="margin-bottom:1rem;">
+            <h3>✉️ Compose Email</h3>
+
+            <div class="compose-field">
+              <span class="compose-label">From Name</span>
+              <input class="compose-input" id="ce-from-name" placeholder="JEETrack" value="JEETrack"/>
+            </div>
+
+            <div class="compose-field">
+              <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
+              <input class="compose-input" id="ce-subject" placeholder="Hey {{name}}, something exciting!"/>
+            </div>
+
+            <div class="compose-field">
+              <span class="compose-label">Email Body (HTML supported) <span class="hint-tag">{{name}} = recipient name</span></span>
+              <div class="toolbar">
+                <button class="tbtn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
+                <button class="tbtn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
+                <button class="tbtn" onclick="insertTag('<br><br>','')">↵</button>
+                <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot;>','</a>')">Link</button>
+                <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#a695ff&quot;>','</h2>')">H2</button>
+                <button class="tbtn" onclick="insertSnippet('greeting')">👋 Greeting</button>
+                <button class="tbtn" onclick="insertSnippet('cta')">🔗 CTA</button>
+                <button class="tbtn" onclick="insertSnippet('review')">⭐ Review</button>
+              </div>
+              <textarea class="compose-textarea" id="ce-body" placeholder="Hi {{name}},&#10;&#10;Write your email here...&#10;&#10;HTML is supported!"></textarea>
+            </div>
+
+            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+              <button class="action-btn btn-primary" onclick="previewEmail()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+              <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send Email
+              </button>
+              <span class="recipient-count" id="ce-count">0 recipients selected</span>
+            </div>
+            <div class="compose-result" id="ce-result"></div>
+          </div>
+
+          <!-- Preview Card -->
+          <div class="compose-card" id="ce-preview-card" style="display:none;">
+            <h3>👁️ Email Preview</h3>
+            <div style="font-size:.72rem;color:var(--mu);margin-bottom:.75rem;">
+              From: <strong style="color:var(--tx)" id="prev-from">noreply@jeetrack.in</strong> &nbsp;·&nbsp;
+              Subject: <strong style="color:var(--tx)" id="prev-subject">—</strong>
+            </div>
+            <iframe id="ce-preview-frame" style="width:100%;height:420px;border:1px solid var(--bd);border-radius:8px;background:#0a0a0f;" sandbox="allow-same-origin"></iframe>
+          </div>
+        </div>
+
+        <!-- RIGHT — Recipients -->
+        <div>
+          <div class="compose-card">
+            <h3>👥 Recipients</h3>
+            <div class="recipient-tabs">
+              <button class="rtab active" onclick="setRecipientTab('select',this)">Select Users</button>
+              <button class="rtab" onclick="setRecipientTab('all_active',this)">Active (30d)</button>
+              <button class="rtab" onclick="setRecipientTab('all',this)">All Users</button>
+              <button class="rtab" onclick="setRecipientTab('custom',this)">Custom</button>
+            </div>
+
+            <div class="recipient-panel active" id="rp-select">
+              <div class="select-all-row">
+                <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;">
+                  <input type="checkbox" id="select-all-users" onchange="toggleSelectAll(this)" style="accent-color:var(--ac2);">
+                  Select All
+                </label>
+                <span id="selected-count" style="font-size:.72rem;color:var(--ac2);font-weight:600;">0 selected</span>
+              </div>
+              <div class="user-check-list" id="user-check-list">
+                <div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">Loading...</div>
+              </div>
+            </div>
+
+            <div class="recipient-panel" id="rp-all_active">
+              <div style="background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
+                📨 Email sent to all users <strong style="color:var(--tx)">active in last 30 days</strong>. Count shown before sending.
+              </div>
+            </div>
+
+            <div class="recipient-panel" id="rp-all">
+              <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
+                ⚠️ Email sent to <strong style="color:#f87171">ALL users</strong> regardless of activity. Use carefully!
+              </div>
+            </div>
+
+            <div class="recipient-panel" id="rp-custom">
+              <span class="compose-label">Enter emails (one per line or comma separated)</span>
+              <textarea class="compose-textarea" id="ce-custom-emails" style="min-height:140px;" placeholder="user1@gmail.com&#10;user2@gmail.com"></textarea>
+            </div>
+          </div>
+
+          <div class="compose-card" style="margin-top:1rem;">
+            <h3>💡 Tips</h3>
+            <div style="font-size:.75rem;color:var(--mu);line-height:1.9;">
+              <div>• <code style="color:var(--ac2)">{{name}}</code> → replaced with user's name</div>
+              <div>• HTML fully supported in body</div>
+              <div>• Sent from <code style="color:var(--ac2)">noreply@jeetrack.in</code></div>
+              <div>• Preview before sending</div>
+              <div>• Sent in batches of 10</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /page-email -->
 
   </div><!-- /content -->
 </div><!-- /main -->
+<style>
+.email-composer { display: grid; grid-template-columns: 1fr 380px; gap: 1.1rem; }
+@media(max-width:900px){ .email-composer { grid-template-columns: 1fr; } }
+.compose-card { background: var(--sf); border: 1px solid var(--bd); border-radius: var(--r); padding: 1.25rem; }
+.compose-card h3 { font-size: .85rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Syne', sans-serif; display: flex; align-items: center; gap: .5rem; }
+.compose-label { font-size: .72rem; color: var(--mu); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .4rem; display: block; }
+.compose-input { width: 100%; padding: .6rem .85rem; background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; color: var(--tx); font-size: .85rem; outline: none; transition: border .15s; font-family: inherit; }
+.compose-input:focus { border-color: var(--ac2); }
+.compose-textarea { width: 100%; padding: .75rem .85rem; background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; color: var(--tx); font-size: .85rem; outline: none; transition: border .15s; font-family: inherit; resize: vertical; min-height: 220px; line-height: 1.6; }
+.compose-textarea:focus { border-color: var(--ac2); }
+.compose-field { margin-bottom: .9rem; }
+.recipient-tabs { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.rtab { padding: .3rem .75rem; border-radius: 99px; font-size: .75rem; font-weight: 600; border: 1px solid var(--bd); background: transparent; color: var(--mu); cursor: pointer; transition: all .15s; font-family: inherit; }
+.rtab.active { background: var(--ac2); color: #fff; border-color: var(--ac2); }
+.recipient-panel { display: none; }
+.recipient-panel.active { display: block; }
+.user-check-list { max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: .3rem; }
+.user-check-item { display: flex; align-items: center; gap: .6rem; padding: .45rem .6rem; border-radius: 7px; cursor: pointer; transition: background .1s; }
+.user-check-item:hover { background: var(--sf2); }
+.user-check-item input[type=checkbox] { accent-color: var(--ac2); width: 14px; height: 14px; flex-shrink: 0; cursor: pointer; }
+.user-check-info { flex: 1; min-width: 0; }
+.user-check-name { font-size: .78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-check-email { font-size: .68rem; color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.select-all-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+.select-all-row span { font-size: .72rem; color: var(--mu); }
+.hint-tag { font-size: .68rem; color: var(--ac2); background: rgba(124,106,247,.1); padding: .15rem .45rem; border-radius: 99px; font-weight: 600; }
+.preview-box { background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 1rem; font-size: .8rem; line-height: 1.6; color: var(--mu); min-height: 80px; }
+.send-bar { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
+.recipient-count { font-size: .78rem; color: var(--mu); }
+.recipient-count strong { color: var(--ac2); }
+.compose-result { font-size: .8rem; padding: .6rem .9rem; border-radius: 8px; margin-top: .75rem; display: none; line-height: 1.5; }
+.compose-ok  { background: rgba(34,197,94,.1);  color: #4ade80; border: 1px solid rgba(34,197,94,.2); }
+.compose-err { background: rgba(239,68,68,.1);  color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+.toolbar { display: flex; gap: .35rem; margin-bottom: .5rem; flex-wrap: wrap; }
+.tbtn { padding: .25rem .55rem; border-radius: 6px; font-size: .72rem; font-weight: 600; border: 1px solid var(--bd); background: var(--bg); color: var(--mu); cursor: pointer; font-family: inherit; transition: all .15s; }
+.tbtn:hover { background: var(--sf2); color: var(--tx); }
+</style>
 
 <!-- USER DETAIL MODAL -->
 <div class="modal-overlay" id="user-modal">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="modal-title">User Details</h3>
+      <div class="modal-header-info">
+        <div class="modal-avatar" id="modal-avatar">?</div>
+        <div style="min-width:0">
+          <h3 id="modal-title">User Details</h3>
+          <div class="modal-header-sub" id="modal-subtitle">—</div>
+        </div>
+      </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div id="modal-body"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <div class="modal-tab active" data-tab="summary" onclick="switchModalTab('summary')">Summary</div>
+        <div class="modal-tab" data-tab="tests" onclick="switchModalTab('tests')">Tests</div>
+        <div class="modal-tab" data-tab="syllabus" onclick="switchModalTab('syllabus')">Syllabus</div>
+        <div class="modal-tab" data-tab="activity" onclick="switchModalTab('activity')">Activity</div>
+      </div>
+      <div id="modal-body-content"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
   </div>
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────
@@ -396,7 +918,34 @@ const API_BASE = '/api/admin';
 let _token = null;
 let _days = 7;
 let _userPage = 0;
+let _userSort = { by: 'created_at', dir: 'desc' };
+let _userSearchTimer = null;
 let _currentPage = 'overview';
+let _modalUserId = null;
+let _modalData = null;
+
+const COACHING_OPTIONS = [
+  ['pw_online','PW Online'],['allen_online','Allen Online'],['unacademy','Unacademy'],
+  ['vedantu','Vedantu'],['aakash_online','Aakash Digital'],['motion_online','Motion Online'],
+  ['other_online','Other (Online)'],['pw_vidyapeeth','PW Vidyapeeth'],['allen','Allen'],
+  ['aakash','Aakash'],['fiitjee','FIITJEE'],['resonance','Resonance'],['vibrant','Vibrant Academy'],
+  ['motion','Motion'],['narayana','Narayana'],['sri_chaitanya','Sri Chaitanya'],
+  ['other_offline','Other (Offline)'],['self','Self Study'],
+];
+
+const SUBJECT_COLORS = { physics:'#60a5fa', chemistry:'#34d399', maths:'#fbbf24' };
+const SUBJECT_ICONS  = { physics:'⚛️', chemistry:'🧪', maths:'📐' };
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('filter-coaching');
+  if (sel) {
+    COACHING_OPTIONS.forEach(([id, label]) => {
+      const opt = document.createElement('option');
+      opt.value = id; opt.textContent = label;
+      sel.appendChild(opt);
+    });
+  }
+});
 
 // ── AUTH ─────────────────────────────────────────────────────
 async function doLogin() {
@@ -413,20 +962,30 @@ async function doLogin() {
     if (!res.ok || !data.ok) throw new Error(data.error || 'Wrong password');
     _token = data.token;
     sessionStorage.setItem('jt_admin_token', _token);
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('sidebar').style.display = 'flex';
-    document.getElementById('main').style.display = 'flex';
-    loadAll();
+    enterDashboard();
   } catch(e) {
     errEl.textContent = e.message;
     errEl.style.display = 'block';
   }
 }
 
+function enterDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main').style.display = 'flex';
+  loadAll();
+}
+
 function doLogout() {
   sessionStorage.removeItem('jt_admin_token');
   _token = null;
   location.reload();
+}
+
+// ── SIDEBAR (mobile) ─────────────────────────────────────────
+function toggleSidebar(open) {
+  document.getElementById('sidebar').classList.toggle('open', open);
+  document.getElementById('sb-overlay').classList.toggle('show', open);
 }
 
 // ── API CALL ─────────────────────────────────────────────────
@@ -453,27 +1012,47 @@ async function apiPost(action, body = {}) {
 }
 
 // ── NAVIGATION ───────────────────────────────────────────────
+const PAGE_META = {
+  overview:      { title: 'Overview',          sub: 'Platform-wide snapshot' },
+  features:      { title: 'Feature Analytics', sub: 'Usage across every feature' },
+  funnel:        { title: 'User Funnel',        sub: 'Signup to engagement conversion' },
+  dau:           { title: 'DAU Trend',          sub: 'Daily active users over time' },
+  users:         { title: 'All Users',          sub: 'Complete profile & performance data per student' },
+  leaderboard:   { title: 'Leaderboard',        sub: 'Top performing students, ranked' },
+  consistency:   { title: 'Consistency',        sub: 'Who shows up, every single day' },
+  demographics:  { title: 'Segmentation',       sub: 'Class & coaching institute distribution' },
+  db:            { title: 'DB Stats',           sub: 'Raw Supabase table counts' },
+  actions:       { title: 'Admin Actions',      sub: 'Manual triggers & session info' },
+  email:         { title: 'Email Composer',     sub: 'Send custom emails to your users' },
+};
+
 function showPage(page, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(`page-${page}`).classList.add('active');
-  el.classList.add('active');
+  if (el) el.classList.add('active');
   _currentPage = page;
-  const titles = { overview:'Overview', features:'Feature Analytics', funnel:'User Funnel',
-    dau:'DAU Trend', users:'Users', db:'DB Stats', actions:'Admin Actions' };
-  document.getElementById('page-title').textContent = titles[page] || page;
+  const meta = PAGE_META[page] || { title: page, sub: '' };
+  document.getElementById('page-title').textContent = meta.title;
+  document.getElementById('page-sub').textContent = meta.sub;
+  document.getElementById('range-btns').style.display =
+    ['overview','features','dau'].includes(page) ? 'flex' : 'none';
+  toggleSidebar(false);
   loadCurrentPage();
 }
 
 function loadCurrentPage() {
   const loaders = {
-    overview: loadOverview,
-    features: loadFeatures,
-    funnel:   loadFunnel,
-    dau:      loadDAU,
-    users:    () => loadUsers(0),
-    db:       loadDBStats,
-    actions:  () => {},
+    overview:     loadOverview,
+    features:     loadFeatures,
+    funnel:        loadFunnel,
+    dau:           loadDAU,
+    users:         () => loadUsers(0),
+    leaderboard:   loadLeaderboard,
+    consistency:   loadConsistency,
+    demographics:  loadDemographics,
+    db:            loadDBStats,
+    actions:       () => {},
   };
   (loaders[_currentPage] || (() => {}))();
 }
@@ -502,28 +1081,28 @@ async function loadStats() {
   try {
     const d = await api('stats');
     el.innerHTML = [
-      { label:'Total Users',      value: fmt(d.totalUsers),    sub:'All time',           icon:'👥' },
-      { label:'Active Users',     value: fmt(d.activeUsers),   sub:`Last ${_days} days`, icon:'🟢' },
-      { label:'Mock Tests',       value: fmt(d.mockTests),     sub:`Last ${_days} days`, icon:'📝' },
-      { label:'Study Hours',      value: fmt(d.studyHours),    sub:`Last ${_days} days`, icon:'⏱️' },
-      { label:'AI Insights',      value: fmt(d.aiInsights),    sub:`Last ${_days} days`, icon:'🤖' },
-      { label:'Chapters Marked',  value: fmt(d.chapters),      sub:`Last ${_days} days`, icon:'📚' },
-      { label:'Backlogs Added',   value: fmt(d.backlogs),      sub:`Last ${_days} days`, icon:'🔴' },
-      { label:'Todos Added',      value: fmt(d.todos),         sub:`Last ${_days} days`, icon:'✅' },
-      { label:'Page Views',       value: fmt(d.pageViews),     sub:`Last ${_days} days`, icon:'👁️' },
-      { label:'Feedbacks',        value: fmt(d.feedbacks),     sub:`Last ${_days} days`, icon:'💬' },
-      { label:'PDF Exports',      value: fmt(d.exports),       sub:`Last ${_days} days`, icon:'📄' },
-      { label:'Onboardings',      value: fmt(d.onboardings),   sub:`Last ${_days} days`, icon:'🎉' },
+      { label:'Total Users',      value: fmt(d.totalUsers),    sub:'All time',           icon:'👥', bg:'rgba(124,106,247,.16)' },
+      { label:'Active Users',     value: fmt(d.activeUsers),   sub:`Last ${_days} days`, icon:'🟢', bg:'rgba(52,211,153,.14)' },
+      { label:'Mock Tests',       value: fmt(d.mockTests),     sub:`Last ${_days} days`, icon:'📝', bg:'rgba(96,165,250,.14)' },
+      { label:'Study Hours',      value: fmt(d.studyHours),    sub:`Last ${_days} days`, icon:'⏱️', bg:'rgba(251,191,36,.13)' },
+      { label:'AI Insights',      value: fmt(d.aiInsights),    sub:`Last ${_days} days`, icon:'🤖', bg:'rgba(244,114,182,.14)' },
+      { label:'Chapters Marked',  value: fmt(d.chapters),      sub:`Last ${_days} days`, icon:'📚', bg:'rgba(96,165,250,.14)' },
+      { label:'Backlogs Added',   value: fmt(d.backlogs),      sub:`Last ${_days} days`, icon:'🔴', bg:'rgba(248,113,113,.13)' },
+      { label:'Todos Added',      value: fmt(d.todos),         sub:`Last ${_days} days`, icon:'✅', bg:'rgba(52,211,153,.14)' },
+      { label:'Page Views',       value: fmt(d.pageViews),     sub:`Last ${_days} days`, icon:'👁️', bg:'rgba(124,106,247,.16)' },
+      { label:'Feedbacks',        value: fmt(d.feedbacks),     sub:`Last ${_days} days`, icon:'💬', bg:'rgba(45,212,191,.14)' },
+      { label:'PDF Exports',      value: fmt(d.exports),       sub:`Last ${_days} days`, icon:'📄', bg:'rgba(251,191,36,.13)' },
+      { label:'Onboardings',      value: fmt(d.onboardings),   sub:`Last ${_days} days`, icon:'🎉', bg:'rgba(244,114,182,.14)' },
     ].map(s => `
-      <div class="stat">
-        <div class="stat-icon">${s.icon}</div>
+      <div class="stat" style="--stat-bg:${s.bg};--stat-glow:${s.bg}">
+        <div class="stat-icon-wrap">${s.icon}</div>
         <div class="stat-label">${s.label}</div>
         <div class="stat-value">${s.value}</div>
         <div class="stat-sub">${s.sub}</div>
       </div>
     `).join('');
   } catch(e) {
-    el.innerHTML = `<div class="no-data">Error: ${e.message}</div>`;
+    el.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`;
   }
 }
 
@@ -533,7 +1112,7 @@ async function loadPagesChart() {
   try {
     const data = await api('pages');
     const max = Math.max(...data.map(d => d.count), 1);
-    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6','#f97316','#14b8a6','#6b7280'];
+    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff','#fb923c','#60a5fa','#8b8aa0'];
     const pageLabels = { overview:'Dashboard', mains:'Mains Tests', advanced:'Adv Tests',
       hours:'Study Hours', insights:'AI Insights', backlog:'Backlog',
       todo:'To-Do', syllabus:'Syllabus', compare:'Compare', settings:'Settings' };
@@ -543,8 +1122,8 @@ async function loadPagesChart() {
         <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
         <div class="bar-count">${fmt(d.count)}</div>
       </div>
-    `).join('') || '<div class="no-data">No data yet</div>';
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+    `).join('') || emptyState('No data yet');
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 async function loadSubjectChart() {
@@ -553,15 +1132,14 @@ async function loadSubjectChart() {
   try {
     const data = await api('subjects');
     const max = Math.max(...data.map(d => d.count), 1);
-    const cfg = { physics:{color:'#7c6dff',icon:'⚛️'}, chemistry:{color:'#22c55e',icon:'🧪'}, maths:{color:'#f59e0b',icon:'📐'} };
     el.innerHTML = data.map(d => `
       <div class="bar-row">
-        <div class="bar-label">${cfg[d.subject]?.icon || ''} ${d.subject[0].toUpperCase()+d.subject.slice(1)}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${cfg[d.subject]?.color||'#7c6dff'}"></div></div>
+        <div class="bar-label">${SUBJECT_ICONS[d.subject]||''} ${d.subject[0].toUpperCase()+d.subject.slice(1)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${SUBJECT_COLORS[d.subject]||'#7c6af7'}"></div></div>
         <div class="bar-count">${fmt(d.count)}</div>
       </div>
     `).join('');
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 async function loadExamChart() {
@@ -570,15 +1148,15 @@ async function loadExamChart() {
   try {
     const data = await api('exams');
     const max = Math.max(...data.map(d => d.count), 1);
-    const cfg = { mains:{color:'#7c6dff',label:'📋 JEE Mains'}, advanced:{color:'#f59e0b',label:'🏆 JEE Advanced'} };
+    const cfg = { mains:{color:'#7c6af7',label:'📋 JEE Mains'}, advanced:{color:'#fbbf24',label:'🏆 JEE Advanced'} };
     el.innerHTML = data.map(d => `
       <div class="bar-row">
         <div class="bar-label">${cfg[d.exam]?.label || d.exam}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${cfg[d.exam]?.color||'#7c6dff'}"></div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${cfg[d.exam]?.color||'#7c6af7'}"></div></div>
         <div class="bar-count">${fmt(d.count)}</div>
       </div>
     `).join('');
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 async function loadDAUMini() {
@@ -586,8 +1164,8 @@ async function loadDAUMini() {
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     const d = await api('dau');
-    el.innerHTML = renderLineChart(d.values, d.labels, 110);
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+    el.innerHTML = renderLineChart(d.values, d.labels, 115);
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 // ── FEATURES ─────────────────────────────────────────────────
@@ -597,15 +1175,15 @@ async function loadFeatures() {
   try {
     const data = await api('features');
     const max = Math.max(...data.map(d => d.count), 1);
-    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6','#f97316','#14b8a6','#a3a3a3','#84cc16','#f43f5e','#3b82f6','#10b981','#fb923c'];
+    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff','#fb923c','#60a5fa','#8b8aa0','#84cc16','#f43f5e','#3b82f6','#10b981','#fb923c'];
     el.innerHTML = data.filter(d => d.count >= 0).map((d, i) => `
       <div class="bar-row">
         <div class="bar-label">${d.event}</div>
         <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
         <div class="bar-count">${fmt(d.count)}</div>
       </div>
-    `).join('') || '<div class="no-data">No events yet</div>';
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+    `).join('') || emptyState('No events yet');
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 // ── FUNNEL ───────────────────────────────────────────────────
@@ -615,7 +1193,7 @@ async function loadFunnel() {
   try {
     const data = await api('funnel');
     const max = Math.max(...data.map(d => d.count), 1);
-    const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6'];
+    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff'];
     el.innerHTML = data.map((d, i) => {
       const pct = max > 0 ? (d.count/max*100).toFixed(0) : 0;
       const drop = i > 0 && data[i-1].count > 0
@@ -633,7 +1211,7 @@ async function loadFunnel() {
         </div>
       `;
     }).join('');
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 // ── DAU ──────────────────────────────────────────────────────
@@ -643,90 +1221,455 @@ async function loadDAU() {
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     const d = await api('dau');
-    el.innerHTML = renderLineChart(d.values, d.labels, 200);
-    // Show first + last label
+    el.innerHTML = renderLineChart(d.values, d.labels, 210);
     const labels = d.labels || [];
     if (labels.length > 1) {
       labelsEl.innerHTML = `<span>${fmtDate(labels[0])}</span><span>${fmtDate(labels[labels.length-1])}</span>`;
     }
-  } catch(e) { el.innerHTML = `<div class="no-data">${e.message}</div>`; }
+  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
 // ── USERS ────────────────────────────────────────────────────
+function debounceUserSearch() {
+  clearTimeout(_userSearchTimer);
+  _userSearchTimer = setTimeout(() => loadUsers(0), 350);
+}
+
+function clearUserFilters() {
+  document.getElementById('user-search').value = '';
+  document.getElementById('filter-class').value = '';
+  document.getElementById('filter-coaching').value = '';
+  loadUsers(0);
+}
+
+function setUserSort(by) {
+  if (_userSort.by === by) {
+    _userSort.dir = _userSort.dir === 'desc' ? 'asc' : 'desc';
+  } else {
+    _userSort = { by, dir: 'desc' };
+  }
+  updateSortHeaders();
+  loadUsers(0);
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll('#page-users th.sortable').forEach(th => {
+    const isActive = th.dataset.sort === _userSort.by;
+    th.classList.toggle('sorted', isActive);
+    const arrow = th.querySelector('.arrow');
+    if (arrow) arrow.textContent = isActive ? (_userSort.dir === 'desc' ? '↓' : '↑') : '↕';
+  });
+}
+
 async function loadUsers(page = 0) {
   _userPage = page;
   const tbody = document.getElementById('users-table');
-  tbody.innerHTML = '<tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
-    const d = await api(`users&page=${page}`);
+    const search = encodeURIComponent(document.getElementById('user-search')?.value || '');
+    const cls = document.getElementById('filter-class')?.value || '';
+    const coaching = document.getElementById('filter-coaching')?.value || '';
+    const extra = `&page=${page}&pageSize=20&search=${search}&class_year=${cls}&coaching=${coaching}&sort=${_userSort.by}&dir=${_userSort.dir}`;
+    const d = await api('users', extra);
     const users = d.users || [];
     if (!users.length) {
-      tbody.innerHTML = '<tr><td colspan="9"><div class="no-data">No users found</div></td></tr>';
+      tbody.innerHTML = `<tr><td colspan="8">${emptyState('No users match these filters')}</td></tr>`;
+      document.getElementById('page-info').textContent = '';
+      document.getElementById('prev-btn').disabled = true;
+      document.getElementById('next-btn').disabled = true;
       return;
     }
     tbody.innerHTML = users.map(u => `
-      <tr>
-        <td><strong>${esc(u.name)}</strong></td>
-        <td style="color:var(--muted)">${esc(u.email)}</td>
-        <td>${u.class ? `<span class="pill pill-blue">${u.class}</span>` : '—'}</td>
-        <td>${u.target_year || '—'}</td>
-        <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(u.coaching || '—')}</td>
-        <td style="color:var(--muted);white-space:nowrap;">${fmtDate(u.created_at)}</td>
-        <td style="color:var(--muted);white-space:nowrap;">${fmtDate(u.last_active)}</td>
+      <tr class="row-click user-row" data-uid="${esc(u.id)}" data-uname="${esc(u.name)}">
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${initials(u.name)}</div>
+            <div style="min-width:0">
+              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${esc(u.name)}</div>
+              <div style="font-size:.7rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${esc(u.email)}</div>
+            </div>
+          </div>
+        </td>
+        <td>${u.class_year ? `<span class="pill pill-blue">${esc(u.class)}</span>` : '<span style="color:var(--mu2)">—</span>'}</td>
+        <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mu)">${esc(u.coaching)}</td>
+        <td style="color:var(--mu)">${esc(u.target_year) || '—'}</td>
+        <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.created_at)}</td>
+        <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.last_active)}</td>
         <td>${u.email_reports === 'monthly'
           ? '<span class="pill pill-green">Monthly ✓</span>'
           : '<span class="pill pill-red">Off</span>'}</td>
         <td>
-          <button class="action-btn btn-primary" style="padding:.25rem .6rem;font-size:.7rem;" onclick="viewUser('${esc(u.id)}','${esc(u.name)}')">
-            View
+          <button class="action-btn btn-ghost btn-sm user-row-btn" data-uid="${esc(u.id)}" data-uname="${esc(u.name)}">
+            View Full Profile
           </button>
         </td>
       </tr>
     `).join('');
     document.getElementById('prev-btn').disabled = page === 0;
     document.getElementById('next-btn').disabled = !d.next;
-    document.getElementById('page-info').textContent = `Page ${page+1} · ${d.count || ''} total`;
+    const startN = page*20+1, endN = Math.min(page*20+users.length, d.count||0);
+    document.getElementById('page-info').textContent = `${startN}–${endN} of ${d.count || 0} students`;
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data">Error: ${e.message}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
   }
 }
 
+// ── USER DETAIL MODAL (rich profile) ──────────────────────────
 async function viewUser(id, name) {
-  document.getElementById('modal-title').textContent = name;
-  document.getElementById('modal-body').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  _modalUserId = id;
+  document.getElementById('modal-title').textContent = name || 'Loading…';
+  document.getElementById('modal-subtitle').textContent = '—';
+  document.getElementById('modal-avatar').textContent = initials(name);
   document.getElementById('user-modal').style.display = 'flex';
+  switchModalTab('summary', true);
+  document.getElementById('modal-body-content').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     const d = await api(`user_detail&distinct_id=${encodeURIComponent(id)}`);
-    const events = d.events || [];
-    document.getElementById('modal-body').innerHTML = `
-      <div class="section-title" style="margin-bottom:.5rem;">Recent Events (last 50)</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Event</th><th>Time</th><th>Properties</th></tr></thead>
-          <tbody>
-            ${events.length ? events.map(e => `
-              <tr>
-                <td><strong>${e.event}</strong></td>
-                <td style="color:var(--muted);white-space:nowrap;">${fmtDate(e.timestamp)}</td>
-                <td style="color:var(--muted);font-size:.7rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;">
-                  ${Object.entries(e.properties || {})
-                    .filter(([k]) => !k.startsWith('$'))
-                    .map(([k,v]) => `${k}: ${v}`)
-                    .join(', ') || '—'}
-                </td>
-              </tr>
-            `).join('') : '<tr><td colspan="3"><div class="no-data">No events found</div></td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    `;
+    _modalData = d;
+    const p = d.profile || {};
+    document.getElementById('modal-title').textContent = p.name || name || 'Unknown';
+    document.getElementById('modal-subtitle').textContent = `${p.email || 'No email'} · ${p.class || 'Class not set'} · ${p.coaching || 'No coaching'}`;
+    document.getElementById('modal-avatar').textContent = initials(p.name || name);
+    renderModalTab('summary');
   } catch(e) {
-    document.getElementById('modal-body').innerHTML = `<div class="no-data">Error: ${e.message}</div>`;
+    document.getElementById('modal-body-content').innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`;
   }
+}
+
+function switchModalTab(tab, skipRender) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  if (!skipRender && _modalData) renderModalTab(tab);
+}
+
+function renderModalTab(tab) {
+  const el = document.getElementById('modal-body-content');
+  if (!_modalData) { el.innerHTML = '<div class="loading"><div class="spinner"></div></div>'; return; }
+  const d = _modalData;
+  if (tab === 'summary') el.innerHTML = renderSummaryTab(d);
+  else if (tab === 'tests') el.innerHTML = renderTestsTab(d);
+  else if (tab === 'syllabus') el.innerHTML = renderSyllabusTab(d);
+  else if (tab === 'activity') el.innerHTML = renderActivityTab(d);
+}
+
+function renderSummaryTab(d) {
+  const t = d.tests || {}, h = d.hours || {}, c = d.consistency || {}, syl = d.syllabus || {};
+  return `
+    <div class="mini-stat-grid">
+      <div class="mini-stat"><div class="mini-stat-label">Tests Attempted</div><div class="mini-stat-value">${fmt(t.total)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Avg Score</div><div class="mini-stat-value">${fmt(t.avgScore)}${t.avgScorePct?` <span style="font-size:.65rem;color:var(--mu)">(${t.avgScorePct}%)</span>`:''}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Best Score</div><div class="mini-stat-value">${fmt(t.bestScore)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Study Hours</div><div class="mini-stat-value">${fmt(h.totalTime)}h</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Syllabus Done</div><div class="mini-stat-value">${syl.overallPct||0}%</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">AI Insights Used</div><div class="mini-stat-value">${fmt(d.aiInsights)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Active Days (30d)</div><div class="mini-stat-value">${fmt(c.activeDaysLast30)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Longest Streak</div><div class="mini-stat-value">🔥 ${fmt(c.longestStreak)}d</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:0">
+      <div class="card" style="padding:1rem 1.1rem">
+        <h3 style="margin-bottom:.7rem;font-size:.78rem">Subject-wise Avg Score</h3>
+        ${subjectMiniBar('Physics', t.avgPhysics, Math.max(t.avgPhysics,t.avgChem,t.avgMaths,1), '#60a5fa')}
+        ${subjectMiniBar('Chemistry', t.avgChem, Math.max(t.avgPhysics,t.avgChem,t.avgMaths,1), '#34d399')}
+        ${subjectMiniBar('Maths', t.avgMaths, Math.max(t.avgPhysics,t.avgChem,t.avgMaths,1), '#fbbf24')}
+      </div>
+      <div class="card" style="padding:1rem 1.1rem">
+        <h3 style="margin-bottom:.7rem;font-size:.78rem">Study Hours by Subject</h3>
+        ${subjectMiniBar('Physics', h.physics, Math.max(h.physics,h.chemistry,h.maths,1), '#60a5fa', 'h')}
+        ${subjectMiniBar('Chemistry', h.chemistry, Math.max(h.physics,h.chemistry,h.maths,1), '#34d399', 'h')}
+        ${subjectMiniBar('Maths', h.maths, Math.max(h.physics,h.chemistry,h.maths,1), '#fbbf24', 'h')}
+      </div>
+    </div>
+    <div class="card-foot" style="border-top:none;padding-top:.9rem;display:flex;flex-wrap:wrap;gap:1.2rem">
+      <span>📋 Backlogs: <strong style="color:var(--tx)">${fmt(d.backlogs)}</strong></span>
+      <span>✅ Todos: <strong style="color:var(--tx)">${fmt(d.todos)}</strong></span>
+      <span>💬 Feedback: <strong style="color:var(--tx)">${(d.feedback||[]).length}</strong></span>
+      <span>📧 Reports: <strong style="color:var(--tx)">${d.profile?.email_reports === 'monthly' ? 'On' : 'Off'}</strong></span>
+    </div>
+  `;
+}
+
+function subjectMiniBar(label, val, max, color, unit) {
+  val = val || 0;
+  const pct = max ? Math.round(val/max*100) : 0;
+  return `
+    <div class="subject-bar-mini">
+      <div class="subject-dot" style="background:${color}"></div>
+      <div class="lbl">${label}</div>
+      <div class="trk"><div class="fil" style="width:${pct}%;background:${color}"></div></div>
+      <div class="pctval">${val}${unit||''}</div>
+    </div>
+  `;
+}
+
+function renderTestsTab(d) {
+  const t = d.tests || {};
+  const recent = t.recent || [];
+  return `
+    <div class="mini-stat-grid">
+      <div class="mini-stat"><div class="mini-stat-label">Mains Attempted</div><div class="mini-stat-value">${fmt(t.mains)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Advanced Attempted</div><div class="mini-stat-value">${fmt(t.advanced)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Avg Score</div><div class="mini-stat-value">${fmt(t.avgScore)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Best Score</div><div class="mini-stat-value">${fmt(t.bestScore)}</div></div>
+    </div>
+    <h3 style="font-size:.78rem;margin-bottom:.6rem">Recent Test History</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Exam</th><th>Date</th><th>Score</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
+        <tbody>
+          ${recent.length ? recent.map(r => `
+            <tr>
+              <td><span class="pill ${r.exam==='advanced'?'pill-yellow':'pill-purple'}">${esc(r.exam||'—')}</span></td>
+              <td style="color:var(--mu)">${fmtDate(r.date)}</td>
+              <td><strong>${fmt(r.total)}</strong>${r.max?` / ${fmt(r.max)}`:''}</td>
+              <td>${fmt(r.physics)}</td><td>${fmt(r.chemistry)}</td><td>${fmt(r.maths)}</td>
+            </tr>
+          `).join('') : `<tr><td colspan="6">${emptyState('No tests logged yet')}</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderSyllabusTab(d) {
+  const syl = d.syllabus || {};
+  const by = syl.bySubject || [];
+  return `
+    <div class="mini-stat-grid">
+      <div class="mini-stat"><div class="mini-stat-label">Overall Completion</div><div class="mini-stat-value">${syl.overallPct||0}%</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Chapters Synced</div><div class="mini-stat-value">${fmt(syl.totalRows)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Chapters Completed</div><div class="mini-stat-value">${fmt(syl.doneRows)}</div></div>
+    </div>
+    <h3 style="font-size:.78rem;margin-bottom:.7rem">Completion by Subject</h3>
+    ${by.map(s => `
+      <div style="margin-bottom:.9rem">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;font-size:.78rem">
+          <span>${SUBJECT_ICONS[s.subject]||''} ${s.subject[0].toUpperCase()+s.subject.slice(1)}</span>
+          <span style="color:var(--mu)">${s.done}/${s.total} chapters · ${s.pct}%</span>
+        </div>
+        <div class="dist-track" style="height:9px"><div class="dist-fill" style="width:${s.pct}%;background:${SUBJECT_COLORS[s.subject]}"></div></div>
+      </div>
+    `).join('') || emptyState('No syllabus data synced yet')}
+  `;
+}
+
+function renderActivityTab(d) {
+  const c = d.consistency || {};
+  const streak = d.streak || {};
+  return `
+    <div class="mini-stat-grid">
+      <div class="mini-stat"><div class="mini-stat-label">Active Days (30d)</div><div class="mini-stat-value">${fmt(c.activeDaysLast30)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Longest Active Streak</div><div class="mini-stat-value">🔥 ${fmt(c.longestStreak)}d</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Total Active Days</div><div class="mini-stat-value">${fmt(c.totalActiveDays)}</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Backlog Clear Streak</div><div class="mini-stat-value">${fmt(streak.backlog_streak)}</div></div>
+    </div>
+    <h3 style="font-size:.78rem;margin-bottom:.6rem">Recent Feedback</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Rating</th><th>Message</th></tr></thead>
+        <tbody>
+          ${(d.feedback||[]).length ? d.feedback.slice(0,8).map(f => `
+            <tr>
+              <td style="color:var(--mu);white-space:nowrap">${fmtDate(f.created_at)}</td>
+              <td>${f.rating ? '⭐'.repeat(f.rating) : '—'}</td>
+              <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">${esc(f.message||f.subject||'—')}</td>
+            </tr>
+          `).join('') : `<tr><td colspan="3">${emptyState('No feedback submitted')}</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function closeModal() {
   document.getElementById('user-modal').style.display = 'none';
+  _modalData = null;
+}
+
+// ── LEADERBOARD ──────────────────────────────────────────────
+async function loadLeaderboard() {
+  const podiumEl = document.getElementById('podium-wrap');
+  const tbody = document.getElementById('leaderboard-table');
+  podiumEl.innerHTML = '';
+  tbody.innerHTML = '<tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const metric = document.getElementById('leaderboard-metric').value;
+    const d = await api('leaderboard', `&metric=${metric}`);
+    const list = d.leaderboard || [];
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="9">${emptyState('No test data logged yet — leaderboard will populate once students log tests')}</td></tr>`;
+      return;
+    }
+
+    const top3 = list.slice(0, 3);
+    if (top3.length) {
+      const medalClass = ['gold','silver','bronze'];
+      const medalIcon = ['🥇','🥈','🥉'];
+      podiumEl.innerHTML = `<div class="podium">${top3.map((u, i) => `
+        <div class="podium-card ${medalClass[i]}">
+          <div class="podium-rank">${medalIcon[i]}</div>
+          <div class="podium-avatar">${initials(u.name)}</div>
+          <div class="podium-name">${esc(u.name)}</div>
+          <div class="podium-meta">${esc(u.class)} · ${esc(u.coaching)}</div>
+          <div class="podium-score">${metricValue(u, metric)}</div>
+          <div class="podium-score-label">${metricLabel(metric)}</div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    tbody.innerHTML = list.map(u => `
+      <tr class="row-click user-row" data-uid="${esc(u.user_id)}" data-uname="${esc(u.name)}">
+        <td>${rankBadge(u.rank)}</td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${initials(u.name)}</div>
+            <div style="min-width:0">
+              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">${esc(u.name)}</div>
+              <div style="font-size:.7rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">${esc(u.email)}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="pill pill-blue">${esc(u.class)}</span></td>
+        <td>${fmt(u.totalTests)}</td>
+        <td><strong>${fmt(u.avgScore)}</strong></td>
+        <td>${u.avgScorePct}%</td>
+        <td>${fmt(u.bestScore)}</td>
+        <td>${fmt(u.totalHours)}h</td>
+        <td>${fmt(u.activeDays)}/30</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
+  }
+}
+
+function metricValue(u, metric) {
+  if (metric === 'avgScorePct') return u.avgScorePct + '%';
+  if (metric === 'bestScore') return fmt(u.bestScore);
+  if (metric === 'totalTests') return fmt(u.totalTests);
+  if (metric === 'totalHours') return fmt(u.totalHours) + 'h';
+  if (metric === 'consistency') return fmt(u.activeDays);
+  return fmt(u.avgScore);
+}
+function metricLabel(metric) {
+  return { avgScore:'Avg Marks', avgScorePct:'Avg %', bestScore:'Best Score',
+    totalTests:'Tests Attempted', totalHours:'Study Hours', consistency:'Active Days' }[metric] || 'Score';
+}
+
+function rankBadge(rank) {
+  const cls = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
+  return `<span class="rank-badge ${cls}">${rank}</span>`;
+}
+
+// ── CONSISTENCY ──────────────────────────────────────────────
+async function loadConsistency() {
+  const kpiEl = document.getElementById('consistency-kpis');
+  const dauEl = document.getElementById('consistency-dau');
+  const streakEl = document.getElementById('streak-list');
+  const tbody = document.getElementById('consistency-table');
+  kpiEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  dauEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  streakEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api('consistency', '&window=30');
+    const users = d.users || [];
+    const top = d.mostConsistent;
+
+    kpiEl.innerHTML = `
+      <div class="kpi-card">
+        <div class="kpi-label">🏅 Most Consistent Student</div>
+        <div class="kpi-name">${top ? esc(top.name) : '—'}</div>
+        <div class="kpi-sub">${top ? `${top.currentStreak}-day current streak` : 'No data yet'}</div>
+      </div>
+      <div class="kpi-card alt">
+        <div class="kpi-label">🔥 Longest Streak Ever</div>
+        <div class="kpi-name">${users.length ? Math.max(...users.map(u=>u.longestStreak)) + ' days' : '—'}</div>
+        <div class="kpi-sub">${users.length ? esc([...users].sort((a,b)=>b.longestStreak-a.longestStreak)[0].name) : ''}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📅 Active Today/Yesterday</div>
+        <div class="kpi-name">${users.filter(u=>u.currentStreak>0).length}</div>
+        <div class="kpi-sub">out of ${users.length} tracked students</div>
+      </div>
+      <div class="kpi-card alt">
+        <div class="kpi-label">📊 Avg Active Days (30d)</div>
+        <div class="kpi-name">${users.length ? Math.round(users.reduce((s,u)=>s+u.activeDaysInWindow,0)/users.length) : 0}</div>
+        <div class="kpi-sub">days per student, last 30 days</div>
+      </div>
+    `;
+
+    dauEl.innerHTML = renderLineChart((d.dau||[]).map(x=>x.count), (d.dau||[]).map(x=>x.date), 170);
+
+    const topStreaks = [...users].sort((a,b)=>b.longestStreak-a.longestStreak).slice(0,8);
+    streakEl.innerHTML = topStreaks.length ? topStreaks.map((u,i) => `
+      <div class="streak-row">
+        <div class="streak-fire">${i===0?'🔥':'🔸'}</div>
+        <div class="avatar" style="width:26px;height:26px;font-size:.62rem">${initials(u.name)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}</div>
+          <div style="font-size:.68rem;color:var(--mu)">${esc(u.class)}</div>
+        </div>
+        <div class="streak-days">${u.longestStreak}d</div>
+      </div>
+    `).join('') : emptyState('No streak data yet');
+
+    if (!users.length) {
+      tbody.innerHTML = `<tr><td colspan="7">${emptyState('No activity logged yet — consistency data appears once students log tests or study hours')}</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = users.map(u => `
+      <tr class="row-click user-row" data-uid="${esc(u.user_id)}" data-uname="${esc(u.name)}">
+        <td>${rankBadge(u.rank)}</td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${initials(u.name)}</div>
+            <div style="min-width:0">
+              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${esc(u.name)}</div>
+              <div style="font-size:.7rem;color:var(--mu)">${esc(u.class)} · ${esc(u.coaching)}</div>
+            </div>
+          </div>
+        </td>
+        <td>${u.currentStreak > 0 ? `<span class="pill pill-yellow">🔥 ${u.currentStreak}d</span>` : '<span style="color:var(--mu2)">—</span>'}</td>
+        <td>${fmt(u.longestStreak)}d</td>
+        <td>${fmt(u.activeDaysInWindow)}/${u.windowDays}</td>
+        <td>${fmt(u.totalActiveDays)}</td>
+        <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.lastActiveDate)}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
+  }
+}
+
+// ── DEMOGRAPHICS / SEGMENTATION ───────────────────────────────
+async function loadDemographics() {
+  const classEl = document.getElementById('class-dist');
+  const coachEl = document.getElementById('coaching-dist');
+  const yearEl = document.getElementById('year-dist');
+  classEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  coachEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  yearEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('demographics');
+    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#60a5fa','#a695ff','#fb923c','#8b8aa0'];
+    classEl.innerHTML = renderDistribution(d.classes, colors) + `<div class="card-foot">Based on ${fmt(d.total)} total registered users</div>`;
+    coachEl.innerHTML = renderDistribution(d.coachings, colors) + `<div class="card-foot">Based on ${fmt(d.total)} total registered users</div>`;
+    yearEl.innerHTML = renderDistribution(d.years, colors);
+  } catch(e) {
+    classEl.innerHTML = coachEl.innerHTML = yearEl.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderDistribution(list, colors) {
+  if (!list || !list.length) return emptyState('No data yet');
+  return list.map((d, i) => `
+    <div class="dist-row">
+      <div class="dist-swatch" style="background:${colors[i%colors.length]}"></div>
+      <div class="dist-label">${esc(d.label)}</div>
+      <div class="dist-track"><div class="dist-fill" style="width:${d.pct}%;background:${colors[i%colors.length]}"></div></div>
+      <div class="dist-pct">${d.pct}%</div>
+    </div>
+  `).join('');
 }
 
 // ── DB STATS ─────────────────────────────────────────────────
@@ -736,36 +1679,36 @@ async function loadDBStats() {
   try {
     const d = await api('db_stats');
     el.innerHTML = [
-      { label:'Total Tests Rows',    value: fmt(d.totalTests),     icon:'📝', sub:'In DB' },
-      { label:'Total Hours Rows',    value: fmt(d.totalHours),     icon:'⏱️', sub:'In DB' },
-      { label:'Total Backlogs',      value: fmt(d.totalBacklogs),  icon:'🔴', sub:'In DB' },
-      { label:'Total Todos',         value: fmt(d.totalTodos),     icon:'✅', sub:'In DB' },
-      { label:'Syllabus Rows',       value: fmt(d.totalSyllabus),  icon:'📚', sub:'In DB' },
-      { label:'Email Reports ON',    value: fmt(d.emailReportsOn), icon:'📧', sub:'Users subscribed' },
-      { label:'Active (7d)',         value: fmt(d.activeUsers7d),  icon:'🟢', sub:'Last 7 days' },
-      { label:'Total in Prefs',      value: fmt(d.totalPrefs),     icon:'👥', sub:'Users with prefs' },
+      { label:'Total Tests Rows',    value: fmt(d.totalTests),     icon:'📝', sub:'In DB', bg:'rgba(96,165,250,.14)' },
+      { label:'Total Hours Rows',    value: fmt(d.totalHours),     icon:'⏱️', sub:'In DB', bg:'rgba(251,191,36,.13)' },
+      { label:'Total Backlogs',      value: fmt(d.totalBacklogs),  icon:'🔴', sub:'In DB', bg:'rgba(248,113,113,.13)' },
+      { label:'Total Todos',         value: fmt(d.totalTodos),     icon:'✅', sub:'In DB', bg:'rgba(52,211,153,.14)' },
+      { label:'Syllabus Rows',       value: fmt(d.totalSyllabus),  icon:'📚', sub:'In DB', bg:'rgba(96,165,250,.14)' },
+      { label:'Email Reports ON',    value: fmt(d.emailReportsOn), icon:'📧', sub:'Users subscribed', bg:'rgba(244,114,182,.14)' },
+      { label:'Active (7d)',         value: fmt(d.activeUsers7d),  icon:'🟢', sub:'Last 7 days', bg:'rgba(52,211,153,.14)' },
+      { label:'Total in Prefs',      value: fmt(d.totalPrefs),     icon:'👥', sub:'Users with prefs', bg:'rgba(124,106,247,.16)' },
     ].map(s => `
-      <div class="stat">
-        <div class="stat-icon">${s.icon}</div>
+      <div class="stat" style="--stat-bg:${s.bg};--stat-glow:${s.bg}">
+        <div class="stat-icon-wrap">${s.icon}</div>
         <div class="stat-label">${s.label}</div>
         <div class="stat-value">${s.value}</div>
         <div class="stat-sub">${s.sub}</div>
       </div>
     `).join('');
-  } catch(e) { el.innerHTML = `<div class="no-data">Error: ${e.message}</div>`; }
+  } catch(e) { el.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`; }
 }
 
 // ── ACTIONS ──────────────────────────────────────────────────
 async function triggerAction(action, resultId) {
   const resultEl = document.getElementById(resultId);
   resultEl.style.display = 'none';
-  showToast('Triggering... please wait');
+  showToast('Triggering… please wait');
   try {
     const d = await apiPost(action);
     resultEl.className = 'action-result result-ok';
     resultEl.textContent = `✓ Success: ${JSON.stringify(d.result || d)}`;
     resultEl.style.display = 'block';
-    showToast('Done! ✓');
+    showToast('Done ✓');
   } catch(e) {
     resultEl.className = 'action-result result-err';
     resultEl.textContent = `✗ Error: ${e.message}`;
@@ -776,25 +1719,26 @@ async function triggerAction(action, resultId) {
 
 // ── LINE CHART ────────────────────────────────────────────────
 function renderLineChart(values, labels, height) {
-  if (!values || !values.length) return '<div class="no-data">No data</div>';
+  if (!values || !values.length) return emptyState('No data');
   const w = 600; const h = height - 20;
   const max = Math.max(...values, 1);
   const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * w;
+    const x = values.length > 1 ? (i / (values.length - 1)) * w : 0;
     const y = h - (v / max) * h;
     return `${x},${y}`;
   });
   const area = `M ${pts.join(' L ')} L ${w},${h} L 0,${h} Z`;
+  const gid = 'g' + Math.random().toString(36).slice(2,8);
   return `
     <svg viewBox="0 0 ${w} ${height}" preserveAspectRatio="none">
       <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#7c6dff" stop-opacity=".3"/>
-          <stop offset="100%" stop-color="#7c6dff" stop-opacity="0"/>
+        <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7c6af7" stop-opacity=".35"/>
+          <stop offset="100%" stop-color="#7c6af7" stop-opacity="0"/>
         </linearGradient>
       </defs>
-      <path d="${area}" fill="url(#g)"/>
-      <polyline points="${pts.join(' ')}" fill="none" stroke="#7c6dff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="${area}" fill="url(#${gid})"/>
+      <polyline points="${pts.join(' ')}" fill="none" stroke="#a695ff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
   `;
 }
@@ -803,7 +1747,7 @@ function renderLineChart(values, labels, height) {
 function fmt(n) {
   if (!n) return '0';
   if (n >= 1000) return (n/1000).toFixed(1) + 'k';
-  return String(Math.round(n));
+  return String(Math.round(n*10)/10);
 }
 
 function fmtDate(d) {
@@ -813,7 +1757,18 @@ function fmtDate(d) {
 }
 
 function esc(s) {
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function initials(name) {
+  if (!name || name === 'Unknown') return '?';
+  const parts = String(name).trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+}
+
+function emptyState(msg) {
+  return `<div class="no-data"><span class="emoji">🗒️</span>${esc(msg)}</div>`;
 }
 
 function showToast(msg) {
@@ -824,25 +1779,285 @@ function showToast(msg) {
 }
 
 // ── INIT ─────────────────────────────────────────────────────
-// Check existing session
 const saved = sessionStorage.getItem('jt_admin_token');
 if (saved) {
   _token = saved;
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('sidebar').style.display = 'flex';
-  document.getElementById('main').style.display = 'flex';
-  loadAll();
+  enterDashboard();
 }
 
-// Keyboard shortcut
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+  if (e.key === 'Escape') closeModal();
 });
 
-// Close modal on overlay click
 document.getElementById('user-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+// Delegated handler for any rendered "view profile" row/button — uses data
+// attributes (not inline onclick string interpolation) so names containing
+// quotes, apostrophes, or other special characters never break the markup.
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.user-row-btn');
+  if (btn) {
+    e.stopPropagation();
+    viewUser(btn.dataset.uid, btn.dataset.uname);
+    return;
+  }
+  const row = e.target.closest('.user-row');
+  if (row) {
+    viewUser(row.dataset.uid, row.dataset.uname);
+  }
+});
+
+// ══ EMAIL COMPOSER ════════════════════════════════════════════
+let _recipientTab = 'select';
+let _emailUsers   = [];
+let _supabaseUrl  = '';
+let _supabaseKey  = '';
+
+// Load supabase URL on init (needed for edge function)
+async function loadSupabaseConfig() {
+  if (_supabaseUrl) return;
+  try {
+    const r = await fetch('/api/config');
+    const d = await r.json();
+    _supabaseUrl = d.url || '';
+    _supabaseKey = d.key || '';
+  } catch(e) {}
+}
+
+// Load user list for checkboxes
+async function loadEmailUsers() {
+  const el = document.getElementById('user-check-list');
+  if (_emailUsers.length) { renderEmailUsers(); return; }
+  el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">Loading...</div>';
+  try {
+    const d = await api('users&page=0');
+    _emailUsers = d.users || [];
+    renderEmailUsers();
+  } catch(e) {
+    el.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--rd);font-size:.8rem;">Error loading users</div>`;
+  }
+}
+
+function renderEmailUsers() {
+  const el = document.getElementById('user-check-list');
+  if (!_emailUsers.length) { el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">No users found</div>'; return; }
+  el.innerHTML = _emailUsers.map((u, i) => `
+    <label class="user-check-item">
+      <input type="checkbox" class="user-email-cb" value="${u.id}" onchange="updateSelectedCount()"/>
+      <div class="user-check-info">
+        <div class="user-check-name">${esc(u.name || 'Unknown')}</div>
+        <div class="user-check-email">${esc(u.email || '')}</div>
+      </div>
+      ${u.class ? `<span style="font-size:.65rem;color:var(--ac2);background:rgba(124,106,247,.1);padding:.1rem .4rem;border-radius:99px;">${u.class}</span>` : ''}
+    </label>
+  `).join('');
+  updateSelectedCount();
+}
+
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.user-email-cb').forEach(c => c.checked = cb.checked);
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  const checked = document.querySelectorAll('.user-email-cb:checked').length;
+  const el = document.getElementById('selected-count');
+  if (el) el.textContent = `${checked} selected`;
+  updateRecipientCount();
+}
+
+function setRecipientTab(tab, btn) {
+  _recipientTab = tab;
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.recipient-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(`rp-${tab}`);
+  if (panel) panel.classList.add('active');
+  if (tab === 'select') loadEmailUsers();
+  updateRecipientCount();
+}
+
+function updateRecipientCount() {
+  const el = document.getElementById('ce-count');
+  if (!el) return;
+  if (_recipientTab === 'select') {
+    const n = document.querySelectorAll('.user-email-cb:checked').length;
+    el.innerHTML = `<strong style="color:var(--ac2)">${n}</strong> recipient${n !== 1 ? 's' : ''} selected`;
+  } else if (_recipientTab === 'all_active') {
+    el.innerHTML = `<strong style="color:var(--ac2)">All active</strong> users (last 30d)`;
+  } else if (_recipientTab === 'all') {
+    el.innerHTML = `<strong style="color:var(--rd)">All users</strong> — use carefully!`;
+  } else if (_recipientTab === 'custom') {
+    const emails = getCustomEmails();
+    el.innerHTML = `<strong style="color:var(--ac2)">${emails.length}</strong> custom email${emails.length !== 1 ? 's' : ''}`;
+  }
+}
+
+function getCustomEmails() {
+  const raw = document.getElementById('ce-custom-emails')?.value || '';
+  return raw.split(/[\n,]/).map(e => e.trim()).filter(e => e.includes('@'));
+}
+
+// Toolbar helpers
+function insertTag(open, close) {
+  const ta = document.getElementById('ce-body');
+  if (!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e);
+  ta.value = ta.value.substring(0, s) + open + sel + close + ta.value.substring(e);
+  ta.selectionStart = s + open.length;
+  ta.selectionEnd   = s + open.length + sel.length;
+  ta.focus();
+}
+
+function insertSnippet(type) {
+  const ta = document.getElementById('ce-body');
+  if (!ta) return;
+  const snippets = {
+    greeting: `Hi {{name}},\n\nHope your JEE prep is going well! 🚀\n\n`,
+    cta: `\n\n<div style="text-align:center;margin:20px 0"><a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;display:inline-block">Open JEETrack →</a></div>`,
+    review: `Hi {{name}},\n\nYou've been using JEETrack for a while now — I'd love to hear what you think! 🙏\n\nCould you spare 2 minutes to leave a quick review? It helps other JEE aspirants discover the app.\n\n<div style="text-align:center;margin:20px 0"><a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;display:inline-block">⭐ Leave a Review</a></div>\n\nThank you so much!\n— Aman, JEETrack`,
+  };
+  const pos = ta.selectionStart;
+  const snippet = snippets[type] || '';
+  ta.value = ta.value.substring(0, pos) + snippet + ta.value.substring(pos);
+  ta.selectionStart = ta.selectionEnd = pos + snippet.length;
+  ta.focus();
+}
+
+// Preview
+function previewEmail() {
+  const subject  = document.getElementById('ce-subject')?.value || '';
+  const body     = document.getElementById('ce-body')?.value || '';
+  const fromName = document.getElementById('ce-from-name')?.value || 'JEETrack';
+
+  if (!body.trim()) { showToast('Write email body first!'); return; }
+
+  const previewHTML = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:'Segoe UI',Arial,sans-serif;color:#f0eff5">
+<div style="max-width:580px;margin:0 auto;padding:24px 16px">
+  <div style="text-align:center;padding:28px 0 20px">
+    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Track</span></div>
+  </div>
+  <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.7;color:#e8e8f0">
+    ${body.replace(/\{\{name\}\}/g, 'Aman')}
+  </div>
+  <div style="text-align:center;margin:20px 0">
+    <a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 30px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block">Open JEETrack →</a>
+  </div>
+  <div style="text-align:center;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06)">
+    <div style="font-size:12px;color:#4a4960">JEETrack · jeetrack.in</div>
+  </div>
+</div></body></html>`;
+
+  const card = document.getElementById('ce-preview-card');
+  const frame = document.getElementById('ce-preview-frame');
+  const prevSubject = document.getElementById('prev-subject');
+  const prevFrom = document.getElementById('prev-from');
+
+  card.style.display = 'block';
+  prevSubject.textContent = subject.replace(/\{\{name\}\}/g, 'Aman') || '(no subject)';
+  prevFrom.textContent = `${fromName} <noreply@jeetrack.in>`;
+
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(previewHTML); doc.close();
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Send
+async function sendCustomEmail() {
+  const subject  = document.getElementById('ce-subject')?.value?.trim();
+  const body     = document.getElementById('ce-body')?.value?.trim();
+  const fromName = document.getElementById('ce-from-name')?.value?.trim() || 'JEETrack';
+  const resultEl = document.getElementById('ce-result');
+  const sendBtn  = document.getElementById('ce-send-btn');
+
+  if (!subject) { showToast('Subject is required!'); return; }
+  if (!body)    { showToast('Email body is required!'); return; }
+
+  // Build payload
+  const payload = { subject, html: body, from_name: fromName };
+
+  if (_recipientTab === 'select') {
+    const ids = [...document.querySelectorAll('.user-email-cb:checked')].map(c => c.value);
+    if (!ids.length) { showToast('Select at least one user!'); return; }
+    payload.to_user_ids = ids;
+  } else if (_recipientTab === 'custom') {
+    const emails = getCustomEmails();
+    if (!emails.length) { showToast('Enter at least one valid email!'); return; }
+    payload.to_emails = emails;
+  } else {
+    payload.type = _recipientTab; // 'all_active' or 'all'
+  }
+
+  // Confirm
+  const recipientLabel = _recipientTab === 'select'
+    ? `${payload.to_user_ids?.length} selected users`
+    : _recipientTab === 'custom'
+    ? `${payload.to_emails?.length} custom emails`
+    : _recipientTab === 'all_active' ? 'all active users (30d)' : 'ALL users';
+
+  if (!confirm(`Send email to ${recipientLabel}?\n\nSubject: ${subject}\n\nThis cannot be undone!`)) return;
+
+  // Send via Supabase edge function
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending...';
+  resultEl.style.display = 'none';
+  showToast('Sending emails...');
+
+  try {
+    await loadSupabaseConfig();
+    if (!_supabaseUrl) throw new Error('Supabase URL not configured');
+
+    const res = await fetch(`${_supabaseUrl}/functions/v1/custom-email`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || `HTTP ${res.status}`);
+
+    resultEl.className = 'compose-result compose-ok';
+    resultEl.innerHTML = `✓ <strong>${d.sent}</strong> emails sent successfully!${d.failed > 0 ? ` <span style="color:#f87171">${d.failed} failed.</span>` : ''} Total: ${d.total}`;
+    resultEl.style.display = 'block';
+    showToast(`✓ ${d.sent} emails sent!`);
+  } catch(e) {
+    resultEl.className = 'compose-result compose-err';
+    resultEl.textContent = `✗ Error: ${e.message}`;
+    resultEl.style.display = 'block';
+    showToast('Send failed: ' + e.message);
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Email`;
+  }
+}
+
+// Load email users when email page is visited
+const _origLoadCurrentPage = loadCurrentPage;
+window.loadCurrentPage = function() {
+  if (_currentPage === 'email') {
+    loadEmailUsers();
+    updateRecipientCount();
+    return;
+  }
+  _origLoadCurrentPage();
+};
+
+// Update count when custom emails textarea changes
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'ce-custom-emails') updateRecipientCount();
+});
+// ══ END EMAIL COMPOSER ═══════════════════════════════════════
 </script>
+
 </body>
 </html>

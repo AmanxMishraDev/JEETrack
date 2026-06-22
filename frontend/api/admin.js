@@ -1,6 +1,6 @@
 // ============================================================
 // JEETrack Admin API — api/admin.js
-// ALL PostHog credentials stay server-side (env vars only)
+// ALL PostHog + Supabase credentials stay server-side (env vars only)
 // ============================================================
 
 const POSTHOG_PERSONAL_KEY = process.env.POSTHOG_PERSONAL_KEY;
@@ -9,6 +9,25 @@ const POSTHOG_HOST         = process.env.POSTHOG_HOST || 'https://us.posthog.com
 const ADMIN_PASSWORD       = process.env.ADMIN_PASSWORD;
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Human-friendly labels for coaching institute ids (see COACHING_BY_MODE in app.js)
+const COACHING_LABELS = {
+  pw_online: 'PW Online', allen_online: 'Allen Online', unacademy: 'Unacademy',
+  vedantu: 'Vedantu', aakash_online: 'Aakash Digital', motion_online: 'Motion Online',
+  other_online: 'Other (Online)', pw_vidyapeeth: 'PW Vidyapeeth', allen: 'Allen',
+  aakash: 'Aakash', fiitjee: 'FIITJEE', resonance: 'Resonance', vibrant: 'Vibrant Academy',
+  motion: 'Motion', narayana: 'Narayana', sri_chaitanya: 'Sri Chaitanya',
+  other_offline: 'Other (Offline)', self: 'Self Study',
+};
+function coachingLabel(id) {
+  if (!id) return 'Not Set';
+  return COACHING_LABELS[id] || id;
+}
+const CLASS_LABELS = { '11': 'Class 11', '12': 'Class 12', dropper: 'Dropper', other: 'Other' };
+function classLabel(id) {
+  if (!id) return 'Not Set';
+  return CLASS_LABELS[id] || id;
+}
 
 // ── CORS headers ─────────────────────────────────────────────
 function cors(res) {
@@ -32,16 +51,6 @@ async function phQuery(query) {
     const txt = await res.text();
     throw new Error(`PostHog ${res.status}: ${txt}`);
   }
-  return res.json();
-}
-
-// ── PostHog Persons API (user list) ─────────────────────────
-async function phPersons(limit = 100, offset = 0) {
-  const url = `${POSTHOG_HOST}/api/projects/${POSTHOG_PROJECT_ID}/persons/?limit=${limit}&offset=${offset}`;
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${POSTHOG_PERSONAL_KEY}` }
-  });
-  if (!res.ok) throw new Error(`PostHog persons ${res.status}`);
   return res.json();
 }
 
@@ -89,6 +98,32 @@ async function sbCount(table, filter = '') {
   return parseInt(range.split('/')[1] || '0', 10);
 }
 
+// ── Supabase Auth Admin — list all users (paginated) ─────────
+// Returns the full auth.users list ({ id, email, created_at, ... }).
+// This is the only reliable source for email addresses — the
+// user_preferences table never stores email itself.
+async function sbAuthListAllUsers() {
+  const perPage = 1000;
+  let page = 1;
+  let all = [];
+  for (let i = 0; i < 20; i++) { // hard cap: 20k users
+    const url = `${SUPABASE_URL}/auth/v1/admin/users?page=${page}&per_page=${perPage}`;
+    const res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      },
+    });
+    if (!res.ok) throw new Error(`Supabase auth admin ${res.status}: ${await res.text()}`);
+    const data = await res.json();
+    const users = data.users || [];
+    all = all.concat(users);
+    if (users.length < perPage) break;
+    page++;
+  }
+  return all;
+}
+
 // ── Trigger Supabase Edge Function ───────────────────────────
 async function triggerEdgeFunction(fnName, body = {}) {
   const url = `${SUPABASE_URL}/functions/v1/${fnName}`;
@@ -122,6 +157,51 @@ function dateFrom(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toISOString().split('T')[0];
+}
+
+// Build a single combined roster: auth users + user_preferences, keyed by user_id.
+// This is the backbone for Users / Demographics / Leaderboard / Consistency —
+// all sourced from Supabase (reliable) instead of PostHog persons (often empty,
+// since the app never actually calls posthog.identify with matching property names).
+let _rosterCache = null, _rosterCacheAt = 0;
+async function buildRoster({ fresh = false } = {}) {
+  if (!fresh && _rosterCache && Date.now() - _rosterCacheAt < 30000) return _rosterCache;
+
+  const [authUsers, prefs] = await Promise.all([
+    sbAuthListAllUsers().catch(() => []),
+    sbQuery('user_preferences?select=*').catch(() => []),
+  ]);
+
+  const prefMap = {};
+  prefs.forEach(p => { prefMap[p.user_id] = p; });
+
+  // Some users may have a user_preferences row but be missing from the
+  // auth list (rare edge cases), or vice versa for brand-new signups. Union both.
+  const ids = new Set([...authUsers.map(u => u.id), ...prefs.map(p => p.user_id)]);
+  const authMap = {};
+  authUsers.forEach(u => { authMap[u.id] = u; });
+
+  const roster = [...ids].map(id => {
+    const a = authMap[id] || {};
+    const p = prefMap[id] || {};
+    return {
+      id,
+      email: a.email || '',
+      created_at: a.created_at || p.created_at || null,
+      name: p.username || (a.email ? a.email.split('@')[0] : 'Unknown'),
+      class_year: p.class_year || '',
+      coaching: p.coaching || '',
+      study_mode: p.study_mode || '',
+      target_year: p.target_year || '',
+      email_reports: p.email_reports || 'off',
+      last_active_at: p.last_active_at || null,
+      onboarding_done: !!p.onboarding_done,
+    };
+  });
+
+  _rosterCache = roster;
+  _rosterCacheAt = Date.now();
+  return roster;
 }
 
 // ── MAIN HANDLER ─────────────────────────────────────────────
@@ -334,76 +414,86 @@ export default async function handler(req, res) {
     }
 
     // ── USER LIST ─────────────────────────────────────────────
+    // Sourced from Supabase (auth.users + user_preferences) — reliable,
+    // always populated, supports search + class/coaching filters + sorting.
     if (action === 'users') {
-      const page = parseInt(req.query.page || '0');
-      const phData = await phPersons(50, page * 50);
+      const page        = parseInt(req.query.page || '0');
+      const pageSize     = parseInt(req.query.pageSize || '20');
+      const search       = (req.query.search || '').toLowerCase().trim();
+      const classFilter  = req.query.class_year || '';
+      const coachFilter  = req.query.coaching || '';
+      const sortBy       = req.query.sort || 'created_at'; // created_at | last_active | name
+      const sortDir      = req.query.dir === 'asc' ? 1 : -1;
 
-      let prefs = [];
-      try {
-        prefs = await sbQuery('user_preferences?select=user_id,email_reports,last_active_at,report_last_sent_at');
-      } catch(e) {}
+      let roster = await buildRoster();
 
-      const prefsMap = {};
-      prefs.forEach(p => { prefsMap[p.user_id] = p; });
+      if (search) {
+        roster = roster.filter(u =>
+          (u.name || '').toLowerCase().includes(search) ||
+          (u.email || '').toLowerCase().includes(search)
+        );
+      }
+      if (classFilter) roster = roster.filter(u => u.class_year === classFilter);
+      if (coachFilter) roster = roster.filter(u => u.coaching === coachFilter);
 
-      const users = (phData?.results || []).map(person => {
-        const props = person.properties || {};
-        const pref = prefsMap[person.distinct_ids?.[0]] || {};
-        return {
-          id:            person.distinct_ids?.[0] || person.id,
-          name:          props.name || props.$name || 'Unknown',
-          email:         props.email || props.$email || '',
-          class:         props.class || '',
-          target_year:   props.target_year || '',
-          coaching:      props.coaching || '',
-          created_at:    person.created_at,
-          last_seen:     person.properties?.$last_seen,
-          email_reports: pref.email_reports || 'off',
-          last_active:   pref.last_active_at || '',
-          report_sent:   pref.report_last_sent_at || '',
-        };
+      const toTime = (v) => v ? new Date(v).getTime() : 0;
+      roster.sort((a, b) => {
+        if (sortBy === 'name') return sortDir * (a.name || '').localeCompare(b.name || '');
+        if (sortBy === 'last_active') return sortDir === 1
+          ? toTime(a.last_active_at) - toTime(b.last_active_at)
+          : toTime(b.last_active_at) - toTime(a.last_active_at);
+        return sortDir === 1
+          ? toTime(a.created_at) - toTime(b.created_at)
+          : toTime(b.created_at) - toTime(a.created_at);
       });
+
+      const total = roster.length;
+      const start = page * pageSize;
+      const pageItems = roster.slice(start, start + pageSize);
+
+      const users = pageItems.map(u => ({
+        id:            u.id,
+        name:          u.name,
+        email:         u.email,
+        class:         classLabel(u.class_year),
+        class_year:    u.class_year,
+        target_year:   u.target_year,
+        coaching:      coachingLabel(u.coaching),
+        coaching_id:   u.coaching,
+        created_at:    u.created_at,
+        last_active:   u.last_active_at,
+        email_reports: u.email_reports,
+      }));
 
       return res.status(200).json({
         users,
-        next: phData?.next || null,
-        count: phData?.count || 0,
+        count: total,
+        page,
+        pageSize,
+        next: start + pageSize < total,
       });
     }
 
     // ── DEMOGRAPHICS ─────────────────────────────────────────
-    // Aggregates class + coaching distribution from PostHog persons
+    // Class + coaching distribution, sourced from Supabase user_preferences
+    // (PostHog person properties are never populated by the app, so they
+    // are not a reliable source for this).
     if (action === 'demographics') {
-      // Fetch all persons (up to 250 — paginate if needed)
-      const [p1, p2, p3, p4, p5] = await Promise.all([
-        phPersons(100, 0),
-        phPersons(100, 100),
-        phPersons(100, 200),
-        phPersons(100, 300),
-        phPersons(100, 400),
-      ]);
-      const all = [
-        ...(p1?.results||[]),
-        ...(p2?.results||[]),
-        ...(p3?.results||[]),
-        ...(p4?.results||[]),
-        ...(p5?.results||[]),
-      ];
-      const total = all.length;
+      const roster = await buildRoster();
+      const total = roster.length;
 
       const classCount = {}, coachingCount = {}, yearCount = {};
-      all.forEach(person => {
-        const props = person.properties || {};
-        const cls     = props.class     || 'Unknown';
-        const coaching = props.coaching || 'Unknown';
-        const year    = props.target_year || 'Unknown';
-        classCount[cls]      = (classCount[cls]      || 0) + 1;
+      roster.forEach(u => {
+        const cls      = classLabel(u.class_year);
+        const coaching = coachingLabel(u.coaching);
+        const year     = u.target_year || 'Not Set';
+        classCount[cls]         = (classCount[cls]         || 0) + 1;
         coachingCount[coaching] = (coachingCount[coaching] || 0) + 1;
-        yearCount[year]      = (yearCount[year]      || 0) + 1;
+        yearCount[year]         = (yearCount[year]         || 0) + 1;
       });
 
       const toArr = (obj) => Object.entries(obj)
-        .map(([label, count]) => ({ label, count, pct: total ? Math.round((count/total)*100) : 0 }))
+        .map(([label, count]) => ({ label, count, pct: total ? Math.round((count/total)*1000)/10 : 0 }))
         .sort((a, b) => b.count - a.count);
 
       return res.status(200).json({
@@ -421,18 +511,21 @@ export default async function handler(req, res) {
 
       // Fetch everything in parallel
       const [
-        testsData, hoursData, syllabus, backlogs, todos, feedbacks, streaks, prefs, aiCount
+        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, aiCount, authUsers
       ] = await Promise.all([
         sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
-        sbCount('syllabus', `user_id=eq.${distinct_id}`).catch(() => 0),
+        sbQuery(`syllabus?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbCount('backlogs', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbCount('todos', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: '-90d' }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'total', properties: [{ key: 'distinct_id', value: distinct_id, operator: 'exact', type: 'person' }] }] }).catch(() => null),
+        buildRoster().catch(() => []),
       ]);
+
+      const authUser = authUsers.find(u => u.id === distinct_id) || null;
 
       // Compute test stats
       const totalTests = testsData.length;
@@ -443,6 +536,9 @@ export default async function handler(req, res) {
       const avgPhysics = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.physics || 0), 0) / totalTests) : 0;
       const avgChem    = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.chemistry || 0), 0) / totalTests) : 0;
       const avgMaths   = totalTests ? Math.round(testsData.reduce((s, t) => s + (t.maths || 0), 0) / totalTests) : 0;
+      const avgMaxPct  = totalTests
+        ? Math.round(testsData.reduce((s, t) => s + (t.max ? (t.total||0)/t.max*100 : 0), 0) / totalTests)
+        : 0;
 
       // Compute study hours stats
       const totalHoursCount = hoursData.length;
@@ -451,20 +547,71 @@ export default async function handler(req, res) {
       const chemHours = hoursData.filter(h => h.subject === 'chemistry').reduce((s, h) => s + (h.total || 0), 0);
       const mathHours = hoursData.filter(h => h.subject === 'maths').reduce((s, h) => s + (h.total || 0), 0);
 
-      // Consistency: unique dates with activity in last 30 days
+      // Syllabus completion: chapters synced per subject, marked done = theory && practice
+      const subjects = ['physics', 'chemistry', 'maths'];
+      const syllabusBySubject = subjects.map(s => {
+        const rows = syllabusData.filter(r => r.subject === s);
+        const done = rows.filter(r => r.theory && r.practice).length;
+        return {
+          subject: s,
+          total: rows.length,
+          done,
+          pct: rows.length ? Math.round((done / rows.length) * 100) : 0,
+        };
+      });
+      const syllabusTotalRows = syllabusData.length;
+      const syllabusDoneRows  = syllabusData.filter(r => r.theory && r.practice).length;
+      const syllabusOverallPct = syllabusTotalRows ? Math.round((syllabusDoneRows / syllabusTotalRows) * 100) : 0;
+
+      // Consistency: unique active dates from hours + tests
       const last30 = new Date(); last30.setDate(last30.getDate() - 30);
-      const activeDates = new Set(hoursData.filter(h => h.date && new Date(h.date) > last30).map(h => h.date));
-      const consistencyScore = activeDates.size; // days active out of last 30
+      const activityDates = new Set([
+        ...hoursData.filter(h => h.date).map(h => h.date),
+        ...testsData.filter(t => t.date).map(t => t.date),
+      ]);
+      const activeDaysLast30 = [...activityDates].filter(d => new Date(d) > last30).length;
+
+      // Longest streak of consecutive active days (from all logged dates)
+      const sortedDates = [...activityDates].sort();
+      let longestRun = 0, curRun = 0, prevDate = null;
+      sortedDates.forEach(ds => {
+        const d = new Date(ds);
+        if (prevDate) {
+          const diff = Math.round((d - prevDate) / 86400000);
+          curRun = diff === 1 ? curRun + 1 : 1;
+        } else {
+          curRun = 1;
+        }
+        longestRun = Math.max(longestRun, curRun);
+        prevDate = d;
+      });
+
+      const pref = prefs[0] || {};
+      const email = authUser?.email || '';
+      const name = pref.username || (email ? email.split('@')[0] : 'Unknown');
 
       return res.status(200).json({
+        profile: {
+          id: distinct_id,
+          name,
+          email,
+          class: classLabel(pref.class_year),
+          coaching: coachingLabel(pref.coaching),
+          study_mode: pref.study_mode || '',
+          target_year: pref.target_year || '',
+          created_at: authUser?.created_at || pref.created_at || null,
+          last_active: pref.last_active_at || null,
+          email_reports: pref.email_reports || 'off',
+        },
         tests: {
           total: totalTests,
           mains: mainsTests.length,
           advanced: advTests.length,
           avgScore: avgTotal,
+          avgScorePct: avgMaxPct,
           bestScore,
           avgPhysics, avgChem, avgMaths,
-          recent: testsData.slice(0, 5).map(t => ({
+          recent: testsData.slice(0, 8).map(t => ({
             exam: t.exam, date: t.date, total: t.total, max: t.max,
             physics: t.physics, chemistry: t.chemistry, maths: t.maths
           })),
@@ -476,43 +623,38 @@ export default async function handler(req, res) {
           chemistry: Math.round(chemHours * 10) / 10,
           maths: Math.round(mathHours * 10) / 10,
         },
-        syllabus, backlogs, todos,
+        syllabus: {
+          bySubject: syllabusBySubject,
+          totalRows: syllabusTotalRows,
+          doneRows: syllabusDoneRows,
+          overallPct: syllabusOverallPct,
+        },
+        backlogs, todos,
         aiInsights: sumResults(aiCount),
-        consistency: { activeDaysLast30: consistencyScore },
+        consistency: {
+          activeDaysLast30,
+          longestStreak: longestRun,
+          totalActiveDays: activityDates.size,
+        },
         streak: streaks[0] || {},
         feedback: feedbacks,
-        pref: prefs[0] || {},
+        pref,
       });
     }
 
     // ── LEADERBOARD ───────────────────────────────────────────
+    // Sourced entirely from Supabase: user_preferences (+ auth) for identity,
+    // tests/hours for performance metrics.
     if (action === 'leaderboard') {
-      const metric = req.query.metric || 'avgScore'; // avgScore | bestScore | totalTests | totalHours
+      const metric = req.query.metric || 'avgScore'; // avgScore | avgScorePct | bestScore | totalTests | totalHours | consistency
 
-      // Get all users with prefs (name/email)
-      const prefs = await sbQuery('user_preferences?select=user_id,last_active_at').catch(() => []);
-      const userIds = prefs.map(p => p.user_id);
+      const roster = await buildRoster();
+      if (!roster.length) return res.status(200).json({ leaderboard: [], topper: null });
 
-      if (!userIds.length) return res.status(200).json({ leaderboard: [] });
-
-      // Fetch all tests and hours
-      const [allTests, allHours, phPersonsData] = await Promise.all([
-        sbQuery('tests?select=user_id,total,physics,chemistry,maths,exam,date').catch(() => []),
+      const [allTests, allHours] = await Promise.all([
+        sbQuery('tests?select=user_id,total,max,physics,chemistry,maths,exam,date').catch(() => []),
         sbQuery('hours?select=user_id,total,subject,date').catch(() => []),
-        phPersons(100, 0).catch(() => ({ results: [] })),
       ]);
-
-      // Build name map from PostHog
-      const nameMap = {};
-      (phPersonsData?.results || []).forEach(p => {
-        const uid = p.distinct_ids?.[0];
-        if (uid) {
-          nameMap[uid] = {
-            name:  p.properties?.name || p.properties?.$name || 'Anonymous',
-            email: p.properties?.email || p.properties?.$email || '',
-          };
-        }
-      });
 
       // Group tests by user
       const userTestMap = {};
@@ -528,45 +670,147 @@ export default async function handler(req, res) {
         userHoursMap[h.user_id].push(h);
       });
 
+      const last30 = new Date(); last30.setDate(last30.getDate() - 30);
+
       // Build leaderboard entries
-      const entries = prefs.map(p => {
-        const uid   = p.user_id;
+      const entries = roster.map(u => {
+        const uid   = u.id;
         const tests = userTestMap[uid] || [];
         const hours = userHoursMap[uid] || [];
-        const info  = nameMap[uid] || {};
         const totalHrsTime = hours.reduce((s, h) => s + (h.total || 0), 0);
         const avgScore  = tests.length ? Math.round(tests.reduce((s, t) => s + (t.total || 0), 0) / tests.length) : 0;
         const bestScore = tests.length ? Math.max(...tests.map(t => t.total || 0)) : 0;
+        const avgScorePct = tests.length
+          ? Math.round(tests.reduce((s, t) => s + (t.max ? (t.total||0)/t.max*100 : 0), 0) / tests.length)
+          : 0;
 
         // Consistency: unique active days (hours entries) last 30 days
-        const last30 = new Date(); last30.setDate(last30.getDate() - 30);
         const activeDays = new Set(hours.filter(h => h.date && new Date(h.date) > last30).map(h => h.date)).size;
 
         return {
           user_id:     uid,
-          name:        info.name  || 'Anonymous',
-          email:       info.email || '',
+          name:        u.name || 'Anonymous',
+          email:       u.email || '',
+          class:       classLabel(u.class_year),
+          coaching:    coachingLabel(u.coaching),
           totalTests:  tests.length,
           avgScore,
+          avgScorePct,
           bestScore,
           totalHours:  Math.round(totalHrsTime * 10) / 10,
           activeDays,   // consistency metric
-          last_active: p.last_active_at,
+          last_active: u.last_active_at,
         };
       }).filter(e => e.totalTests > 0 || e.totalHours > 0); // only users with data
 
       // Sort by requested metric
       const sortKey = {
-        avgScore:   (a, b) => b.avgScore   - a.avgScore,
-        bestScore:  (a, b) => b.bestScore  - a.bestScore,
-        totalTests: (a, b) => b.totalTests - a.totalTests,
-        totalHours: (a, b) => b.totalHours - a.totalHours,
-        consistency:(a, b) => b.activeDays - a.activeDays,
+        avgScore:    (a, b) => b.avgScore    - a.avgScore,
+        avgScorePct: (a, b) => b.avgScorePct - a.avgScorePct,
+        bestScore:   (a, b) => b.bestScore   - a.bestScore,
+        totalTests:  (a, b) => b.totalTests  - a.totalTests,
+        totalHours:  (a, b) => b.totalHours  - a.totalHours,
+        consistency: (a, b) => b.activeDays  - a.activeDays,
       }[metric] || ((a, b) => b.avgScore - a.avgScore);
 
       entries.sort(sortKey);
+      entries.forEach((e, i) => { e.rank = i + 1; });
 
-      return res.status(200).json({ leaderboard: entries.slice(0, 50) });
+      return res.status(200).json({
+        leaderboard: entries.slice(0, 100),
+        topper: entries[0] || null,
+      });
+    }
+
+    // ── CONSISTENCY ANALYTICS ─────────────────────────────────
+    // Daily-active tracking, streaks, and overall consistency ranking.
+    // Activity = any tests/hours row logged on that date (best available
+    // proxy for "opened the app and used it that day").
+    if (action === 'consistency') {
+      const windowDays = parseInt(req.query.window || '30');
+      const roster = await buildRoster();
+      if (!roster.length) return res.status(200).json({ users: [], dau: [], mostConsistent: null });
+
+      const cutoffDate = dateFrom(windowDays);
+
+      const [allTests, allHours] = await Promise.all([
+        sbQuery(`tests?select=user_id,date&date=gte.${dateFrom(180)}`).catch(() => []),
+        sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(180)}`).catch(() => []),
+      ]);
+
+      // Map user_id -> Set of active dates (capped to last 180d fetched)
+      const userDates = {};
+      [...allTests, ...allHours].forEach(r => {
+        if (!r.date) return;
+        if (!userDates[r.user_id]) userDates[r.user_id] = new Set();
+        userDates[r.user_id].add(r.date);
+      });
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      const users = roster.map(u => {
+        const dates = userDates[u.id] || new Set();
+        const datesArr = [...dates].sort();
+        const activeInWindow = datesArr.filter(d => d >= cutoffDate).length;
+
+        // Longest consecutive-day streak (all available history)
+        let longest = 0, cur = 0, prev = null;
+        datesArr.forEach(ds => {
+          const d = new Date(ds);
+          if (prev) {
+            const diff = Math.round((d - prev) / 86400000);
+            cur = diff === 1 ? cur + 1 : 1;
+          } else cur = 1;
+          longest = Math.max(longest, cur);
+          prev = d;
+        });
+
+        // Current streak: consecutive days ending today or yesterday
+        let current = 0;
+        if (datesArr.length) {
+          const cursor = new Date(todayStr);
+          const offset = dates.has(todayStr) ? 0 : 1;
+          cursor.setDate(cursor.getDate() - offset);
+          while (dates.has(cursor.toISOString().split('T')[0])) {
+            current++;
+            cursor.setDate(cursor.getDate() - 1);
+          }
+        }
+
+        return {
+          user_id: u.id,
+          name: u.name || 'Anonymous',
+          email: u.email || '',
+          class: classLabel(u.class_year),
+          coaching: coachingLabel(u.coaching),
+          activeDaysInWindow: activeInWindow,
+          windowDays,
+          longestStreak: longest,
+          currentStreak: current,
+          totalActiveDays: datesArr.length,
+          lastActiveDate: datesArr[datesArr.length - 1] || null,
+        };
+      }).filter(u => u.totalActiveDays > 0);
+
+      users.sort((a, b) => b.currentStreak - a.currentStreak || b.activeDaysInWindow - a.activeDaysInWindow);
+      users.forEach((u, i) => { u.rank = i + 1; });
+
+      // DAU trend for the window: how many distinct users were active each day
+      const dauMap = {};
+      Object.entries(userDates).forEach(([uid, dates]) => {
+        dates.forEach(d => {
+          if (d < cutoffDate) return;
+          dauMap[d] = (dauMap[d] || 0) + 1;
+        });
+      });
+      const dauLabels = Object.keys(dauMap).sort();
+      const dau = dauLabels.map(d => ({ date: d, count: dauMap[d] }));
+
+      return res.status(200).json({
+        users: users.slice(0, 100),
+        mostConsistent: users[0] || null,
+        dau,
+      });
     }
 
     // ── TRIGGER MONTHLY REPORT ────────────────────────────────
