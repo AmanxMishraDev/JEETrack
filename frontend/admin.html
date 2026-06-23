@@ -1216,7 +1216,7 @@ async function loadStats() {
       { label:'Mock Tests',       value: fmt(d.mockTests),     sub:`Last ${_days} days`, icon:'📝', bg:'rgba(96,165,250,.14)' },
       { label:'Study Hours',      value: fmt(d.studyHours),    sub:`Last ${_days} days`, icon:'⏱️', bg:'rgba(251,191,36,.13)' },
       { label:'AI Insights',      value: fmt(d.aiInsights),    sub:`Last ${_days} days`, icon:'🤖', bg:'rgba(244,114,182,.14)' },
-      { label:'Chapters Marked',  value: fmt(d.chapters),      sub:`Last ${_days} days`, icon:'📚', bg:'rgba(96,165,250,.14)' },
+      { label:'Avg Syllabus Done', value: (d.syllabusPercent||0)+'%', sub:'All users avg', icon:'📚', bg:'rgba(96,165,250,.14)' },
       { label:'Backlogs Added',   value: fmt(d.backlogs),      sub:`Last ${_days} days`, icon:'🔴', bg:'rgba(248,113,113,.13)' },
       { label:'Todos Added',      value: fmt(d.todos),         sub:`Last ${_days} days`, icon:'✅', bg:'rgba(52,211,153,.14)' },
       { label:'Page Views',       value: fmt(d.pageViews),     sub:`Last ${_days} days`, icon:'👁️', bg:'rgba(124,106,247,.16)' },
@@ -1304,15 +1304,41 @@ async function loadFeatures() {
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     const data = await api('features');
-    const max = Math.max(...data.map(d => d.count), 1);
-    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff','#fb923c','#60a5fa','#8b8aa0','#84cc16','#f43f5e','#3b82f6','#10b981','#fb923c'];
-    el.innerHTML = data.filter(d => d.count >= 0).map((d, i) => `
-      <div class="bar-row">
-        <div class="bar-label">${d.event}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
-        <div class="bar-count">${fmt(d.count)}</div>
-      </div>
-    `).join('') || emptyState('No events yet');
+    if (!data.features) { el.innerHTML = '<div class="no-data">No data</div>'; return; }
+
+    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff'];
+
+    // Header
+    let html = `<div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem;display:flex;justify-content:space-between;">
+      <span>Feature</span>
+      <span>% of all users who ever used it · (${data.totalUsers} total users)</span>
+    </div>`;
+
+    html += data.features.map((d, i) => `
+      <div class="bar-row" style="margin-bottom:.35rem;">
+        <div class="bar-label" style="width:110px;">${d.feature}</div>
+        <div class="bar-track" style="position:relative;">
+          <div class="bar-fill" style="width:${d.pct}%;background:${colors[i%colors.length]}"></div>
+        </div>
+        <div style="font-size:.72rem;color:var(--tx);width:70px;text-align:right;flex-shrink:0;">
+          <strong>${d.pct}%</strong> <span style="color:var(--mu)">(${d.users})</span>
+        </div>
+      </div>`).join('');
+
+    if (data.dauFeatures?.length) {
+      html += `<div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--bd);">
+        <div style="font-size:.7rem;color:var(--mu);margin-bottom:.5rem;">Daily Usage (% of users active per day on average)</div>`;
+      data.dauFeatures.forEach(d => {
+        html += `<div class="bar-row">
+          <div class="bar-label" style="width:110px;">${d.feature}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${d.dauPct}%;background:#06b6d4"></div></div>
+          <div style="font-size:.72rem;color:var(--tx);width:70px;text-align:right;flex-shrink:0;"><strong>${d.dauPct}%</strong> <span style="color:var(--mu)">(${d.dau})</span></div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    el.innerHTML = html;
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
@@ -1963,6 +1989,8 @@ function setEmailMode(mode, btn) {
   document.getElementById('em-compose-mode').style.display = mode === 'compose' ? 'block' : 'none';
   document.getElementById('em-html-mode').style.display    = mode === 'html'    ? 'block' : 'none';
   document.getElementById('ce-preview-card').style.display = 'none';
+  // Sync recipient count display for both modes
+  updateRecipientCount();
 }
 
 function toggleCTA() {
@@ -2077,14 +2105,18 @@ function insertTag(open, close) {
 function insertSnippet(type) {
   const ta = document.getElementById('ce-body');
   if (!ta) return;
+  // Using <br> tags because textarea content is sent as HTML email body
+  // 
+ shows in textarea as newline but won't render in email — <br> does both
   const snippets = {
-    greeting: `Hi {{name}},\n\nHope your JEE prep is going strong! 🚀\n\n`,
-    review:   `Hi {{name}},\n\nYou've been using JEETrack for a while — I'd love your feedback! 🙏\n\nCould you spare 2 minutes to share what you think? It really helps!\n\n`,
-    tips:     `Here are some quick tips to get the most out of JEETrack:\n\n<ul style="padding-left:20px;line-height:2">\n<li>Log every mock test — even bad ones</li>\n<li>Use AI Insights weekly for honest feedback</li>\n<li>Clear backlog daily — zero tolerance!</li>\n</ul>\n\n`,
-    closing:  `\n\nBest of luck with your prep! 💪\n\n— Aman Mishra\nFounder, JEETrack`,
+    greeting: `Hi {{name}},<br><br>Hope your JEE prep is going strong! 🚀<br><br>`,
+    review:   `Hi {{name}},<br><br>You've been using JEETrack for a while — I'd love your feedback! 🙏<br><br>Could you spare 2 minutes to share what you think? It really helps!<br><br>`,
+    tips:     `Here are some quick tips to get the most out of JEETrack:<br><br><ul style="padding-left:20px;line-height:2"><li>Log every mock test — even bad ones</li><li>Use AI Insights weekly for honest feedback</li><li>Clear backlog daily — zero tolerance!</li></ul><br>`,
+    closing:  `<br><br>Best of luck with your prep! 💪<br><br>— Aman Mishra<br>Founder, JEETrack`,
   };
   const pos = ta.selectionStart;
   ta.value = ta.value.substring(0, pos) + (snippets[type]||'') + ta.value.substring(pos);
+  ta.selectionStart = ta.selectionEnd = pos + (snippets[type]||'').length;
   ta.focus();
 }
 
@@ -2104,7 +2136,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
     <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></div>
   </div>
   <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.75;color:#e8e8f0">
-    ${bodyHtml.replace(/\{\{name\}\}/g, name)}
+    ${bodyHtml.replace(/\{\{name\}\}/g, name).replace(/\n/g, "<br>")}
   </div>
   ${cta}
   <div style="text-align:center;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:16px">
@@ -2246,6 +2278,130 @@ document.addEventListener('input', e => {
   if (e.target.id === 'ce-custom-emails') updateRecipientCount();
 });
 // ══ END EMAIL COMPOSER ═══════════════════════════════════════
+
+// ══ FEEDBACK ANALYTICS ════════════════════════════════════════
+let _fbPage = 0;
+let _allFeedbacks = [];
+let _filteredFeedbacks = [];
+
+async function loadFeedbackStats() {
+  try {
+    const d = await api('feedback_stats');
+    document.getElementById('fb-total').textContent = fmt(d.total || 0);
+    const thisMonth = new Date().toISOString().slice(0,7);
+    document.getElementById('fb-this-month').textContent = fmt(d.byMonth?.[thisMonth] || 0);
+    if (d.categories) {
+      const top = Object.entries(d.categories).sort((a,b) => b[1]-a[1])[0];
+      document.getElementById('fb-top-cat').textContent = top ? top[0] : '—';
+    }
+    // Category chart
+    const catEl = document.getElementById('fb-cat-chart');
+    if (d.categories) {
+      const sorted = Object.entries(d.categories).sort((a,b) => b[1]-a[1]);
+      const max = Math.max(...sorted.map(e => e[1]), 1);
+      const colors = ['#7c6dff','#22c55e','#f59e0b','#ec4899','#06b6d4','#ef4444','#8b5cf6','#f97316','#14b8a6'];
+      catEl.innerHTML = sorted.map(([cat, count], i) => `
+        <div class="bar-row">
+          <div class="bar-label">${cat}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
+          <div class="bar-count">${count}</div>
+        </div>`).join('') || '<div class="no-data">No data yet</div>';
+    }
+    // Monthly chart
+    const monthEl = document.getElementById('fb-month-chart');
+    if (d.byMonth) {
+      const sorted = Object.entries(d.byMonth).sort((a,b) => a[0].localeCompare(b[0])).slice(-6);
+      const max = Math.max(...sorted.map(e => e[1]), 1);
+      monthEl.innerHTML = sorted.map(([month, count]) => `
+        <div class="bar-row">
+          <div class="bar-label">${month}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(1)}%;background:#7c6dff"></div></div>
+          <div class="bar-count">${count}</div>
+        </div>`).join('') || '<div class="no-data">No data yet</div>';
+    }
+  } catch(e) { console.error('Feedback stats:', e); }
+}
+
+async function loadFeedbacks(page = 0) {
+  _fbPage = page;
+  const tbody = document.getElementById('fb-table');
+  tbody.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api(`feedback_list&limit=20&offset=${page*20}`);
+    _allFeedbacks = d.feedbacks || [];
+    _filteredFeedbacks = _allFeedbacks;
+    renderFeedbackTable(_filteredFeedbacks);
+    document.getElementById('fb-prev').disabled = page === 0;
+    document.getElementById('fb-next').disabled = _allFeedbacks.length < 20;
+    document.getElementById('fb-page-info').textContent = `Page ${page+1} · ${d.total||''} total`;
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="no-data">Error: ${e.message}</div></td></tr>`;
+  }
+}
+
+function filterFeedbacks(q) {
+  _filteredFeedbacks = q.trim()
+    ? _allFeedbacks.filter(f =>
+        (f.subject||'').toLowerCase().includes(q.toLowerCase()) ||
+        (f.message||'').toLowerCase().includes(q.toLowerCase()) ||
+        (f.email||'').toLowerCase().includes(q.toLowerCase()))
+    : _allFeedbacks;
+  renderFeedbackTable(_filteredFeedbacks);
+}
+
+function renderFeedbackTable(feedbacks) {
+  const tbody = document.getElementById('fb-table');
+  if (!feedbacks.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="no-data">No feedbacks found</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = feedbacks.map(f => `
+    <tr>
+      <td style="font-size:.75rem;">${esc(f.email?.split('@')[0]||'Anonymous')}</td>
+      <td style="font-size:.72rem;color:var(--mu);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.email||'—')}</td>
+      <td style="font-weight:600;font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.subject||'')}">${esc(f.subject||'—')}</td>
+      <td style="font-size:.75rem;color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.message||'')}">${esc(f.message||'—')}</td>
+      <td style="font-size:.72rem;color:var(--mu);white-space:nowrap;">${fmtDate(f.created_at)}</td>
+      <td>
+        <button class="action-btn btn-primary" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;"
+          onclick="replyToFeedback('${esc(f.user_id||'')}','${esc(f.email||'')}','${esc(f.subject||'')}')">
+          ✉️ Reply
+        </button>
+      </td>
+    </tr>`).join('');
+}
+
+function replyToFeedback(userId, email, subject) {
+  // Go to email page
+  const navEl = document.querySelector('.nav-item[onclick*=\'email\']');
+  if (navEl) showPage('email', navEl);
+
+  setTimeout(() => {
+    // Set subject
+    const replySubject = subject ? `Re: ${subject}` : 'Thank You for Your Feedback!';
+    document.getElementById('ce-subject').value = replySubject;
+
+    // Pre-fill body
+    document.getElementById('ce-body').value =
+      `Hi {{name}},<br><br>Thank you so much for your feedback! 🙏<br><br>${subject ? `Regarding: "<em>${subject}</em>"<br><br>` : ''}[Write your reply here...]<br><br>Best,<br>Aman Mishra<br>Founder, JEETrack`;
+
+    // Set custom email recipient
+    const customBtn = document.querySelectorAll('#page-email .recipient-tabs .rtab')[3];
+    if (customBtn) setRecipientTab('custom', customBtn);
+    const ta = document.getElementById('ce-custom-emails');
+    if (ta && email) { ta.value = email; updateRecipientCount(); }
+
+    showToast('Reply ready in Email Composer ✓');
+  }, 350);
+}
+
+// Override loadCurrentPage for feedback
+const _origLoadFb = window.loadCurrentPage;
+window.loadCurrentPage = function() {
+  if (_currentPage === 'feedback') { loadFeedbackStats(); loadFeedbacks(0); return; }
+  _origLoadFb();
+};
+// ══ END FEEDBACK ANALYTICS ════════════════════════════════════
 
 </script>
 
