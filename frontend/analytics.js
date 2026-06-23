@@ -159,9 +159,9 @@ function attachPatches() {
             hours:    S.hours?.length || 0,
             backlogs: (S.backlogs || []).filter(b => !b.done).length,
             todos:    (S.todos || []).filter(t => !t.done).length,
-            sylPh:    (S.syllabus?.physics || []).filter(c => c.theory || c.practice).length,
-            sylCh:    (S.syllabus?.chemistry || []).filter(c => c.theory || c.practice).length,
-            sylMa:    (S.syllabus?.maths || []).filter(c => c.theory || c.practice).length,
+            sylPh:    (S.syllabus?.physics || []).filter(c => c.theory === true || c.practice === true).length,
+            sylCh:    (S.syllabus?.chemistry || []).filter(c => c.theory === true || c.practice === true).length,
+            sylMa:    (S.syllabus?.maths || []).filter(c => c.theory === true || c.practice === true).length,
           };
 
           if (cur.tests > _prev.tests) {
@@ -190,9 +190,11 @@ function attachPatches() {
             const l = (S.todos || []).filter(t => !t.done).slice(-1)[0] || {};
             _jtTrack('todo_task_added', { subject: l.subject || '', priority: l.priority || '' });
           }
-          if (cur.sylPh > _prev.sylPh) _jtTrack('chapter_marked', { subject: 'physics' });
-          if (cur.sylCh > _prev.sylCh) _jtTrack('chapter_marked', { subject: 'chemistry' });
-          if (cur.sylMa > _prev.sylMa) _jtTrack('chapter_marked', { subject: 'maths' });
+          // Only fire if ONLY syllabus changed (not other data changing too)
+          const _onlySyl = cur.tests === _prev.tests && cur.hours === _prev.hours && cur.backlogs === _prev.backlogs && cur.todos === _prev.todos;
+          if (_onlySyl && cur.sylPh > _prev.sylPh) _jtTrack('chapter_marked', { subject: 'physics', count: cur.sylPh - _prev.sylPh });
+          if (_onlySyl && cur.sylCh > _prev.sylCh) _jtTrack('chapter_marked', { subject: 'chemistry', count: cur.sylCh - _prev.sylCh });
+          if (_onlySyl && cur.sylMa > _prev.sylMa) _jtTrack('chapter_marked', { subject: 'maths', count: cur.sylMa - _prev.sylMa });
 
           _prev = cur;
         }

@@ -449,7 +449,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
     <div class="nav-item" onclick="showPage('email',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Email Composer
-      <span class="nav-tag">New</span>
+    </div>
+    <div class="nav-item" onclick="showPage('feedback',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Feedback
     </div>
   </nav>
   <div class="sb-bottom">
@@ -729,79 +732,146 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
     <!-- ══ EMAIL COMPOSER ══════════════════════════════════ -->
     <div class="page" id="page-email">
       <div class="section-title">Email Composer<span class="line"></span></div>
+
+      <!-- MODE TABS -->
+      <div style="display:flex;gap:.5rem;margin-bottom:1.1rem;flex-wrap:wrap;">
+        <button class="rtab active" onclick="setEmailMode('compose',this)" id="mode-compose">✉️ Compose</button>
+        <button class="rtab" onclick="setEmailMode('html',this)" id="mode-html">🧑‍💻 Custom HTML</button>
+      </div>
+
       <div class="email-composer">
 
-        <!-- LEFT — Compose -->
+        <!-- LEFT — Compose / HTML -->
         <div>
-          <div class="compose-card" style="margin-bottom:1rem;">
-            <h3>✉️ Compose Email</h3>
 
-            <div class="compose-field">
-              <span class="compose-label">From Name</span>
-              <input class="compose-input" id="ce-from-name" placeholder="JEETrack" value="JEETrack"/>
-            </div>
+          <!-- COMPOSE MODE -->
+          <div id="em-compose-mode">
+            <div class="compose-card" style="margin-bottom:1rem;">
+              <h3>✉️ Compose Email</h3>
 
-            <div class="compose-field">
-              <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
-              <input class="compose-input" id="ce-subject" placeholder="Hey {{name}}, something exciting!"/>
-            </div>
-
-            <div class="compose-field">
-              <span class="compose-label">Email Body (HTML supported) <span class="hint-tag">{{name}} = recipient name</span></span>
-              <div class="toolbar">
-                <button class="tbtn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
-                <button class="tbtn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
-                <button class="tbtn" onclick="insertTag('<br><br>','')">↵</button>
-                <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot;>','</a>')">Link</button>
-                <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#a695ff&quot;>','</h2>')">H2</button>
-                <button class="tbtn" onclick="insertSnippet('greeting')">👋 Greeting</button>
-                <button class="tbtn" onclick="insertSnippet('cta')">🔗 CTA</button>
-                <button class="tbtn" onclick="insertSnippet('review')">⭐ Review</button>
+              <div class="compose-field">
+                <span class="compose-label">From Name</span>
+                <input class="compose-input" id="ce-from-name" placeholder="JEETrack" value="JEETrack"/>
               </div>
-              <textarea class="compose-textarea" id="ce-body" placeholder="Hi {{name}},&#10;&#10;Write your email here...&#10;&#10;HTML is supported!"></textarea>
-            </div>
 
-            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
-              <button class="action-btn btn-primary" onclick="previewEmail()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                Preview
-              </button>
-              <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                Send Email
-              </button>
-              <span class="recipient-count" id="ce-count">0 recipients selected</span>
+              <div class="compose-field">
+                <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
+                <input class="compose-input" id="ce-subject" placeholder="Hey {{name}}, something exciting!"/>
+              </div>
+
+              <!-- CTA BUILDER -->
+              <div class="compose-field">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+                  <span class="compose-label" style="margin:0;">CTA Button</span>
+                  <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.72rem;color:var(--mu);">
+                    <input type="checkbox" id="ce-cta-enabled" style="accent-color:var(--ac2);" checked onchange="toggleCTA()"> Enable CTA
+                  </label>
+                </div>
+                <div id="ce-cta-fields" style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                  <input class="compose-input" id="ce-cta-text" placeholder="Button text" value="Open JEETrack →" style="flex:1;min-width:140px;"/>
+                  <input class="compose-input" id="ce-cta-url" placeholder="URL" value="https://jeetrack.in" style="flex:1;min-width:180px;"/>
+                </div>
+              </div>
+
+              <div class="compose-field">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+                  <span class="compose-label" style="margin:0;">Email Body <span class="hint-tag">{{name}} supported</span></span>
+                </div>
+                <div class="toolbar">
+                  <button class="tbtn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
+                  <button class="tbtn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
+                  <button class="tbtn" onclick="insertTag('<br><br>','')">↵ Para</button>
+                  <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot; style=&quot;color:#a695ff&quot;>','</a>')">🔗 Link</button>
+                  <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#a695ff;margin:16px 0 8px&quot;>','</h2>')">H2</button>
+                  <button class="tbtn" onclick="insertTag('<ul style=&quot;padding-left:20px&quot;><li>','</li></ul>')">• List</button>
+                  <span style="width:1px;background:var(--bd);margin:0 .2rem;"></span>
+                  <button class="tbtn" onclick="insertSnippet('greeting')">👋 Hi</button>
+                  <button class="tbtn" onclick="insertSnippet('review')">⭐ Review</button>
+                  <button class="tbtn" onclick="insertSnippet('tips')">💡 Tips</button>
+                  <button class="tbtn" onclick="insertSnippet('closing')">✍️ Sign off</button>
+                </div>
+                <textarea class="compose-textarea" id="ce-body" placeholder="Hi {{name}},&#10;&#10;Write your email here...&#10;&#10;HTML is fully supported!" style="min-height:260px;"></textarea>
+              </div>
+
+              <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
+                <button class="action-btn btn-primary" onclick="previewEmail()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Preview
+                </button>
+                <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Send Email
+                </button>
+                <span class="recipient-count" id="ce-count">0 recipients selected</span>
+              </div>
+              <div class="compose-result" id="ce-result"></div>
             </div>
-            <div class="compose-result" id="ce-result"></div>
           </div>
 
-          <!-- Preview Card -->
+          <!-- HTML MODE -->
+          <div id="em-html-mode" style="display:none;">
+            <div class="compose-card" style="margin-bottom:1rem;">
+              <h3>🧑‍💻 Custom HTML Email</h3>
+              <div class="compose-field">
+                <span class="compose-label">From Name</span>
+                <input class="compose-input" id="ce-from-name-html" placeholder="JEETrack" value="JEETrack"/>
+              </div>
+              <div class="compose-field">
+                <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
+                <input class="compose-input" id="ce-subject-html" placeholder="Subject line here..."/>
+              </div>
+              <div class="compose-field">
+                <span class="compose-label">Full HTML <span class="hint-tag">Complete email HTML — no wrapper added</span></span>
+                <textarea class="compose-textarea" id="ce-html-body" style="min-height:360px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html>&#10;<html>&#10;<body>&#10;  Your full email HTML here...&#10;  Use {{name}} for personalization&#10;</body>&#10;</html>"></textarea>
+              </div>
+              <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                <button class="action-btn btn-primary" onclick="previewHTML()">👁️ Preview</button>
+                <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn-html">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Send Email
+                </button>
+                <span class="recipient-count" id="ce-count-html">0 recipients selected</span>
+              </div>
+              <div class="compose-result" id="ce-result-html"></div>
+            </div>
+          </div>
+
+          <!-- PREVIEW -->
           <div class="compose-card" id="ce-preview-card" style="display:none;">
-            <h3>👁️ Email Preview</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+              <h3 style="margin:0;">👁️ Preview</h3>
+              <button class="tbtn" onclick="document.getElementById('ce-preview-card').style.display='none'">✕ Close</button>
+            </div>
             <div style="font-size:.72rem;color:var(--mu);margin-bottom:.75rem;">
               From: <strong style="color:var(--tx)" id="prev-from">noreply@jeetrack.in</strong> &nbsp;·&nbsp;
               Subject: <strong style="color:var(--tx)" id="prev-subject">—</strong>
             </div>
-            <iframe id="ce-preview-frame" style="width:100%;height:420px;border:1px solid var(--bd);border-radius:8px;background:#0a0a0f;" sandbox="allow-same-origin"></iframe>
+            <iframe id="ce-preview-frame" style="width:100%;height:480px;border:1px solid var(--bd);border-radius:8px;background:#0a0a0f;" sandbox="allow-same-origin"></iframe>
           </div>
         </div>
 
         <!-- RIGHT — Recipients -->
         <div>
-          <div class="compose-card">
+          <div class="compose-card" style="margin-bottom:1rem;">
             <h3>👥 Recipients</h3>
-            <div class="recipient-tabs">
-              <button class="rtab active" onclick="setRecipientTab('select',this)">Select Users</button>
+            <div class="recipient-tabs" style="margin-bottom:.75rem;">
+              <button class="rtab active" onclick="setRecipientTab('select',this)">Select</button>
               <button class="rtab" onclick="setRecipientTab('all_active',this)">Active (30d)</button>
-              <button class="rtab" onclick="setRecipientTab('all',this)">All Users</button>
+              <button class="rtab" onclick="setRecipientTab('all',this)">All</button>
               <button class="rtab" onclick="setRecipientTab('custom',this)">Custom</button>
             </div>
 
+            <!-- Select users panel -->
             <div class="recipient-panel active" id="rp-select">
+              <!-- Search -->
+              <div style="position:relative;margin-bottom:.6rem;">
+                <svg style="position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--mu);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="compose-input" id="user-search" placeholder="Search by name or email..." style="padding-left:2rem;" oninput="filterEmailUsers(this.value)"/>
+              </div>
               <div class="select-all-row">
                 <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;">
                   <input type="checkbox" id="select-all-users" onchange="toggleSelectAll(this)" style="accent-color:var(--ac2);">
-                  Select All
+                  Select All Visible
                 </label>
                 <span id="selected-count" style="font-size:.72rem;color:var(--ac2);font-weight:600;">0 selected</span>
               </div>
@@ -810,32 +880,36 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
               </div>
             </div>
 
+            <!-- All active -->
             <div class="recipient-panel" id="rp-all_active">
               <div style="background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
-                📨 Email sent to all users <strong style="color:var(--tx)">active in last 30 days</strong>. Count shown before sending.
+                📨 Sends to all users <strong style="color:var(--tx)">active in last 30 days</strong>.
               </div>
             </div>
 
+            <!-- All -->
             <div class="recipient-panel" id="rp-all">
               <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
-                ⚠️ Email sent to <strong style="color:#f87171">ALL users</strong> regardless of activity. Use carefully!
+                ⚠️ Sends to <strong style="color:#f87171">ALL users</strong>. Use carefully!
               </div>
             </div>
 
+            <!-- Custom -->
             <div class="recipient-panel" id="rp-custom">
-              <span class="compose-label">Enter emails (one per line or comma separated)</span>
-              <textarea class="compose-textarea" id="ce-custom-emails" style="min-height:140px;" placeholder="user1@gmail.com&#10;user2@gmail.com"></textarea>
+              <span class="compose-label">Emails (one per line or comma separated)</span>
+              <textarea class="compose-textarea" id="ce-custom-emails" style="min-height:120px;" placeholder="user1@gmail.com&#10;user2@gmail.com"></textarea>
             </div>
           </div>
 
-          <div class="compose-card" style="margin-top:1rem;">
+          <!-- Tips -->
+          <div class="compose-card">
             <h3>💡 Tips</h3>
             <div style="font-size:.75rem;color:var(--mu);line-height:1.9;">
-              <div>• <code style="color:var(--ac2)">{{name}}</code> → replaced with user's name</div>
-              <div>• HTML fully supported in body</div>
+              <div>• <code style="color:var(--ac2)">{{name}}</code> → recipient's name</div>
               <div>• Sent from <code style="color:var(--ac2)">noreply@jeetrack.in</code></div>
-              <div>• Preview before sending</div>
-              <div>• Sent in batches of 10</div>
+              <div>• Always preview before sending</div>
+              <div>• Batches of 10, 300ms delay</div>
+              <div>• HTML mode = full control</div>
             </div>
           </div>
         </div>
@@ -843,6 +917,61 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div><!-- /page-email -->
 
+
+
+    <!-- ══ FEEDBACK ANALYTICS ══════════════════════════════ -->
+    <div class="page" id="page-feedback">
+      <div class="section-title">Feedback Analytics<span class="line"></span></div>
+
+      <!-- Stats row -->
+      <div class="stats-grid" id="fb-stats-grid" style="margin-bottom:1.25rem;">
+        <div class="stat"><div class="stat-icon">💬</div><div class="stat-label">Total Feedbacks</div><div class="stat-value" id="fb-total">—</div></div>
+        <div class="stat"><div class="stat-icon">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="fb-this-month">—</div></div>
+        <div class="stat"><div class="stat-icon">🏷️</div><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:1rem;" id="fb-top-cat">—</div></div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.25rem;">
+        <!-- Category breakdown -->
+        <div class="card">
+          <h3>🏷️ Feedback by Category</h3>
+          <div class="bar-chart" id="fb-cat-chart"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <!-- Monthly trend -->
+        <div class="card">
+          <h3>📈 Monthly Trend</h3>
+          <div class="bar-chart" id="fb-month-chart"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- All feedbacks table -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;flex-wrap:wrap;gap:.5rem;">
+          <h3 style="margin:0;">📋 All Feedbacks</h3>
+          <div style="position:relative;">
+            <svg style="position:absolute;left:.55rem;top:50%;transform:translateY(-50%);width:12px;height:12px;color:var(--mu);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="compose-input" id="fb-search" placeholder="Search feedbacks..." style="padding-left:1.8rem;width:220px;" oninput="filterFeedbacks(this.value)"/>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="fb-table">
+              <tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem;">
+          <button class="action-btn btn-primary" onclick="loadFeedbacks(Math.max(0,_fbPage-1))" id="fb-prev" style="font-size:.75rem;padding:.35rem .75rem;">← Prev</button>
+          <span id="fb-page-info" style="font-size:.75rem;color:var(--mu);"></span>
+          <button class="action-btn btn-primary" onclick="loadFeedbacks(_fbPage+1)" id="fb-next" style="font-size:.75rem;padding:.35rem .75rem;">Next →</button>
+        </div>
+      </div>
+
+    </div><!-- /page-feedback -->
   </div><!-- /content -->
 </div><!-- /main -->
 <style>
@@ -1024,6 +1153,7 @@ const PAGE_META = {
   db:            { title: 'DB Stats',           sub: 'Raw Supabase table counts' },
   actions:       { title: 'Admin Actions',      sub: 'Manual triggers & session info' },
   email:         { title: 'Email Composer',     sub: 'Send custom emails to your users' },
+  feedback:      { title: 'Feedback Analytics',  sub: 'User feedback and reviews' },
 };
 
 function showPage(page, el) {
@@ -1813,45 +1943,74 @@ document.addEventListener('click', (e) => {
 // ══ EMAIL COMPOSER ════════════════════════════════════════════
 let _recipientTab = 'select';
 let _emailUsers   = [];
+let _emailMode    = 'compose';
 let _supabaseUrl  = '';
-let _supabaseKey  = '';
 
-// Load supabase URL on init (needed for edge function)
 async function loadSupabaseConfig() {
   if (_supabaseUrl) return;
   try {
     const r = await fetch('/api/config');
     const d = await r.json();
     _supabaseUrl = d.url || '';
-    _supabaseKey = d.key || '';
   } catch(e) {}
 }
 
-// Load user list for checkboxes
+// ── Mode switching ────────────────────────────────────────────
+function setEmailMode(mode, btn) {
+  _emailMode = mode;
+  document.querySelectorAll('#mode-compose,#mode-html').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('em-compose-mode').style.display = mode === 'compose' ? 'block' : 'none';
+  document.getElementById('em-html-mode').style.display    = mode === 'html'    ? 'block' : 'none';
+  document.getElementById('ce-preview-card').style.display = 'none';
+}
+
+function toggleCTA() {
+  const en = document.getElementById('ce-cta-enabled').checked;
+  document.getElementById('ce-cta-fields').style.opacity = en ? '1' : '.4';
+  document.getElementById('ce-cta-fields').style.pointerEvents = en ? 'auto' : 'none';
+}
+
+// ── User list ─────────────────────────────────────────────────
 async function loadEmailUsers() {
   const el = document.getElementById('user-check-list');
-  if (_emailUsers.length) { renderEmailUsers(); return; }
+  if (_emailUsers.length) { renderEmailUsers(_emailUsers); return; }
   el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">Loading...</div>';
   try {
     const d = await api('users&page=0');
     _emailUsers = d.users || [];
-    renderEmailUsers();
+    renderEmailUsers(_emailUsers);
   } catch(e) {
-    el.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--rd);font-size:.8rem;">Error loading users</div>`;
+    el.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--rd);font-size:.8rem;">Error: ${e.message}</div>`;
   }
 }
 
-function renderEmailUsers() {
+function filterEmailUsers(q) {
+  const filtered = q.trim()
+    ? _emailUsers.filter(u =>
+        (u.name||'').toLowerCase().includes(q.toLowerCase()) ||
+        (u.email||'').toLowerCase().includes(q.toLowerCase())
+      )
+    : _emailUsers;
+  renderEmailUsers(filtered);
+}
+
+function renderEmailUsers(users) {
   const el = document.getElementById('user-check-list');
-  if (!_emailUsers.length) { el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">No users found</div>'; return; }
-  el.innerHTML = _emailUsers.map((u, i) => `
+  if (!users.length) {
+    el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">No users found</div>';
+    return;
+  }
+  // Keep previously checked state
+  const checked = new Set([...document.querySelectorAll('.user-email-cb:checked')].map(c => c.value));
+  el.innerHTML = users.map(u => `
     <label class="user-check-item">
-      <input type="checkbox" class="user-email-cb" value="${u.id}" onchange="updateSelectedCount()"/>
+      <input type="checkbox" class="user-email-cb" value="${u.id}" ${checked.has(u.id)?'checked':''} onchange="updateSelectedCount()"/>
       <div class="user-check-info">
-        <div class="user-check-name">${esc(u.name || 'Unknown')}</div>
-        <div class="user-check-email">${esc(u.email || '')}</div>
+        <div class="user-check-name">${esc(u.name||'Unknown')}</div>
+        <div class="user-check-email">${esc(u.email||'')}</div>
       </div>
-      ${u.class ? `<span style="font-size:.65rem;color:var(--ac2);background:rgba(124,106,247,.1);padding:.1rem .4rem;border-radius:99px;">${u.class}</span>` : ''}
+      ${u.class?`<span style="font-size:.62rem;color:var(--ac2);background:rgba(124,106,247,.1);padding:.1rem .35rem;border-radius:99px;flex-shrink:0">${u.class}</span>`:''}
     </label>
   `).join('');
   updateSelectedCount();
@@ -1863,9 +2022,9 @@ function toggleSelectAll(cb) {
 }
 
 function updateSelectedCount() {
-  const checked = document.querySelectorAll('.user-email-cb:checked').length;
+  const n = document.querySelectorAll('.user-email-cb:checked').length;
   const el = document.getElementById('selected-count');
-  if (el) el.textContent = `${checked} selected`;
+  if (el) el.textContent = `${n} selected`;
   updateRecipientCount();
 }
 
@@ -1881,19 +2040,21 @@ function setRecipientTab(tab, btn) {
 }
 
 function updateRecipientCount() {
-  const el = document.getElementById('ce-count');
-  if (!el) return;
-  if (_recipientTab === 'select') {
-    const n = document.querySelectorAll('.user-email-cb:checked').length;
-    el.innerHTML = `<strong style="color:var(--ac2)">${n}</strong> recipient${n !== 1 ? 's' : ''} selected`;
-  } else if (_recipientTab === 'all_active') {
-    el.innerHTML = `<strong style="color:var(--ac2)">All active</strong> users (last 30d)`;
-  } else if (_recipientTab === 'all') {
-    el.innerHTML = `<strong style="color:var(--rd)">All users</strong> — use carefully!`;
-  } else if (_recipientTab === 'custom') {
-    const emails = getCustomEmails();
-    el.innerHTML = `<strong style="color:var(--ac2)">${emails.length}</strong> custom email${emails.length !== 1 ? 's' : ''}`;
-  }
+  ['ce-count','ce-count-html'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (_recipientTab === 'select') {
+      const n = document.querySelectorAll('.user-email-cb:checked').length;
+      el.innerHTML = `<strong style="color:var(--ac2)">${n}</strong> user${n!==1?'s':''} selected`;
+    } else if (_recipientTab === 'all_active') {
+      el.innerHTML = `<strong style="color:var(--ac2)">All active</strong> users (30d)`;
+    } else if (_recipientTab === 'all') {
+      el.innerHTML = `<strong style="color:var(--rd)">All users</strong>`;
+    } else {
+      const n = getCustomEmails().length;
+      el.innerHTML = `<strong style="color:var(--ac2)">${n}</strong> custom email${n!==1?'s':''}`;
+    }
+  });
 }
 
 function getCustomEmails() {
@@ -1901,9 +2062,9 @@ function getCustomEmails() {
   return raw.split(/[\n,]/).map(e => e.trim()).filter(e => e.includes('@'));
 }
 
-// Toolbar helpers
+// ── Toolbar ───────────────────────────────────────────────────
 function insertTag(open, close) {
-  const ta = document.getElementById('ce-body');
+  const ta = document.getElementById(_emailMode === 'html' ? 'ce-html-body' : 'ce-body');
   if (!ta) return;
   const s = ta.selectionStart, e = ta.selectionEnd;
   const sel = ta.value.substring(s, e);
@@ -1917,71 +2078,96 @@ function insertSnippet(type) {
   const ta = document.getElementById('ce-body');
   if (!ta) return;
   const snippets = {
-    greeting: `Hi {{name}},\n\nHope your JEE prep is going well! 🚀\n\n`,
-    cta: `\n\n<div style="text-align:center;margin:20px 0"><a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;display:inline-block">Open JEETrack →</a></div>`,
-    review: `Hi {{name}},\n\nYou've been using JEETrack for a while now — I'd love to hear what you think! 🙏\n\nCould you spare 2 minutes to leave a quick review? It helps other JEE aspirants discover the app.\n\n<div style="text-align:center;margin:20px 0"><a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;display:inline-block">⭐ Leave a Review</a></div>\n\nThank you so much!\n— Aman, JEETrack`,
+    greeting: `Hi {{name}},\n\nHope your JEE prep is going strong! 🚀\n\n`,
+    review:   `Hi {{name}},\n\nYou've been using JEETrack for a while — I'd love your feedback! 🙏\n\nCould you spare 2 minutes to share what you think? It really helps!\n\n`,
+    tips:     `Here are some quick tips to get the most out of JEETrack:\n\n<ul style="padding-left:20px;line-height:2">\n<li>Log every mock test — even bad ones</li>\n<li>Use AI Insights weekly for honest feedback</li>\n<li>Clear backlog daily — zero tolerance!</li>\n</ul>\n\n`,
+    closing:  `\n\nBest of luck with your prep! 💪\n\n— Aman Mishra\nFounder, JEETrack`,
   };
   const pos = ta.selectionStart;
-  const snippet = snippets[type] || '';
-  ta.value = ta.value.substring(0, pos) + snippet + ta.value.substring(pos);
-  ta.selectionStart = ta.selectionEnd = pos + snippet.length;
+  ta.value = ta.value.substring(0, pos) + (snippets[type]||'') + ta.value.substring(pos);
   ta.focus();
 }
 
-// Preview
-function previewEmail() {
-  const subject  = document.getElementById('ce-subject')?.value || '';
-  const body     = document.getElementById('ce-body')?.value || '';
-  const fromName = document.getElementById('ce-from-name')?.value || 'JEETrack';
+// ── Email HTML builder ────────────────────────────────────────
+function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
+  const cta = includeCTA && ctaText ? `
+  <div style="text-align:center;margin:24px 0">
+    <a href="${ctaUrl||'https://jeetrack.in'}" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 30px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block">${ctaText}</a>
+  </div>` : '';
 
-  if (!body.trim()) { showToast('Write email body first!'); return; }
-
-  const previewHTML = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#0a0a0f;font-family:'Segoe UI',Arial,sans-serif;color:#f0eff5">
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0;padding:0;background:#0a0a0f;font-family:'Segoe UI',Arial,sans-serif;color:#f0eff5}a{color:#a695ff}</style>
+</head><body>
 <div style="max-width:580px;margin:0 auto;padding:24px 16px">
   <div style="text-align:center;padding:28px 0 20px">
-    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Track</span></div>
+    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></div>
   </div>
-  <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.7;color:#e8e8f0">
-    ${body.replace(/\{\{name\}\}/g, 'Aman')}
+  <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.75;color:#e8e8f0">
+    ${bodyHtml.replace(/\{\{name\}\}/g, name)}
   </div>
-  <div style="text-align:center;margin:20px 0">
-    <a href="https://jeetrack.in" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 30px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block">Open JEETrack →</a>
-  </div>
-  <div style="text-align:center;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06)">
-    <div style="font-size:12px;color:#4a4960">JEETrack · jeetrack.in</div>
+  ${cta}
+  <div style="text-align:center;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:16px">
+    <div style="font-size:12px;color:#4a4960;line-height:1.8">JEETrack · Built for serious JEE aspirants<br><a href="https://jeetrack.in" style="color:#4a4960">jeetrack.in</a></div>
   </div>
 </div></body></html>`;
-
-  const card = document.getElementById('ce-preview-card');
-  const frame = document.getElementById('ce-preview-frame');
-  const prevSubject = document.getElementById('prev-subject');
-  const prevFrom = document.getElementById('prev-from');
-
-  card.style.display = 'block';
-  prevSubject.textContent = subject.replace(/\{\{name\}\}/g, 'Aman') || '(no subject)';
-  prevFrom.textContent = `${fromName} <noreply@jeetrack.in>`;
-
-  const doc = frame.contentDocument || frame.contentWindow.document;
-  doc.open(); doc.write(previewHTML); doc.close();
-
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Send
+// ── Preview ───────────────────────────────────────────────────
+function previewEmail() {
+  const body = document.getElementById('ce-body')?.value || '';
+  const subject = document.getElementById('ce-subject')?.value || '';
+  const fromName = document.getElementById('ce-from-name')?.value || 'JEETrack';
+  const ctaEnabled = document.getElementById('ce-cta-enabled')?.checked;
+  const ctaText = document.getElementById('ce-cta-text')?.value || '';
+  const ctaUrl  = document.getElementById('ce-cta-url')?.value  || '';
+  if (!body.trim()) { showToast('Write body first!'); return; }
+  _renderPreview(buildEmailHTML('Aman', body, ctaText, ctaUrl, ctaEnabled), subject, fromName);
+}
+
+function previewHTML() {
+  const body = document.getElementById('ce-html-body')?.value || '';
+  const subject = document.getElementById('ce-subject-html')?.value || '';
+  const fromName = document.getElementById('ce-from-name-html')?.value || 'JEETrack';
+  if (!body.trim()) { showToast('Write HTML first!'); return; }
+  _renderPreview(body.replace(/\{\{name\}\}/g,'Aman'), subject, fromName);
+}
+
+function _renderPreview(html, subject, fromName) {
+  const card  = document.getElementById('ce-preview-card');
+  const frame = document.getElementById('ce-preview-frame');
+  document.getElementById('prev-subject').textContent = subject.replace(/\{\{name\}\}/g,'Aman') || '(no subject)';
+  document.getElementById('prev-from').textContent    = `${fromName} <noreply@jeetrack.in>`;
+  card.style.display = 'block';
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  card.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Send ──────────────────────────────────────────────────────
 async function sendCustomEmail() {
-  const subject  = document.getElementById('ce-subject')?.value?.trim();
-  const body     = document.getElementById('ce-body')?.value?.trim();
-  const fromName = document.getElementById('ce-from-name')?.value?.trim() || 'JEETrack';
-  const resultEl = document.getElementById('ce-result');
-  const sendBtn  = document.getElementById('ce-send-btn');
+  const isHTML    = _emailMode === 'html';
+  const subject   = (document.getElementById(isHTML?'ce-subject-html':'ce-subject')?.value||'').trim();
+  const fromName  = (document.getElementById(isHTML?'ce-from-name-html':'ce-from-name')?.value||'JEETrack').trim();
+  const resultEl  = document.getElementById(isHTML?'ce-result-html':'ce-result');
+  const sendBtn   = document.getElementById(isHTML?'ce-send-btn-html':'ce-send-btn');
 
-  if (!subject) { showToast('Subject is required!'); return; }
-  if (!body)    { showToast('Email body is required!'); return; }
+  let htmlBody = '';
+  if (isHTML) {
+    htmlBody = (document.getElementById('ce-html-body')?.value||'').trim();
+  } else {
+    const body = (document.getElementById('ce-body')?.value||'').trim();
+    const ctaEnabled = document.getElementById('ce-cta-enabled')?.checked;
+    const ctaText = document.getElementById('ce-cta-text')?.value||'';
+    const ctaUrl  = document.getElementById('ce-cta-url')?.value||'';
+    if (!body) { showToast('Email body required!'); return; }
+    htmlBody = buildEmailHTML('{{name}}', body, ctaText, ctaUrl, ctaEnabled);
+  }
 
-  // Build payload
-  const payload = { subject, html: body, from_name: fromName };
+  if (!subject) { showToast('Subject required!'); return; }
+  if (!htmlBody) { showToast('Email body required!'); return; }
+
+  const payload = { subject, html: htmlBody, from_name: fromName, is_raw_html: isHTML };
 
   if (_recipientTab === 'select') {
     const ids = [...document.querySelectorAll('.user-email-cb:checked')].map(c => c.value);
@@ -1989,22 +2175,18 @@ async function sendCustomEmail() {
     payload.to_user_ids = ids;
   } else if (_recipientTab === 'custom') {
     const emails = getCustomEmails();
-    if (!emails.length) { showToast('Enter at least one valid email!'); return; }
+    if (!emails.length) { showToast('Enter valid emails!'); return; }
     payload.to_emails = emails;
   } else {
-    payload.type = _recipientTab; // 'all_active' or 'all'
+    payload.type = _recipientTab;
   }
 
-  // Confirm
-  const recipientLabel = _recipientTab === 'select'
-    ? `${payload.to_user_ids?.length} selected users`
-    : _recipientTab === 'custom'
-    ? `${payload.to_emails?.length} custom emails`
-    : _recipientTab === 'all_active' ? 'all active users (30d)' : 'ALL users';
+  const recipLabel = _recipientTab==='select' ? `${payload.to_user_ids?.length} users`
+    : _recipientTab==='custom' ? `${payload.to_emails?.length} emails`
+    : _recipientTab==='all_active' ? 'all active users' : 'ALL users';
 
-  if (!confirm(`Send email to ${recipientLabel}?\n\nSubject: ${subject}\n\nThis cannot be undone!`)) return;
+  if (!confirm(`Send to ${recipLabel}?\n\nSubject: ${subject}\n\nCannot be undone!`)) return;
 
-  // Send via Supabase edge function
   sendBtn.disabled = true;
   sendBtn.textContent = 'Sending...';
   resultEl.style.display = 'none';
@@ -2016,47 +2198,55 @@ async function sendCustomEmail() {
 
     const res = await fetch(`${_supabaseUrl}/functions/v1/custom-email`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${_token}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${_token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-
     const d = await res.json();
     if (!res.ok) throw new Error(d.error || `HTTP ${res.status}`);
 
     resultEl.className = 'compose-result compose-ok';
-    resultEl.innerHTML = `✓ <strong>${d.sent}</strong> emails sent successfully!${d.failed > 0 ? ` <span style="color:#f87171">${d.failed} failed.</span>` : ''} Total: ${d.total}`;
+    resultEl.innerHTML = `✓ <strong>${d.sent}</strong> sent!${d.failed?` <span style="color:#f87171">${d.failed} failed</span>`:''}`;
     resultEl.style.display = 'block';
     showToast(`✓ ${d.sent} emails sent!`);
   } catch(e) {
     resultEl.className = 'compose-result compose-err';
-    resultEl.textContent = `✗ Error: ${e.message}`;
+    resultEl.textContent = `✗ ${e.message}`;
     resultEl.style.display = 'block';
-    showToast('Send failed: ' + e.message);
+    showToast('Error: ' + e.message);
   } finally {
     sendBtn.disabled = false;
     sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Email`;
   }
 }
 
-// Load email users when email page is visited
+// Expose for feedback page redirect
+window.openEmailComposerWith = function(subject, toUserIds) {
+  showPage('email', document.querySelector('.nav-item[onclick*="email"]'));
+  setTimeout(() => {
+    document.getElementById('ce-subject').value = subject || '';
+    if (toUserIds?.length) {
+      setRecipientTab('select', document.querySelector('.rtab'));
+      loadEmailUsers().then(() => {
+        document.querySelectorAll('.user-email-cb').forEach(cb => {
+          cb.checked = toUserIds.includes(cb.value);
+        });
+        updateSelectedCount();
+      });
+    }
+  }, 300);
+};
+
 const _origLoadCurrentPage = loadCurrentPage;
 window.loadCurrentPage = function() {
-  if (_currentPage === 'email') {
-    loadEmailUsers();
-    updateRecipientCount();
-    return;
-  }
+  if (_currentPage === 'email') { loadEmailUsers(); updateRecipientCount(); return; }
   _origLoadCurrentPage();
 };
 
-// Update count when custom emails textarea changes
-document.addEventListener('input', (e) => {
+document.addEventListener('input', e => {
   if (e.target.id === 'ce-custom-emails') updateRecipientCount();
 });
 // ══ END EMAIL COMPOSER ═══════════════════════════════════════
+
 </script>
 
 </body>
