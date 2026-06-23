@@ -735,19 +735,19 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 
       <!-- MODE TABS -->
       <div style="display:flex;gap:.5rem;margin-bottom:1.1rem;flex-wrap:wrap;">
-        <button class="rtab active" onclick="setEmailMode('compose',this)" id="mode-compose">✉️ Compose</button>
-        <button class="rtab" onclick="setEmailMode('html',this)" id="mode-html">🧑‍💻 Custom HTML</button>
+        <button class="rtab active" onclick="setEmailMode('compose',this)" id="mode-compose">✉️ Compose with Preset</button>
+        <button class="rtab" onclick="setEmailMode('custom',this)" id="mode-custom">🧑‍💻 Custom (No Wrapper)</button>
       </div>
 
       <div class="email-composer">
 
-        <!-- LEFT — Compose / HTML -->
+        <!-- LEFT — Compose / Custom -->
         <div>
 
           <!-- COMPOSE MODE -->
           <div id="em-compose-mode">
             <div class="compose-card" style="margin-bottom:1rem;">
-              <h3>✉️ Compose Email</h3>
+              <h3>✉️ Compose with Preset Template</h3>
 
               <div class="compose-field">
                 <span class="compose-label">From Name</span>
@@ -764,12 +764,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
                   <span class="compose-label" style="margin:0;">CTA Button</span>
                   <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.72rem;color:var(--mu);">
-                    <input type="checkbox" id="ce-cta-enabled" style="accent-color:var(--ac2);" checked onchange="toggleCTA()"> Enable CTA
+                    <input type="checkbox" id="ce-cta-enabled" style="accent-color:var(--ac2);" onchange="toggleCTA()"> Add CTA Button
                   </label>
                 </div>
-                <div id="ce-cta-fields" style="display:flex;gap:.5rem;flex-wrap:wrap;">
-                  <input class="compose-input" id="ce-cta-text" placeholder="Button text" value="Open JEETrack →" style="flex:1;min-width:140px;"/>
-                  <input class="compose-input" id="ce-cta-url" placeholder="URL" value="https://jeetrack.in" style="flex:1;min-width:180px;"/>
+                <div id="ce-cta-fields" style="display:flex;gap:.5rem;flex-wrap:wrap;opacity:.35;pointer-events:none;">
+                  <input class="compose-input" id="ce-cta-text" placeholder="Button text e.g. Open JEETrack →" style="flex:1;min-width:140px;"/>
+                  <input class="compose-input" id="ce-cta-url" placeholder="URL e.g. https://jeetrack.in" style="flex:1;min-width:180px;"/>
                 </div>
               </div>
 
@@ -790,7 +790,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
                   <button class="tbtn" onclick="insertSnippet('tips')">💡 Tips</button>
                   <button class="tbtn" onclick="insertSnippet('closing')">✍️ Sign off</button>
                 </div>
-                <textarea class="compose-textarea" id="ce-body" placeholder="Hi {{name}},&#10;&#10;Write your email here...&#10;&#10;HTML is fully supported!" style="min-height:260px;"></textarea>
+                <textarea class="compose-textarea" id="ce-body" placeholder="Hi {{name}},&#10;&#10;Write your email here...&#10;&#10;HTML tags are supported!" style="min-height:260px;"></textarea>
               </div>
 
               <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
@@ -808,31 +808,51 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
             </div>
           </div>
 
-          <!-- HTML MODE -->
-          <div id="em-html-mode" style="display:none;">
+          <!-- CUSTOM MODE -->
+          <div id="em-custom-mode" style="display:none;">
             <div class="compose-card" style="margin-bottom:1rem;">
-              <h3>🧑‍💻 Custom HTML Email</h3>
+              <h3>🧑‍💻 Custom Email — No Wrapper</h3>
+              <div style="font-size:.74rem;color:var(--mu);margin-bottom:1rem;line-height:1.6;background:rgba(124,106,247,.07);border:1px solid rgba(124,106,247,.18);border-radius:8px;padding:.65rem .85rem;">
+                ℹ️ Email is sent exactly as you write it — no header, footer, or preset wrapper added.
+              </div>
               <div class="compose-field">
                 <span class="compose-label">From Name</span>
-                <input class="compose-input" id="ce-from-name-html" placeholder="JEETrack" value="JEETrack"/>
+                <input class="compose-input" id="ce-from-name-custom" placeholder="JEETrack" value="JEETrack"/>
               </div>
               <div class="compose-field">
                 <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
-                <input class="compose-input" id="ce-subject-html" placeholder="Subject line here..."/>
+                <input class="compose-input" id="ce-subject-custom" placeholder="Subject line here..."/>
               </div>
+
+              <!-- Custom sub-tabs: Plain Text vs Full HTML -->
               <div class="compose-field">
-                <span class="compose-label">Full HTML <span class="hint-tag">Complete email HTML — no wrapper added</span></span>
-                <textarea class="compose-textarea" id="ce-html-body" style="min-height:360px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html>&#10;<html>&#10;<body>&#10;  Your full email HTML here...&#10;  Use {{name}} for personalization&#10;</body>&#10;</html>"></textarea>
+                <div style="display:flex;gap:.4rem;margin-bottom:.75rem;">
+                  <button class="rtab active" id="custom-sub-plain" onclick="setCustomSubMode('plain',this)">📝 Plain Text</button>
+                  <button class="rtab" id="custom-sub-html" onclick="setCustomSubMode('html',this)">&lt;/&gt; Full HTML</button>
+                </div>
+
+                <!-- Plain text sub-mode -->
+                <div id="em-custom-plain">
+                  <span class="compose-label">Message <span class="hint-tag">Sent as plain text email</span></span>
+                  <textarea class="compose-textarea" id="ce-plain-body" style="min-height:320px;font-family:monospace;font-size:.85rem;" placeholder="Hi {{name}},&#10;&#10;Write your plain text email here.&#10;&#10;No HTML — just text.&#10;&#10;— Aman Mishra&#10;Founder, JEETrack"></textarea>
+                </div>
+
+                <!-- Full HTML sub-mode -->
+                <div id="em-custom-html" style="display:none;">
+                  <span class="compose-label">Full HTML <span class="hint-tag">Complete email — sent exactly as written</span></span>
+                  <textarea class="compose-textarea" id="ce-html-body" style="min-height:360px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html>&#10;<html>&#10;<body>&#10;  Your full email HTML here...&#10;  Use {{name}} for personalization&#10;</body>&#10;</html>"></textarea>
+                </div>
               </div>
+
               <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-                <button class="action-btn btn-primary" onclick="previewHTML()">👁️ Preview</button>
-                <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn-html">
+                <button class="action-btn btn-primary" onclick="previewCustom()">👁️ Preview</button>
+                <button class="action-btn btn-green" onclick="sendCustomEmail()" id="ce-send-btn-custom">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   Send Email
                 </button>
-                <span class="recipient-count" id="ce-count-html">0 recipients selected</span>
+                <span class="recipient-count" id="ce-count-custom">0 recipients selected</span>
               </div>
-              <div class="compose-result" id="ce-result-html"></div>
+              <div class="compose-result" id="ce-result-custom"></div>
             </div>
           </div>
 
@@ -1982,20 +2002,29 @@ async function loadSupabaseConfig() {
 }
 
 // ── Mode switching ────────────────────────────────────────────
+let _customSubMode = 'plain';
+
 function setEmailMode(mode, btn) {
   _emailMode = mode;
-  document.querySelectorAll('#mode-compose,#mode-html').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#mode-compose,#mode-custom').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('em-compose-mode').style.display = mode === 'compose' ? 'block' : 'none';
-  document.getElementById('em-html-mode').style.display    = mode === 'html'    ? 'block' : 'none';
+  document.getElementById('em-custom-mode').style.display  = mode === 'custom'  ? 'block' : 'none';
   document.getElementById('ce-preview-card').style.display = 'none';
-  // Sync recipient count display for both modes
   updateRecipientCount();
+}
+
+function setCustomSubMode(sub, btn) {
+  _customSubMode = sub;
+  document.querySelectorAll('#custom-sub-plain,#custom-sub-html').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('em-custom-plain').style.display = sub === 'plain' ? 'block' : 'none';
+  document.getElementById('em-custom-html').style.display  = sub === 'html'  ? 'block' : 'none';
 }
 
 function toggleCTA() {
   const en = document.getElementById('ce-cta-enabled').checked;
-  document.getElementById('ce-cta-fields').style.opacity = en ? '1' : '.4';
+  document.getElementById('ce-cta-fields').style.opacity = en ? '1' : '.35';
   document.getElementById('ce-cta-fields').style.pointerEvents = en ? 'auto' : 'none';
 }
 
@@ -2068,7 +2097,7 @@ function setRecipientTab(tab, btn) {
 }
 
 function updateRecipientCount() {
-  ['ce-count','ce-count-html'].forEach(id => {
+  ['ce-count','ce-count-custom'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     if (_recipientTab === 'select') {
@@ -2121,9 +2150,9 @@ function insertSnippet(type) {
 
 // ── Email HTML builder ────────────────────────────────────────
 function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
-  const cta = includeCTA && ctaText ? `
-  <div style="text-align:center;margin:24px 0">
-    <a href="${ctaUrl||'https://jeetrack.in'}" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 30px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block">${ctaText}</a>
+  const cta = (includeCTA && ctaText && ctaText.trim()) ? `
+  <div style="text-align:center;margin:28px 0">
+    <a href="${ctaUrl||'https://jeetrack.in'}" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 32px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block;letter-spacing:.01em">${ctaText.trim()}</a>
   </div>` : '';
 
   return `<!DOCTYPE html>
@@ -2132,7 +2161,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
 </head><body>
 <div style="max-width:580px;margin:0 auto;padding:24px 16px">
   <div style="text-align:center;padding:28px 0 20px">
-    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></div>
+    <img src="https://jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" style="height:36px;width:auto;display:inline-block"/>
   </div>
   <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.75;color:#e8e8f0">
     ${bodyHtml.replace(/\{\{name\}\}/g, name).replace(/\n/g, "<br>")}
@@ -2156,12 +2185,20 @@ function previewEmail() {
   _renderPreview(buildEmailHTML('Aman', body, ctaText, ctaUrl, ctaEnabled), subject, fromName);
 }
 
-function previewHTML() {
-  const body = document.getElementById('ce-html-body')?.value || '';
-  const subject = document.getElementById('ce-subject-html')?.value || '';
-  const fromName = document.getElementById('ce-from-name-html')?.value || 'JEETrack';
-  if (!body.trim()) { showToast('Write HTML first!'); return; }
-  _renderPreview(body.replace(/\{\{name\}\}/g,'Aman'), subject, fromName);
+function previewCustom() {
+  const fromName = (document.getElementById('ce-from-name-custom')?.value || 'JEETrack');
+  const subject  = (document.getElementById('ce-subject-custom')?.value  || '');
+  if (_customSubMode === 'plain') {
+    const body = document.getElementById('ce-plain-body')?.value || '';
+    if (!body.trim()) { showToast('Write your message first!'); return; }
+    // Render plain text as preformatted in a simple wrapper
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:24px;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.75;color:#222;background:#fff;white-space:pre-wrap;word-wrap:break-word}</style></head><body>${body.replace(/\{\{name\}\}/g,'Aman').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</body></html>`;
+    _renderPreview(html, subject, fromName);
+  } else {
+    const body = document.getElementById('ce-html-body')?.value || '';
+    if (!body.trim()) { showToast('Write HTML first!'); return; }
+    _renderPreview(body.replace(/\{\{name\}\}/g,'Aman'), subject, fromName);
+  }
 }
 
 function _renderPreview(html, subject, fromName) {
@@ -2177,28 +2214,46 @@ function _renderPreview(html, subject, fromName) {
 
 // ── Send ──────────────────────────────────────────────────────
 async function sendCustomEmail() {
-  const isHTML    = _emailMode === 'html';
-  const subject   = (document.getElementById(isHTML?'ce-subject-html':'ce-subject')?.value||'').trim();
-  const fromName  = (document.getElementById(isHTML?'ce-from-name-html':'ce-from-name')?.value||'JEETrack').trim();
-  const resultEl  = document.getElementById(isHTML?'ce-result-html':'ce-result');
-  const sendBtn   = document.getElementById(isHTML?'ce-send-btn-html':'ce-send-btn');
+  const isCustom  = _emailMode === 'custom';
+  const subject   = (document.getElementById(isCustom?'ce-subject-custom':'ce-subject')?.value||'').trim();
+  const fromName  = (document.getElementById(isCustom?'ce-from-name-custom':'ce-from-name')?.value||'JEETrack').trim();
+  const resultEl  = document.getElementById(isCustom?'ce-result-custom':'ce-result');
+  const sendBtn   = document.getElementById(isCustom?'ce-send-btn-custom':'ce-send-btn');
 
   let htmlBody = '';
-  if (isHTML) {
-    htmlBody = (document.getElementById('ce-html-body')?.value||'').trim();
+  let isRawHtml = false;
+
+  if (isCustom) {
+    if (_customSubMode === 'plain') {
+      const body = (document.getElementById('ce-plain-body')?.value||'').trim();
+      if (!body) { showToast('Write your message first!'); return; }
+      // Send as plain text wrapped minimally — Resend handles text field
+      htmlBody = body.replace(/\{\{name\}\}/g, '{{name}}');
+      isRawHtml = false;
+    } else {
+      htmlBody = (document.getElementById('ce-html-body')?.value||'').trim();
+      if (!htmlBody) { showToast('HTML body required!'); return; }
+      isRawHtml = true;
+    }
   } else {
     const body = (document.getElementById('ce-body')?.value||'').trim();
-    const ctaEnabled = document.getElementById('ce-cta-enabled')?.checked;
-    const ctaText = document.getElementById('ce-cta-text')?.value||'';
-    const ctaUrl  = document.getElementById('ce-cta-url')?.value||'';
+    const ctaEnabled = document.getElementById('ce-cta-enabled')?.checked || false;
+    const ctaText = ctaEnabled ? (document.getElementById('ce-cta-text')?.value||'').trim() : '';
+    const ctaUrl  = ctaEnabled ? (document.getElementById('ce-cta-url')?.value||'https://jeetrack.in').trim() : '';
     if (!body) { showToast('Email body required!'); return; }
     htmlBody = buildEmailHTML('{{name}}', body, ctaText, ctaUrl, ctaEnabled);
+    isRawHtml = true;
   }
 
   if (!subject) { showToast('Subject required!'); return; }
   if (!htmlBody) { showToast('Email body required!'); return; }
 
-  const payload = { subject, html: htmlBody, from_name: fromName, is_raw_html: isHTML };
+  const payload = {
+    subject,
+    from_name: fromName,
+    is_raw_html: isRawHtml,
+    ...(isCustom && _customSubMode === 'plain' ? { text: htmlBody } : { html: htmlBody }),
+  };
 
   if (_recipientTab === 'select') {
     const ids = [...document.querySelectorAll('.user-email-cb:checked')].map(c => c.value);
@@ -2247,6 +2302,7 @@ async function sendCustomEmail() {
   } finally {
     sendBtn.disabled = false;
     sendBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Email`;
+    sendBtn.disabled = false;
   }
 }
 
