@@ -2107,7 +2107,7 @@ function insertSnippet(type) {
   if (!ta) return;
   // Using <br> tags because textarea content is sent as HTML email body
   // 
- shows in textarea as newline but won't render in email — <br> does both
+  // Use <br> for line breaks — works in both textarea and email
   const snippets = {
     greeting: `Hi {{name}},<br><br>Hope your JEE prep is going strong! 🚀<br><br>`,
     review:   `Hi {{name}},<br><br>You've been using JEETrack for a while — I'd love your feedback! 🙏<br><br>Could you spare 2 minutes to share what you think? It really helps!<br><br>`,
