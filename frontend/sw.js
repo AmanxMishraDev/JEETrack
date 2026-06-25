@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jeetrack-v1';
+const CACHE_NAME = 'jeetrack-v2';
 const ASSETS = [
   '/',
   '/index.html',
