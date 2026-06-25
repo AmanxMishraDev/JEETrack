@@ -2493,6 +2493,58 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
 
     
+    <!-- ── Study Timer ── -->
+    <div class="lh-timer-wrap" id="lh-timer-wrap">
+      <div class="lh-timer-label">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Study Timer
+        <span class="lh-timer-mode-tag" id="lh-timer-mode-tag">Stopwatch</span>
+      </div>
+
+      <!-- Countdown target row (hidden by default) -->
+      <div class="lh-countdown-row" id="lh-countdown-row" style="display:none">
+        <label class="lh-countdown-lbl">Set goal</label>
+        <input type="number" id="lh-cd-h" class="lh-cd-inp" min="0" max="23" placeholder="0" title="hours"/> h
+        <input type="number" id="lh-cd-m" class="lh-cd-inp" min="0" max="59" placeholder="30" title="minutes"/> m
+      </div>
+
+      <div class="lh-timer-display" id="lh-timer-display">00:00:00</div>
+
+      <div class="lh-timer-bar-wrap" id="lh-timer-bar-wrap" style="display:none">
+        <div class="lh-timer-bar" id="lh-timer-bar"></div>
+      </div>
+
+      <div class="lh-timer-controls">
+        <button class="lh-timer-btn lh-timer-toggle" id="lh-timer-toggle" onclick="lhTimerToggle()">
+          <svg id="lh-play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg id="lh-pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          <span id="lh-timer-btn-txt">Start</span>
+        </button>
+        <button class="lh-timer-btn lh-timer-reset" onclick="lhTimerReset()" title="Reset">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+        <button class="lh-timer-btn lh-timer-use" id="lh-timer-use" onclick="lhTimerUse()" title="Apply to a field" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Use
+        </button>
+        <button class="lh-timer-mode-btn" id="lh-timer-mode-btn" onclick="lhTimerToggleMode()">⏱ Countdown</button>
+        <button class="lh-timer-pip-btn" onclick="lhOpenPip()" title="Float timer on top of all windows">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><rect x="12" y="11" width="8" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          Pop out
+        </button>
+      </div>
+
+      <!-- Apply-to selector (shown after Stop) -->
+      <div class="lh-timer-apply" id="lh-timer-apply" style="display:none">
+        <span class="lh-apply-lbl">Add <strong id="lh-apply-time"></strong> to:</span>
+        <div class="lh-apply-pills">
+          <button class="lh-apply-pill" onclick="lhApplyTime('lecture')">Lecture</button>
+          <button class="lh-apply-pill" onclick="lhApplyTime('practice')">Practice</button>
+          <button class="lh-apply-pill" onclick="lhApplyTime('revision')">Revision</button>
+        </div>
+      </div>
+    </div>
+
     <div class="pmo-hours-grid">
       <div class="pmo-hrs-card pmo-hrs-lec">
         <div class="pmo-hrs-label">
@@ -3982,7 +4034,7 @@ const openM=function(id,preset){
   if(id==='resetConfirm'){try{document.getElementById('reset-confirm-input').value='';}catch(e){}}
   if(id==='addTest'){document.getElementById('at-date').value=td();if(preset)document.getElementById('at-exam').value=preset;toggleExam();}
   if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset){document.getElementById('sch-exam').value=preset;document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));document.querySelector('#modal-scheduleTest .pmo-pill[onclick*="'+preset+'"]')?.classList.add('active');}}
-  if(id==='logHours'){document.getElementById('lh-date').value=td();['lh-l','lh-p','lh-r'].forEach(i=>document.getElementById(i).value='');document.getElementById('lh-tot').value='';['lh-l','lh-p','lh-r'].forEach(i=>clearFieldErr(i,'lh-hrs-err'));}
+  if(id==='logHours'){document.getElementById('lh-date').value=td();['lh-l','lh-p','lh-r'].forEach(i=>document.getElementById(i).value='');document.getElementById('lh-tot').value='';['lh-l','lh-p','lh-r'].forEach(i=>clearFieldErr(i,'lh-hrs-err'));_lhTimerReset();}
   if(id==='addTodo'){['td-title','td-det','td-due'].forEach(i=>{try{document.getElementById(i).value=''}catch(e){}});clearFieldErr('td-title','td-title-err');}
   if(id==='addBacklog'){['bl-title-i','bl-det','bl-due-i'].forEach(i=>{try{document.getElementById(i).value=''}catch(e){}});clearFieldErr('bl-title-i','bl-title-err');}
   if(id==='addChapter'){
@@ -4022,13 +4074,252 @@ const openM=function(id,preset){
     el.onclick=function(e){if(e.target===el)closeM(id);};
   }
 }
-function closeM(id){document.getElementById('modal-'+id).classList.remove('open')}
+function closeM(id){document.getElementById('modal-'+id).classList.remove('open');if(id==='logHours'&&_lhTimer.running){clearInterval(_lhTimer.interval);_lhTimer.interval=null;_lhTimer.running=false;}}
 function toggleExam(){
   const v=document.getElementById('at-exam').value;
   document.getElementById('at-paper-g').style.display=v==='advanced'?'':'none';
   document.getElementById('at-max').value=v==='advanced'?360:300;
   _atUpdateBar();
 }
+// ── Study Timer ─────────────────────────────────────────────────────────────
+// ── Study Timer (Sticky + PiP) ───────────────────────────────────────────────
+let _lhTimer = { running:false, mode:'stopwatch', elapsed:0, goal:0, interval:null, snapshot:0, startTs:null };
+let _lhPipWindow = null;
+let _lhPipInterval = null;
+
+function _lhFmt(secs) {
+  const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+  return [h,m,s].map(v=>String(v).padStart(2,'0')).join(':');
+}
+
+function _lhRenderAll() {
+  const t = _lhTimer;
+  const disp = _lhFmt(t.elapsed);
+  const md = document.getElementById('lh-timer-display');
+  if (md) md.textContent = disp;
+  if (t.mode === 'countdown' && t.goal) {
+    const pct = Math.min(100, ((t.goal - t.elapsed) / t.goal) * 100);
+    const bar = document.getElementById('lh-timer-bar'); if(bar) bar.style.width = pct + '%';
+    const sb = document.getElementById('lhs-bar'); if(sb) sb.style.width = pct + '%';
+  }
+  _lhStickyUpdate();
+  if (_lhPipWindow && !_lhPipWindow.closed) {
+    const pd = _lhPipWindow.document.getElementById('pip-display'); if(pd) pd.textContent = disp;
+    if (t.mode==='countdown' && t.goal) {
+      const pb = _lhPipWindow.document.getElementById('pip-bar');
+      if(pb) pb.style.width = Math.min(100,((t.goal-t.elapsed)/t.goal)*100)+'%';
+    }
+    const ps = _lhPipWindow.document.getElementById('pip-subj');
+    const subj = document.getElementById('lh-subj')?.value||'';
+    if(ps) ps.textContent = subj ? subj[0].toUpperCase()+subj.slice(1) : '';
+  }
+}
+
+function _lhTick() {
+  const now = Date.now();
+  const delta = Math.floor((now - _lhTimer.startTs) / 1000);
+  if (_lhTimer.mode === 'stopwatch') {
+    _lhTimer.elapsed = _lhTimer.snapshot + delta;
+  } else {
+    _lhTimer.elapsed = Math.max(0, _lhTimer.goal - (_lhTimer.snapshot + delta));
+    if (_lhTimer.elapsed === 0) { lhTimerStop(true); return; }
+  }
+  _lhRenderAll();
+}
+
+function _lhStickyUpdate() {
+  const sw = document.getElementById('lh-sticky');
+  if (!sw) return;
+  const t = _lhTimer;
+  if (!t.running && t.elapsed === 0) { sw.style.display='none'; return; }
+  sw.style.display = 'flex';
+  const sd = sw.querySelector('.lhs-time'); if(sd) sd.textContent = _lhFmt(t.elapsed);
+  const sBar = sw.querySelector('.lhs-bar');
+  if (sBar) sBar.style.display = (t.mode==='countdown'&&t.goal) ? 'block' : 'none';
+  if (t.mode==='countdown'&&t.goal) {
+    const sb = sw.querySelector('.lhs-bar-fill');
+    if(sb) sb.style.width = Math.min(100,((t.goal-t.elapsed)/t.goal)*100)+'%';
+  }
+  const sBtn = sw.querySelector('.lhs-toggle'); if(sBtn) sBtn.textContent = t.running?'⏸':'▶';
+  const subj = document.getElementById('lh-subj')?.value||'';
+  const sl = sw.querySelector('.lhs-subj'); if(sl) sl.textContent = subj?subj[0].toUpperCase()+subj.slice(1):'Study';
+}
+
+async function lhOpenPip() {
+  if (!('documentPictureInPicture' in window)) {
+    // Fallback: open a small popup
+    if (_lhPipWindow && !_lhPipWindow.closed) { _lhPipWindow.focus(); return; }
+    _lhPipWindow = window.open('','_blank','width=240,height=190,top=100,left=100,toolbar=no,menubar=no,scrollbars=no,resizable=yes,status=no');
+    if (!_lhPipWindow) { alert('Allow popups for this site to use the floating timer.'); return; }
+    _lhBuildPipContent();
+    return;
+  }
+  if (_lhPipWindow && !_lhPipWindow.closed) { _lhPipWindow.focus(); return; }
+  try {
+    _lhPipWindow = await window.documentPictureInPicture.requestWindow({ width:230, height:190 });
+    _lhBuildPipContent();
+    _lhPipWindow.addEventListener('pagehide', () => { _lhPipWindow=null; clearInterval(_lhPipInterval); });
+  } catch(e) { console.warn('PiP failed:',e); alert('Could not open Picture-in-Picture. Try Chrome 116+ on desktop.'); }
+}
+
+function _lhBuildPipContent() {
+  if (!_lhPipWindow) return;
+  const subj = document.getElementById('lh-subj')?.value||'';
+  const subjLabel = subj ? subj[0].toUpperCase()+subj.slice(1) : 'Study';
+  _lhPipWindow.document.head.innerHTML = `<meta charset="utf-8"><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0e0e16;color:#f0eff5;font-family:system-ui,sans-serif;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      height:100vh;gap:6px;user-select:none;overflow:hidden}
+    .pip-subj{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(166,149,255,.7)}
+    .pip-time{font-size:44px;font-weight:800;letter-spacing:.04em;color:#f0eff5;line-height:1;font-variant-numeric:tabular-nums}
+    .pip-bar-wrap{width:82%;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;display:none;margin:2px 0}
+    .pip-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c6af7,#a78bfa);border-radius:99px;transition:width .5s linear}
+    .pip-controls{display:flex;gap:6px;margin-top:4px}
+    .pip-btn{padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.07);color:#f0eff5;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+    .pip-btn:hover{background:rgba(255,255,255,.14)}
+    .pip-btn.primary{background:rgba(124,106,247,.35);border-color:rgba(124,106,247,.55)}
+    .pip-btn.primary:hover{background:rgba(124,106,247,.5)}
+  </style>`;
+  _lhPipWindow.document.body.innerHTML = `
+    <div class="pip-subj" id="pip-subj">${subjLabel}</div>
+    <div class="pip-time" id="pip-display">${_lhFmt(_lhTimer.elapsed)}</div>
+    <div class="pip-bar-wrap" id="pip-bar-wrap" style="${_lhTimer.mode==='countdown'?'display:block':''}">
+      <div class="pip-bar-fill" id="pip-bar"></div>
+    </div>
+    <div class="pip-controls">
+      <button class="pip-btn primary" id="pip-toggle">⏸ Pause</button>
+      <button class="pip-btn" id="pip-reset">↺</button>
+    </div>`;
+  // Wire buttons — opener reference
+  _lhPipWindow.document.getElementById('pip-toggle').onclick = () => { window.lhTimerToggle?.(); };
+  _lhPipWindow.document.getElementById('pip-reset').onclick  = () => { window.lhTimerReset?.(); };
+  // poll btn text
+  clearInterval(_lhPipInterval);
+  _lhPipInterval = setInterval(() => {
+    if (!_lhPipWindow||_lhPipWindow.closed) { clearInterval(_lhPipInterval); return; }
+    const b = _lhPipWindow.document.getElementById('pip-toggle');
+    if(b) b.textContent = _lhTimer.running ? '⏸ Pause' : '▶ Resume';
+  }, 600);
+}
+
+function lhTimerToggle() {
+  if (_lhTimer.running) { lhTimerStop(false); } else { lhTimerStart(); }
+}
+
+function lhTimerStart() {
+  if (_lhTimer.mode === 'countdown') {
+    if (_lhTimer.elapsed === 0) {
+      const h = +document.getElementById('lh-cd-h').value||0;
+      const m = +document.getElementById('lh-cd-m').value||0;
+      _lhTimer.goal = h*3600 + m*60;
+      if (!_lhTimer.goal) { alert('Set a countdown goal first.'); return; }
+    }
+    const bw = document.getElementById('lh-timer-bar-wrap'); if(bw) bw.style.display='block';
+  }
+  _lhTimer.running = true;
+  _lhTimer.startTs = Date.now();
+  _lhTimer.interval = setInterval(_lhTick, 500);
+  const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display='none';
+  const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display='';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Pause';
+  const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='none';
+  const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='none';
+  const cr=document.getElementById('lh-countdown-row'); if(cr) cr.style.display='none';
+  const mb=document.getElementById('lh-timer-mode-btn'); if(mb) mb.style.display='none';
+  _lhStickyUpdate();
+}
+
+function lhTimerStop(finished) {
+  clearInterval(_lhTimer.interval); _lhTimer.interval=null;
+  _lhTimer.snapshot = _lhTimer.elapsed;
+  _lhTimer.running = false;
+  const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display='';
+  const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display='none';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent=_lhTimer.elapsed>0?'Resume':'Start';
+  if (_lhTimer.elapsed>0||finished) {
+    const secsLogged = _lhTimer.mode==='countdown'&&finished ? _lhTimer.goal
+      : (_lhTimer.mode==='countdown' ? Math.max(0,_lhTimer.goal-_lhTimer.elapsed) : _lhTimer.elapsed);
+    const at=document.getElementById('lh-apply-time'); if(at) at.textContent=_lhFmt(secsLogged);
+    const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='block';
+    const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='flex';
+  }
+  const mb=document.getElementById('lh-timer-mode-btn'); if(mb) mb.style.display='';
+  if (_lhTimer.mode==='countdown'&&!finished) { const cr=document.getElementById('lh-countdown-row'); if(cr) cr.style.display='flex'; }
+  if (finished) { const md=document.getElementById('lh-timer-display'); if(md) md.textContent='✓ Done!'; }
+  _lhStickyUpdate();
+}
+
+function lhTimerReset() {
+  clearInterval(_lhTimer.interval); _lhTimer.interval=null;
+  _lhTimer.running=false; _lhTimer.elapsed=0; _lhTimer.snapshot=0;
+  const md=document.getElementById('lh-timer-display'); if(md) md.textContent='00:00:00';
+  const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display='';
+  const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display='none';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
+  const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='none';
+  const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='none';
+  const bar=document.getElementById('lh-timer-bar'); if(bar) bar.style.width='0%';
+  const mb=document.getElementById('lh-timer-mode-btn'); if(mb) mb.style.display='';
+  const cr=document.getElementById('lh-countdown-row');
+  if(cr) cr.style.display=_lhTimer.mode==='countdown'?'flex':'none';
+  if (_lhPipWindow&&!_lhPipWindow.closed) {
+    const pd=_lhPipWindow.document.getElementById('pip-display'); if(pd) pd.textContent='00:00:00';
+    const pb=_lhPipWindow.document.getElementById('pip-bar'); if(pb) pb.style.width='0%';
+  }
+  const sw=document.getElementById('lh-sticky'); if(sw) sw.style.display='none';
+}
+
+function lhTimerToggleMode() {
+  if (_lhTimer.running) return;
+  _lhTimer.elapsed=0; _lhTimer.snapshot=0;
+  if (_lhTimer.mode==='stopwatch') {
+    _lhTimer.mode='countdown';
+    const mb=document.getElementById('lh-timer-mode-btn'); if(mb) mb.textContent='⏱ Stopwatch';
+    const mt=document.getElementById('lh-timer-mode-tag'); if(mt) mt.textContent='Countdown';
+    const cr=document.getElementById('lh-countdown-row'); if(cr) cr.style.display='flex';
+  } else {
+    _lhTimer.mode='stopwatch';
+    const mb=document.getElementById('lh-timer-mode-btn'); if(mb) mb.textContent='⏱ Countdown';
+    const mt=document.getElementById('lh-timer-mode-tag'); if(mt) mt.textContent='Stopwatch';
+    const cr=document.getElementById('lh-countdown-row'); if(cr) cr.style.display='none';
+    const bw=document.getElementById('lh-timer-bar-wrap'); if(bw) bw.style.display='none';
+  }
+  const md=document.getElementById('lh-timer-display'); if(md) md.textContent='00:00:00';
+  const bar=document.getElementById('lh-timer-bar'); if(bar) bar.style.width='0%';
+  const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='none';
+  const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='none';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
+}
+
+function lhTimerUse() { const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='block'; }
+
+function lhApplyTime(field) {
+  const secsLogged = _lhTimer.mode==='countdown'
+    ? Math.max(0,_lhTimer.goal-_lhTimer.elapsed) : _lhTimer.elapsed;
+  const hrs = +(secsLogged/3600).toFixed(2);
+  const rounded = Math.round(hrs*2)/2;
+  const inputId = field==='lecture'?'lh-l':field==='practice'?'lh-p':'lh-r';
+  const inp=document.getElementById(inputId);
+  if(inp){inp.value=rounded||hrs.toFixed(1);calcTotal();}
+  const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='none';
+  const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='none';
+}
+
+function _lhTimerReset() {
+  if (_lhTimer.running) return; // keep alive if user is mid-session
+  _lhTimer = { running:false, mode:_lhTimer.mode, elapsed:0, goal:0, interval:null, snapshot:0, startTs:null };
+  const md=document.getElementById('lh-timer-display'); if(md) md.textContent='00:00:00';
+  const bar=document.getElementById('lh-timer-bar'); if(bar) bar.style.width='0%';
+  const bw=document.getElementById('lh-timer-bar-wrap'); if(bw) bw.style.display='none';
+  const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display='';
+  const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display='none';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
+  const ub=document.getElementById('lh-timer-use'); if(ub) ub.style.display='none';
+  const ap=document.getElementById('lh-timer-apply'); if(ap) ap.style.display='none';
+}
+
 function calcTotal(){
   const l=+document.getElementById('lh-l').value||0,p=+document.getElementById('lh-p').value||0,r=+document.getElementById('lh-r').value||0;
   const tot=(l+p+r).toFixed(1);
@@ -6275,5 +6566,27 @@ function renderInsights(d){
 </script>
 <script src="/analytics.js"></script>
 <script src="app.js"></script>
+<!-- ── Sticky Study Timer ── -->
+<div id="lh-sticky" style="display:none" class="lhs-widget">
+  <div class="lhs-inner">
+    <div class="lhs-top">
+      <span class="lhs-subj">Study</span>
+      <div class="lhs-actions">
+        <button class="lhs-pip" onclick="lhOpenPip()" title="Float on top (Picture-in-Picture)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><rect x="12" y="11" width="8" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="lhs-open" onclick="openM('logHours')" title="Open Log Hours">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="lhs-time">00:00:00</div>
+    <div class="lhs-bar" style="display:none"><div class="lhs-bar-fill"></div></div>
+    <div class="lhs-controls">
+      <button class="lhs-toggle" onclick="lhTimerToggle()">⏸</button>
+      <button class="lhs-reset" onclick="lhTimerReset()">↺</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

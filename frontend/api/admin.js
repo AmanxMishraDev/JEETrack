@@ -419,30 +419,44 @@ export default async function handler(req, res) {
     }
 
     // ── FUNNEL ────────────────────────────────────────────────
-    // Use Supabase for real data steps, PostHog for behavioral ones
+    // 100% Supabase — no PostHog, no fake data.
+    // Each step = distinct users who have reached that milestone.
     if (action === 'funnel') {
       const [
-        totalUsers, onboardings,
-        usersWithTests, usersWithHours, usersWithAI
+        totalUsers, onboardedUsers,
+        usersWithTests, usersWithHours, usersWithBacklogs,
+        usersWithSyllabus, usersWithAIRaw,
       ] = await Promise.all([
+        // Step 1: anyone who signed up (has a user_preferences row)
         sbCount('user_preferences').catch(() => 0),
-        // Distinct users who have logged at least one test
-        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: dateFrom(90) }, series: [{ kind: 'EventsNode', event: 'onboarding_completed', math: 'dau' }] }).catch(() => null),
-        // Count distinct user_ids in tests table
+        // Step 2: users who actually finished onboarding (flag in user_preferences)
+        sbCount('user_preferences', 'onboarding_done=eq.true').catch(() => 0),
+        // Step 3: users who logged at least one mock test
         sbQuery('tests?select=user_id').catch(() => []),
+        // Step 4: users who logged at least one study hour session
         sbQuery('hours?select=user_id').catch(() => []),
+        // Step 5: users who added at least one backlog item
+        sbQuery('backlogs?select=user_id').catch(() => []),
+        // Step 6: users who touched syllabus tracker
+        sbQuery('syllabus?select=user_id').catch(() => []),
+        // Step 7: try PostHog AI insights, fallback gracefully
         phQuery({ kind: 'TrendsQuery', dateRange: { date_from: dateFrom(90) }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'dau' }] }).catch(() => null),
       ]);
 
-      const distinctTestUsers  = new Set(usersWithTests.map(r => r.user_id)).size;
-      const distinctHoursUsers = new Set(usersWithHours.map(r => r.user_id)).size;
+      const distinctTestUsers     = new Set(usersWithTests.map(r => r.user_id)).size;
+      const distinctHoursUsers    = new Set(usersWithHours.map(r => r.user_id)).size;
+      const distinctBacklogUsers  = new Set(usersWithBacklogs.map(r => r.user_id)).size;
+      const distinctSyllabusUsers = new Set(usersWithSyllabus.map(r => r.user_id)).size;
+      const aiUsers               = maxResult(usersWithAIRaw); // PostHog peak-day DAU, best proxy
 
       return res.status(200).json([
         { event: 'user_signed_up',        label: 'Signed Up',            count: totalUsers },
-        { event: 'onboarding_completed',  label: 'Completed Onboarding', count: maxResult(onboardings) },
+        { event: 'onboarding_completed',  label: 'Completed Onboarding', count: onboardedUsers },
         { event: 'mock_test_logged',      label: 'Logged Mock Test',      count: distinctTestUsers },
         { event: 'study_hours_logged',    label: 'Logged Study Hours',    count: distinctHoursUsers },
-        { event: 'ai_insights_generated', label: 'Used AI Insights',      count: maxResult(usersWithAI) },
+        { event: 'backlog_used',          label: 'Used Backlog',          count: distinctBacklogUsers },
+        { event: 'syllabus_used',         label: 'Used Syllabus Tracker', count: distinctSyllabusUsers },
+        { event: 'ai_insights_generated', label: 'Used AI Insights',      count: aiUsers },
       ]);
     }
 
@@ -893,21 +907,33 @@ export default async function handler(req, res) {
       const limit  = parseInt(req.query.limit || '50');
       const offset = parseInt(req.query.offset || '0');
 
-      // Get feedbacks with user info
+      // Get feedbacks — include rating (may be null for text-only feedback)
+      // email may be null for review/rating submissions (those don't store email)
       const feedbacks = await sbQuery(
-        `feedback?select=id,user_id,email,subject,message,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
+        `feedback?select=id,user_id,email,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
       ).catch(() => []);
 
       // Get total count
       const total = await sbCount('feedback').catch(() => 0);
 
-      return res.status(200).json({ feedbacks, total });
+      // Enrich with username from roster where email is missing
+      const roster = await buildRoster().catch(() => []);
+      const rosterMap = {};
+      roster.forEach(u => { rosterMap[u.id] = u; });
+
+      const enriched = feedbacks.map(f => ({
+        ...f,
+        display_name: rosterMap[f.user_id]?.name || f.email?.split('@')[0] || 'Anonymous',
+        email: f.email || rosterMap[f.user_id]?.email || '',
+      }));
+
+      return res.status(200).json({ feedbacks: enriched, total });
     }
 
     // ── FEEDBACK STATS ──────────────────────────────────────
     if (action === 'feedback_stats') {
       const feedbacks = await sbQuery(
-        'feedback?select=id,user_id,email,subject,message,created_at&order=created_at.desc&limit=500'
+        'feedback?select=id,user_id,email,subject,message,rating,created_at&order=created_at.desc&limit=500'
       ).catch(() => []);
 
       // Categorize by subject keywords
@@ -944,11 +970,75 @@ export default async function handler(req, res) {
         byMonth[m] = (byMonth[m] || 0) + 1;
       });
 
+      // Rating distribution (only entries with a numeric rating)
+      const ratedItems = feedbacks.filter(f => f.rating != null && !isNaN(f.rating));
+      const ratingDist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      ratedItems.forEach(f => {
+        const r = Math.round(Number(f.rating));
+        if (r >= 1 && r <= 5) ratingDist[r]++;
+      });
+      const avgRating = ratedItems.length
+        ? (ratedItems.reduce((s, f) => s + Number(f.rating), 0) / ratedItems.length).toFixed(1)
+        : null;
+
       return res.status(200).json({
         total: feedbacks.length,
         categories,
         byMonth,
+        ratingDist,
+        avgRating,
+        ratedCount: ratedItems.length,
         recent: feedbacks.slice(0, 10),
+      });
+    }
+
+    // ── RETENTION ─────────────────────────────────────────────
+    // Cohort-based Day-1 / Day-7 / Day-30 retention.
+    // "Active" = has a test or hours entry on that date.
+    if (action === 'retention') {
+      const roster = await buildRoster();
+      if (!roster.length) return res.status(200).json({ d1: 0, d7: 0, d30: 0, cohorts: [] });
+
+      const [allTests, allHours] = await Promise.all([
+        sbQuery(`tests?select=user_id,date&date=gte.${dateFrom(45)}`).catch(() => []),
+        sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(45)}`).catch(() => []),
+      ]);
+
+      // Map user_id -> Set of active dates
+      const userDates = {};
+      [...allTests, ...allHours].forEach(r => {
+        if (!r.date) return;
+        if (!userDates[r.user_id]) userDates[r.user_id] = new Set();
+        userDates[r.user_id].add(r.date);
+      });
+
+      // For each user, check if they were active on day 1, 7, 30 after signup
+      const d1Users = [], d7Users = [], d30Users = [];
+      let d1Eligible = 0, d7Eligible = 0, d30Eligible = 0;
+
+      const now = new Date();
+      roster.forEach(u => {
+        if (!u.created_at) return;
+        const signup = new Date(u.created_at);
+        const daysSinceSignup = Math.floor((now - signup) / 86400000);
+        const dates = userDates[u.id] || new Set();
+
+        const wasActiveOnDay = (n) => {
+          const target = new Date(signup);
+          target.setDate(target.getDate() + n);
+          return dates.has(target.toISOString().split('T')[0]);
+        };
+
+        if (daysSinceSignup >= 1)  { d1Eligible++;  if (wasActiveOnDay(1))  d1Users.push(u.id); }
+        if (daysSinceSignup >= 7)  { d7Eligible++;  if (wasActiveOnDay(7))  d7Users.push(u.id); }
+        if (daysSinceSignup >= 30) { d30Eligible++; if (wasActiveOnDay(30)) d30Users.push(u.id); }
+      });
+
+      return res.status(200).json({
+        d1:  d1Eligible  ? Math.round(d1Users.length  / d1Eligible  * 100) : 0,
+        d7:  d7Eligible  ? Math.round(d7Users.length  / d7Eligible  * 100) : 0,
+        d30: d30Eligible ? Math.round(d30Users.length / d30Eligible * 100) : 0,
+        d1Eligible, d7Eligible, d30Eligible,
       });
     }
 

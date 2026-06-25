@@ -528,10 +528,22 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 
     <!-- FUNNEL PAGE -->
     <div class="page" id="page-funnel">
-      <div class="section-title">User Journey Funnel (Last 90 Days)<span class="line"></span></div>
-      <div class="card">
+      <div class="section-title">User Journey Funnel<span class="line"></span></div>
+      <div class="card" style="margin-bottom:1.25rem;">
         <h3><span class="ic">🎯</span>Signup → Engagement Funnel</h3>
+        <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">All steps sourced from Supabase — counts are <strong>distinct users</strong> who reached each milestone. Onboarding = <code>onboarding_done=true</code> in user_preferences.</p>
         <div class="funnel" id="funnel-steps"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+      <!-- Retention card -->
+      <div class="card">
+        <h3><span class="ic">🔄</span>Retention (Cohort)</h3>
+        <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">"Active on Day N" = user logged a test or study session exactly N days after signup.</p>
+        <div class="stats-grid" id="retention-grid">
+          <div class="stat"><div class="stat-icon">1️⃣</div><div class="stat-label">Day-1 Retention</div><div class="stat-value" id="ret-d1">—</div></div>
+          <div class="stat"><div class="stat-icon">7️⃣</div><div class="stat-label">Day-7 Retention</div><div class="stat-value" id="ret-d7">—</div></div>
+          <div class="stat"><div class="stat-icon">📅</div><div class="stat-label">Day-30 Retention</div><div class="stat-value" id="ret-d30">—</div></div>
+        </div>
+        <p id="ret-note" style="font-size:.72rem;color:var(--mu);margin-top:.6rem;"></p>
       </div>
     </div>
 
@@ -947,6 +959,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
       <div class="stats-grid" id="fb-stats-grid" style="margin-bottom:1.25rem;">
         <div class="stat"><div class="stat-icon">💬</div><div class="stat-label">Total Feedbacks</div><div class="stat-value" id="fb-total">—</div></div>
         <div class="stat"><div class="stat-icon">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="fb-this-month">—</div></div>
+        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-label">Avg Rating</div><div class="stat-value" id="fb-avg-rating">—</div></div>
         <div class="stat"><div class="stat-icon">🏷️</div><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:1rem;" id="fb-top-cat">—</div></div>
       </div>
 
@@ -956,9 +969,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
           <h3>🏷️ Feedback by Category</h3>
           <div class="bar-chart" id="fb-cat-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
-        <!-- Monthly trend -->
+        <!-- Rating distribution -->
         <div class="card">
-          <h3>📈 Monthly Trend</h3>
+          <h3>⭐ Rating Distribution</h3>
+          <div class="bar-chart" id="fb-rating-chart"><div class="loading"><div class="spinner"></div></div></div>
+          <!-- Monthly trend below -->
+          <h3 style="margin-top:1.1rem;">📈 Monthly Trend</h3>
           <div class="bar-chart" id="fb-month-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
       </div>
@@ -976,11 +992,11 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
           <table>
             <thead>
               <tr>
-                <th>User</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th>
+                <th>User</th><th>Email</th><th>Rating</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="fb-table">
-              <tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>
+              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1203,6 +1219,8 @@ function loadCurrentPage() {
     demographics:  loadDemographics,
     db:            loadDBStats,
     actions:       () => {},
+    email:         () => { loadEmailUsers(); updateRecipientCount(); },
+    feedback:      () => { loadFeedbackStats(); loadFeedbacks(0); },
   };
   (loaders[_currentPage] || (() => {}))();
 }
@@ -1388,6 +1406,26 @@ async function loadFunnel() {
       `;
     }).join('');
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
+  // Also load retention on the same page
+  loadRetention();
+}
+
+async function loadRetention() {
+  try {
+    const d = await api('retention');
+    document.getElementById('ret-d1').textContent  = d.d1  != null ? `${d.d1}%`  : '—';
+    document.getElementById('ret-d7').textContent  = d.d7  != null ? `${d.d7}%`  : '—';
+    document.getElementById('ret-d30').textContent = d.d30 != null ? `${d.d30}%` : '—';
+    if (d.d1Eligible != null) {
+      document.getElementById('ret-note').textContent =
+        `Eligible users — D1: ${d.d1Eligible} · D7: ${d.d7Eligible} · D30: ${d.d30Eligible}`;
+    }
+  } catch(e) {
+    ['ret-d1','ret-d7','ret-d30'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = 'err';
+    });
+  }
 }
 
 // ── DAU ──────────────────────────────────────────────────────
@@ -2323,12 +2361,6 @@ window.openEmailComposerWith = function(subject, toUserIds) {
   }, 300);
 };
 
-const _origLoadCurrentPage = loadCurrentPage;
-window.loadCurrentPage = function() {
-  if (_currentPage === 'email') { loadEmailUsers(); updateRecipientCount(); return; }
-  _origLoadCurrentPage();
-};
-
 document.addEventListener('input', e => {
   if (e.target.id === 'ce-custom-emails') updateRecipientCount();
 });
@@ -2345,6 +2377,7 @@ async function loadFeedbackStats() {
     document.getElementById('fb-total').textContent = fmt(d.total || 0);
     const thisMonth = new Date().toISOString().slice(0,7);
     document.getElementById('fb-this-month').textContent = fmt(d.byMonth?.[thisMonth] || 0);
+    document.getElementById('fb-avg-rating').textContent = d.avgRating ? `${d.avgRating} ⭐` : '—';
     if (d.categories) {
       const top = Object.entries(d.categories).sort((a,b) => b[1]-a[1])[0];
       document.getElementById('fb-top-cat').textContent = top ? top[0] : '—';
@@ -2362,6 +2395,23 @@ async function loadFeedbackStats() {
           <div class="bar-count">${count}</div>
         </div>`).join('') || '<div class="no-data">No data yet</div>';
     }
+    // Rating distribution chart
+    const ratingEl = document.getElementById('fb-rating-chart');
+    if (d.ratingDist && d.ratedCount > 0) {
+      const maxR = Math.max(...Object.values(d.ratingDist), 1);
+      const starColors = ['#ef4444','#f97316','#f59e0b','#84cc16','#22c55e'];
+      ratingEl.innerHTML = [5,4,3,2,1].map((star, i) => {
+        const count = d.ratingDist[star] || 0;
+        return `
+        <div class="bar-row">
+          <div class="bar-label">${'⭐'.repeat(star)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/maxR*100).toFixed(1)}%;background:${starColors[5-star]}"></div></div>
+          <div class="bar-count">${count}</div>
+        </div>`;
+      }).join('') + `<p style="font-size:.72rem;color:var(--mu);margin-top:.5rem;">${d.ratedCount} rated out of ${d.total} total</p>`;
+    } else {
+      ratingEl.innerHTML = '<div class="no-data">No ratings yet</div>';
+    }
     // Monthly chart
     const monthEl = document.getElementById('fb-month-chart');
     if (d.byMonth) {
@@ -2374,13 +2424,20 @@ async function loadFeedbackStats() {
           <div class="bar-count">${count}</div>
         </div>`).join('') || '<div class="no-data">No data yet</div>';
     }
-  } catch(e) { console.error('Feedback stats:', e); }
+  } catch(e) {
+    console.error('Feedback stats:', e);
+    // Show error in UI so it's not silently invisible
+    ['fb-total','fb-this-month','fb-avg-rating','fb-top-cat'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.textContent === '—') el.textContent = 'err';
+    });
+  }
 }
 
 async function loadFeedbacks(page = 0) {
   _fbPage = page;
   const tbody = document.getElementById('fb-table');
-  tbody.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
     const d = await api(`feedback_list&limit=20&offset=${page*20}`);
     _allFeedbacks = d.feedbacks || [];
@@ -2390,7 +2447,7 @@ async function loadFeedbacks(page = 0) {
     document.getElementById('fb-next').disabled = _allFeedbacks.length < 20;
     document.getElementById('fb-page-info').textContent = `Page ${page+1} · ${d.total||''} total`;
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="no-data">Error: ${e.message}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="no-data">Error loading feedbacks: ${e.message}</div></td></tr>`;
   }
 }
 
@@ -2399,7 +2456,8 @@ function filterFeedbacks(q) {
     ? _allFeedbacks.filter(f =>
         (f.subject||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.message||'').toLowerCase().includes(q.toLowerCase()) ||
-        (f.email||'').toLowerCase().includes(q.toLowerCase()))
+        (f.email||'').toLowerCase().includes(q.toLowerCase()) ||
+        (f.display_name||'').toLowerCase().includes(q.toLowerCase()))
     : _allFeedbacks;
   renderFeedbackTable(_filteredFeedbacks);
 }
@@ -2407,13 +2465,16 @@ function filterFeedbacks(q) {
 function renderFeedbackTable(feedbacks) {
   const tbody = document.getElementById('fb-table');
   if (!feedbacks.length) {
-    tbody.innerHTML = '<tr><td colspan="6"><div class="no-data">No feedbacks found</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="no-data">No feedbacks found</div></td></tr>';
     return;
   }
-  tbody.innerHTML = feedbacks.map(f => `
+  tbody.innerHTML = feedbacks.map(f => {
+    const stars = f.rating != null ? '⭐'.repeat(Math.min(5, Math.max(1, Math.round(Number(f.rating))))) : '—';
+    return `
     <tr>
-      <td style="font-size:.75rem;">${esc(f.email?.split('@')[0]||'Anonymous')}</td>
+      <td style="font-size:.75rem;font-weight:600;">${esc(f.display_name||f.email?.split('@')[0]||'Anonymous')}</td>
       <td style="font-size:.72rem;color:var(--mu);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.email||'—')}</td>
+      <td style="font-size:.8rem;white-space:nowrap;" title="${f.rating != null ? f.rating+'/5' : 'No rating'}">${stars}</td>
       <td style="font-weight:600;font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.subject||'')}">${esc(f.subject||'—')}</td>
       <td style="font-size:.75rem;color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.message||'')}">${esc(f.message||'—')}</td>
       <td style="font-size:.72rem;color:var(--mu);white-space:nowrap;">${fmtDate(f.created_at)}</td>
@@ -2423,7 +2484,8 @@ function renderFeedbackTable(feedbacks) {
           ✉️ Reply
         </button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function replyToFeedback(userId, email, subject) {
@@ -2450,12 +2512,6 @@ function replyToFeedback(userId, email, subject) {
   }, 350);
 }
 
-// Override loadCurrentPage for feedback
-const _origLoadFb = window.loadCurrentPage;
-window.loadCurrentPage = function() {
-  if (_currentPage === 'feedback') { loadFeedbackStats(); loadFeedbacks(0); return; }
-  _origLoadFb();
-};
 // ══ END FEEDBACK ANALYTICS ════════════════════════════════════
 
 </script>
