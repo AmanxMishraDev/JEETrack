@@ -12,7 +12,7 @@ export default function handler(req, res) {
     return res.status(500).json({ error: 'Supabase env vars not configured' });
   }
 
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+  res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=300');
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({ url, key, posthogKey, posthogHost });
 }

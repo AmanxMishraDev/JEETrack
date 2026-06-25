@@ -22,16 +22,25 @@ async function initSupabase(){
     if(!_authResolved) showAuthScreen();
   }, 6000);
 
-  
+  // Fetch config — retry with cache-bust if first attempt fails
   try {
     const res = await fetch('/api/config');
     if(res.ok){
       const cfg = await res.json();
       SUPABASE_URL = cfg.url;
       SUPABASE_ANON_KEY = cfg.key;
+    } else {
+      // Try again with cache-bust
+      const res2 = await fetch('/api/config?_=' + Date.now());
+      if(res2.ok){ const cfg2=await res2.json(); SUPABASE_URL=cfg2.url; SUPABASE_ANON_KEY=cfg2.key; }
     }
   } catch(e) {
-    console.warn('Could not fetch /api/config — running in offline/demo mode', e);
+    console.warn('Could not fetch /api/config \u2014 running in offline/demo mode', e);
+    // One more try with cache-bust
+    try {
+      const res3 = await fetch('/api/config?_=' + Date.now());
+      if(res3.ok){ const cfg3=await res3.json(); SUPABASE_URL=cfg3.url; SUPABASE_ANON_KEY=cfg3.key; }
+    } catch(e2) {}
   }
 
   if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
@@ -473,8 +482,32 @@ async function loadUserData(){
     }
   }catch(e){
     console.error('Load error:',e);
-    const saved=localStorage.getItem('jt3');
-    if(saved) try{ const p=JSON.parse(saved); if(p.backlogStreak>365)p.backlogStreak=0; S=p; }catch(e2){}
+    // Wait 1.5s and retry once before falling back to localStorage
+    try {
+      await new Promise(r => setTimeout(r, 1500));
+      const uid2 = currentUser.id;
+      const [tests2,hours2,backlogs2,todos2,upcoming2,syllabus2,streaks2] = await Promise.all([
+        sb.from('tests').select('*').eq('user_id',uid2),
+        sb.from('hours').select('*').eq('user_id',uid2),
+        sb.from('backlogs').select('*').eq('user_id',uid2),
+        sb.from('todos').select('*').eq('user_id',uid2),
+        sb.from('upcoming').select('*').eq('user_id',uid2),
+        sb.from('syllabus').select('*').eq('user_id',uid2),
+        sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle()
+      ]);
+      S.tests=(tests2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
+      S.hours=(hours2.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total}));
+      S.backlogs=(backlogs2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
+      S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
+      S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
+      if(syllabus2.data&&syllabus2.data.length){ S.syllabus={physics:[],chemistry:[],maths:[]}; syllabus2.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); }); S=migrateSyllabus(S); }
+      if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
+      console.log('Retry load succeeded');
+    } catch(e2) {
+      console.error('Retry load also failed, falling back to localStorage:', e2);
+      const saved=localStorage.getItem('jt3');
+      if(saved) try{ const p=JSON.parse(saved); if(p.backlogStreak>365)p.backlogStreak=0; S=p; }catch(e3){}
+    }
   }
 }
 
