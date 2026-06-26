@@ -1,5 +1,26 @@
 
 
+// ── Auto-reload when a new Service Worker takes control ─────────────────────
+// Without this, a deployed update can sit "active" in the background forever
+// while an already-open tab keeps rendering the OLD html/css/js it loaded with.
+// This does NOT clear any storage/session — it only reloads the document so the
+// browser re-fetches index.html/app.js/styles.css fresh. Sessions are untouched.
+if ('serviceWorker' in navigator) {
+  let _swReloadingAlready = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (_swReloadingAlready) return; // guard against a reload loop
+    _swReloadingAlready = true;
+    window.location.reload();
+  });
+  // Browsers normally only re-check sw.js on navigation, which can be slow to
+  // notice a fresh deploy on a long-lived open tab. Nudge it along.
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (!reg) return;
+    reg.update().catch(()=>{});
+    setInterval(() => reg.update().catch(()=>{}), 60 * 60 * 1000); // hourly
+  }).catch(()=>{});
+}
+
 let SUPABASE_URL = null;
 let SUPABASE_ANON_KEY = null;
 

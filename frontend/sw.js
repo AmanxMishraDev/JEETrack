@@ -1,6 +1,6 @@
 // Cache version is set at build/deploy time via a version endpoint
 // Falls back to timestamp-based versioning so every deploy auto-invalidates
-const CACHE_VERSION = 'jeetrack-v2';
+const CACHE_VERSION = 'jeetrack-v3';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
