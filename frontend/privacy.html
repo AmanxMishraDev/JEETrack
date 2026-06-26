@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Privacy Policy — JEETrack</title>
+<meta name="description" content="JEETrack's Privacy Policy — what data we collect, how it's used, who we share it with, and how to control or delete it."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://jeetrack.in/privacy"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jeetrack.in/privacy"/>
+<meta property="og:title" content="Privacy Policy — JEETrack"/>
+<meta property="og:description" content="What data JEETrack collects, how it's used, and how to control or delete it."/>
+<meta property="og:image" content="https://jeetrack.in/icon-512.png"/>
+<meta property="og:site_name" content="JEETrack"/>
+<link rel="icon" type="image/svg+xml" href="logo.svg"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #181820;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --purple: #7c6af7;
+    --purple-light: #a695ff;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --rose: #f472b6;
+    --text: #e8e8f0;
+    --muted: #7a7990;
+    --muted2: #4a4960;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
+    text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(145deg, #6c5ce7, #a29bfe, #fd79a8);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 4px 22px rgba(108,92,231,.55), 0 1px 4px rgba(0,0,0,.5);
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .nav-logo-mark::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.25) 0%, transparent 60%);
+    border-radius: inherit;
+  }
+  .nav-logo-text { color: #fff; }
+  .nav-logo-track { background: linear-gradient(135deg,#a29bfe,#fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  @media (max-width: 640px) {
+    .nav-cta-desktop { display: none !important; }
+  }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 4rem 1.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse at center, rgba(124,106,247,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid rgba(124,106,247,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--purple-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .hero h1 em { background: linear-gradient(135deg, #a29bfe, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; }
+  .hero p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+  .hero .updated {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--muted2);
+  }
+
+  /* LAYOUT */
+  .doc-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    min-width: 0;
+  }
+  @media (max-width: 800px) {
+    .doc-wrap { grid-template-columns: 1fr; }
+    .toc { display: none; }
+  }
+
+  /* TOC */
+  .toc {
+    position: sticky;
+    top: 84px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.1rem 1rem;
+  }
+  .toc-title {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+  }
+  .toc a {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.32rem 0;
+    border-left: 2px solid transparent;
+    padding-left: 0.6rem;
+    margin-left: -0.6rem;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { color: var(--text); border-color: var(--purple-light); }
+
+  /* ARTICLE */
+  .doc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.2rem clamp(1.3rem, 4vw, 2.5rem);
+    min-width: 0;
+    overflow: hidden;
+  }
+  .doc-summary {
+    background: rgba(124,106,247,0.08);
+    border: 1px solid rgba(124,106,247,0.22);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .doc-summary strong { color: var(--purple-light); font-family: var(--font-head); }
+  .doc-summary ul { margin: 0.5rem 0 0 1.1rem; color: var(--muted); }
+  .doc-summary li { margin-bottom: 0.25rem; }
+
+  .doc section { margin-bottom: 2.1rem; }
+  .doc section:last-child { margin-bottom: 0; }
+  .doc h2 {
+    font-family: var(--font-head);
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    scroll-margin-top: 80px;
+  }
+  .doc h2 .num {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--purple-light);
+    background: rgba(124,106,247,0.14);
+    border-radius: 6px;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .doc h3 {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.1rem 0 0.5rem;
+  }
+  .doc p {
+    color: var(--muted);
+    font-size: 0.91rem;
+    margin-bottom: 0.7rem;
+  }
+  .doc p strong, .doc li strong { color: var(--text); font-weight: 600; }
+  .doc ul, .doc ol {
+    color: var(--muted);
+    font-size: 0.91rem;
+    margin: 0.5rem 0 0.7rem 1.2rem;
+  }
+  .doc li { margin-bottom: 0.4rem; }
+  .doc a { color: var(--purple-light); text-decoration: none; }
+  .doc a:hover { text-decoration: underline; }
+
+  .table-wrap { overflow-x: auto; margin: 0.8rem 0 1rem; max-width: 100%; }
+  table.dtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    table-layout: fixed;
+  }
+  table.dtable th, table.dtable td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  @media (min-width: 700px) {
+    table.dtable { min-width: 520px; table-layout: auto; }
+  }
+  table.dtable th {
+    color: var(--purple-light);
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    background: var(--surface2);
+  }
+  table.dtable td { color: var(--muted); }
+  table.dtable td strong { color: var(--text); }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.6rem 0 0.9rem; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.74rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 99px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    background: var(--surface2);
+  }
+  .tag.green { color: var(--green); border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.08); }
+  .tag.amber { color: var(--amber); border-color: rgba(251,191,36,.3); background: rgba(251,191,36,.08); }
+  .tag.purple { color: var(--purple-light); border-color: rgba(124,106,247,.3); background: rgba(124,106,247,.08); }
+  .tag.rose { color: var(--rose); border-color: rgba(244,114,182,.3); background: rgba(244,114,182,.08); }
+
+  .callout {
+    border-left: 3px solid var(--purple);
+    background: rgba(124,106,247,0.06);
+    border-radius: 0 10px 10px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.9rem 0;
+    font-size: 0.87rem;
+  }
+  .callout.amber { border-left-color: var(--amber); background: rgba(251,191,36,0.06); }
+  .callout p { margin-bottom: 0; color: var(--text); }
+
+  .doc hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .contact-box {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-top: 0.8rem;
+  }
+  .contact-box a { font-weight: 600; }
+
+  /* CTA + FOOTER (shared) */
+  .cta-section {
+    text-align: center;
+    padding: 3rem 1.5rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .cta-section h2 {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  .cta-section p {
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--purple-light); text-decoration: none; }
+  footer .footer-links a { margin: 0 0.3rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://jeetrack.in" class="nav-logo">
+    <div class="nav-logo-mark">J</div>
+    <span class="nav-logo-text">JEE<span class="nav-logo-track">Track</span></span>
+  </a>
+  <a href="https://jeetrack.in" class="nav-cta nav-cta-desktop">Get Started Free →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span class="hero-badge-dot"></span>Legal</div>
+  <h1>Privacy <em>Policy</em></h1>
+  <p>What we collect, why we collect it, who we share it with, and how you can control or delete it.</p>
+  <div class="updated">Last updated: June 26, 2026</div>
+</section>
+
+<div class="doc-wrap">
+
+  <div class="toc">
+    <div class="toc-title">On this page</div>
+    <a href="#overview">Overview</a>
+    <a href="#what-we-collect">What we collect</a>
+    <a href="#how-we-use">How we use it</a>
+    <a href="#ai-insights">AI Insights & Groq</a>
+    <a href="#analytics">Analytics & PostHog</a>
+    <a href="#sharing">Who we share data with</a>
+    <a href="#storage">Storage & security</a>
+    <a href="#retention">Retention & deletion</a>
+    <a href="#your-rights">Your rights & choices</a>
+    <a href="#children">Children & minors</a>
+    <a href="#cookies">Cookies & local storage</a>
+    <a href="#notifications">Push notifications</a>
+    <a href="#changes">Changes to this policy</a>
+    <a href="#contact">Contact us</a>
+  </div>
+
+  <article class="doc">
+
+    <div class="doc-summary">
+      <strong>The short version:</strong>
+      <ul>
+        <li>JEETrack stores the study data you enter (test scores, study hours, syllabus progress, tasks) so the app works. We don't sell your data.</li>
+        <li>We use <strong>Supabase</strong> to store your account and data, <strong>Groq</strong> to generate your AI Insights, <strong>Resend</strong> to send report emails, and <strong>PostHog</strong> to understand how the app is used (including limited, input-masked session recordings).</li>
+        <li>You can export or permanently delete all your data anytime from <strong>Settings → Data & Backup</strong>.</li>
+        <li>Many JEETrack users are under 18. If you're under 18, please use JEETrack with a parent or guardian's knowledge — see <a href="#children">Children &amp; Minors</a>.</li>
+      </ul>
+    </div>
+
+    <section id="overview">
+      <h2><span class="num">1</span>Overview</h2>
+      <p>JEETrack ("JEETrack", "we", "us", "our") is a study-tracking web app built for JEE (Joint Entrance Examination) aspirants in India, accessible at <a href="https://jeetrack.in">jeetrack.in</a>. JEETrack is built and operated by an individual developer, not a registered company.</p>
+      <p>This Privacy Policy explains what information JEETrack collects when you use the app, how that information is used, who it's shared with, and what choices you have. It applies to the JEETrack website, the JEETrack Progressive Web App (PWA) when installed on your device, and any related services described below.</p>
+      <p>By creating an account or using JEETrack, you agree to the collection and use of information as described in this policy. If you don't agree, please don't use the app.</p>
+    </section>
+
+    <section id="what-we-collect">
+      <h2><span class="num">2</span>What we collect</h2>
+      <p>We try to collect only what's needed to make JEETrack work and to improve it. Here's exactly what that includes:</p>
+
+      <h3>Account information</h3>
+      <p>When you sign up, you create an account through <strong>Supabase Authentication</strong>, using either:</p>
+      <ul>
+        <li><strong>Email and password</strong> — we (via Supabase) store your email address and a securely hashed password. We never see or store your password in plain text.</li>
+        <li><strong>Google Sign-In (OAuth)</strong> — Google shares your name, email address, and profile picture (if available) with us, so we can create your account without you typing a password.</li>
+      </ul>
+
+      <h3>Profile & onboarding information</h3>
+      <p>During onboarding, you may provide:</p>
+      <ul>
+        <li>Display name and profile photo (uploaded photo or a preset avatar)</li>
+        <li>Academic year (Class 11, Class 12, or Dropper) and target JEE year</li>
+        <li>Study mode (online, offline, hybrid, self-study) and coaching institute name, if any</li>
+      </ul>
+
+      <h3>Study data you create</h3>
+      <p>This is the core of the app — the data you log to track your preparation:</p>
+      <ul>
+        <li>Mock test scores for JEE Mains and JEE Advanced (subject-wise breakdowns, totals, dates, notes)</li>
+        <li>Study hours logged by subject and type (lecture, practice, revision), including timer sessions</li>
+        <li>Syllabus completion status for Physics, Chemistry, and Maths chapters</li>
+        <li>To-do and backlog tasks, including titles, priorities, due dates, and notes</li>
+        <li>Score goals you set for yourself</li>
+        <li>Feedback or messages you send us through the in-app feedback form</li>
+      </ul>
+
+      <h3>Technical & usage information</h3>
+      <p>We (and our analytics provider, described below) automatically collect some technical information when you use JEETrack, such as device type, browser type, general usage patterns (which pages and features you use), and approximate location derived from your IP address (typically city/country level, not precise GPS).</p>
+
+      <h3>Information we do <em>not</em> intentionally collect</h3>
+      <p>We don't ask for or knowingly collect your government ID numbers, financial/payment details (JEETrack is free — we don't process payments), or precise GPS location.</p>
+    </section>
+
+    <section id="how-we-use">
+      <h2><span class="num">3</span>How we use your information</h2>
+      <p>We use the information described above to:</p>
+      <ul>
+        <li>Create and maintain your account, and let you sign in securely</li>
+        <li>Save and sync your study data across your devices</li>
+        <li>Generate your dashboards, charts, streaks, and the study-hours heatmap</li>
+        <li>Generate your AI Insights reports (see below)</li>
+        <li>Send you transactional emails (like monthly report emails) and, if you opt in, push notifications for test reminders and study nudges</li>
+        <li>Personalize onboarding and dashboard calibration based on your class/target year</li>
+        <li>Understand how people use JEETrack, fix bugs, and decide what to build next</li>
+        <li>Respond to feedback or support requests you send us</li>
+      </ul>
+      <p>We do <strong>not</strong> sell your personal data to advertisers or other third parties, and JEETrack does not run third-party advertising.</p>
+    </section>
+
+    <section id="ai-insights">
+      <h2><span class="num">4</span>AI Insights & Groq</h2>
+      <p>JEETrack's "AI Insights" feature analyzes your test scores, study hours, syllabus progress, and backlog data to generate a personalized weekly breakdown. To do this, when you tap <strong>Generate Insights</strong>, JEETrack sends a summary of that data — built from what you've logged in the app — to <strong><a href="https://groq.com" target="_blank" rel="noopener">Groq</a></strong>, a third-party AI inference provider, which runs a large language model (Llama 3.3 70B) to produce the analysis text.</p>
+      <div class="callout">
+        <p>This means a snapshot of your performance data (scores, hours, syllabus gaps) is sent to Groq's servers at the moment you request an insight. We've designed the request to include only what's needed to generate the report — not your name, email, or account credentials — but the academic data itself (e.g. "scored 62% in Physics on partial syllabus") is included so the AI can analyze it.</p>
+      </div>
+      <p>This request happens through our own backend (a Supabase Edge Function), which requires you to be signed in — it isn't called automatically or in the background. Groq processes this data to return a response and does not use it to train their models for the purposes of this integration, per their API terms; we encourage you to review <a href="https://groq.com/privacy-policy" target="_blank" rel="noopener">Groq's own privacy policy</a> for how they handle API data.</p>
+    </section>
+
+    <section id="analytics">
+      <h2><span class="num">5</span>Analytics & PostHog</h2>
+      <p>We use <strong><a href="https://posthog.com" target="_blank" rel="noopener">PostHog</a></strong>, a product analytics service, to understand how people actually use JEETrack so we can fix what's broken and improve what isn't. Here's specifically what that involves:</p>
+
+      <div class="tag-row">
+        <span class="tag purple">Event tracking</span>
+        <span class="tag amber">Session recording (inputs masked)</span>
+        <span class="tag green">User identification</span>
+      </div>
+
+      <h3>Events we track</h3>
+      <p>We log specific actions you take in the app — for example, signing up, signing in, completing onboarding, logging a mock test (including the subject-wise scores you entered), logging study hours, adding a to-do or backlog item, marking a syllabus chapter complete, generating AI Insights, submitting feedback, and exporting a PDF report.</p>
+
+      <h3>Session recording</h3>
+      <p>PostHog also records a visual replay of your session (mouse movement, clicks, and page navigation) to help us spot confusing UI or bugs. <strong>All input field contents are masked</strong> in these recordings — meaning text you type into any field (including password fields) is not visible in the recording, it shows as masked characters instead.</p>
+
+      <h3>Identification</h3>
+      <p>Once you're signed in, we associate your analytics activity with your account using your user ID, along with your email, display name, and academic profile fields (class, target year, study mode, coaching institute) — this lets us understand usage patterns without needing to guess who's doing what.</p>
+
+      <p>PostHog is a separate data processor from Supabase — your account data and your analytics data are stored in different systems operated by different companies. You can review <a href="https://posthog.com/privacy" target="_blank" rel="noopener">PostHog's privacy policy</a> for details on how they handle and secure this data.</p>
+    </section>
+
+    <section id="sharing">
+      <h2><span class="num">6</span>Who we share data with</h2>
+      <p>We don't sell or rent your personal information. We do share data with the service providers who help us run JEETrack — each only gets the data it needs to do its job:</p>
+
+      <div class="table-wrap">
+        <table class="dtable">
+          <tr><th>Provider</th><th>What they're used for</th><th>What they receive</th></tr>
+          <tr>
+            <td><strong>Supabase</strong></td>
+            <td>Authentication, database, and Edge Functions (our backend)</td>
+            <td>Account credentials, all study data you create, profile info</td>
+          </tr>
+          <tr>
+            <td><strong>Google</strong></td>
+            <td>Sign-in via Google OAuth (optional, if you choose it)</td>
+            <td>Your Google account email, name, and profile picture</td>
+          </tr>
+          <tr>
+            <td><strong>Groq</strong></td>
+            <td>Generating AI Insights reports</td>
+            <td>A summary of your academic performance data, only when you request an insight</td>
+          </tr>
+          <tr>
+            <td><strong>Resend</strong></td>
+            <td>Sending monthly report emails and transactional emails</td>
+            <td>Your email address, and the content of the report (built from your data)</td>
+          </tr>
+          <tr>
+            <td><strong>PostHog</strong></td>
+            <td>Product analytics and session recording</td>
+            <td>Usage events, masked-input session recordings, account identifiers</td>
+          </tr>
+          <tr>
+            <td><strong>Vercel</strong></td>
+            <td>Hosting the website and serverless functions</td>
+            <td>Standard web request data (IP address, browser info) as part of serving the site</td>
+          </tr>
+        </table>
+      </div>
+
+      <p>We may also disclose information if required to by law, legal process, or government request, or if necessary to protect the rights, property, or safety of JEETrack, our users, or others.</p>
+      <p>If JEETrack is ever acquired, merged, or its assets transferred, your information may be transferred as part of that transaction — we'll notify you if that happens.</p>
+    </section>
+
+    <section id="storage">
+      <h2><span class="num">7</span>Storage & security</h2>
+      <p>Your account and study data are stored in a <strong>Supabase</strong> PostgreSQL database with Row Level Security enabled, meaning the database itself enforces that you can only ever read or write your own data — not other users' data. Communication between your browser and our backend uses HTTPS encryption.</p>
+      <p>JEETrack also keeps a local copy of your data in your browser's local storage so the app stays fast and usable on flaky connections, syncing it back to Supabase when you're online.</p>
+      <p>No method of transmission or storage is 100% secure, and we can't guarantee absolute security — but we use industry-standard practices (encrypted connections, access-controlled databases, hashed passwords) to protect your information.</p>
+    </section>
+
+    <section id="retention">
+      <h2><span class="num">8</span>Retention & deletion</h2>
+      <p>We keep your account and study data for as long as your account is active, so your tracker keeps working and your history stays intact for streaks, trends, and comparisons.</p>
+      <p>You're in control of this data:</p>
+      <ul>
+        <li><strong>Export:</strong> Go to <em>Settings → Data &amp; Backup → Export JSON Backup</em> to download all your data, or <em>Export PDF Report</em> for a formatted summary.</li>
+        <li><strong>Delete everything:</strong> Go to <em>Settings → Data &amp; Backup → Reset All Data</em> to permanently and irreversibly erase your scores, study hours, tasks, backlog, and syllabus progress.</li>
+        <li><strong>Delete your account entirely:</strong> Email us at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we'll delete your account and associated data from our systems.</li>
+      </ul>
+      <p>Some information may persist for a short period in backups or logs (including analytics event logs already sent to PostHog) even after deletion, but it will no longer be linked to active use of the product and will age out per our providers' standard retention schedules.</p>
+    </section>
+
+    <section id="your-rights">
+      <h2><span class="num">9</span>Your rights & choices</h2>
+      <p>Regardless of where you live, you can:</p>
+      <ul>
+        <li><strong>Access</strong> your data anytime through the app, or request a copy from us directly</li>
+        <li><strong>Correct</strong> inaccurate profile information from Settings</li>
+        <li><strong>Export</strong> your data as a JSON backup or PDF report</li>
+        <li><strong>Delete</strong> your data or your account, as described above</li>
+        <li><strong>Opt out</strong> of push notifications and monthly email reports anytime from Settings</li>
+        <li><strong>Withdraw consent</strong> for Google Sign-In data sharing by disconnecting JEETrack from your Google account settings, or by deleting your JEETrack account</li>
+      </ul>
+      <p>If you're an Indian resident, these rights are consistent with the Digital Personal Data Protection Act, 2023 (DPDP Act). If you're located outside India and a different privacy law applies to you (such as the GDPR), we'll honor equivalent rights on request — contact us and we'll do our best to accommodate it.</p>
+    </section>
+
+    <section id="children">
+      <h2><span class="num">10</span>Children & minors</h2>
+      <div class="callout amber">
+        <p>We know many JEETrack users are between 16 and 18 years old, since that's the typical age range for JEE aspirants. This section is here deliberately, not as boilerplate.</p>
+      </div>
+      <p>If you are under 18, you should use JEETrack with the involvement, awareness, or consent of a parent or legal guardian, consistent with applicable law in your jurisdiction. JEETrack does not knowingly collect more information from a minor than is needed to provide the study-tracking features described in this policy, and we don't use minors' data for advertising.</p>
+      <p>If you are a parent or guardian and believe your child has provided personal information to JEETrack and you'd like it reviewed, exported, or deleted, contact us at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we will act on that request.</p>
+    </section>
+
+    <section id="cookies">
+      <h2><span class="num">11</span>Cookies & local storage</h2>
+      <p>JEETrack uses your browser's local storage to keep you signed in and to cache your study data for offline-friendly performance. Supabase Authentication may also use cookies or similar tokens to manage your login session securely.</p>
+      <p>PostHog sets its own cookies/local storage entries to recognize your browser across sessions for analytics purposes. We don't use cookies for third-party advertising or cross-site ad tracking.</p>
+      <p>JEETrack also registers a <strong>service worker</strong> in your browser (if you enable notifications) to support offline caching and push notifications. This service worker can store cached copies of app files on your device — it does not collect personal data on its own.</p>
+    </section>
+
+    <section id="notifications">
+      <h2><span class="num">12</span>Push notifications & emails</h2>
+      <p>If you opt in, JEETrack can send browser push notifications for test reminders, daily study nudges, and backlog reminders. You can disable these anytime from Settings or your browser's notification permissions — this is entirely optional and off by default.</p>
+      <p>If you opt in to monthly reports, we'll send a curated progress email (via Resend) on the 1st of each month, including a PDF performance summary built from your data. You can unsubscribe anytime from Settings.</p>
+    </section>
+
+    <section id="changes">
+      <h2><span class="num">13</span>Changes to this policy</h2>
+      <p>We may update this Privacy Policy as JEETrack evolves — for example, if we add a new feature or change a service provider. If we make material changes, we'll update the "Last updated" date at the top of this page, and where appropriate, notify you in-app. Continuing to use JEETrack after changes take effect means you accept the revised policy.</p>
+    </section>
+
+    <section id="contact">
+      <h2><span class="num">14</span>Contact us</h2>
+      <p>If you have questions about this Privacy Policy, want to exercise any of your rights, or want to report a concern, reach out:</p>
+      <div class="contact-box">
+        <p style="margin-bottom:0.4rem"><strong>Email:</strong> <a href="mailto:support@jeetrack.in">support@jeetrack.in</a></p>
+        <p style="margin-bottom:0"><strong>GitHub:</strong> <a href="https://github.com/AmanxMishraDev/JEETrack" target="_blank" rel="noopener">github.com/AmanxMishraDev/JEETrack</a></p>
+      </div>
+    </section>
+
+  </article>
+</div>
+
+<section class="cta-section">
+  <h2>Questions about your data?</h2>
+  <p>We're a small team building this for JEE aspirants — reach out anytime.</p>
+  <a href="mailto:support@jeetrack.in" class="cta-btn">Email support@jeetrack.in →</a>
+</section>
+
+<footer>
+  <p>© 2026 JEETrack · <a href="https://jeetrack.in">Home</a> · <a href="/faq">FAQ</a> · <a href="/terms">Terms</a> · Built for JEE aspirants across India</p>
+</footer>
+
+</body>
+</html>

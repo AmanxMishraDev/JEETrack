@@ -352,6 +352,32 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .splash-title span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .splash-sub{color:var(--mu);font-size:12px;margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;animation:splashUp .6s cubic-bezier(.34,1.2,.64,1) .55s both}
 
+/* ── 404 Not Found ── */
+#not-found{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:24px}
+#not-found.hidden{display:none}
+.nf-orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;animation:orbFloat 7s ease-in-out infinite}
+.nf-orb-1{width:420px;height:420px;background:radial-gradient(circle,rgba(124,106,247,.16) 0%,transparent 70%);top:-120px;left:-100px}
+.nf-orb-2{width:380px;height:380px;background:radial-gradient(circle,rgba(244,114,182,.12) 0%,transparent 70%);bottom:-120px;right:-90px;animation-delay:-3s}
+.nf-logo{position:absolute;top:28px;left:28px;display:flex;align-items:center;gap:9px;text-decoration:none;z-index:1}
+.nf-logo-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(145deg,#6c5ce7,#a695ff,#f472b6);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.15),0 4px 18px rgba(124,106,247,.5)}
+.nf-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--tx);letter-spacing:-.02em}
+.nf-logo-text span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nf-content{position:relative;z-index:1;max-width:480px;text-align:center;animation:splashUp .5s cubic-bezier(.34,1.2,.64,1) both}
+.nf-code{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(4rem,14vw,6.5rem);line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem}
+.nf-title{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(1.2rem,3.5vw,1.6rem);color:var(--tx);margin-bottom:.7rem;letter-spacing:-.01em}
+.nf-sub{color:var(--mu);font-size:.92rem;line-height:1.6;margin-bottom:1.8rem}
+.nf-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.6rem}
+.nf-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s}
+.nf-btn-primary{background:linear-gradient(135deg,#7c6af7,#a695ff);color:#fff;box-shadow:0 4px 18px rgba(124,106,247,.4)}
+.nf-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(124,106,247,.55)}
+.nf-btn-ghost{background:rgba(255,255,255,.04);color:var(--tx);border:1px solid var(--bd2)}
+.nf-btn-ghost:hover{background:rgba(255,255,255,.08)}
+.nf-links{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:.8rem}
+.nf-links a{color:var(--mu);text-decoration:none}
+.nf-links a:hover{color:var(--ac2)}
+.nf-links span{color:var(--mu2)}
+@media (max-width:480px){.nf-logo{top:20px;left:20px}.nf-links{gap:6px}}
+
 .auth-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.55rem;letter-spacing:-.025em;text-align:center;margin-bottom:.25rem}
 .auth-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .auth-logo-wrap{position:relative;width:64px;height:64px;margin:0 auto 14px}

@@ -154,6 +154,8 @@ function switchAuthTab(tab){
   
   const fw=document.getElementById('auth-forgot-wrap');
   if(fw)fw.style.display=tab==='login'?'block':'none';
+  const legalNote=document.getElementById('auth-legal-note');
+  if(legalNote)legalNote.style.display=tab==='signup'?'block':'none';
   hideAuthMsg();
 }
 function togglePassVis(){
@@ -2123,6 +2125,9 @@ saveGoalSettings = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (typeof _isKnownPath === 'function' && !_isKnownPath(window.location.pathname)) {
+    if (typeof show404 === 'function') { show404(); return; }
+  }
   initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
 

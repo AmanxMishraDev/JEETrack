@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Terms & Conditions — JEETrack</title>
+<meta name="description" content="JEETrack's Terms & Conditions — the rules for using the app, what we promise, what we don't, and your responsibilities as a user."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://jeetrack.in/terms"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jeetrack.in/terms"/>
+<meta property="og:title" content="Terms & Conditions — JEETrack"/>
+<meta property="og:description" content="The rules for using JEETrack — what we promise, what we don't, and your responsibilities as a user."/>
+<meta property="og:image" content="https://jeetrack.in/icon-512.png"/>
+<meta property="og:site_name" content="JEETrack"/>
+<link rel="icon" type="image/svg+xml" href="logo.svg"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #181820;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --purple: #7c6af7;
+    --purple-light: #a695ff;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --rose: #f472b6;
+    --red: #f87171;
+    --text: #e8e8f0;
+    --muted: #7a7990;
+    --muted2: #4a4960;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
+    text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(145deg, #6c5ce7, #a29bfe, #fd79a8);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 4px 22px rgba(108,92,231,.55), 0 1px 4px rgba(0,0,0,.5);
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .nav-logo-mark::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.25) 0%, transparent 60%);
+    border-radius: inherit;
+  }
+  .nav-logo-text { color: #fff; }
+  .nav-logo-track { background: linear-gradient(135deg,#a29bfe,#fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  @media (max-width: 640px) {
+    .nav-cta-desktop { display: none !important; }
+  }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 4rem 1.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse at center, rgba(124,106,247,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid rgba(124,106,247,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--purple-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .hero h1 em { background: linear-gradient(135deg, #a29bfe, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; }
+  .hero p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+  .hero .updated {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--muted2);
+  }
+
+  /* LAYOUT */
+  .doc-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    min-width: 0;
+  }
+  @media (max-width: 800px) {
+    .doc-wrap { grid-template-columns: 1fr; }
+    .toc { display: none; }
+  }
+
+  /* TOC */
+  .toc {
+    position: sticky;
+    top: 84px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.1rem 1rem;
+  }
+  .toc-title {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+  }
+  .toc a {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.32rem 0;
+    border-left: 2px solid transparent;
+    padding-left: 0.6rem;
+    margin-left: -0.6rem;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { color: var(--text); border-color: var(--purple-light); }
+
+  /* ARTICLE */
+  .doc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.2rem clamp(1.3rem, 4vw, 2.5rem);
+    min-width: 0;
+    overflow: hidden;
+  }
+  .doc-summary {
+    background: rgba(124,106,247,0.08);
+    border: 1px solid rgba(124,106,247,0.22);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .doc-summary strong { color: var(--purple-light); font-family: var(--font-head); }
+  .doc-summary ul { margin: 0.5rem 0 0 1.1rem; color: var(--muted); }
+  .doc-summary li { margin-bottom: 0.25rem; }
+
+  .doc section { margin-bottom: 2.1rem; }
+  .doc section:last-child { margin-bottom: 0; }
+  .doc h2 {
+    font-family: var(--font-head);
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    scroll-margin-top: 80px;
+  }
+  .doc h2 .num {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--purple-light);
+    background: rgba(124,106,247,0.14);
+    border-radius: 6px;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .doc h3 {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.1rem 0 0.5rem;
+  }
+  .doc p {
+    color: var(--muted);
+    font-size: 0.91rem;
+    margin-bottom: 0.7rem;
+  }
+  .doc p strong, .doc li strong { color: var(--text); font-weight: 600; }
+  .doc ul, .doc ol {
+    color: var(--muted);
+    font-size: 0.91rem;
+    margin: 0.5rem 0 0.7rem 1.2rem;
+  }
+  .doc li { margin-bottom: 0.4rem; }
+  .doc a { color: var(--purple-light); text-decoration: none; }
+  .doc a:hover { text-decoration: underline; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.6rem 0 0.9rem; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.74rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 99px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    background: var(--surface2);
+  }
+  .tag.green { color: var(--green); border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.08); }
+  .tag.amber { color: var(--amber); border-color: rgba(251,191,36,.3); background: rgba(251,191,36,.08); }
+  .tag.purple { color: var(--purple-light); border-color: rgba(124,106,247,.3); background: rgba(124,106,247,.08); }
+  .tag.red { color: var(--red); border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.08); }
+
+  .callout {
+    border-left: 3px solid var(--purple);
+    background: rgba(124,106,247,0.06);
+    border-radius: 0 10px 10px 0;
+    padding: 0.85rem 1.1rem;
+    margin: 0.9rem 0;
+    font-size: 0.87rem;
+  }
+  .callout.amber { border-left-color: var(--amber); background: rgba(251,191,36,0.06); }
+  .callout.red { border-left-color: var(--red); background: rgba(248,113,113,0.06); }
+  .callout p { margin-bottom: 0; color: var(--text); }
+
+  .contact-box {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-top: 0.8rem;
+  }
+  .contact-box a { font-weight: 600; }
+
+  /* CTA + FOOTER (shared) */
+  .cta-section {
+    text-align: center;
+    padding: 3rem 1.5rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .cta-section h2 {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  .cta-section p {
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--purple-light); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://jeetrack.in" class="nav-logo">
+    <div class="nav-logo-mark">J</div>
+    <span class="nav-logo-text">JEE<span class="nav-logo-track">Track</span></span>
+  </a>
+  <a href="https://jeetrack.in" class="nav-cta nav-cta-desktop">Get Started Free →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span class="hero-badge-dot"></span>Legal</div>
+  <h1>Terms & <em>Conditions</em></h1>
+  <p>The ground rules for using JEETrack — please read before you create an account.</p>
+  <div class="updated">Last updated: June 26, 2026</div>
+</section>
+
+<div class="doc-wrap">
+
+  <div class="toc">
+    <div class="toc-title">On this page</div>
+    <a href="#acceptance">Acceptance of terms</a>
+    <a href="#eligibility">Eligibility & minors</a>
+    <a href="#account">Your account</a>
+    <a href="#free">Free service</a>
+    <a href="#acceptable-use">Acceptable use</a>
+    <a href="#your-content">Your content & data</a>
+    <a href="#ai-disclaimer">AI Insights disclaimer</a>
+    <a href="#no-guarantee">No guarantee of results</a>
+    <a href="#availability">Availability & changes</a>
+    <a href="#ip">Intellectual property</a>
+    <a href="#third-party">Third-party services</a>
+    <a href="#termination">Termination</a>
+    <a href="#disclaimer">Disclaimer of warranties</a>
+    <a href="#liability">Limitation of liability</a>
+    <a href="#governing-law">Governing law</a>
+    <a href="#changes">Changes to these terms</a>
+    <a href="#contact">Contact us</a>
+  </div>
+
+  <article class="doc">
+
+    <div class="doc-summary">
+      <strong>The short version:</strong>
+      <ul>
+        <li>JEETrack is a free study tracker. There's no payment, no subscription, nothing to cancel.</li>
+        <li>You're responsible for the accuracy of the data you enter — we just help you organize and visualize it.</li>
+        <li>AI Insights are AI-generated suggestions, not professional advice — use your judgment.</li>
+        <li>We can't guarantee any exam outcome. JEETrack is a tracking tool, not a coaching institute.</li>
+        <li>You can delete your account and data anytime; we can suspend accounts that abuse the service.</li>
+      </ul>
+    </div>
+
+    <section id="acceptance">
+      <h2><span class="num">1</span>Acceptance of terms</h2>
+      <p>These Terms & Conditions ("Terms") govern your access to and use of JEETrack, available at <a href="https://jeetrack.in">jeetrack.in</a>, including the website and the installable Progressive Web App (collectively, the "Service"). JEETrack is built and operated by an individual developer ("we", "us", "our").</p>
+      <p>By creating an account or otherwise using the Service, you agree to be bound by these Terms and our <a href="/privacy">Privacy Policy</a>. If you don't agree, please don't use the Service.</p>
+    </section>
+
+    <section id="eligibility">
+      <h2><span class="num">2</span>Eligibility & minors</h2>
+      <p>JEETrack is built for JEE (Joint Entrance Examination) aspirants, many of whom are between 15 and 18 years old. We don't impose a strict minimum age, but if you are under 18, you should use JEETrack with the awareness and, where required by applicable law, the consent of a parent or legal guardian.</p>
+      <p>By using JEETrack, you confirm that any information you provide is accurate, and if you're a minor, that you have the necessary permission from a parent or guardian to use the Service.</p>
+    </section>
+
+    <section id="account">
+      <h2><span class="num">3</span>Your account</h2>
+      <p>To use most features of JEETrack, you need to create an account using email/password or Google Sign-In. You're responsible for:</p>
+      <ul>
+        <li>Providing accurate information when creating your account</li>
+        <li>Keeping your password confidential and your account secure</li>
+        <li>All activity that happens under your account</li>
+      </ul>
+      <p>If you believe your account has been compromised, contact us immediately at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a>.</p>
+    </section>
+
+    <section id="free">
+      <h2><span class="num">4</span>Free service</h2>
+      <div class="tag-row">
+        <span class="tag green">100% free</span>
+        <span class="tag purple">No payment info collected</span>
+        <span class="tag amber">May change in the future</span>
+      </div>
+      <p>JEETrack is currently free to use, with no paid plans, subscriptions, or in-app purchases. We don't collect any payment or billing information.</p>
+      <p>We reserve the right to introduce paid features in the future. If we do, this would apply only to new optional features — we'll communicate any such change clearly in advance, and it won't retroactively charge you for features you're already using for free.</p>
+    </section>
+
+    <section id="acceptable-use">
+      <h2><span class="num">5</span>Acceptable use</h2>
+      <p>When using JEETrack, you agree not to:</p>
+      <ul>
+        <li>Use the Service for any unlawful purpose, or in violation of any applicable law</li>
+        <li>Attempt to gain unauthorized access to other users' accounts or data</li>
+        <li>Interfere with, disrupt, or attempt to bypass the security of the Service (including attempting to exploit, scrape at scale, or reverse-engineer the platform beyond what's permitted by our open-source license, where applicable)</li>
+        <li>Upload or transmit viruses, malware, or any other malicious code</li>
+        <li>Impersonate another person or misrepresent your affiliation with anyone</li>
+        <li>Use automated scripts or bots to create accounts or generate fake data at scale</li>
+        <li>Harass, abuse, or send inappropriate content through the feedback feature</li>
+      </ul>
+      <p>We may suspend or terminate accounts that violate these rules, at our discretion.</p>
+    </section>
+
+    <section id="your-content">
+      <h2><span class="num">6</span>Your content & data</h2>
+      <p>You retain ownership of the data you enter into JEETrack — your test scores, study hours, notes, and other study data ("Your Content"). By using the Service, you grant us a limited license to store, process, and display Your Content back to you, and to use it as described in our <a href="/privacy">Privacy Policy</a> (for example, to generate AI Insights or send report emails).</p>
+      <p>You're responsible for the accuracy of the data you enter. JEETrack displays and analyzes whatever you log — if you enter incorrect test scores, the charts, streaks, and AI Insights built from that data will reflect those inaccuracies.</p>
+    </section>
+
+    <section id="ai-disclaimer">
+      <h2><span class="num">7</span>AI Insights disclaimer</h2>
+      <div class="callout amber">
+        <p>AI Insights are generated by a third-party large language model (via Groq) based on the data you've logged. They are <strong>automated suggestions, not professional educational, psychological, or career advice.</strong></p>
+      </div>
+      <p>AI-generated content can be inaccurate, oversimplified, or just plain wrong — language models sometimes get things wrong with confidence ("hallucination"). Treat AI Insights as one input among many, not a verdict on your preparation. Use your own judgment, and consult a teacher, mentor, or counselor for decisions that matter, like changing your study strategy significantly or your choice of coaching.</p>
+      <p>We are not responsible for decisions you make based solely on AI-generated insights.</p>
+    </section>
+
+    <section id="no-guarantee">
+      <h2><span class="num">8</span>No guarantee of exam results</h2>
+      <p>JEETrack is a <strong>tracking and organization tool</strong> — it helps you log, visualize, and stay consistent with your JEE preparation. It is not a coaching institute, test-prep curriculum, or guarantee of any kind.</p>
+      <p>We make no promises, representations, or guarantees about your JEE Mains or JEE Advanced results, rank, admission outcomes, or any other academic or career outcome, regardless of how consistently you use the app or what your streaks, charts, or AI Insights show.</p>
+    </section>
+
+    <section id="availability">
+      <h2><span class="num">9</span>Availability & changes to the Service</h2>
+      <p>We try to keep JEETrack available and reliable, but we don't guarantee uninterrupted access. The Service may be unavailable due to maintenance, updates, or issues with third-party providers (like Supabase, Vercel, or Groq) that are outside our control.</p>
+      <p>We may add, change, or remove features at any time. We'll try to avoid breaking changes that affect your existing data, but we can't promise every feature will exist forever in its current form.</p>
+    </section>
+
+    <section id="ip">
+      <h2><span class="num">10</span>Intellectual property</h2>
+      <p>The JEETrack name, logo, and the app's design are owned by us. The JEETrack source code is published on <a href="https://github.com/AmanxMishraDev/JEETrack" target="_blank" rel="noopener">GitHub</a> under the license specified in that repository — if you intend to reuse, fork, or build on the code, please check the repository's license terms.</p>
+      <p>You may not use the JEETrack name, logo, or branding to represent your own product or service without our written permission.</p>
+    </section>
+
+    <section id="third-party">
+      <h2><span class="num">11</span>Third-party services</h2>
+      <p>JEETrack relies on third-party services to operate — including Supabase (database & auth), Vercel (hosting), Groq (AI Insights), Resend (email), Google (sign-in), and PostHog (analytics). Your use of JEETrack may be subject to those providers' own terms, in addition to ours. We're not responsible for outages, errors, or policy changes on the part of these third-party providers, though we'll do our best to adapt or find alternatives if something breaks.</p>
+    </section>
+
+    <section id="termination">
+      <h2><span class="num">12</span>Termination</h2>
+      <p>You can stop using JEETrack and delete your account at any time — go to <em>Settings → Data &amp; Backup → Reset All Data</em> to erase your data, or email <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> to have your account fully deleted.</p>
+      <p>We may suspend or terminate your access to the Service if you violate these Terms, engage in abusive behavior, or if we discontinue the Service. Where reasonably possible, we'll try to give you notice and a chance to export your data first.</p>
+    </section>
+
+    <section id="disclaimer">
+      <h2><span class="num">13</span>Disclaimer of warranties</h2>
+      <div class="callout red">
+        <p>JEETrack is provided <strong>"as is" and "as available,"</strong> without warranties of any kind, whether express or implied — including, without limitation, warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement.</p>
+      </div>
+      <p>We do not warrant that the Service will be uninterrupted, error-free, or completely secure, or that any data loss will never occur. While we take reasonable steps to protect your data (see our <a href="/privacy">Privacy Policy</a>), you're encouraged to periodically export your data as a backup.</p>
+    </section>
+
+    <section id="liability">
+      <h2><span class="num">14</span>Limitation of liability</h2>
+      <p>To the fullest extent permitted by applicable law, JEETrack and its developer shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, exam performance, or opportunity, arising from your use of (or inability to use) the Service — including reliance on AI Insights, charts, or any other content generated by the app.</p>
+      <p>Since JEETrack is provided free of charge, our total liability to you for any claim arising from these Terms or the Service is limited to the greatest extent permitted by law.</p>
+    </section>
+
+    <section id="governing-law">
+      <h2><span class="num">15</span>Governing law</h2>
+      <p>These Terms are governed by and construed in accordance with the laws of India, without regard to conflict-of-law principles. Any disputes arising from these Terms or your use of the Service will be subject to the exclusive jurisdiction of the competent courts in India.</p>
+    </section>
+
+    <section id="changes">
+      <h2><span class="num">16</span>Changes to these terms</h2>
+      <p>We may revise these Terms from time to time as JEETrack evolves. If we make material changes, we'll update the "Last updated" date above and, where appropriate, notify you in-app. Continuing to use JEETrack after changes take effect means you accept the revised Terms — if you don't agree with a change, please stop using the Service and you may delete your account.</p>
+    </section>
+
+    <section id="contact">
+      <h2><span class="num">17</span>Contact us</h2>
+      <p>Questions about these Terms? Reach out:</p>
+      <div class="contact-box">
+        <p style="margin-bottom:0.4rem"><strong>Email:</strong> <a href="mailto:support@jeetrack.in">support@jeetrack.in</a></p>
+        <p style="margin-bottom:0"><strong>GitHub:</strong> <a href="https://github.com/AmanxMishraDev/JEETrack" target="_blank" rel="noopener">github.com/AmanxMishraDev/JEETrack</a></p>
+      </div>
+    </section>
+
+  </article>
+</div>
+
+<section class="cta-section">
+  <h2>Ready to get serious about JEE?</h2>
+  <p>Free, forever — no fine print on that part.</p>
+  <a href="https://jeetrack.in" class="cta-btn">Start Tracking for Free →</a>
+</section>
+
+<footer>
+  <p>© 2026 JEETrack · <a href="https://jeetrack.in">Home</a> · <a href="/faq">FAQ</a> · <a href="/privacy">Privacy</a> · Built for JEE aspirants across India</p>
+</footer>
+
+</body>
+</html>

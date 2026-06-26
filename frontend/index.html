@@ -135,6 +135,34 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="splash-credit">crafted by <strong>Aman Mishra</strong></div>
 </div>
 
+<div id="not-found" class="hidden">
+  <div class="nf-orb nf-orb-1"></div>
+  <div class="nf-orb nf-orb-2"></div>
+  <a href="/" class="nf-logo">
+    <div class="nf-logo-mark">J</div>
+    <span class="nf-logo-text">JEE<span>Track</span></span>
+  </a>
+  <div class="nf-content">
+    <div class="nf-code">404</div>
+    <h1 class="nf-title">This page didn't make the cut.</h1>
+    <p class="nf-sub">The page you're looking for doesn't exist, was moved, or the link's just wrong. Let's get you back to tracking your prep.</p>
+    <div class="nf-actions">
+      <a href="/" class="nf-btn nf-btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Back to JEETrack
+      </a>
+      <a href="/faq" class="nf-btn nf-btn-ghost">Visit FAQ</a>
+    </div>
+    <div class="nf-links">
+      <a href="/dashboard">Dashboard</a><span>·</span>
+      <a href="/hours">Study Hours</a><span>·</span>
+      <a href="/syllabus">Syllabus</a><span>·</span>
+      <a href="/privacy">Privacy</a><span>·</span>
+      <a href="/terms">Terms</a>
+    </div>
+  </div>
+</div>
+
 <div id="landing" class="hidden">
   <div class="land-aura-wrap">
     <div class="land-aura land-aura-1"></div>
@@ -325,6 +353,9 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               <button type="button" onclick="doForgotPass()" style="background:none;border:none;cursor:pointer;color:var(--mu);font-size:11px;font-family:'DM Sans',sans-serif;padding:0">Forgot password?</button>
             </div>
           </div>
+          <div id="auth-legal-note" style="display:none;font-size:11px;color:var(--mu);line-height:1.5;margin:2px 0 10px;text-align:center">
+            By creating an account, you agree to our <a href="/terms" target="_blank" style="color:var(--ac2);text-decoration:none">Terms</a> and <a href="/privacy" target="_blank" style="color:var(--ac2);text-decoration:none">Privacy Policy</a>.
+          </div>
           <button class="btn bp auth-submit-btn" id="auth-btn" onclick="doAuth()">Sign In</button>
           <div class="auth-divider" style="color:rgba(255,255,255,.2)">or</div>
           <button class="auth-google" onclick="doGoogleAuth()">
@@ -472,6 +503,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <a href="/faq">FAQ</a>
       <span class="ls-footer-sep">·</span>
       <a href="#about" onclick="landScrollTo('about');return false;">About</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="/privacy">Privacy</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="/terms">Terms</a>
     </div>
     <div class="ls-footer-copy">© 2026 JEETrack · Built for JEE aspirants across India</div>
   </footer>
@@ -2181,6 +2216,20 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="settings-row-l">
               <div class="settings-row-title">Website</div>
               <div class="settings-row-sub">jeetrack.in</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="settings-row clickable" onclick="window.open('https://jeetrack.in/privacy','_blank')">
+            <div class="settings-row-l">
+              <div class="settings-row-title">Privacy Policy</div>
+              <div class="settings-row-sub">How your data is collected & used</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="settings-row clickable" onclick="window.open('https://jeetrack.in/terms','_blank')">
+            <div class="settings-row-l">
+              <div class="settings-row-title">Terms & Conditions</div>
+              <div class="settings-row-sub">Rules for using JEETrack</div>
             </div>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </div>
@@ -3934,6 +3983,25 @@ const _pageTitles = {
   syllabus:'Syllabus', insights:'AI Insights', settings:'Settings',
 };
 const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback'];
+
+// Static pages served directly by vercel.json rewrites (not part of the SPA's own router)
+const _staticPages = ['/faq','/privacy','/terms','/admin'];
+
+function _isKnownPath(path){
+  if(path==='/index.html') return true;
+  if(_routeMap.hasOwnProperty(path)) return true;
+  if(_staticPages.includes(path)) return true;
+  return false;
+}
+
+function show404(){
+  hideSplash();
+  document.getElementById('landing')?.classList.add('hidden');
+  document.getElementById('onboarding')?.classList.remove('show');
+  const app=document.getElementById('main-app'); if(app) app.style.display='none';
+  document.getElementById('not-found')?.classList.remove('hidden');
+  document.title = 'Page Not Found — JEETrack';
+}
 
 function _handleRoute(){
   const path = window.location.pathname;
