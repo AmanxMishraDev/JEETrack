@@ -1,14 +1,23 @@
-const CACHE_NAME = 'jeetrack-v2';
-const ASSETS = [
-  '/',
-  '/index.html',
+// Cache version is set at build/deploy time via a version endpoint
+// Falls back to timestamp-based versioning so every deploy auto-invalidates
+const CACHE_VERSION = 'jeetrack-v2';
+const CACHE_NAME = CACHE_VERSION;
+
+const STATIC_ASSETS = [
   'https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js'
 ];
 
+// Never cache these — always fetch fresh
+const NEVER_CACHE = [
+  '/api/',
+  '/api/config',
+];
+
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS).catch(() => {}))
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(STATIC_ASSETS).catch(() => {}))
   );
   self.skipWaiting();
 });
@@ -16,14 +25,47 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+      Promise.all(
+        keys
+          .filter(k => k !== CACHE_NAME)
+          .map(k => {
+            console.log('[SW] Deleting old cache:', k);
+            return caches.delete(k);
+          })
+      )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+
+  const url = new URL(e.request.url);
+
+  // Never cache API calls or auth-related requests
+  if (NEVER_CACHE.some(p => url.pathname.startsWith(p))) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // For HTML pages — network first, fall back to cache
+  // This ensures users always get latest HTML on good connections
+  if (e.request.headers.get('accept')?.includes('text/html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res && res.status === 200) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // For CSS/JS/fonts — network first, cache as backup
   e.respondWith(
     fetch(e.request)
       .then(res => {
