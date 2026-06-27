@@ -1072,7 +1072,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 
 .land-nav-logo{
   font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;
-  letter-spacing:-.025em;color:#fff;display:flex;align-items:center;gap:10px;
+  letter-spacing:-.025em;color:#fff;display:flex;align-items:center;
   text-decoration:none;
 }
 .land-nav-logo span{background:linear-gradient(135deg,#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -1343,11 +1343,11 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   background:#fff;border:1px solid rgba(255,255,255,.9);
   color:#1a1a2e;font-weight:700;font-size:13.5px;
   box-shadow:0 2px 14px rgba(255,255,255,.08),0 4px 20px rgba(0,0,0,.25);
-  margin-bottom:1.1rem;
+  margin-bottom:0;
 }
 .auth-google-primary:hover{background:#fafafa;border-color:#fff;transform:translateY(-1.5px);box-shadow:0 4px 20px rgba(255,255,255,.12),0 6px 26px rgba(0,0,0,.3)}
 
-.land-auth-or{display:flex;align-items:center;gap:10px;margin:0 0 1.1rem;color:rgba(255,255,255,.22);font-size:11px;letter-spacing:.01em}
+.land-auth-or{display:flex;align-items:center;gap:10px;margin:1.1rem 0;color:rgba(255,255,255,.22);font-size:11px;letter-spacing:.01em}
 .land-auth-or::before,.land-auth-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
 
 .land-auth-pills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:1.3rem}

@@ -378,6 +378,19 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 }
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
 .sb-overlay.show{display:block}
+/* ── FROM ADDRESS SELECTOR ── */
+.from-addr-opt{display:inline-flex;cursor:pointer}
+.from-addr-opt input[type="radio"]{display:none}
+.from-addr-pill{
+  display:inline-flex;align-items:center;padding:.35rem .8rem;border-radius:99px;font-size:.75rem;font-weight:600;
+  border:1.5px solid var(--bd);background:var(--sf2);color:var(--mu);
+  transition:all .16s var(--ease);white-space:nowrap;
+}
+.from-addr-opt input[type="radio"]:checked + .from-addr-pill{
+  border-color:var(--ac);background:rgba(124,106,247,.14);color:var(--ac2);
+  box-shadow:0 0 0 3px rgba(124,106,247,.12);
+}
+.from-addr-opt:hover .from-addr-pill{border-color:var(--bd2);color:var(--tx)}
 </style>
 </head>
 <body>
@@ -531,7 +544,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
       <div class="section-title">User Journey Funnel<span class="line"></span></div>
       <div class="card" style="margin-bottom:1.25rem;">
         <h3><span class="ic">🎯</span>Signup → Engagement Funnel</h3>
-        <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">All steps sourced from Supabase — counts are <strong>distinct users</strong> who reached each milestone. Onboarding = <code>onboarding_done=true</code> in user_preferences.</p>
+        <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">All steps sourced from Supabase — counts are <strong>distinct users</strong> who reached each milestone. Onboarding = <code>onboarding_done=true</code> in user_preferences. Range is controlled by the <strong>7D / 30D / 90D</strong> buttons above.</p>
         <div class="funnel" id="funnel-steps"><div class="loading"><div class="spinner"></div></div></div>
       </div>
       <!-- Retention card -->
@@ -539,9 +552,9 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
         <h3><span class="ic">🔄</span>Retention (Cohort)</h3>
         <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">"Active on Day N" = user logged a test or study session exactly N days after signup.</p>
         <div class="stats-grid" id="retention-grid">
-          <div class="stat"><div class="stat-icon">1️⃣</div><div class="stat-label">Day-1 Retention</div><div class="stat-value" id="ret-d1">—</div></div>
-          <div class="stat"><div class="stat-icon">7️⃣</div><div class="stat-label">Day-7 Retention</div><div class="stat-value" id="ret-d7">—</div></div>
-          <div class="stat"><div class="stat-icon">📅</div><div class="stat-label">Day-30 Retention</div><div class="stat-value" id="ret-d30">—</div></div>
+          <div class="stat" style="--stat-bg:rgba(124,106,247,.16)"><div class="stat-icon-wrap">1️⃣</div><div class="stat-label">Day-1 Retention</div><div class="stat-value" id="ret-d1">—</div></div>
+          <div class="stat" style="--stat-bg:rgba(96,165,250,.14)"><div class="stat-icon-wrap">7️⃣</div><div class="stat-label">Day-7 Retention</div><div class="stat-value" id="ret-d7">—</div></div>
+          <div class="stat" style="--stat-bg:rgba(52,211,153,.14)"><div class="stat-icon-wrap">📅</div><div class="stat-label">Day-30 Retention</div><div class="stat-value" id="ret-d30">—</div></div>
         </div>
         <p id="ret-note" style="font-size:.72rem;color:var(--mu);margin-top:.6rem;"></p>
       </div>
@@ -720,22 +733,23 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
         </div>
 
         <div class="action-card">
-          <h3>🔄 Force Data Refresh</h3>
-          <p>Reload all analytics data from PostHog and Supabase. Use this if dashboard seems stale.</p>
-          <button class="action-btn btn-primary" onclick="loadAll()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
-            Refresh All Data
+          <h3>📥 Export Users CSV</h3>
+          <p>Download a CSV of all registered users — name, email, class, coaching, joined date, and last active.</p>
+          <button class="action-btn btn-primary" onclick="exportUsersCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
           </button>
+          <div class="action-result" id="result-export"></div>
         </div>
 
         <div class="action-card">
-          <h3>🔐 Session Info</h3>
-          <p>Your current admin session details.</p>
-          <div style="font-size:.78rem;color:var(--mu);line-height:1.85">
-            <div>Domain: <span style="color:var(--tx)">admin.jeetrack.in</span></div>
-            <div>PostHog Project: <span style="color:var(--tx)">478522</span></div>
-            <div>Session: <span style="color:var(--gn)">Active ✓</span></div>
+          <h3>🔔 New Feedback Alert</h3>
+          <p>Last time feedback was checked. Unread count refreshes on each visit to this page.</p>
+          <div style="font-size:.78rem;color:var(--mu);line-height:2;margin-bottom:.75rem">
+            <div>Unread feedback: <span style="color:var(--ac2);font-weight:700" id="action-unread-count">—</span></div>
+            <div>Last checked: <span style="color:var(--tx)" id="action-last-checked">—</span></div>
           </div>
+          <button class="action-btn btn-ghost btn-sm" onclick="showPage('feedback', document.querySelector('.nav-item[onclick*=\'feedback\']'))">View Feedback →</button>
         </div>
 
       </div>
@@ -760,6 +774,21 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
           <div id="em-compose-mode">
             <div class="compose-card" style="margin-bottom:1rem;">
               <h3>✉️ Compose with Preset Template</h3>
+
+              <div class="compose-field">
+                <span class="compose-label">From Address</span>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                  <label class="from-addr-opt" id="fa-noreply-label">
+                    <input type="radio" name="ce-from-addr" id="fa-noreply" value="noreply@jeetrack.in" checked onchange="updateFromPreview()">
+                    <span class="from-addr-pill">📤 noreply@jeetrack.in</span>
+                  </label>
+                  <label class="from-addr-opt" id="fa-support-label">
+                    <input type="radio" name="ce-from-addr" id="fa-support" value="support@jeetrack.in" onchange="updateFromPreview()">
+                    <span class="from-addr-pill">💬 support@jeetrack.in</span>
+                  </label>
+                </div>
+                <div style="font-size:.7rem;color:var(--mu);margin-top:.4rem;" id="fa-hint-compose">Use <strong style="color:var(--tx)">noreply</strong> for announcements, <strong style="color:var(--tx)">support</strong> for replies &amp; personal emails.</div>
+              </div>
 
               <div class="compose-field">
                 <span class="compose-label">From Name</span>
@@ -793,8 +822,8 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
                   <button class="tbtn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
                   <button class="tbtn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
                   <button class="tbtn" onclick="insertTag('<br><br>','')">↵ Para</button>
-                  <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot; style=&quot;color:#a695ff&quot;>','</a>')">🔗 Link</button>
-                  <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#a695ff;margin:16px 0 8px&quot;>','</h2>')">H2</button>
+                  <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot; style=&quot;color:#D8B4FE;text-decoration:none;font-weight:600&quot;>','</a>')">🔗 Link</button>
+                  <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#A855F7;margin:16px 0 8px&quot;>','</h2>')">H2</button>
                   <button class="tbtn" onclick="insertTag('<ul style=&quot;padding-left:20px&quot;><li>','</li></ul>')">• List</button>
                   <span style="width:1px;background:var(--bd);margin:0 .2rem;"></span>
                   <button class="tbtn" onclick="insertSnippet('greeting')">👋 Hi</button>
@@ -826,6 +855,19 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
               <h3>🧑‍💻 Custom Email — No Wrapper</h3>
               <div style="font-size:.74rem;color:var(--mu);margin-bottom:1rem;line-height:1.6;background:rgba(124,106,247,.07);border:1px solid rgba(124,106,247,.18);border-radius:8px;padding:.65rem .85rem;">
                 ℹ️ Email is sent exactly as you write it — no header, footer, or preset wrapper added.
+              </div>
+              <div class="compose-field">
+                <span class="compose-label">From Address</span>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                  <label class="from-addr-opt">
+                    <input type="radio" name="ce-from-addr-custom" id="fa-noreply-custom" value="noreply@jeetrack.in" checked onchange="updateFromPreview()">
+                    <span class="from-addr-pill">📤 noreply@jeetrack.in</span>
+                  </label>
+                  <label class="from-addr-opt">
+                    <input type="radio" name="ce-from-addr-custom" id="fa-support-custom" value="support@jeetrack.in" onchange="updateFromPreview()">
+                    <span class="from-addr-pill">💬 support@jeetrack.in</span>
+                  </label>
+                </div>
               </div>
               <div class="compose-field">
                 <span class="compose-label">From Name</span>
@@ -878,7 +920,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
               From: <strong style="color:var(--tx)" id="prev-from">noreply@jeetrack.in</strong> &nbsp;·&nbsp;
               Subject: <strong style="color:var(--tx)" id="prev-subject">—</strong>
             </div>
-            <iframe id="ce-preview-frame" style="width:100%;height:480px;border:1px solid var(--bd);border-radius:8px;background:#0a0a0f;" sandbox="allow-same-origin"></iframe>
+            <iframe id="ce-preview-frame" style="width:100%;height:520px;border:1px solid var(--bd);border-radius:8px;background:#050816;" sandbox="allow-same-origin"></iframe>
           </div>
         </div>
 
@@ -898,7 +940,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
               <!-- Search -->
               <div style="position:relative;margin-bottom:.6rem;">
                 <svg style="position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--mu);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input class="compose-input" id="user-search" placeholder="Search by name or email..." style="padding-left:2rem;" oninput="filterEmailUsers(this.value)"/>
+                <input class="compose-input" id="email-user-search" placeholder="Search by name or email..." style="padding-left:2rem;" oninput="filterEmailUsers(this.value)"/>
               </div>
               <div class="select-all-row">
                 <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;">
@@ -938,7 +980,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
             <h3>💡 Tips</h3>
             <div style="font-size:.75rem;color:var(--mu);line-height:1.9;">
               <div>• <code style="color:var(--ac2)">{{name}}</code> → recipient's name</div>
-              <div>• Sent from <code style="color:var(--ac2)">noreply@jeetrack.in</code></div>
+              <div>• From: <code style="color:var(--ac2)" id="tips-from-addr">noreply@jeetrack.in</code></div>
               <div>• Always preview before sending</div>
               <div>• Batches of 10, 300ms delay</div>
               <div>• HTML mode = full control</div>
@@ -957,10 +999,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 
       <!-- Stats row -->
       <div class="stats-grid" id="fb-stats-grid" style="margin-bottom:1.25rem;">
-        <div class="stat"><div class="stat-icon">💬</div><div class="stat-label">Total Feedbacks</div><div class="stat-value" id="fb-total">—</div></div>
-        <div class="stat"><div class="stat-icon">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="fb-this-month">—</div></div>
-        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-label">Avg Rating</div><div class="stat-value" id="fb-avg-rating">—</div></div>
-        <div class="stat"><div class="stat-icon">🏷️</div><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:1rem;" id="fb-top-cat">—</div></div>
+        <div class="stat" style="--stat-bg:rgba(45,212,191,.14)"><div class="stat-icon-wrap">💬</div><div class="stat-label">Total Feedbacks</div><div class="stat-value" id="fb-total">—</div></div>
+        <div class="stat" style="--stat-bg:rgba(96,165,250,.14)"><div class="stat-icon-wrap">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="fb-this-month">—</div></div>
+        <div class="stat" style="--stat-bg:rgba(251,191,36,.13)"><div class="stat-icon-wrap">⭐</div><div class="stat-label">Avg Rating</div><div class="stat-value" id="fb-avg-rating">—</div></div>
+        <div class="stat" style="--stat-bg:rgba(124,106,247,.16)"><div class="stat-icon-wrap">🏷️</div><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:1rem;" id="fb-top-cat">—</div></div>
       </div>
 
       <div class="grid-2" style="margin-bottom:1.25rem;">
@@ -1082,12 +1124,17 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 const API_BASE = '/api/admin';
 let _token = null;
 let _days = 7;
-let _userPage = 0;
-let _userSort = { by: 'created_at', dir: 'desc' };
-let _userSearchTimer = null;
 let _currentPage = 'overview';
 let _modalUserId = null;
 let _modalData = null;
+
+// Paginated page state — scoped per feature to prevent cross-contamination
+const _pagination = { users: 0, feedback: 0 };
+let _userPage = 0;   // alias kept for inline onclick handlers
+let _fbPage   = 0;   // alias kept for inline onclick handlers
+
+let _userSort = { by: 'created_at', dir: 'desc' };
+let _userSearchTimer = null;
 
 const COACHING_OPTIONS = [
   ['pw_online','PW Online'],['allen_online','Allen Online'],['unacademy','Unacademy'],
@@ -1202,7 +1249,7 @@ function showPage(page, el) {
   document.getElementById('page-title').textContent = meta.title;
   document.getElementById('page-sub').textContent = meta.sub;
   document.getElementById('range-btns').style.display =
-    ['overview','features','dau'].includes(page) ? 'flex' : 'none';
+    ['overview','features','dau','funnel','consistency'].includes(page) ? 'flex' : 'none';
   toggleSidebar(false);
   loadCurrentPage();
 }
@@ -1218,7 +1265,7 @@ function loadCurrentPage() {
     consistency:   loadConsistency,
     demographics:  loadDemographics,
     db:            loadDBStats,
-    actions:       () => {},
+    actions:       loadActionsPage,
     email:         () => { loadEmailUsers(); updateRecipientCount(); },
     feedback:      () => { loadFeedbackStats(); loadFeedbacks(0); },
   };
@@ -1385,7 +1432,7 @@ async function loadFunnel() {
   const el = document.getElementById('funnel-steps');
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
-    const data = await api('funnel');
+    const data = await api('funnel', `&days=${_days}`);
     const max = Math.max(...data.map(d => d.count), 1);
     const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff'];
     el.innerHTML = data.map((d, i) => {
@@ -1477,6 +1524,7 @@ function updateSortHeaders() {
 
 async function loadUsers(page = 0) {
   _userPage = page;
+  _pagination.users = page;
   const tbody = document.getElementById('users-table');
   tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
@@ -1784,7 +1832,7 @@ async function loadConsistency() {
   streakEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
-    const d = await api('consistency', '&window=30');
+    const d = await api('consistency', `&window=${_days}`);
     const users = d.users || [];
     const top = d.mostConsistent;
 
@@ -1805,9 +1853,9 @@ async function loadConsistency() {
         <div class="kpi-sub">out of ${users.length} tracked students</div>
       </div>
       <div class="kpi-card alt">
-        <div class="kpi-label">📊 Avg Active Days (30d)</div>
+        <div class="kpi-label">📊 Avg Active Days (${_days}d)</div>
         <div class="kpi-name">${users.length ? Math.round(users.reduce((s,u)=>s+u.activeDaysInWindow,0)/users.length) : 0}</div>
-        <div class="kpi-sub">days per student, last 30 days</div>
+        <div class="kpi-sub">days per student, last ${_days} days</div>
       </div>
     `;
 
@@ -1992,6 +2040,51 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+// ── ACTIONS PAGE ─────────────────────────────────────────────
+async function loadActionsPage() {
+  // Show unread feedback count
+  try {
+    const d = await api('feedback_stats');
+    const el = document.getElementById('action-unread-count');
+    if (el) el.textContent = d.total || 0;
+    const lc = document.getElementById('action-last-checked');
+    if (lc) lc.textContent = new Date().toLocaleTimeString('en-IN');
+  } catch(e) {}
+}
+
+async function exportUsersCSV() {
+  const resultEl = document.getElementById('result-export');
+  resultEl.style.display = 'none';
+  showToast('Building CSV…');
+  try {
+    const d = await api('users&page=0&pageSize=9999');
+    const users = d.users || [];
+    if (!users.length) { showToast('No users found'); return; }
+    const header = ['Name','Email','Class','Coaching','Target Year','Joined','Last Active','Email Reports'];
+    const rows = users.map(u => [
+      u.name, u.email, u.class, u.coaching,
+      u.target_year || '—',
+      u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—',
+      u.last_active ? new Date(u.last_active).toLocaleDateString('en-IN') : '—',
+      u.email_reports,
+    ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+    const csv = [header.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `jeetrack-users-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+    resultEl.className = 'action-result result-ok';
+    resultEl.textContent = `✓ ${users.length} users exported`;
+    resultEl.style.display = 'block';
+    showToast(`✓ ${users.length} users exported`);
+  } catch(e) {
+    resultEl.className = 'action-result result-err';
+    resultEl.textContent = `✗ ${e.message}`;
+    resultEl.style.display = 'block';
+  }
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 const saved = sessionStorage.getItem('jt_admin_token');
 if (saved) {
@@ -2125,7 +2218,8 @@ function updateSelectedCount() {
 
 function setRecipientTab(tab, btn) {
   _recipientTab = tab;
-  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  // Only deactivate tabs within recipient-tabs containers (not mode-select tabs)
+  document.querySelectorAll('.recipient-tabs .rtab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.recipient-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById(`rp-${tab}`);
@@ -2175,10 +2269,10 @@ function insertSnippet(type) {
   // Using <br> tags because textarea content is sent as HTML email body
   // Use <br> for line breaks — works in both textarea and email
   const snippets = {
-    greeting: `Hi {{name}},<br><br>Hope your JEE prep is going strong! 🚀<br><br>`,
-    review:   `Hi {{name}},<br><br>You've been using JEETrack for a while — I'd love your feedback! 🙏<br><br>Could you spare 2 minutes to share what you think? It really helps!<br><br>`,
-    tips:     `Here are some quick tips to get the most out of JEETrack:<br><br><ul style="padding-left:20px;line-height:2"><li>Log every mock test — even bad ones</li><li>Use AI Insights weekly for honest feedback</li><li>Clear backlog daily — zero tolerance!</li></ul><br>`,
-    closing:  `<br><br>Best of luck with your prep! 💪<br><br>— Aman Mishra<br>Founder, JEETrack`,
+    greeting: `Dear <strong>{{name}}</strong>,<br><br>Hope your JEE prep is going strong! 🚀<br><br>`,
+    review:   `Dear <strong>{{name}}</strong>,<br><br>You've been using JEETrack for a while — I'd love your feedback! 🙏<br><br>Could you spare 2 minutes to share what you think? It really helps us improve.<br><br>`,
+    tips:     `Here are some quick tips to get the most out of JEETrack:<br><br><ul style="padding-left:20px;line-height:2;color:#B4BCD0"><li>Log every mock test — even the bad ones</li><li>Use AI Insights weekly for honest feedback</li><li>Clear your backlog daily — zero tolerance!</li></ul><br>`,
+    closing:  `<br>If you have any questions or suggestions, feel free to reach out at <a href="mailto:support@jeetrack.in" style="color:#D8B4FE;text-decoration:none;font-weight:600;">support@jeetrack.in</a>.<br><br>Best of luck with your prep! 💪`,
   };
   const pos = ta.selectionStart;
   ta.value = ta.value.substring(0, pos) + (snippets[type]||'') + ta.value.substring(pos);
@@ -2189,26 +2283,99 @@ function insertSnippet(type) {
 // ── Email HTML builder ────────────────────────────────────────
 function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
   const cta = (includeCTA && ctaText && ctaText.trim()) ? `
-  <div style="text-align:center;margin:28px 0">
-    <a href="${ctaUrl||'https://jeetrack.in'}" style="background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:13px 32px;border-radius:10px;font-weight:700;font-size:14px;display:inline-block;letter-spacing:.01em">${ctaText.trim()}</a>
-  </div>` : '';
+      <tr>
+        <td align="center" style="padding:0 40px 40px;">
+          <a href="${ctaUrl||'https://jeetrack.in'}"
+            style="display:inline-block;background:linear-gradient(135deg,#A855F7,#EC4899);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:600;">
+            ${ctaText.trim()}
+          </a>
+        </td>
+      </tr>` : '';
 
   return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<style>body{margin:0;padding:0;background:#0a0a0f;font-family:'Segoe UI',Arial,sans-serif;color:#f0eff5}a{color:#a695ff}</style>
-</head><body>
-<div style="max-width:580px;margin:0 auto;padding:24px 16px">
-  <div style="text-align:center;padding:28px 0 20px">
-    <img src="https://jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" style="height:36px;width:auto;display:inline-block"/>
-  </div>
-  <div style="background:#111118;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px 28px;font-size:15px;line-height:1.75;color:#e8e8f0">
-    ${bodyHtml.replace(/\{\{name\}\}/g, name).replace(/\n/g, "<br>")}
-  </div>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body style="margin:0;padding:40px 20px;background:#050816;font-family:Inter,Segoe UI,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td align="center">
+<table width="620" cellpadding="0" cellspacing="0" border="0"
+  style="max-width:620px;background:#0B1020;border:1px solid #1A2035;border-radius:20px;overflow:hidden;">
+
+  <!-- Logo -->
+  <tr>
+    <td align="center" style="padding:40px 30px 20px;">
+      <img src="https://jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" width="260"
+        style="display:block;border:0;max-width:260px;height:auto;">
+    </td>
+  </tr>
+
+  <!-- Divider -->
+  <tr>
+    <td>
+      <div style="height:1px;background:linear-gradient(90deg,transparent,#A855F7,#EC4899,transparent);"></div>
+    </td>
+  </tr>
+
+  <!-- Body -->
+  <tr>
+    <td style="padding:40px;color:#B4BCD0;font-size:16px;line-height:1.9;">
+      ${bodyHtml.replace(/\{\{name\}\}/g, name).replace(/\n/g, '<br>')}
+    </td>
+  </tr>
+
+  <!-- Signature -->
+  <tr>
+    <td style="padding:0 40px 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0"
+        style="background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(236,72,153,0.08));border:1px solid rgba(168,85,247,0.25);border-radius:14px;">
+        <tr>
+          <td style="padding:22px;">
+            <p style="margin:0;color:#B4BCD0;font-size:14px;">Best Regards,</p>
+            <p style="margin:12px 0 4px;color:#ffffff;font-size:22px;font-weight:700;">Aman Mishra</p>
+            <p style="margin:0;color:#D8B4FE;font-size:15px;">Founder, JEETrack</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
   ${cta}
-  <div style="text-align:center;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:16px">
-    <div style="font-size:12px;color:#4a4960;line-height:1.8">JEETrack · Built for serious JEE aspirants<br><a href="https://jeetrack.in" style="color:#4a4960">jeetrack.in</a></div>
-  </div>
-</div></body></html>`;
+
+  <!-- Footer -->
+  <tr>
+    <td align="center" style="padding:24px;border-top:1px solid #1A2035;">
+      <p style="margin:0;color:#6B7280;font-size:13px;">© 2026 JEETrack • Built for JEE Aspirants</p>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+function getFromAddress() {
+  const isCustom = _emailMode === 'custom';
+  const name = isCustom ? 'ce-from-addr-custom' : 'ce-from-addr';
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  return checked ? checked.value : 'noreply@jeetrack.in';
+}
+
+function updateFromPreview() {
+  const addr = getFromAddress();
+  // Update tips card
+  const tipEl = document.getElementById('tips-from-addr');
+  if (tipEl) tipEl.textContent = addr;
+  // Update live preview if open
+  const prevFrom = document.getElementById('prev-from');
+  if (prevFrom && document.getElementById('ce-preview-card').style.display !== 'none') {
+    const fromName = document.getElementById(_emailMode === 'custom' ? 'ce-from-name-custom' : 'ce-from-name')?.value || 'JEETrack';
+    prevFrom.textContent = `${fromName} <${addr}>`;
+  }
 }
 
 // ── Preview ───────────────────────────────────────────────────
@@ -2230,7 +2397,7 @@ function previewCustom() {
     const body = document.getElementById('ce-plain-body')?.value || '';
     if (!body.trim()) { showToast('Write your message first!'); return; }
     // Render plain text as preformatted in a simple wrapper
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:24px;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.75;color:#222;background:#fff;white-space:pre-wrap;word-wrap:break-word}</style></head><body>${body.replace(/\{\{name\}\}/g,'Aman').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</body></html>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:40px 20px;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:15px;line-height:1.9;color:#B4BCD0;background:#050816;white-space:pre-wrap;word-wrap:break-word}a{color:#D8B4FE}</style></head><body>${body.replace(/\{\{name\}\}/g,'Aman').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</body></html>`;
     _renderPreview(html, subject, fromName);
   } else {
     const body = document.getElementById('ce-html-body')?.value || '';
@@ -2242,8 +2409,9 @@ function previewCustom() {
 function _renderPreview(html, subject, fromName) {
   const card  = document.getElementById('ce-preview-card');
   const frame = document.getElementById('ce-preview-frame');
+  const fromAddr = getFromAddress();
   document.getElementById('prev-subject').textContent = subject.replace(/\{\{name\}\}/g,'Aman') || '(no subject)';
-  document.getElementById('prev-from').textContent    = `${fromName} <noreply@jeetrack.in>`;
+  document.getElementById('prev-from').textContent    = `${fromName} <${fromAddr}>`;
   card.style.display = 'block';
   const doc = frame.contentDocument || frame.contentWindow.document;
   doc.open(); doc.write(html); doc.close();
@@ -2289,6 +2457,7 @@ async function sendCustomEmail() {
   const payload = {
     subject,
     from_name: fromName,
+    from_address: getFromAddress(),
     is_raw_html: isRawHtml,
     ...(isCustom && _customSubMode === 'plain' ? { text: htmlBody } : { html: htmlBody }),
   };
@@ -2436,6 +2605,7 @@ async function loadFeedbackStats() {
 
 async function loadFeedbacks(page = 0) {
   _fbPage = page;
+  _pagination.feedback = page;
   const tbody = document.getElementById('fb-table');
   tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
@@ -2500,10 +2670,11 @@ function replyToFeedback(userId, email, subject) {
 
     // Pre-fill body
     document.getElementById('ce-body').value =
-      `Hi {{name}},<br><br>Thank you so much for your feedback! 🙏<br><br>${subject ? `Regarding: "<em>${subject}</em>"<br><br>` : ''}[Write your reply here...]<br><br>Best,<br>Aman Mishra<br>Founder, JEETrack`;
+      `Dear <strong>{{name}}</strong>,\n\nThank you for your valuable feedback and kind words about JEETrack.\n\n${subject ? `Regarding: "<em>${subject}</em>"\n\n` : ''}[Write your reply here...]\n\nIf you have any further questions or suggestions, feel free to reach out at <a href="mailto:support@jeetrack.in" style="color:#D8B4FE;text-decoration:none;font-weight:600;">support@jeetrack.in</a>.`;
 
-    // Set custom email recipient
-    const customBtn = document.querySelectorAll('#page-email .recipient-tabs .rtab')[3];
+    // Set custom email recipient — find by text content, not index (safe against reordering)
+    const customBtn = [...document.querySelectorAll('#page-email .recipient-tabs .rtab')]
+      .find(b => b.textContent.trim().toLowerCase() === 'custom');
     if (customBtn) setRecipientTab('custom', customBtn);
     const ta = document.getElementById('ce-custom-emails');
     if (ta && email) { ta.value = email; updateRecipientCount(); }
