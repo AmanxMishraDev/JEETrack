@@ -1345,7 +1345,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   box-shadow:0 2px 14px rgba(255,255,255,.08),0 4px 20px rgba(0,0,0,.25);
   margin-bottom:0;
 }
-.auth-google-primary:hover{background:#fafafa;border-color:#fff;transform:translateY(-1.5px);box-shadow:0 4px 20px rgba(255,255,255,.12),0 6px 26px rgba(0,0,0,.3)}
+.auth-google-primary:hover{background:#fafafa;border-color:#fff;color:#1a1a2e;transform:translateY(-1.5px);box-shadow:0 4px 20px rgba(255,255,255,.12),0 6px 26px rgba(0,0,0,.3)}
 
 .land-auth-or{display:flex;align-items:center;gap:10px;margin:1.1rem 0;color:rgba(255,255,255,.22);font-size:11px;letter-spacing:.01em}
 .land-auth-or::before,.land-auth-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
