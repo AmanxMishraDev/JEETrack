@@ -141,17 +141,13 @@ async function initSupabase(){
 let authTab = 'login';
 function switchAuthTab(tab){
   authTab = tab;
-  document.querySelectorAll('.auth-tab,.land-auth-tab').forEach((b,i) => b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('auth-tab-login')?.classList.toggle('active', tab==='login');
+  document.getElementById('auth-tab-signup')?.classList.toggle('active', tab==='signup');
   const authBtn = document.getElementById('auth-btn');
   if(authBtn) authBtn.textContent = tab==='login' ? 'Sign In' : 'Create Account';
   const nameField = document.getElementById('auth-name-field');
   if(nameField) nameField.style.display = tab==='signup' ? '' : 'none';
-  
-  const ft = document.getElementById('land-form-title');
-  const fs = document.getElementById('land-form-sub');
-  if(ft) ft.textContent = tab==='login' ? 'Welcome back' : 'Create your account';
-  if(fs) fs.textContent = tab==='login' ? 'Sign in to continue your JEE prep' : 'Start your JEE tracking journey';
-  
+
   const fw=document.getElementById('auth-forgot-wrap');
   if(fw)fw.style.display=tab==='login'?'block':'none';
   const legalNote=document.getElementById('auth-legal-note');
@@ -1047,11 +1043,6 @@ function _initLandFabScroll() {
 }
 
 function landingOpenAuth(tab) {
-  const hero = document.getElementById('land-hero-cta');
-  const form = document.getElementById('land-auth-form');
-  if (!hero || !form) return;
-
-  
   if (window.innerWidth <= 768) {
     const panel = document.querySelector('.land-right');
     if (panel && !panel.classList.contains('mob-visible')) {
@@ -1061,52 +1052,20 @@ function landingOpenAuth(tab) {
       if (cta) cta.style.display = 'none';
     }
   }
-
-  
-  hero.style.opacity = '0';
-  hero.style.transform = 'translateY(-10px)';
-  hero.style.transition = 'opacity .22s ease, transform .22s ease';
-  setTimeout(() => {
-    hero.style.display = 'none';
-    hero.style.opacity = '';
-    hero.style.transform = '';
-    hero.style.transition = '';
-    form.classList.add('show');
-    switchAuthTab(tab);
-  }, 220);
+  switchAuthTab(tab);
 }
 
 function mobileLandingShowAuth() {
   const panel = document.querySelector('.land-right');
   if (!panel) return;
   panel.classList.add('mob-visible');
+  document.body.style.overflow = 'hidden';
   const cta = document.getElementById('mob-land-cta');
   if (cta) cta.style.display = 'none';
 }
 
 function landingCloseAuth() {
-  const hero = document.getElementById('land-hero-cta');
-  const form = document.getElementById('land-auth-form');
-  if (!hero || !form) return;
-  form.classList.remove('show');
-  hero.style.display = 'flex';
-  hero.style.opacity = '0';
-  hero.style.transform = 'translateY(10px)';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      hero.style.transition = 'opacity .28s ease, transform .28s ease';
-      hero.style.opacity = '1';
-      hero.style.transform = 'none';
-    });
-  });
-  setTimeout(() => { hero.style.transition = ''; }, 320);
-
-  
-  
-  if (window.innerWidth <= 768) {
-    
-    
-  }
+  // Desktop panel is always visible now — nothing to animate back to.
 }
 
 function closeMobAuthOverlay() {
@@ -1115,10 +1074,6 @@ function closeMobAuthOverlay() {
   document.body.style.overflow = '';
   const cta = document.getElementById('mob-land-cta');
   if (cta) { cta.style.display = ''; cta.style.transform = ''; cta.style.opacity = ''; }
-  const hero = document.getElementById('land-hero-cta');
-  const form = document.getElementById('land-auth-form');
-  if (hero) { hero.style.display = 'flex'; hero.style.opacity = '1'; hero.style.transform = 'none'; }
-  if (form) form.classList.remove('show');
 }
 
 const COACHING_BY_MODE = {
@@ -1217,6 +1172,7 @@ function showOnboarding() {
   history.replaceState({page:'onboarding'}, '', '/onboarding');
   document.title = 'JEETrack — Setup Profile';
   
+  renderObYearOptions();
   const cs = document.getElementById('coaching-section');
   if (cs) cs.style.display = 'none';
   const nameEl = document.getElementById('ob-name');
@@ -1313,6 +1269,38 @@ function removeObAvatar() {
   if (input) input.value = '';
   const rb = document.getElementById('ob-av-remove-btn');
   if (rb) rb.style.display = 'none';
+}
+
+function renderObYearOptions() {
+  const baseYear = typeof getDefaultJeeYear === 'function' ? getDefaultJeeYear() : (new Date().getFullYear()+1);
+
+  // Class-step hints: a Class 12 student sits JEE at the end of THIS academic
+  // year (baseYear); a Class 11 student sits it the year after (baseYear+1).
+  const c12 = document.getElementById('ob-class12-yr');
+  const c11 = document.getElementById('ob-class11-yr');
+  if (c12) c12.textContent = 'JEE ' + baseYear;
+  if (c11) c11.textContent = 'JEE ' + (baseYear+1);
+
+  const grid = document.getElementById('ob-year-grid');
+  if (!grid) return;
+  const opts = [
+    { year: baseYear,   label: 'This year',  icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', color: '#fbbf24' },
+    { year: baseYear+1, label: 'Next year',  icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', color: '#a29bfe' },
+    { year: baseYear+2, label: 'Two years',  icon: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>', color: '#34d399' },
+  ];
+  let html = opts.map(o => `
+    <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="${o.year}">
+      <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${o.color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${o.icon}</svg></div>
+      <div class="ob-opt-label">JEE ${o.year}</div>
+      <div class="ob-opt-sub">${o.label}</div>
+    </div>`).join('');
+  html += `
+    <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="other">
+      <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a7990" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="ob-opt-label">Later</div>
+      <div class="ob-opt-sub">Just exploring</div>
+    </div>`;
+  grid.innerHTML = html;
 }
 
 function obSelect(el, group) {
@@ -1462,7 +1450,7 @@ async function finishOnboarding() {
     class_year: obData.class_year || 'other',
     study_mode: obData.mode || 'self',
     coaching: obData.coaching || 'self',
-    target_year: obData.year || '2027',
+    target_year: obData.year || String(getDefaultJeeYear()),
     onboarding_done: true,
   };
   
@@ -1606,12 +1594,27 @@ function renderSettings() {
 
 function loadStudySettings() {
   if (document.getElementById('settings-class')) document.getElementById('settings-class').value = userProfile.class_year || '12';
-  if (document.getElementById('settings-year')) document.getElementById('settings-year').value = userProfile.target_year || '2027';
+  renderSettingsYearOptions();
+  if (document.getElementById('settings-year')) document.getElementById('settings-year').value = userProfile.target_year || String(getDefaultJeeYear());
   if (document.getElementById('settings-mode')) document.getElementById('settings-mode').value = userProfile.study_mode || 'online';
   const coaching = COACHING_LIST.find(c => c.id === userProfile.coaching);
   const sel = document.getElementById('settings-coaching');
   if (sel) sel.value = coaching ? coaching.id : 'self';
   toggleCustomCoaching();
+}
+
+function renderSettingsYearOptions() {
+  const sel = document.getElementById('settings-year');
+  if (!sel) return;
+  const baseYear = typeof getDefaultJeeYear === 'function' ? getDefaultJeeYear() : (new Date().getFullYear()+1);
+  // Always include the user's currently-saved year too, even if it's since
+  // fallen outside the rolling 3-year window, so their existing choice never
+  // silently disappears from the list.
+  const saved = userProfile?.target_year && /^\d{4}$/.test(userProfile.target_year) ? parseInt(userProfile.target_year,10) : null;
+  const years = new Set([baseYear, baseYear+1, baseYear+2]);
+  if (saved) years.add(saved);
+  const sorted = [...years].sort((a,b)=>a-b);
+  sel.innerHTML = sorted.map(y => `<option value="${y}">JEE ${y}</option>`).join('') + `<option value="other">Later</option>`;
 }
 
 function loadAlertsSettings() {
@@ -1903,7 +1906,6 @@ function applyFontSize(s) {
       .sv { font-size: calc(1.7rem * ${ratio}) !important; }
       .pt { font-size: calc(1.4rem * ${ratio}) !important; }
       .slide-title { font-size: calc(2.7rem * ${ratio}) !important; }
-      .land-hero-title { font-size: calc(1.55rem * ${ratio}) !important; }
       .land-auth-welcome { font-size: calc(1.35rem * ${ratio}) !important; }
       .logo { font-size: calc(1.05rem * ${ratio}) !important; }
     `;

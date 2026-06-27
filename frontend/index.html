@@ -82,7 +82,7 @@
 }
 </script>
 
-<link rel="icon" type="image/svg+xml" href="logo.svg"/>
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg"/>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
 <link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="preload" as="image" href="icon-512.png"/>
@@ -126,7 +126,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="splash-corner splash-corner-tr"></div>
     <div class="splash-corner splash-corner-bl"></div>
     <div class="splash-corner splash-corner-br"></div>
-    <div class="splash-j">J</div>
+    <div class="splash-j"><img src="logo-mark.png" alt="JEETrack" class="splash-j-img"/></div>
   </div>
   <div class="splash-title">JEE<span>Track</span></div>
   <div class="splash-sub">Your JEE preparation at a glance</div>
@@ -139,7 +139,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="nf-orb nf-orb-1"></div>
   <div class="nf-orb nf-orb-2"></div>
   <a href="/" class="nf-logo">
-    <div class="nf-logo-mark">J</div>
     <span class="nf-logo-text">JEE<span>Track</span></span>
   </a>
   <div class="nf-content">
@@ -173,7 +172,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="land-stars" id="land-stars"></div>
   <nav class="land-nav">
     <a class="land-nav-logo" href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" style="text-decoration:none;color:inherit">
-      <div class="land-nav-logo-mark">J</div>
       JEE<span>Track</span>
     </a>
     <div class="land-nav-links">
@@ -298,38 +296,25 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="land-right-shimmer"></div>
       <div class="land-auth-inner">
 
-        
-        <div class="land-hero-cta" id="land-hero-cta">
-          <div class="land-hero-logo"><div class="land-hero-logo-ring"></div>J</div>
-          <div class="land-hero-title">Your JEE command<br>centre awaits</div>
-          <div class="land-hero-sub">Track scores, hours, syllabus, and AI insights — all in one place, built for serious aspirants.</div>
-          <div class="land-hero-pills">
-            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#a695ff"></span>Mock Analysis</span>
-            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#34d399"></span>Study Heatmap</span>
-            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#f472b6"></span>AI Insights</span>
-            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#fbbf24"></span>Syllabus Tracker</span>
-          </div>
-          <div class="land-hero-actions">
-            <button class="land-hero-btn-main" onclick="landingOpenAuth('signup')">Create free account →</button>
-            <div class="land-hero-divider">or</div>
-            <button class="land-hero-btn-ghost" onclick="landingOpenAuth('login')">Sign in to your account</button>
-            <div class="land-hero-divider">or</div>
-            <button class="land-google-btn" onclick="doGoogleAuth()">
-              <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-              Continue with Google
-            </button>
-          </div>
-          <div style="margin-top:1.6rem;font-size:10px;color:rgba(255,255,255,.15);text-align:center;letter-spacing:.04em">crafted by Aman Mishra</div>
-        </div>
-
-        
         <div class="land-auth-form" id="land-auth-form">
-          <button class="land-auth-back" onclick="window.innerWidth<=768 ? closeMobAuthOverlay() : landingCloseAuth()">← Back</button>
-          <div class="land-auth-welcome" id="land-form-title">Welcome back</div>
-          <div class="land-auth-sub" id="land-form-sub">Sign in to continue your JEE prep</div>
+          <div class="land-auth-brand">
+            <div class="land-auth-brand-logo"><img src="logo-mark.png" alt="JEETrack"/></div>
+            <div class="land-auth-brand-text">
+              <div class="land-auth-welcome" id="land-form-title">Your JEE command centre</div>
+              <div class="land-auth-sub" id="land-form-sub">Track scores, hours, syllabus & AI insights</div>
+            </div>
+          </div>
+
+          <button class="auth-google auth-google-primary" onclick="doGoogleAuth()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+
+          <div class="land-auth-or"><span>or continue with email</span></div>
+
           <div class="land-auth-tabs">
-            <button class="land-auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
-            <button class="land-auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            <button class="land-auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Sign In</button>
+            <button class="land-auth-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
           </div>
           <div class="auth-err" id="auth-err"></div>
           <div class="auth-info" id="auth-info"></div>
@@ -357,11 +342,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             By creating an account, you agree to our <a href="/terms" target="_blank" style="color:var(--ac2);text-decoration:none">Terms</a> and <a href="/privacy" target="_blank" style="color:var(--ac2);text-decoration:none">Privacy Policy</a>.
           </div>
           <button class="btn bp auth-submit-btn" id="auth-btn" onclick="doAuth()">Sign In</button>
-          <div class="auth-divider" style="color:rgba(255,255,255,.2)">or</div>
-          <button class="auth-google" onclick="doGoogleAuth()">
-            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Continue with Google
-          </button>
+          <div class="land-auth-pills">
+            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#a695ff"></span>Mock Analysis</span>
+            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#34d399"></span>Study Heatmap</span>
+            <span class="land-hero-pill"><span class="land-hero-pill-dot" style="background:#f472b6"></span>AI Insights</span>
+          </div>
+          <div style="margin-top:1.2rem;font-size:10px;color:rgba(255,255,255,.15);text-align:center;letter-spacing:.04em">crafted by Aman Mishra</div>
         </div>
 
       </div>
@@ -492,7 +478,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   
   <footer class="ls-footer">
     <a href="#" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});return false;" class="ls-footer-logo">
-      <div class="ls-footer-logo-mark">J</div>
       <span class="ls-footer-logo-text">JEE<span>Track</span></span>
     </a>
     <div class="ls-footer-links">
@@ -617,12 +602,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="ob-opt" onclick="obSelect(this,'ob-class')" data-val="11">
               <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
               <div class="ob-opt-label">Class 11</div>
-              <div class="ob-opt-sub">JEE 2027</div>
+              <div class="ob-opt-sub" id="ob-class11-yr">JEE —</div>
             </div>
             <div class="ob-opt" onclick="obSelect(this,'ob-class')" data-val="12">
               <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div>
               <div class="ob-opt-label">Class 12</div>
-              <div class="ob-opt-sub">JEE 2026</div>
+              <div class="ob-opt-sub" id="ob-class12-yr">JEE —</div>
             </div>
             <div class="ob-opt" onclick="obSelect(this,'ob-class')" data-val="dropper">
               <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
@@ -699,27 +684,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="ob-step-desc">We'll set the countdown and intensity accordingly</div>
           </div>
 
-          <div class="ob-grid">
-            <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="2026">
-              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-              <div class="ob-opt-label">JEE 2026</div>
-              <div class="ob-opt-sub">This year</div>
-            </div>
-            <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="2027">
-              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              <div class="ob-opt-label">JEE 2027</div>
-              <div class="ob-opt-sub">Next year</div>
-            </div>
-            <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="2028">
-              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>
-              <div class="ob-opt-label">JEE 2028</div>
-              <div class="ob-opt-sub">Two years</div>
-            </div>
-            <div class="ob-opt" onclick="obSelect(this,'ob-year')" data-val="other">
-              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a7990" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-              <div class="ob-opt-label">Later</div>
-              <div class="ob-opt-sub">Just exploring</div>
-            </div>
+          <div class="ob-grid" id="ob-year-grid">
+            <!-- populated dynamically by renderObYearOptions() — see app.js -->
           </div>
 
           
@@ -1824,10 +1790,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="settings-row">
             <div class="settings-row-l"><div class="settings-row-title">Target JEE Year</div><div class="settings-row-sub">Which year are you targeting?</div></div>
             <select class="fs" id="settings-year" style="width:175px;padding:8px 12px;font-size:13px">
-              <option value="2026">JEE 2026</option>
-              <option value="2027">JEE 2027</option>
-              <option value="2028">JEE 2028</option>
-              <option value="other">Later</option>
+              <!-- populated dynamically by renderSettingsYearOptions() — see app.js -->
             </select>
           </div>
           <div class="settings-row">
@@ -3485,11 +3448,18 @@ let undoTimer=null;
 let currentQLType='lecture';
 let dismissedNotifs=new Set();
 
-function getTargetYear(){ return parseInt(userProfile?.target_year || localStorage.getItem('jt_target_year') || '2027', 10); }
+// The "default" JEE target year for a new/unset user, advancing automatically
+// every June 1st — JEE Mains/Advanced for year Y wraps up by ~May of year Y,
+// so from June 1 onward the natural "next" JEE year becomes Y+1.
+function getDefaultJeeYear(){
+  const now=new Date();
+  const y=now.getFullYear();
+  const juneFirst=new Date(y,5,1); // month is 0-indexed: 5 = June
+  return now>=juneFirst ? y+1 : y;
+}
+function getTargetYear(){ return parseInt(userProfile?.target_year || localStorage.getItem('jt_target_year') || String(getDefaultJeeYear()), 10); }
 function getJeeMainsDate(){ return new Date(getTargetYear()+'-01-20'); }
 function getJeeAdvDate()  { return new Date(getTargetYear()+'-05-17'); }
-const JEE_M=new Date('2027-01-20');
-const JEE_A=new Date('2027-05-17');
 
 function dismissNotif(id){dismissedNotifs.add(id);renderOvNotifs();}
 function renderOvNotifs(){
@@ -3809,7 +3779,7 @@ JEETrack helped me set a clear goal (${goal}/${examMax}), track every mock test,
 Start tracking your JEE prep for free 👇
 ${shareUrl}
 
-#JEE2026 #JEEMains #JEEPreparation #JEETrack`;
+#JEE${getTargetYear()} #JEEMains #JEEPreparation #JEETrack`;
 
   if(navigator.share){
     try{
@@ -6486,7 +6456,7 @@ async function generateInsights(){
   const todoRate=S.todos.length?Math.round(todoDone/S.todos.length*100):0;
 
   const aiUserName = document.getElementById('sb-username')?.textContent?.trim() || 'there';
-  const prompt=`You are ${aiUserName}'s personal JEE 2027 coach. Analyze their data and generate smart, data-driven insights. Follow the INCLUSION RULES strictly.
+  const prompt=`You are ${aiUserName}'s personal JEE ${getTargetYear()} coach. Analyze their data and generate smart, data-driven insights. Follow the INCLUSION RULES strictly.
 
 IMPORTANT: When referring to test scores, always say "X marks" or "scored X/300" — NEVER say "X%" for a raw test score. Percentages are only for study split (lecture/practice/revision) and syllabus completion. Example: say "scored 201/300" not "67%".
 

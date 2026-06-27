@@ -23,7 +23,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { type, subject, html, text, to_user_ids, to_emails, from_name, preview_only, is_raw_html } = body;
+    const { type, subject, html, text, to_user_ids, to_emails, from_name, from_address, preview_only, is_raw_html } = body;
 
     if (!subject?.trim()) return new Response(JSON.stringify({ error: "Subject required" }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
     if (!html?.trim() && !text?.trim()) return new Response(JSON.stringify({ error: "Body required" }), { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
@@ -69,7 +69,8 @@ serve(async (req) => {
     // ── Send in batches ──────────────────────────────────────
     // is_raw_html=true  → send exactly as built by the frontend (compose preset HTML or custom HTML/text)
     // is_raw_html=false/absent → also send as-is (compose mode now builds full HTML via buildEmailHTML)
-    const from = `${from_name || "JEETrack"} <noreply@jeetrack.in>`;
+    const fromAddr = (from_address === "support@jeetrack.in") ? "support@jeetrack.in" : "noreply@jeetrack.in";
+    const from = `${from_name || "JEETrack"} <${fromAddr}>`;
     let sent = 0, failed = 0, failedEmails: string[] = [];
 
     for (let i = 0; i < recipients.length; i += 10) {

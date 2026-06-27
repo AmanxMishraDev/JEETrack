@@ -1,7 +1,7 @@
 {
-  "name": "JEETrack — JEE 2027 Prep",
+  "name": "JEETrack — JEE Prep Tracker",
   "short_name": "JEETrack",
-  "description": "Your personal JEE 2027 preparation dashboard",
+  "description": "Your personal JEE preparation dashboard",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",
