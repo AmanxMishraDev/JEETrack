@@ -910,7 +910,7 @@ export default async function handler(req, res) {
       // Get feedbacks — include rating (may be null for text-only feedback)
       // email may be null for review/rating submissions (those don't store email)
       const feedbacks = await sbQuery(
-        `feedback?select=id,user_id,email,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
+        `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
       ).catch(() => []);
 
       // Get total count
@@ -933,7 +933,7 @@ export default async function handler(req, res) {
     // ── FEEDBACK STATS ──────────────────────────────────────
     if (action === 'feedback_stats') {
       const feedbacks = await sbQuery(
-        'feedback?select=id,user_id,email,subject,message,rating,created_at&order=created_at.desc&limit=500'
+        'feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=500'
       ).catch(() => []);
 
       // Categorize by subject keywords
