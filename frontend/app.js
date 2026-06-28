@@ -139,61 +139,101 @@ async function initSupabase(){
 }
 
 let authTab = 'login';
-function switchAuthTab(tab){
-  authTab = tab;
-  document.getElementById('auth-tab-login')?.classList.toggle('active', tab==='login');
-  document.getElementById('auth-tab-signup')?.classList.toggle('active', tab==='signup');
-  const authBtn = document.getElementById('auth-btn');
-  if(authBtn) authBtn.textContent = tab==='login' ? 'Sign In' : 'Create Account';
-  const nameField = document.getElementById('auth-name-field');
-  if(nameField) nameField.style.display = tab==='signup' ? '' : 'none';
+let _authSlideAnimating = false;
 
-  const fw=document.getElementById('auth-forgot-wrap');
-  if(fw)fw.style.display=tab==='login'?'block':'none';
-  const legalNote=document.getElementById('auth-legal-note');
-  if(legalNote)legalNote.style.display=tab==='signup'?'block':'none';
-  hideAuthMsg();
+function switchAuthMode(mode){
+  if (mode === authTab || _authSlideAnimating) return;
+  const viewport = document.getElementById('auth-slide-viewport');
+  const current = document.getElementById('auth-slide-' + authTab);
+  const next = document.getElementById('auth-slide-' + mode);
+  if (!viewport || !current || !next) { authTab = mode; return; }
+
+  _authSlideAnimating = true;
+  const goingForward = mode === 'signup'; // signup slides in from the right, login from the left
+  current.classList.add(goingForward ? 'slide-out-left' : 'slide-out-right');
+  next.classList.add('active', goingForward ? 'slide-in-right' : 'slide-in-left');
+
+  // measure the incoming slide's natural height so the viewport animates to fit it
+  next.style.position='absolute'; next.style.visibility='hidden'; next.style.display='block';
+  const nextHeight = next.scrollHeight;
+  next.style.position=''; next.style.visibility=''; next.style.display='';
+  viewport.style.height = viewport.offsetHeight + 'px';
+  requestAnimationFrame(() => { viewport.style.height = nextHeight + 'px'; });
+
+  authTab = mode;
+  hideAuthMsgPro(mode==='login'?'signup':'login');
+
+  setTimeout(() => {
+    current.classList.remove('active','slide-out-left','slide-out-right');
+    next.classList.remove('slide-in-right','slide-in-left');
+    viewport.style.height = '';
+    _authSlideAnimating = false;
+  }, 420);
 }
-function togglePassVis(){
-  const inp=document.getElementById('auth-pass');
-  const btn=document.getElementById('pass-eye-btn');
+
+// Back-compat shim: anything still calling switchAuthTab (e.g. nav "Sign In" / "Get Started" buttons) routes through the new slide-aware switcher.
+function switchAuthTab(tab){ switchAuthMode(tab); }
+
+function togglePassVisPro(mode){
+  const inp=document.getElementById('auth-pass-'+mode);
+  const btn=document.getElementById('pass-eye-btn-'+mode);
+  const icon=document.getElementById('eye-icon-'+mode);
   const isPass=inp.type==='password';
   inp.type=isPass?'text':'password';
-  btn.style.color=isPass?'var(--ac2)':'var(--mu)';
-  document.getElementById('eye-icon').innerHTML=isPass
+  btn.classList.toggle('active', isPass);
+  icon.innerHTML=isPass
     ?'<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
     :'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
 }
 async function doForgotPass(){
-  if(!sb){showAuthErr('Supabase not configured yet.');return;}
-  const email=document.getElementById('auth-email').value.trim();
-  if(!email){showAuthErr('Enter your email address first, then click Forgot password.');return;}
-  const btn=document.querySelector('[onclick="doForgotPass()"]');
+  if(!sb){showAuthErrPro('login','Supabase not configured yet.');return;}
+  const email=document.getElementById('auth-email-login').value.trim();
+  if(!email){showAuthErrPro('login','Enter your email address first, then click Forgot password.');return;}
+  const btn=document.querySelector('.auth-forgot-link');
+  const originalText = btn ? btn.textContent : '';
   if(btn){btn.textContent='Sending...';btn.disabled=true;}
   try{
     const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
     if(error)throw error;
-    showAuthInfo('Password reset email sent! Check your inbox and follow the link.');
-  }catch(e){showAuthErr(e.message||'Failed to send reset email.');}
-  if(btn){btn.textContent='Forgot password?';btn.disabled=false;}
+    showAuthInfoPro('login','Password reset email sent! Check your inbox and follow the link.');
+  }catch(e){showAuthErrPro('login', e.message||'Failed to send reset email.');}
+  if(btn){btn.textContent=originalText||'Forgot password?';btn.disabled=false;}
 }
-function hideAuthMsg(){ document.getElementById('auth-err').style.display='none'; document.getElementById('auth-info').style.display='none'; }
-function showAuthErr(msg){ const e=document.getElementById('auth-err'); e.textContent=msg; e.style.display='block'; document.getElementById('auth-info').style.display='none'; }
-function showAuthInfo(msg){ const e=document.getElementById('auth-info'); e.textContent=msg; e.style.display='block'; document.getElementById('auth-err').style.display='none'; }
+function hideAuthMsgPro(mode){
+  const e=document.getElementById('auth-err-'+mode), i=document.getElementById('auth-info-'+mode);
+  if(e) e.style.display='none';
+  if(i) i.style.display='none';
+}
+function hideAuthMsg(){ hideAuthMsgPro('login'); hideAuthMsgPro('signup'); }
+function showAuthErrPro(mode, msg){
+  const e=document.getElementById('auth-err-'+mode);
+  if(!e) return;
+  e.textContent=msg; e.style.display='block';
+  const i=document.getElementById('auth-info-'+mode); if(i) i.style.display='none';
+}
+function showAuthInfoPro(mode, msg){
+  const i=document.getElementById('auth-info-'+mode);
+  if(!i) return;
+  i.textContent=msg; i.style.display='block';
+  const e=document.getElementById('auth-err-'+mode); if(e) e.style.display='none';
+}
+// Back-compat shims for any other call sites still using the single-mode versions
+function showAuthErr(msg){ showAuthErrPro(authTab, msg); }
+function showAuthInfo(msg){ showAuthInfoPro(authTab, msg); }
 
-async function doAuth(){
-  if(!sb){ showAuthErr('Supabase credentials not set in the code yet.'); return; }
-  const email = document.getElementById('auth-email').value.trim();
-  const pass = document.getElementById('auth-pass').value;
-  if(!email || !pass){ showAuthErr('Please enter your email and password.'); return; }
-  const btn = document.getElementById('auth-btn');
-  btn.disabled = true; btn.textContent = 'Please wait...'; hideAuthMsg();
+async function doAuthPro(mode){
+  if(!sb){ showAuthErrPro(mode, 'Supabase credentials not set in the code yet.'); return; }
+  const email = document.getElementById('auth-email-'+mode).value.trim();
+  const pass = document.getElementById('auth-pass-'+mode).value;
+  if(!email || !pass){ showAuthErrPro(mode, 'Please enter your email and password.'); return; }
+  const btn = document.getElementById('auth-btn-'+mode);
+  btn.disabled = true; btn.classList.add('loading'); hideAuthMsgPro(mode);
   try{
-    if(authTab === 'signup'){
-      const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
+    if(mode === 'signup'){
+      const name = document.getElementById('auth-name-signup').value.trim() || email.split('@')[0];
       const { error } = await sb.auth.signUp({ email, password: pass, options:{ data:{ full_name: name } } });
       if(error) throw error;
-      showAuthInfo('Check your email for a confirmation link. After confirming, sign in here.');
+      showAuthInfoPro(mode, 'Check your email for a confirmation link. After confirming, sign in here.');
     } else {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
       if(error) throw error;
@@ -205,16 +245,17 @@ async function doAuth(){
     if (msg.toLowerCase().includes('password') && (msg.toLowerCase().includes('character') || msg.toLowerCase().includes('least') || msg.toLowerCase().includes('uppercase') || msg.toLowerCase().includes('lowercase') || msg.toLowerCase().includes('symbol') || msg.toLowerCase().includes('number') || msg.toLowerCase().includes('digit'))) {
       msg = 'Password must be 6+ chars with a number & symbol.';
     }
-    showAuthErr(msg);
+    showAuthErrPro(mode, msg);
   }
-  btn.disabled = false;
-  btn.textContent = authTab==='login' ? 'Sign In' : 'Create Account';
+  btn.disabled = false; btn.classList.remove('loading');
 }
+// Back-compat shim for any remaining callers of the old single-mode doAuth
+function doAuth(){ return doAuthPro(authTab); }
 
 async function doGoogleAuth(){
-  if(!sb){ showAuthErr('Supabase not configured yet.'); return; }
+  if(!sb){ showAuthErrPro(authTab, 'Supabase not configured yet.'); return; }
   const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.origin } });
-  if(error) showAuthErr(error.message);
+  if(error) showAuthErrPro(authTab, error.message);
 }
 
 async function signOut(){
@@ -1042,39 +1083,30 @@ function _initLandFabScroll() {
   if (landingEl) landingEl.addEventListener('scroll', onScroll, { passive: true });
 }
 
-function landingOpenAuth(tab) {
-  if (window.innerWidth <= 768) {
-    const panel = document.querySelector('.land-right');
-    if (panel && !panel.classList.contains('mob-visible')) {
-      panel.classList.add('mob-visible');
-      document.body.style.overflow = 'hidden';
-      const cta = document.getElementById('mob-land-cta');
-      if (cta) cta.style.display = 'none';
-    }
-  }
-  switchAuthTab(tab);
-}
-
-function mobileLandingShowAuth() {
-  const panel = document.querySelector('.land-right');
-  if (!panel) return;
-  panel.classList.add('mob-visible');
+function landingOpenAuth(mode) {
+  const scrim = document.getElementById('auth-modal-scrim');
+  if (!scrim) return;
+  scrim.classList.add('open');
   document.body.style.overflow = 'hidden';
-  const cta = document.getElementById('mob-land-cta');
-  if (cta) cta.style.display = 'none';
+  switchAuthTab(mode);
 }
 
-function landingCloseAuth() {
-  // Desktop panel is always visible now — nothing to animate back to.
-}
-
-function closeMobAuthOverlay() {
-  const panel = document.querySelector('.land-right');
-  if (panel) panel.classList.remove('mob-visible');
+function closeAuthModal() {
+  const scrim = document.getElementById('auth-modal-scrim');
+  if (scrim) scrim.classList.remove('open');
   document.body.style.overflow = '';
-  const cta = document.getElementById('mob-land-cta');
-  if (cta) { cta.style.display = ''; cta.style.transform = ''; cta.style.opacity = ''; }
 }
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const scrim = document.getElementById('auth-modal-scrim');
+    if (scrim && scrim.classList.contains('open')) closeAuthModal();
+  }
+});
+
+// Back-compat shims — old names some code paths may still reference.
+function mobileLandingShowAuth() { landingOpenAuth('signup'); }
+function landingCloseAuth() { closeAuthModal(); }
+function closeMobAuthOverlay() { closeAuthModal(); }
 
 const COACHING_BY_MODE = {
   online: [
@@ -1906,7 +1938,7 @@ function applyFontSize(s) {
       .sv { font-size: calc(1.7rem * ${ratio}) !important; }
       .pt { font-size: calc(1.4rem * ${ratio}) !important; }
       .slide-title { font-size: calc(2.7rem * ${ratio}) !important; }
-      .land-auth-welcome { font-size: calc(1.35rem * ${ratio}) !important; }
+      .auth-headline { font-size: calc(1.5rem * ${ratio}) !important; }
       .logo { font-size: calc(1.05rem * ${ratio}) !important; }
     `;
     document.head.appendChild(style);
@@ -1940,7 +1972,7 @@ function applyRadius(r, silent) {
   style.id = 'jt-radius-override';
   style.textContent = `
     .md, .settings-section, .ob-card, .auth-box, .cel-box { border-radius: ${mvals[r]} !important; }
-    .btn, .fc, .fi, .fs, .size-btn, .fc, .auth-tab, .land-auth-tab, .ob-opt,
+    .btn, .fc, .fi, .fs, .size-btn, .fc, .fi-pro, .auth-submit-pro, .auth-google-primary, .ob-opt,
     .ni, .nb, .ti, .citem, .undobar, .settings-nav-item, .chip, .sp,
     .sbadge, .tt, .theme-card, .toast { border-radius: ${bvals[r]} !important; }
     .card, .sc { border-radius: ${vals[r]} !important; }
