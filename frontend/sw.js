@@ -1,6 +1,6 @@
 // Cache version is set at build/deploy time via a version endpoint
 // Falls back to timestamp-based versioning so every deploy auto-invalidates
-const CACHE_VERSION = 'jeetrack-v3';
+const CACHE_VERSION = 'jeetrack-v4';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -12,6 +12,16 @@ const STATIC_ASSETS = [
 const NEVER_CACHE = [
   '/api/',
   '/api/config',
+];
+
+// Core app shell — these three files must always be fetched together as a
+// matching set from the SAME deploy. Caching them independently risks
+// serving e.g. new HTML with old CSS after a deploy, which can break the
+// page layout in ways that are very hard to diagnose. Always network-only.
+const APP_SHELL = [
+  '/index.html',
+  '/app.js',
+  '/styles.css',
 ];
 
 self.addEventListener('install', e => {
@@ -44,6 +54,14 @@ self.addEventListener('fetch', e => {
 
   // Never cache API calls or auth-related requests
   if (NEVER_CACHE.some(p => url.pathname.startsWith(p))) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // App shell (HTML/CSS/app.js) — always network-only, no cache read or
+  // write, so these three files can never be served as a mismatched set
+  // from old + new deploys mixed together.
+  if (APP_SHELL.some(p => url.pathname === p) || url.pathname === '/') {
     e.respondWith(fetch(e.request));
     return;
   }
