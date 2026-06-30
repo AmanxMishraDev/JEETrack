@@ -1,8 +1,11 @@
 // ============================================================
 // JEETrack Admin API — api/admin.js
-// 100% Supabase — no PostHog dependency
+// ALL PostHog + Supabase credentials stay server-side (env vars only)
 // ============================================================
 
+const POSTHOG_PERSONAL_KEY = process.env.POSTHOG_PERSONAL_KEY;
+const POSTHOG_PROJECT_ID   = process.env.POSTHOG_PROJECT_ID;
+const POSTHOG_HOST         = process.env.POSTHOG_HOST || 'https://us.posthog.com';
 const ADMIN_PASSWORD       = process.env.ADMIN_PASSWORD;
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -31,6 +34,34 @@ function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://admin.jeetrack.in');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+}
+
+// ── PostHog API helper ───────────────────────────────────────
+async function phQuery(query) {
+  const url = `${POSTHOG_HOST}/api/projects/${POSTHOG_PROJECT_ID}/query/`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${POSTHOG_PERSONAL_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query }),
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`PostHog ${res.status}: ${txt}`);
+  }
+  return res.json();
+}
+
+// ── PostHog Person Events ────────────────────────────────────
+async function phPersonEvents(distinctId) {
+  const url = `${POSTHOG_HOST}/api/projects/${POSTHOG_PROJECT_ID}/events/?distinct_id=${encodeURIComponent(distinctId)}&limit=50`;
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${POSTHOG_PERSONAL_KEY}` }
+  });
+  if (!res.ok) throw new Error(`PostHog events ${res.status}`);
+  return res.json();
 }
 
 // ── Supabase REST helper ──────────────────────────────────────
@@ -109,6 +140,19 @@ async function triggerEdgeFunction(fnName, body = {}) {
 }
 
 // ── Helpers ──────────────────────────────────────────────────
+function sumResults(res) {
+  try {
+    return (res?.results || []).reduce((acc, s) =>
+      acc + (s?.data || []).reduce((a, b) => a + (b || 0), 0), 0);
+  } catch { return 0; }
+}
+
+function maxResult(res) {
+  try {
+    return Math.max(...(res?.results || []).flatMap(s => s?.data || []).map(v => v || 0), 0);
+  } catch { return 0; }
+}
+
 function dateFrom(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
@@ -205,7 +249,7 @@ export default async function handler(req, res) {
       const [
         totalUsers, totalTests, totalHours, totalBacklogs,
         totalTodos, totalFeedbacks,
-        syllabusRows, aiInsightsUsers,
+        syllabusRows,
       ] = await Promise.all([
         sbCount('user_preferences').catch(() => 0),
         sbCount('tests').catch(() => 0),
@@ -213,10 +257,8 @@ export default async function handler(req, res) {
         sbCount('backlogs').catch(() => 0),
         sbCount('todos').catch(() => 0),
         sbCount('feedback').catch(() => 0),
+        // Total syllabus rows = total chapters possible (to compute % later)
         sbQuery('syllabus?select=user_id,theory,practice').catch(() => []),
-        // AI Insights used = distinct users who have ai_insights_count > 0 in user_preferences
-        // Run SQL to add this column first: ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS ai_insights_count integer DEFAULT 0;
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0`).catch(() => []),
       ]);
 
       // Syllabus % — avg completion across all users
@@ -224,20 +266,15 @@ export default async function handler(req, res) {
       const totalMarked   = syllabusRows.filter(r => r.theory).length + syllabusRows.filter(r => r.practice).length;
       const syllabusPercent = totalPossible > 0 ? Math.round((totalMarked / totalPossible) * 100) : 0;
 
-      // Distinct AI users in the period
-      const aiInsightsCount = new Set(aiInsightsUsers.map(u => u.user_id)).size;
-
       return res.status(200).json({
         totalUsers,
-        activeUsers:      activePrefs.length,
+        activeUsers:      activePrefs.length,   // users who opened app in N days
         mockTests:        totalTests,
         studyHours:       totalHours,
         backlogs:         totalBacklogs,
         todos:            totalTodos,
         feedbacks:        totalFeedbacks,
-        syllabusPercent,
-        aiInsights:       aiInsightsCount,   // distinct users who ever used AI Insights
-        pageViews:        activePrefs.length, // same as activeUsers — app opens in period
+        syllabusPercent,                         // avg % syllabus completed
       });
     }
 
@@ -245,40 +282,50 @@ export default async function handler(req, res) {
     if (action === 'features') {
       const cutoff = dateFrom(days);
 
-      const totalAll = await sbCount('user_preferences').catch(() => 1);
+      // Get all users in period from Supabase
+      const activeUsers = await sbQuery(
+        `user_preferences?select=user_id,last_active_at&last_active_at=gte.${cutoff}T00:00:00Z`
+      ).catch(() => []);
+      const totalActive = activeUsers.length || 1;
+      const activeIds = new Set(activeUsers.map(u => u.user_id));
 
-      // Get unique users per feature from Supabase — 100% reliable
-      const [testUsers, hoursUsers, backlogUsers, todoUsers, syllabusUsers, feedbackUsers, aiUsers] = await Promise.all([
-        sbQuery(`tests?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`hours?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`backlogs?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`todos?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`syllabus?select=user_id&updated_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`feedback?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0&last_active_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
+      // Get unique users per feature from Supabase (reliable, real data)
+      const [testUsers, hoursUsers, backlogUsers, todoUsers, syllabusUsers, feedbackUsers] = await Promise.all([
+        sbQuery('tests?select=user_id').catch(() => []),
+        sbQuery('hours?select=user_id').catch(() => []),
+        sbQuery('backlogs?select=user_id').catch(() => []),
+        sbQuery('todos?select=user_id').catch(() => []),
+        sbQuery('syllabus?select=user_id').catch(() => []),
+        sbQuery('feedback?select=user_id').catch(() => []),
       ]);
 
       const uniq = (arr) => new Set(arr.map(r => r.user_id)).size;
 
+      // Also get daily active feature users from PostHog
+      const [phAI, phPageViewed] = await Promise.all([
+        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'dau' }] }).catch(() => null),
+        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: cutoff }, series: [{ kind: 'EventsNode', event: 'page_viewed', math: 'dau' }] }).catch(() => null),
+      ]);
+
+      const totalAll = await sbCount('user_preferences').catch(() => 1);
+
       const features = [
-        { feature: 'Mock Tests',  users: uniq(testUsers),     total: totalAll },
-        { feature: 'Study Hours', users: uniq(hoursUsers),    total: totalAll },
-        { feature: 'Backlog',     users: uniq(backlogUsers),  total: totalAll },
-        { feature: 'To-Do',       users: uniq(todoUsers),     total: totalAll },
-        { feature: 'Syllabus',    users: uniq(syllabusUsers), total: totalAll },
-        { feature: 'AI Insights', users: uniq(aiUsers),       total: totalAll },
-        { feature: 'Feedback',    users: uniq(feedbackUsers), total: totalAll },
+        { feature: 'Mock Tests',    users: uniq(testUsers),    total: totalAll },
+        { feature: 'Study Hours',   users: uniq(hoursUsers),   total: totalAll },
+        { feature: 'Backlog',       users: uniq(backlogUsers), total: totalAll },
+        { feature: 'To-Do',         users: uniq(todoUsers),    total: totalAll },
+        { feature: 'Syllabus',      users: uniq(syllabusUsers),total: totalAll },
+        { feature: 'AI Insights',   users: maxResult(phAI),    total: totalAll },
+        { feature: 'Feedback',      users: feedbackUsers.length, total: totalAll },
       ].map(f => ({
         ...f,
         pct: totalAll > 0 ? Math.round((f.users / totalAll) * 100) : 0,
       })).sort((a, b) => b.pct - a.pct);
 
-      // DAU per feature — active unique users in period per feature
+      // DAU per feature (avg users per day who use that feature)
       const dauFeatures = [
-        { feature: 'Mock Tests',  dauPct: Math.round(uniq(testUsers)     / totalAll * 100), dau: uniq(testUsers)     },
-        { feature: 'Study Hours', dauPct: Math.round(uniq(hoursUsers)    / totalAll * 100), dau: uniq(hoursUsers)    },
-        { feature: 'AI Insights', dauPct: Math.round(uniq(aiUsers)       / totalAll * 100), dau: uniq(aiUsers)       },
-        { feature: 'Syllabus',    dauPct: Math.round(uniq(syllabusUsers) / totalAll * 100), dau: uniq(syllabusUsers) },
+        { feature: 'App Opened (DAU)', dauPct: Math.round(maxResult(phPageViewed) / totalAll * 100), dau: maxResult(phPageViewed) },
+        { feature: 'AI Insights (DAU)', dauPct: Math.round(maxResult(phAI) / totalAll * 100), dau: maxResult(phAI) },
       ];
 
       return res.status(200).json({ features, dauFeatures, totalUsers: totalAll });
@@ -286,81 +333,61 @@ export default async function handler(req, res) {
 
     // ── DAU TREND ─────────────────────────────────────────────
     if (action === 'dau') {
-      // 100% Supabase — bucket last_active_at by day
-      const prefs = await sbQuery('user_preferences?select=last_active_at').catch(() => []);
-      const byDay = {};
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
-      prefs.forEach(p => {
-        if (!p.last_active_at) return;
-        const d = new Date(p.last_active_at);
-        if (d < cutoff) return;
-        const key = d.toISOString().split('T')[0];
-        byDay[key] = (byDay[key] || 0) + 1;
-      });
-      const labels = [], values = [];
-      for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        labels.push(key);
-        values.push(byDay[key] || 0);
+      // Try PostHog first, fallback to Supabase last_active_at buckets
+      try {
+        const data = await phQuery({
+          kind: 'TrendsQuery',
+          dateRange: { date_from: dateFrom(days) },
+          series: [{ kind: 'EventsNode', event: 'app_opened', math: 'dau' }],
+        });
+        const series = data?.results?.[0];
+        const values = series?.data || [];
+        const labels = series?.days || series?.labels || [];
+
+        // If PostHog has no data, generate from Supabase
+        if (!values.some(v => v > 0)) throw new Error('no posthog data');
+
+        return res.status(200).json({ labels, values, source: 'posthog' });
+      } catch(e) {
+        // Fallback: bucket last_active_at by day from Supabase
+        const prefs = await sbQuery('user_preferences?select=last_active_at').catch(() => []);
+        const byDay = {};
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+        prefs.forEach(p => {
+          if (!p.last_active_at) return;
+          const d = new Date(p.last_active_at);
+          if (d < cutoff) return;
+          const key = d.toISOString().split('T')[0];
+          byDay[key] = (byDay[key] || 0) + 1;
+        });
+
+        // Generate last N days
+        const labels = [], values = [];
+        for (let i = days - 1; i >= 0; i--) {
+          const d = new Date(); d.setDate(d.getDate() - i);
+          const key = d.toISOString().split('T')[0];
+          labels.push(key);
+          values.push(byDay[key] || 0);
+        }
+        return res.status(200).json({ labels, values, source: 'supabase' });
       }
-      return res.status(200).json({ labels, values, source: 'supabase' });
     }
 
-    // ── NEW USER SIGNUPS ──────────────────────────────────────
-    // Day-wise new signups from auth.users created_at
-    if (action === 'new_users') {
-      const authUsers = await sbAuthListAllUsers().catch(() => []);
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
-
-      // Bucket by day (only within selected range)
-      const byDay = {};
-      authUsers.forEach(u => {
-        if (!u.created_at) return;
-        const d = new Date(u.created_at);
-        if (d < cutoff) return;
-        const key = d.toISOString().split('T')[0];
-        byDay[key] = (byDay[key] || 0) + 1;
-      });
-
-      // Build full day-by-day series
-      const labels = [], values = [];
-      for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        labels.push(key);
-        values.push(byDay[key] || 0);
-      }
-
-      const total = values.reduce((a, b) => a + b, 0);
-      const avg   = days > 0 ? Math.round((total / days) * 10) / 10 : 0;
-      const peak  = Math.max(...values, 0);
-      const peakDay = labels[values.indexOf(peak)] || null;
-
-      return res.status(200).json({ labels, values, total, avg, peak, peakDay });
-    }
-    // 100% Supabase — distinct users per feature in period
+    // ── PAGE VIEWS BREAKDOWN ──────────────────────────────────
     if (action === 'pages') {
-      const cutoff = dateFrom(days);
-      const [tests, hours, backlogs, todos, syllabus, feedback, ai] = await Promise.all([
-        sbQuery(`tests?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`hours?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`backlogs?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`todos?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`syllabus?select=user_id&updated_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`feedback?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0&last_active_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-      ]);
-      const uniq = arr => new Set(arr.map(r => r.user_id)).size;
-      return res.status(200).json([
-        { page: 'Mock Tests',  count: uniq(tests)    },
-        { page: 'Study Hours', count: uniq(hours)    },
-        { page: 'Backlog',     count: uniq(backlogs) },
-        { page: 'To-Do',       count: uniq(todos)    },
-        { page: 'Syllabus',    count: uniq(syllabus) },
-        { page: 'AI Insights', count: uniq(ai)       },
-        { page: 'Feedback',    count: uniq(feedback) },
-      ].sort((a, b) => b.count - a.count));
+      const pages = ['overview','mains','advanced','hours','insights','backlog','todo','syllabus','compare','settings'];
+      const results = await Promise.all(
+        pages.map(p => phQuery({
+          kind: 'TrendsQuery',
+          dateRange: { date_from: dateFrom(days) },
+          series: [{ kind: 'EventsNode', event: 'page_viewed', math: 'total' }],
+          breakdownFilter: { breakdown: 'page', breakdown_type: 'event' },
+        }).then(r => {
+          const s = (r?.results || []).find(x => String(x?.breakdown_value).toLowerCase() === p);
+          return { page: p, count: (s?.data || []).reduce((a, b) => a + (b || 0), 0) };
+        }).catch(() => ({ page: p, count: 0 })))
+      );
+      return res.status(200).json(results.sort((a, b) => b.count - a.count));
     }
 
     // ── SUBJECT BREAKDOWN ─────────────────────────────────────
@@ -396,37 +423,40 @@ export default async function handler(req, res) {
     // Each step = distinct users who have reached that milestone.
     if (action === 'funnel') {
       const [
-        totalUsers,
+        totalUsers, onboardedUsers,
         usersWithTests, usersWithHours, usersWithBacklogs,
-        usersWithSyllabus, usersWithAI,
+        usersWithSyllabus, usersWithAIRaw,
       ] = await Promise.all([
         // Step 1: anyone who signed up (has a user_preferences row)
         sbCount('user_preferences').catch(() => 0),
-        // Step 2: users who logged at least one mock test
+        // Step 2: users who actually finished onboarding (flag in user_preferences)
+        sbCount('user_preferences', 'onboarding_done=eq.true').catch(() => 0),
+        // Step 3: users who logged at least one mock test
         sbQuery('tests?select=user_id').catch(() => []),
-        // Step 3: users who logged at least one study hour session
+        // Step 4: users who logged at least one study hour session
         sbQuery('hours?select=user_id').catch(() => []),
-        // Step 4: users who added at least one backlog item
+        // Step 5: users who added at least one backlog item
         sbQuery('backlogs?select=user_id').catch(() => []),
-        // Step 5: users who touched syllabus tracker
+        // Step 6: users who touched syllabus tracker
         sbQuery('syllabus?select=user_id').catch(() => []),
-        // Step 6: users who used AI Insights (ai_insights_count > 0)
-        sbQuery('user_preferences?select=user_id&ai_insights_count=gt.0').catch(() => []),
+        // Step 7: try PostHog AI insights, fallback gracefully
+        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: dateFrom(90) }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'dau' }] }).catch(() => null),
       ]);
 
       const distinctTestUsers     = new Set(usersWithTests.map(r => r.user_id)).size;
       const distinctHoursUsers    = new Set(usersWithHours.map(r => r.user_id)).size;
       const distinctBacklogUsers  = new Set(usersWithBacklogs.map(r => r.user_id)).size;
       const distinctSyllabusUsers = new Set(usersWithSyllabus.map(r => r.user_id)).size;
-      const distinctAIUsers       = new Set(usersWithAI.map(r => r.user_id)).size;
+      const aiUsers               = maxResult(usersWithAIRaw); // PostHog peak-day DAU, best proxy
 
       return res.status(200).json([
         { event: 'user_signed_up',        label: 'Signed Up',            count: totalUsers },
+        { event: 'onboarding_completed',  label: 'Completed Onboarding', count: onboardedUsers },
         { event: 'mock_test_logged',      label: 'Logged Mock Test',      count: distinctTestUsers },
         { event: 'study_hours_logged',    label: 'Logged Study Hours',    count: distinctHoursUsers },
         { event: 'backlog_used',          label: 'Used Backlog',          count: distinctBacklogUsers },
         { event: 'syllabus_used',         label: 'Used Syllabus Tracker', count: distinctSyllabusUsers },
-        { event: 'ai_insights_generated', label: 'Used AI Insights',      count: distinctAIUsers },
+        { event: 'ai_insights_generated', label: 'Used AI Insights',      count: aiUsers },
       ]);
     }
 
@@ -528,7 +558,7 @@ export default async function handler(req, res) {
 
       // Fetch everything in parallel
       const [
-        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, authUsers
+        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, aiCount, authUsers
       ] = await Promise.all([
         sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
@@ -538,6 +568,7 @@ export default async function handler(req, res) {
         sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
+        phQuery({ kind: 'TrendsQuery', dateRange: { date_from: '-90d' }, series: [{ kind: 'EventsNode', event: 'ai_insights_generated', math: 'total', properties: [{ key: 'distinct_id', value: distinct_id, operator: 'exact', type: 'person' }] }] }).catch(() => null),
         buildRoster().catch(() => []),
       ]);
 
@@ -646,7 +677,7 @@ export default async function handler(req, res) {
           overallPct: syllabusOverallPct,
         },
         backlogs, todos,
-        aiInsights: pref?.ai_insights_count || 0,
+        aiInsights: sumResults(aiCount),
         consistency: {
           activeDaysLast30,
           longestStreak: longestRun,
