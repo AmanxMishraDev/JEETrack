@@ -1089,9 +1089,29 @@ function _initLandFabScroll() {
 function landingOpenAuth(mode) {
   const scrim = document.getElementById('auth-modal-scrim');
   if (!scrim) return;
+  const wasOpen = scrim.classList.contains('open');
   scrim.classList.add('open');
   document.body.style.overflow = 'hidden';
-  switchAuthTab(mode);
+  if (wasOpen) {
+    switchAuthTab(mode);
+  } else {
+    setAuthModeInstant(mode);
+  }
+}
+
+// Jumps straight to the requested auth slide with no transition — used when the modal is opening fresh,
+// so we never briefly show the "wrong" card (e.g. login flashing before signup) on open.
+function setAuthModeInstant(mode) {
+  authTab = mode;
+  const login = document.getElementById('auth-slide-login');
+  const signup = document.getElementById('auth-slide-signup');
+  if (!login || !signup) return;
+  login.classList.remove('active', 'slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
+  signup.classList.remove('active', 'slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
+  (mode === 'signup' ? signup : login).classList.add('active');
+  const viewport = document.getElementById('auth-slide-viewport');
+  if (viewport) viewport.style.height = '';
+  hideAuthMsg();
 }
 
 function closeAuthModal() {
