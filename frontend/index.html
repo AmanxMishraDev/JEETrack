@@ -292,11 +292,51 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="land-right">
       <div class="land-hero-visual">
         <div class="land-hero-glow"></div>
-        <div class="land-preview-frame">
-          <div class="land-preview-chrome">
-            <span></span><span></span><span></span>
+
+        <div class="land-dash-card">
+          <div class="land-dash-head">
+            <div class="land-dash-head-left">
+              <span class="land-dash-dot"></span>
+              <span class="land-dash-head-title">This Week</span>
+            </div>
+            <span class="land-dash-live"><i></i>Live</span>
           </div>
-          <img src="screenshots/dashboard.png" alt="JEETrack dashboard showing mock test score trends and subject-wise accuracy" class="land-preview-img" loading="lazy" width="1200" height="650">
+
+          <div class="land-dash-score-row">
+            <div>
+              <div class="land-dash-score-num">248<span>/300</span></div>
+              <div class="land-dash-score-lbl">Avg. Mock Score</div>
+            </div>
+            <div class="land-dash-ring">
+              <svg viewBox="0 0 64 64">
+                <defs>
+                  <linearGradient id="dashRingGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#a695ff"/>
+                    <stop offset="100%" stop-color="#f472b6"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="32" cy="32" r="27" class="land-dash-ring-track"/>
+                <circle cx="32" cy="32" r="27" class="land-dash-ring-fill"/>
+              </svg>
+              <div class="land-dash-ring-num">78%</div>
+            </div>
+          </div>
+
+          <div class="land-dash-chart">
+            <div class="land-dash-bar" style="--h:34%"></div>
+            <div class="land-dash-bar" style="--h:48%"></div>
+            <div class="land-dash-bar" style="--h:42%"></div>
+            <div class="land-dash-bar" style="--h:64%"></div>
+            <div class="land-dash-bar" style="--h:58%"></div>
+            <div class="land-dash-bar land-dash-bar-hi" style="--h:80%"></div>
+            <div class="land-dash-bar land-dash-bar-hi" style="--h:92%"></div>
+          </div>
+
+          <div class="land-dash-subjects">
+            <div class="land-dash-subj"><span style="background:#a695ff"></span>Physics<b>82%</b></div>
+            <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b>76%</b></div>
+            <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b>71%</b></div>
+          </div>
         </div>
 
         <div class="land-float-card land-float-card-1">
