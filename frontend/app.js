@@ -1057,6 +1057,9 @@ function landScrollTo(id) {
 function _initLandFabScroll() {
   const fab = document.getElementById('mob-land-cta');
   if (!fab) return;
+  if (fab.dataset.fabScrollInited === '1') return; // prevent stacking duplicate listeners on repeat visits to the landing screen
+  fab.dataset.fabScrollInited = '1';
+
   let lastScroll = 0;
   let ticking = false;
 
