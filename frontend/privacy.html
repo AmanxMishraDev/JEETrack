@@ -391,7 +391,7 @@
   <div class="hero-badge"><span class="hero-badge-dot"></span>Legal</div>
   <h1>Privacy <em>Policy</em></h1>
   <p>What we collect, why we collect it, who we share it with, and how you can control or delete it.</p>
-  <div class="updated">Last updated: June 26, 2026</div>
+  <div class="updated">Last updated: June 30, 2026</div>
 </section>
 
 <div class="doc-wrap">
@@ -402,7 +402,7 @@
     <a href="#what-we-collect">What we collect</a>
     <a href="#how-we-use">How we use it</a>
     <a href="#ai-insights">AI Insights & Groq</a>
-    <a href="#analytics">Analytics & PostHog</a>
+    <a href="#analytics">Analytics</a>
     <a href="#sharing">Who we share data with</a>
     <a href="#storage">Storage & security</a>
     <a href="#retention">Retention & deletion</a>
@@ -420,7 +420,7 @@
       <strong>The short version:</strong>
       <ul>
         <li>JEETrack stores the study data you enter (test scores, study hours, syllabus progress, tasks) so the app works. We don't sell your data.</li>
-        <li>We use <strong>Supabase</strong> to store your account and data, <strong>Groq</strong> to generate your AI Insights, <strong>Resend</strong> to send report emails, and <strong>PostHog</strong> to understand how the app is used (including limited, input-masked session recordings).</li>
+        <li>We use <strong>Supabase</strong> to store your account and data and to power our internal analytics, and <strong>Groq</strong> to generate your AI Insights, and <strong>Resend</strong> to send report emails.</li>
         <li>You can export or permanently delete all your data anytime from <strong>Settings → Data & Backup</strong>.</li>
         <li>Many JEETrack users are under 18. If you're under 18, please use JEETrack with a parent or guardian's knowledge — see <a href="#children">Children &amp; Minors</a>.</li>
       </ul>
@@ -464,7 +464,7 @@
       </ul>
 
       <h3>Technical & usage information</h3>
-      <p>We (and our analytics provider, described below) automatically collect some technical information when you use JEETrack, such as device type, browser type, general usage patterns (which pages and features you use), and approximate location derived from your IP address (typically city/country level, not precise GPS).</p>
+      <p>We automatically derive some usage information from the study data you create and from your account activity — for example, which features you use (mock tests, study hours, syllabus tracker, AI Insights, backlog), how often you open the app, and your signup date. This is calculated directly from your existing Supabase records, not from a separate tracking script, and is used only for our own internal analytics dashboard to understand product usage at an aggregate level.</p>
 
       <h3>Information we do <em>not</em> intentionally collect</h3>
       <p>We don't ask for or knowingly collect your government ID numbers, financial/payment details (JEETrack is free — we don't process payments), or precise GPS location.</p>
@@ -496,25 +496,22 @@
     </section>
 
     <section id="analytics">
-      <h2><span class="num">5</span>Analytics & PostHog</h2>
-      <p>We use <strong><a href="https://posthog.com" target="_blank" rel="noopener">PostHog</a></strong>, a product analytics service, to understand how people actually use JEETrack so we can fix what's broken and improve what isn't. Here's specifically what that involves:</p>
+      <h2><span class="num">5</span>Analytics</h2>
+      <p>We run our own internal analytics dashboard to understand how people use JEETrack so we can fix what's broken and improve what isn't. Unlike many apps, we don't use a third-party analytics or tracking service — our analytics are built entirely from the same <strong>Supabase</strong> database that stores your study data. There's no separate tracking script running in your browser, no session recording, and no third-party company receiving your usage events.</p>
 
       <div class="tag-row">
-        <span class="tag purple">Event tracking</span>
-        <span class="tag amber">Session recording (inputs masked)</span>
-        <span class="tag green">User identification</span>
+        <span class="tag purple">Derived from existing data</span>
+        <span class="tag green">No session recording</span>
+        <span class="tag amber">No third-party tracker</span>
       </div>
 
-      <h3>Events we track</h3>
-      <p>We log specific actions you take in the app — for example, signing up, signing in, completing onboarding, logging a mock test (including the subject-wise scores you entered), logging study hours, adding a to-do or backlog item, marking a syllabus chapter complete, generating AI Insights, submitting feedback, and exporting a PDF report.</p>
-
-      <h3>Session recording</h3>
-      <p>PostHog also records a visual replay of your session (mouse movement, clicks, and page navigation) to help us spot confusing UI or bugs. <strong>All input field contents are masked</strong> in these recordings — meaning text you type into any field (including password fields) is not visible in the recording, it shows as masked characters instead.</p>
+      <h3>What this means in practice</h3>
+      <p>When you log a mock test, study session, backlog item, or generate an AI Insight, that record already exists in your account's Supabase tables. Our admin dashboard queries those same tables in aggregate — for example, counting how many users logged a test this week, or what percentage of users have tried AI Insights — without adding any new tracking of your individual behavior beyond what's needed for the app to function.</p>
 
       <h3>Identification</h3>
-      <p>Once you're signed in, we associate your analytics activity with your account using your user ID, along with your email, display name, and academic profile fields (class, target year, study mode, coaching institute) — this lets us understand usage patterns without needing to guess who's doing what.</p>
+      <p>Because this analytics data comes from your account records rather than a separate tracking pixel, it's inherently tied to your user ID, email, and profile fields (class, target year, coaching institute) the same way your regular app data is — there's no additional identifier or fingerprinting involved.</p>
 
-      <p>PostHog is a separate data processor from Supabase — your account data and your analytics data are stored in different systems operated by different companies. You can review <a href="https://posthog.com/privacy" target="_blank" rel="noopener">PostHog's privacy policy</a> for details on how they handle and secure this data.</p>
+      <p>This approach means one less third-party company has access to your usage patterns, and there's no separate analytics privacy policy to review — your data stays within the same Supabase infrastructure described throughout this policy.</p>
     </section>
 
     <section id="sharing">
@@ -526,7 +523,7 @@
           <tr><th>Provider</th><th>What they're used for</th><th>What they receive</th></tr>
           <tr>
             <td><strong>Supabase</strong></td>
-            <td>Authentication, database, and Edge Functions (our backend)</td>
+            <td>Authentication, database, Edge Functions (our backend), and our internal analytics dashboard</td>
             <td>Account credentials, all study data you create, profile info</td>
           </tr>
           <tr>
@@ -543,11 +540,6 @@
             <td><strong>Resend</strong></td>
             <td>Sending monthly report emails and transactional emails</td>
             <td>Your email address, and the content of the report (built from your data)</td>
-          </tr>
-          <tr>
-            <td><strong>PostHog</strong></td>
-            <td>Product analytics and session recording</td>
-            <td>Usage events, masked-input session recordings, account identifiers</td>
           </tr>
           <tr>
             <td><strong>Vercel</strong></td>
@@ -577,7 +569,7 @@
         <li><strong>Delete everything:</strong> Go to <em>Settings → Data &amp; Backup → Reset All Data</em> to permanently and irreversibly erase your scores, study hours, tasks, backlog, and syllabus progress.</li>
         <li><strong>Delete your account entirely:</strong> Email us at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we'll delete your account and associated data from our systems.</li>
       </ul>
-      <p>Some information may persist for a short period in backups or logs (including analytics event logs already sent to PostHog) even after deletion, but it will no longer be linked to active use of the product and will age out per our providers' standard retention schedules.</p>
+      <p>Some information may persist for a short period in backups or logs even after deletion, but it will no longer be linked to active use of the product and will age out per our providers' standard retention schedules.</p>
     </section>
 
     <section id="your-rights">
@@ -605,8 +597,7 @@
 
     <section id="cookies">
       <h2><span class="num">11</span>Cookies & local storage</h2>
-      <p>JEETrack uses your browser's local storage to keep you signed in and to cache your study data for offline-friendly performance. Supabase Authentication may also use cookies or similar tokens to manage your login session securely.</p>
-      <p>PostHog sets its own cookies/local storage entries to recognize your browser across sessions for analytics purposes. We don't use cookies for third-party advertising or cross-site ad tracking.</p>
+      <p>JEETrack uses your browser's local storage to keep you signed in and to cache your study data for offline-friendly performance. Supabase Authentication may also use cookies or similar tokens to manage your login session securely. We don't use cookies for third-party advertising, cross-site ad tracking, or third-party analytics — our internal analytics dashboard reads directly from your existing account data rather than setting any tracking cookies of its own.</p>
       <p>JEETrack also registers a <strong>service worker</strong> in your browser (if you enable notifications) to support offline caching and push notifications. This service worker can store cached copies of app files on your device — it does not collect personal data on its own.</p>
     </section>
 
