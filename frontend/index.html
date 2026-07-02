@@ -293,49 +293,105 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="land-hero-visual">
         <div class="land-hero-glow"></div>
 
-        <div class="land-dash-card">
-          <div class="land-dash-head">
-            <div class="land-dash-head-left">
-              <span class="land-dash-dot"></span>
-              <span class="land-dash-head-title">Dashboard · This Week</span>
-            </div>
-            <span class="land-dash-live"><i></i>Live</span>
+        <div class="land-dash-card" id="landDemoCard">
+          <div class="land-dash-tabs" role="tablist" id="landDemoTabs">
+            <button class="land-dash-tab active" data-view="dashboard" role="tab" aria-selected="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+              Dashboard
+            </button>
+            <button class="land-dash-tab" data-view="insights" role="tab" aria-selected="false">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v1.1A4.5 4.5 0 0 0 4 12.5 4.5 4.5 0 0 0 8.5 17H9v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2h.5A4.5 4.5 0 0 0 20 12.5a4.5 4.5 0 0 0-3-4.25V7a5 5 0 0 0-5-5z"/></svg>
+              AI Insights
+            </button>
+            <button class="land-dash-tab" data-view="test" role="tab" aria-selected="false">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Mock Test
+            </button>
           </div>
 
-          <div class="land-dash-score-row">
-            <div>
-              <div class="land-dash-score-num">248<span>/300</span></div>
-              <div class="land-dash-score-lbl">Avg. Mock Score</div>
+          <div class="land-dash-viewport" id="landDemoViewport">
+
+            <div class="land-dash-view active" data-view="dashboard">
+              <div class="land-dash-score-row">
+                <div>
+                  <div class="land-dash-score-num">248<span>/300</span></div>
+                  <div class="land-dash-score-lbl">Avg. Mock Score</div>
+                </div>
+                <div class="land-dash-ring">
+                  <svg viewBox="0 0 64 64">
+                    <defs>
+                      <linearGradient id="dashRingGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#a695ff"/>
+                        <stop offset="100%" stop-color="#f472b6"/>
+                      </linearGradient>
+                    </defs>
+                    <circle cx="32" cy="32" r="27" class="land-dash-ring-track"/>
+                    <circle cx="32" cy="32" r="27" class="land-dash-ring-fill"/>
+                  </svg>
+                  <div class="land-dash-ring-num">78%</div>
+                </div>
+              </div>
+
+              <div class="land-dash-chart">
+                <div class="land-dash-bar" style="--h:34%"></div>
+                <div class="land-dash-bar" style="--h:48%"></div>
+                <div class="land-dash-bar" style="--h:42%"></div>
+                <div class="land-dash-bar" style="--h:64%"></div>
+                <div class="land-dash-bar" style="--h:58%"></div>
+                <div class="land-dash-bar land-dash-bar-hi" style="--h:80%"></div>
+                <div class="land-dash-bar land-dash-bar-hi" style="--h:92%"></div>
+              </div>
+
+              <div class="land-dash-subjects">
+                <div class="land-dash-subj"><span style="background:#a695ff"></span>Physics<b>82%</b></div>
+                <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b>76%</b></div>
+                <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b>71%</b></div>
+              </div>
             </div>
-            <div class="land-dash-ring">
-              <svg viewBox="0 0 64 64">
-                <defs>
-                  <linearGradient id="dashRingGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#a695ff"/>
-                    <stop offset="100%" stop-color="#f472b6"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="32" cy="32" r="27" class="land-dash-ring-track"/>
-                <circle cx="32" cy="32" r="27" class="land-dash-ring-fill"/>
-              </svg>
-              <div class="land-dash-ring-num">78%</div>
+
+            <div class="land-dash-view" data-view="insights">
+              <div class="land-ai-item">
+                <div class="land-ai-icon">↑</div>
+                <div class="land-ai-text">
+                  <div class="land-ai-title">Physics accuracy up <b>+8%</b></div>
+                  <div class="land-ai-sub">Mechanics is now your strongest chapter</div>
+                </div>
+              </div>
+              <div class="land-ai-item">
+                <div class="land-ai-icon land-ai-icon-amber">!</div>
+                <div class="land-ai-text">
+                  <div class="land-ai-title">Revise Thermodynamics</div>
+                  <div class="land-ai-sub">Accuracy dropped 6% in the last 3 mocks</div>
+                </div>
+              </div>
+              <div class="land-ai-item land-ai-item-hi">
+                <div class="land-ai-icon land-ai-icon-grad">✦</div>
+                <div class="land-ai-text">
+                  <div class="land-ai-title">Suggested: 20 Organic MCQs</div>
+                  <div class="land-ai-sub">Based on your weak-topic pattern</div>
+                </div>
+              </div>
             </div>
+
+            <div class="land-dash-view" data-view="test">
+              <div class="land-test-top">
+                <span>Question 14/30</span>
+                <span class="land-test-timer">18:42</span>
+              </div>
+              <div class="land-test-progress"><div class="land-test-progress-fill"></div></div>
+              <div class="land-test-q">A block slides down a 30° rough incline. Find its acceleration. <span>g = 10 m/s², μ = 0.2</span></div>
+              <div class="land-test-opts">
+                <div class="land-test-opt" data-opt="a"><span>A</span>3.27 m/s²</div>
+                <div class="land-test-opt" data-opt="b"><span>B</span>4.87 m/s²</div>
+                <div class="land-test-opt" data-opt="c"><span>C</span>5.83 m/s²</div>
+                <div class="land-test-opt" data-opt="d"><span>D</span>6.12 m/s²</div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="land-dash-chart">
-            <div class="land-dash-bar" style="--h:34%"></div>
-            <div class="land-dash-bar" style="--h:48%"></div>
-            <div class="land-dash-bar" style="--h:42%"></div>
-            <div class="land-dash-bar" style="--h:64%"></div>
-            <div class="land-dash-bar" style="--h:58%"></div>
-            <div class="land-dash-bar land-dash-bar-hi" style="--h:80%"></div>
-            <div class="land-dash-bar land-dash-bar-hi" style="--h:92%"></div>
-          </div>
-
-          <div class="land-dash-subjects">
-            <div class="land-dash-subj"><span style="background:#a695ff"></span>Physics<b>82%</b></div>
-            <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b>76%</b></div>
-            <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b>71%</b></div>
+          <div class="land-dash-cursor" id="landDemoCursor">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 3l6.5 16.5 2.4-6.6 6.6-2.4z" fill="#fff" stroke="#0c0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>
           </div>
         </div>
 
@@ -347,17 +403,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="land-float-title">12-day streak</div>
             <div class="land-float-sub">Backlog cleared daily</div>
           </div>
-        </div>
-
-        <div class="land-float-card land-float-insight">
-          <div class="land-float-insight-head">
-            <div class="land-float-icon land-float-icon-purple">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v1.1A4.5 4.5 0 0 0 4 12.5 4.5 4.5 0 0 0 8.5 17H9v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2h.5A4.5 4.5 0 0 0 20 12.5a4.5 4.5 0 0 0-3-4.25V7a5 5 0 0 0-5-5z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
-            </div>
-            <span class="land-float-insight-tag">AI Insight</span>
-            <span class="land-float-insight-new">New</span>
-          </div>
-          <p class="land-float-insight-text">Physics accuracy up <b>+8%</b> this week — Mechanics is now your strongest chapter.</p>
         </div>
       </div>
     </div>

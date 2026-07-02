@@ -305,6 +305,7 @@ function showAuthScreen(){
   // Disabled: star/particle field was causing lag on lower-end devices
   // setTimeout(initLandingStarField, 50);
   setTimeout(initSlideshow, 100);
+  setTimeout(initHeroDemo, 200);
 }
 
 function showApp(name, email){
@@ -965,6 +966,101 @@ function initLandingStarField() {
     `;
     container.appendChild(star);
   }
+}
+
+let _heroDemoTimer = null;
+
+function initHeroDemo() {
+  const card = document.getElementById('landDemoCard');
+  if (!card) return;
+  const viewport = document.getElementById('landDemoViewport');
+  const tabs = Array.from(card.querySelectorAll('.land-dash-tab'));
+  const views = Array.from(viewport.querySelectorAll('.land-dash-view'));
+  const cursor = document.getElementById('landDemoCursor');
+  const order = ['dashboard', 'insights', 'test'];
+  const activeTab = tabs.find(t => t.classList.contains('active'));
+  let idx = order.indexOf(activeTab ? activeTab.dataset.view : 'dashboard');
+  if (idx < 0) idx = 0;
+
+  function moveCursorTo(el, onArrive) {
+    if (!el) { if (onArrive) onArrive(); return; }
+    const cardRect = card.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const x = elRect.left - cardRect.left + elRect.width / 2 - 10;
+    const y = elRect.top - cardRect.top + elRect.height / 2 - 6;
+    cursor.style.opacity = '1';
+    cursor.style.transform = `translate(${x}px,${y}px)`;
+    setTimeout(() => {
+      cursor.classList.add('clicking');
+      const ring = document.createElement('div');
+      ring.className = 'land-dash-click-ring pulse';
+      ring.style.left = (x + 10) + 'px';
+      ring.style.top = (y + 8) + 'px';
+      card.appendChild(ring);
+      setTimeout(() => ring.remove(), 600);
+      setTimeout(() => cursor.classList.remove('clicking'), 400);
+      if (onArrive) onArrive();
+    }, 750);
+  }
+
+  function activateView(name) {
+    tabs.forEach(t => {
+      const on = t.dataset.view === name;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    views.forEach(v => v.classList.toggle('active', v.dataset.view === name));
+    if (name === 'test') {
+      const fill = viewport.querySelector('.land-test-progress-fill');
+      viewport.querySelectorAll('.land-test-opt').forEach(o => o.classList.remove('selected'));
+      if (fill) {
+        fill.style.width = '0%';
+        setTimeout(() => { fill.style.width = '46%'; }, 150);
+      }
+    }
+  }
+
+  function selectTestOption() {
+    const opt = viewport.querySelector('.land-test-opt[data-opt="b"]');
+    moveCursorTo(opt, () => { if (opt) opt.classList.add('selected'); });
+  }
+
+  function loop() {
+    const landingEl = document.getElementById('landing');
+    if (document.hidden || (landingEl && landingEl.classList.contains('hidden'))) {
+      _heroDemoTimer = setTimeout(loop, 800);
+      return;
+    }
+    idx = (idx + 1) % order.length;
+    const name = order[idx];
+    const tabEl = tabs.find(t => t.dataset.view === name);
+    moveCursorTo(tabEl, () => {
+      activateView(name);
+      if (name === 'test') {
+        setTimeout(selectTestOption, 1400);
+        _heroDemoTimer = setTimeout(loop, 5200);
+      } else {
+        _heroDemoTimer = setTimeout(loop, 3400);
+      }
+    });
+  }
+
+  if (!card._demoBound) {
+    card._demoBound = true;
+    tabs.forEach(t => {
+      t.addEventListener('click', () => {
+        clearTimeout(_heroDemoTimer);
+        const name = t.dataset.view;
+        idx = order.indexOf(name);
+        activateView(name);
+        if (name === 'test') setTimeout(selectTestOption, 900);
+        _heroDemoTimer = setTimeout(loop, 4200);
+      });
+    });
+  }
+
+  clearTimeout(_heroDemoTimer);
+  _heroDemoTimer = setTimeout(loop, 3000);
 }
 
 let slideIdx = 0, slideTimer = null, slideInterval = null;
