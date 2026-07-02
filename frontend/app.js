@@ -1018,7 +1018,7 @@ function initHeroDemo() {
     setTimeout(() => {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
-      spawnClickBurst(x + 10, y + 8);
+      spawnClickBurst(x + 4, y - 6);
       punchZoomAt(x + 10, y + 8);
       setTimeout(() => cursor.classList.remove('clicking'), 460);
       if (onArrive) onArrive();
@@ -1182,7 +1182,7 @@ function initHeroDemo() {
         cursor.classList.remove('traveling');
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 10, y + 8);
+        spawnClickBurst(x + 4, y - 6);
         punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
@@ -1201,7 +1201,7 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 10, y + 8);
+        spawnClickBurst(x + 4, y - 6);
         punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         setFilter(f.dataset.filter, true);

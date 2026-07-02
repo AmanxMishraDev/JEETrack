@@ -1338,23 +1338,23 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 @keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(244,114,182,.75))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
 
 .land-dash-click-ring{
-  position:absolute;top:0;left:0;width:26px;height:26px;margin:-3px 0 0 -3px;
-  border-radius:50%;border:2px solid rgba(166,149,255,.75);
+  position:absolute;top:0;left:0;width:18px;height:18px;margin:-3px 0 0 -3px;
+  border-radius:50%;border:1.5px solid rgba(166,149,255,.5);
   pointer-events:none;z-index:29;opacity:0;
 }
-.land-dash-click-ring.pulse{animation:clickRingPulse .68s cubic-bezier(.2,.7,.3,1) both}
+.land-dash-click-ring.pulse{animation:clickRingPulse .6s cubic-bezier(.2,.7,.3,1) both}
 .land-dash-click-ring.pulse-2{
-  border-color:rgba(244,114,182,.6);
-  animation:clickRingPulse .68s cubic-bezier(.2,.7,.3,1) .08s both;
+  border-color:rgba(244,114,182,.4);
+  animation:clickRingPulse .6s cubic-bezier(.2,.7,.3,1) .08s both;
 }
 .land-dash-click-ring.pulse-dot{
-  width:8px;height:8px;margin:5px 0 0 5px;border:none;
-  background:radial-gradient(circle,#fff,rgba(166,149,255,.9) 60%,transparent 75%);
-  box-shadow:0 0 12px 3px rgba(166,149,255,.7);
-  animation:clickDotPulse .5s cubic-bezier(.34,1.56,.64,1) both;
+  width:6px;height:6px;margin:5px 0 0 5px;border:none;
+  background:radial-gradient(circle,#fff,rgba(166,149,255,.85) 60%,transparent 75%);
+  box-shadow:0 0 7px 1.5px rgba(166,149,255,.45);
+  animation:clickDotPulse .45s cubic-bezier(.34,1.56,.64,1) both;
 }
-@keyframes clickRingPulse{0%{opacity:.9;transform:scale(.2)}70%{opacity:.35}100%{opacity:0;transform:scale(2.1)}}
-@keyframes clickDotPulse{0%{opacity:0;transform:scale(.3)}45%{opacity:1;transform:scale(1.35)}100%{opacity:0;transform:scale(.7)}}
+@keyframes clickRingPulse{0%{opacity:.55;transform:scale(.2)}70%{opacity:.2}100%{opacity:0;transform:scale(1.5)}}
+@keyframes clickDotPulse{0%{opacity:0;transform:scale(.3)}45%{opacity:.75;transform:scale(1.15)}100%{opacity:0;transform:scale(.6)}}
 
 @media(max-width:900px){
   .land-dash-cursor{transform:scale(.88) translate(140px,52px)}
