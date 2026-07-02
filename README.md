@@ -245,7 +245,7 @@ git checkout -b feature/your-feature-name
 
 ## 👨‍💻 Author
 
-**Aman Mishra** · [@contactamanmishra76-blip](https://github.com/contactamanmishra76-blip)
+**Aman Mishra** · [@AmanxMishraDev](https://github.com/AmanxMishraDev)
 
 ---
 
