@@ -388,26 +388,71 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             </div>
 
             <div class="land-dash-view" data-view="insights">
-              <div class="land-ai-item">
-                <div class="land-ai-icon">↑</div>
-                <div class="land-ai-text">
-                  <div class="land-ai-title">Physics accuracy up <b>+8%</b></div>
-                  <div class="land-ai-sub">Mechanics is now your strongest chapter</div>
+              <div class="land-ins-stage" id="landInsStage">
+
+                <div class="land-ins-empty" id="landInsEmpty">
+                  <div class="land-ins-orb">
+                    <div class="land-ins-orb-ring"></div>
+                    <div class="land-ins-orb-core">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="url(#landAiGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <defs><linearGradient id="landAiGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                        <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/>
+                        <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="land-ins-title">Your Personal JEE Coach</div>
+                  <div class="land-ins-sub">Scores, study hours &amp; syllabus gaps — distilled in seconds.</div>
+                  <button class="land-ins-gen-btn" id="landInsGenBtn" type="button">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Generate Insights
+                  </button>
                 </div>
-              </div>
-              <div class="land-ai-item">
-                <div class="land-ai-icon land-ai-icon-amber">!</div>
-                <div class="land-ai-text">
-                  <div class="land-ai-title">Revise Thermodynamics</div>
-                  <div class="land-ai-sub">Accuracy dropped 6% in the last 3 mocks</div>
+
+                <div class="land-ins-loading" id="landInsLoading" style="display:none">
+                  <div class="land-ins-spinner">
+                    <div class="ai-ls-ring"></div>
+                    <div class="ai-ls-ring2"></div>
+                    <div class="ai-ls-ring3"></div>
+                    <div class="ai-ls-dot"></div>
+                  </div>
+                  <div class="land-ins-loading-msg" id="landInsLoadingMsg">Reading your test scores...</div>
+                  <div class="land-ins-steps" id="landInsSteps">
+                    <div class="ai-loading-step active" data-step="1"><div class="ai-loading-step-dot"></div>Test scores</div>
+                    <div class="ai-loading-step" data-step="2"><div class="ai-loading-step-dot"></div>Study hours</div>
+                    <div class="ai-loading-step" data-step="3"><div class="ai-loading-step-dot"></div>Syllabus gaps</div>
+                    <div class="ai-loading-step" data-step="4"><div class="ai-loading-step-dot"></div>Insights</div>
+                  </div>
+                  <div class="ai-prog-track land-ins-prog-track"><div class="ai-prog-fill" id="landInsProgFill"></div></div>
                 </div>
-              </div>
-              <div class="land-ai-item land-ai-item-hi">
-                <div class="land-ai-icon land-ai-icon-grad">✦</div>
-                <div class="land-ai-text">
-                  <div class="land-ai-title">Suggested: 20 Organic MCQs</div>
-                  <div class="land-ai-sub">Based on your weak-topic pattern</div>
+
+                <div class="land-ins-results" id="landInsResults" style="display:none">
+                  <div class="land-ins-verdict">
+                    <div class="land-ins-ring-wrap">
+                      <svg class="land-ins-ring-svg" width="46" height="46" viewBox="0 0 46 46">
+                        <circle cx="23" cy="23" r="18" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+                        <circle cx="23" cy="23" r="18" fill="none" stroke="url(#landRingGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="26"/>
+                        <defs><linearGradient id="landRingGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                      </svg>
+                      <div class="land-ins-ring-num">76</div>
+                    </div>
+                    <div class="land-ins-verdict-text">
+                      <div class="land-ins-verdict-lbl">Overall</div>
+                      <div class="land-ins-verdict-mom">↑ Rising</div>
+                    </div>
+                  </div>
+                  <div class="land-ins-cards">
+                    <div class="land-ins-card land-ins-card-good">
+                      <div class="land-ins-card-title">Scores rising <b>+54</b></div>
+                      <div class="land-ins-card-sub">Mains up across last 4 tests</div>
+                    </div>
+                    <div class="land-ins-card land-ins-card-warn">
+                      <div class="land-ins-card-title">Revise Thermodynamics</div>
+                      <div class="land-ins-card-sub">Accuracy dipped 6% recently</div>
+                    </div>
+                  </div>
                 </div>
+
               </div>
             </div>
 

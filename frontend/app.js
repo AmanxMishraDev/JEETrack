@@ -1000,16 +1000,24 @@ function initHeroDemo() {
   const mtFilters = document.getElementById('landMtFilters');
   const mtGlide = document.getElementById('landMtGlide');
   const mtBody = document.getElementById('landMtBody');
+  const insEmpty = document.getElementById('landInsEmpty');
+  const insLoading = document.getElementById('landInsLoading');
+  const insResults = document.getElementById('landInsResults');
+  const insGenBtn = document.getElementById('landInsGenBtn');
+  const insLoadingMsg = document.getElementById('landInsLoadingMsg');
+  const insProgFill = document.getElementById('landInsProgFill');
   const order = ['dashboard', 'tests', 'insights'];
   const activeTab = tabs.find(t => t.classList.contains('active'));
   let idx = order.indexOf(activeTab ? activeTab.dataset.view : 'dashboard');
   if (idx < 0) idx = 0;
   let currentFilter = 'all';
+  let _insLoadTimer = null;
 
-  // Timing for the one special leg of the demo — Mock Tests tab -> Partial
-  // Filter button — where the cursor travels slightly slower so the cinematic
-  // camera push-in has room to read. Every other move stays on the default
-  // CSS-driven speed (CURSOR_MS mirrors the stylesheet's .78s transition).
+  // Timing for the two cinematic legs of the demo — Mock Tests tab ->
+  // Partial Filter, and AI Insights tab -> Generate Insights — where the
+  // cursor travels slightly slower so the camera push-in has room to read.
+  // Every other move stays on the default CSS-driven speed (CURSOR_MS
+  // mirrors the stylesheet's .78s transition).
   const CURSOR_MS = 780;
   const CURSOR_SLOW_MS = 1180;
   const CINEMATIC_ZOOM_SCALE = 1.24;
@@ -1135,7 +1143,101 @@ function initHeroDemo() {
     views.forEach(v => v.classList.toggle('active', v.dataset.view === name));
     if (name === 'tests') {
       setFilter('all', false);
+    } else if (name === 'insights') {
+      resetInsightsDemo();
     }
+  }
+
+  // Restores the AI Insights mini view to its empty "Generate Insights"
+  // state — mirrors the real /insights page always starting from empty.
+  const INS_LOAD_STEPS = 4;
+  function resetInsightsDemo() {
+    if (!insEmpty) return;
+    clearInterval(_insLoadTimer);
+    insEmpty.style.display = 'flex';
+    insLoading.style.display = 'none';
+    insResults.style.display = 'none';
+    for (let s = 1; s <= INS_LOAD_STEPS; s++) {
+      const el = insLoading.querySelector(`.ai-loading-step[data-step="${s}"]`);
+      if (el) el.classList.remove('active', 'done');
+    }
+    const first = insLoading.querySelector('.ai-loading-step[data-step="1"]');
+    if (first) first.classList.add('active');
+    if (insProgFill) insProgFill.style.width = '0%';
+    if (insGenBtn) insGenBtn.disabled = false;
+    insEmpty.classList.remove('land-ins-in');
+    void insEmpty.offsetWidth;
+    insEmpty.classList.add('land-ins-in');
+  }
+
+  // Same staged-message + step-dot pattern as the real generateInsights()
+  // loading sequence, compressed to fit a few-second hero demo instead of
+  // an actual API round trip.
+  const INS_LOAD_MSGS = ['Reading your test scores...', 'Scanning study hours...', 'Checking syllabus gaps...', 'Generating insights...'];
+  function playInsightsLoading(onDone) {
+    insEmpty.style.display = 'none';
+    insLoading.style.display = 'flex';
+    insResults.style.display = 'none';
+    insLoading.classList.remove('land-ins-in');
+    void insLoading.offsetWidth;
+    insLoading.classList.add('land-ins-in');
+
+    let mi = 0;
+    clearInterval(_insLoadTimer);
+    const tick = () => {
+      if (insLoadingMsg) insLoadingMsg.textContent = INS_LOAD_MSGS[Math.min(mi, INS_LOAD_MSGS.length - 1)];
+      if (insProgFill) insProgFill.style.width = Math.min(100, (mi + 1) * 25) + '%';
+      for (let s = 1; s <= INS_LOAD_STEPS; s++) {
+        const el = insLoading.querySelector(`.ai-loading-step[data-step="${s}"]`);
+        if (!el) continue;
+        if (mi === s - 1) { el.classList.add('active'); el.classList.remove('done'); }
+        else if (mi > s - 1) { el.classList.remove('active'); el.classList.add('done'); }
+      }
+      mi++;
+      if (mi > INS_LOAD_STEPS) {
+        clearInterval(_insLoadTimer);
+        onDone && onDone();
+      }
+    };
+    tick();
+    _insLoadTimer = setInterval(tick, 480);
+  }
+
+  function showInsightsResults() {
+    insLoading.style.display = 'none';
+    insResults.style.display = 'flex';
+    insResults.classList.remove('land-ins-in');
+    void insResults.offsetWidth;
+    insResults.classList.add('land-ins-in');
+  }
+
+  // Generate Insights cinematic click — identical treatment to the Partial
+  // Filter leg (slow cursor + camera push-in timed to the arrival), then a
+  // synced hold/zoom-out into the loading state, matching setFilter's
+  // syncZoomOut pairing of camera pull-back with the content swap.
+  function runInsightsGenerateDemo() {
+    if (!insGenBtn) return;
+    moveCursorTo(insGenBtn, () => {
+      insGenBtn.disabled = true;
+      setTimeout(() => {
+        playInsightsLoading(() => {
+          showInsightsResults();
+          _heroDemoTimer = setTimeout(loop, 3400);
+        });
+        zoomCinematicOut();
+      }, CINEMATIC_HOLD_MS);
+    }, { slow: true, cinematic: true });
+  }
+
+  // Cursor travels from Partial Filter straight to the AI Insights tab
+  // (no stop at "All"), clicks it, then the Generate Insights leg runs.
+  function goToInsightsAndGenerate() {
+    const insightsTab = tabs.find(t => t.dataset.view === 'insights');
+    idx = order.indexOf('insights');
+    moveCursorTo(insightsTab, () => {
+      activateView('insights');
+      setTimeout(runInsightsGenerateDemo, 900);
+    });
   }
 
   function positionGlide(btn) {
@@ -1215,15 +1317,12 @@ function initHeroDemo() {
 
   function toggleFilterDemo() {
     const partial = viewport.querySelector('.land-mt-filter[data-filter="partial"]');
-    const all = viewport.querySelector('.land-mt-filter[data-filter="all"]');
     // Cursor speed stays normal for the Mock Tests tab click itself (handled
     // by the caller); only this leg — traveling to Partial Filter — is slowed
     // and paired with the cinematic camera push-in.
     moveCursorTo(partial, () => {
       setFilter('partial', true, { syncZoomOut: true });
-      setTimeout(() => {
-        moveCursorTo(all, () => setFilter('all', true));
-      }, 1700);
+      setTimeout(goToInsightsAndGenerate, 1700);
     }, { slow: true, cinematic: true });
   }
 
@@ -1240,7 +1339,10 @@ function initHeroDemo() {
       activateView(name);
       if (name === 'tests') {
         setTimeout(toggleFilterDemo, 1100);
-        _heroDemoTimer = setTimeout(loop, 6400);
+        // No generic resume timer here — toggleFilterDemo now chains all the
+        // way through Partial Filter -> AI Insights tab -> Generate Insights
+        // -> results, and schedules the next loop() call itself once that
+        // whole cinematic sequence finishes.
       } else {
         _heroDemoTimer = setTimeout(loop, 2600);
       }
@@ -1267,11 +1369,15 @@ function initHeroDemo() {
         punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
-        if (name === 'tests') setTimeout(toggleFilterDemo, 900);
-        // Dashboard/Insights settle quickly, so resume the demo sooner there;
-        // Mock Tests needs the full Partial-filter cinematic sequence to play out.
-        const resumeDelay = name === 'tests' ? 6400 : name === 'insights' ? 3000 : 2200;
-        _heroDemoTimer = setTimeout(loop, resumeDelay);
+        if (name === 'tests') {
+          setTimeout(toggleFilterDemo, 900);
+          // toggleFilterDemo's cinematic chain schedules its own resume once
+          // Partial Filter -> AI Insights -> Generate Insights -> results
+          // finishes playing out — don't race it with a generic timer here.
+        } else {
+          const resumeDelay = name === 'insights' ? 3000 : 2200;
+          _heroDemoTimer = setTimeout(loop, resumeDelay);
+        }
       });
     });
     viewport.querySelectorAll('.land-mt-filter').forEach(f => {
@@ -1293,6 +1399,29 @@ function initHeroDemo() {
         _heroDemoTimer = setTimeout(loop, 4600);
       });
     });
+    if (insGenBtn) {
+      insGenBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearTimeout(_heroDemoTimer);
+        clearInterval(_insLoadTimer);
+        insGenBtn.disabled = true;
+        const cardRect = card.getBoundingClientRect();
+        const btnRect = insGenBtn.getBoundingClientRect();
+        const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
+        const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.transition = '';
+        cursor.style.opacity = '1';
+        cursor.style.transform = `translate(${x}px,${y}px)`;
+        cursor.classList.add('clicking');
+        spawnClickBurst(x + 4, y - 14);
+        punchZoomAt(x + 10, y + 8);
+        setTimeout(() => cursor.classList.remove('clicking'), 460);
+        playInsightsLoading(() => {
+          showInsightsResults();
+          _heroDemoTimer = setTimeout(loop, 3400);
+        });
+      });
+    }
     window.addEventListener('resize', () => {
       const activeBtn = viewport.querySelector('.land-mt-filter.active');
       if (activeBtn) positionGlide(activeBtn);
