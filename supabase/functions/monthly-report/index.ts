@@ -476,7 +476,7 @@ function generateEmailHTML(name: string, month: string, stats: any, appUrl: stri
     <div style="font-size:12px;color:#4a4960;line-height:1.8">
       JEETrack · Your JEE preparation companion<br>
       Built for aspirants who take their prep seriously<br><br>
-      <a href="${appUrl}/unsubscribe?uid=USER_ID_PLACEHOLDER" style="color:#4a4960">Unsubscribe from monthly reports</a>
+      <a href="${appUrl}/settings?tab=alerts" style="color:#4a4960">Unsubscribe from monthly reports</a>
     </div>
   </div>
 
