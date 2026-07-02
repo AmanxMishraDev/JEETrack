@@ -427,28 +427,51 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
                 </div>
 
                 <div class="land-ins-results" id="landInsResults" style="display:none">
-                  <div class="land-ins-verdict">
+                  <div class="land-ins-head">
+                    <span class="land-ins-head-title">AI Analysis</span>
+                    <span class="land-ins-head-ts">10 Apr, 03:55 pm</span>
+                    <button class="land-ins-refresh" id="landInsRefreshBtn" type="button" aria-label="Refresh insights">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </button>
+                  </div>
+
+                  <div class="land-ins-verdict-box">
+                    <div class="land-ins-verdict-copy">
+                      <div class="land-ins-verdict-lbl">Overall Assessment</div>
+                      <div class="land-ins-verdict-text">Scores rising fast, but syllabus is only 37% done.</div>
+                      <span class="land-ins-mom-badge">↑ RISING</span>
+                    </div>
                     <div class="land-ins-ring-wrap">
-                      <svg class="land-ins-ring-svg" width="46" height="46" viewBox="0 0 46 46">
-                        <circle cx="23" cy="23" r="18" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
-                        <circle cx="23" cy="23" r="18" fill="none" stroke="url(#landRingGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="26"/>
+                      <svg class="land-ins-ring-svg" width="44" height="44" viewBox="0 0 44 44">
+                        <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+                        <circle cx="22" cy="22" r="17" fill="none" stroke="url(#landRingGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="107" stroke-dashoffset="26"/>
                         <defs><linearGradient id="landRingGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
                       </svg>
                       <div class="land-ins-ring-num">76</div>
                     </div>
-                    <div class="land-ins-verdict-text">
-                      <div class="land-ins-verdict-lbl">Overall</div>
-                      <div class="land-ins-verdict-mom">↑ Rising</div>
-                    </div>
                   </div>
-                  <div class="land-ins-cards">
-                    <div class="land-ins-card land-ins-card-good">
-                      <div class="land-ins-card-title">Scores rising <b>+54</b></div>
-                      <div class="land-ins-card-sub">Mains up across last 4 tests</div>
+
+                  <div class="land-ins-section-lbl">Detailed Analysis</div>
+                  <div class="land-ins-chips">
+                    <div class="land-ins-chip land-ins-chip-good">
+                      <span class="land-ins-chip-accent"></span>
+                      <div class="land-ins-chip-top"><span class="land-ins-chip-title">Scores rising</span><span class="land-ins-chip-tag">Trend</span></div>
+                      <div class="land-ins-chip-metric">+54 pts</div>
                     </div>
-                    <div class="land-ins-card land-ins-card-warn">
-                      <div class="land-ins-card-title">Revise Thermodynamics</div>
-                      <div class="land-ins-card-sub">Accuracy dipped 6% recently</div>
+                    <div class="land-ins-chip land-ins-chip-warn">
+                      <span class="land-ins-chip-accent"></span>
+                      <div class="land-ins-chip-top"><span class="land-ins-chip-title">Revise Thermo</span><span class="land-ins-chip-tag">Weak</span></div>
+                      <div class="land-ins-chip-metric">-6% acc.</div>
+                    </div>
+                    <div class="land-ins-chip land-ins-chip-bad">
+                      <span class="land-ins-chip-accent"></span>
+                      <div class="land-ins-chip-top"><span class="land-ins-chip-title">Syllabus gap</span><span class="land-ins-chip-tag">Low</span></div>
+                      <div class="land-ins-chip-metric">37% done</div>
+                    </div>
+                    <div class="land-ins-chip land-ins-chip-bad">
+                      <span class="land-ins-chip-accent"></span>
+                      <div class="land-ins-chip-top"><span class="land-ins-chip-title">Backlogs</span><span class="land-ins-chip-tag">Urgent</span></div>
+                      <div class="land-ins-chip-metric">4 pending</div>
                     </div>
                   </div>
                 </div>
@@ -458,9 +481,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
           </div>
 
+          </div>
+
           <div class="land-dash-cursor" id="landDemoCursor">
             <svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 3l6.5 16.5 2.4-6.6 6.6-2.4z" fill="#fff" stroke="#0c0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>
-          </div>
           </div>
         </div>
     </div>

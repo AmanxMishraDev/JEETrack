@@ -1004,6 +1004,7 @@ function initHeroDemo() {
   const insLoading = document.getElementById('landInsLoading');
   const insResults = document.getElementById('landInsResults');
   const insGenBtn = document.getElementById('landInsGenBtn');
+  const insRefreshBtn = document.getElementById('landInsRefreshBtn');
   const insLoadingMsg = document.getElementById('landInsLoadingMsg');
   const insProgFill = document.getElementById('landInsProgFill');
   const order = ['dashboard', 'tests', 'insights'];
@@ -1020,7 +1021,7 @@ function initHeroDemo() {
   // mirrors the stylesheet's .78s transition).
   const CURSOR_MS = 780;
   const CURSOR_SLOW_MS = 1180;
-  const CINEMATIC_ZOOM_SCALE = 1.24;
+  const CINEMATIC_ZOOM_SCALE = 1.55;
   const CINEMATIC_HOLD_MS = 170;
   const CINEMATIC_OUT_MS = 780;
 
@@ -1407,6 +1408,28 @@ function initHeroDemo() {
         insGenBtn.disabled = true;
         const cardRect = card.getBoundingClientRect();
         const btnRect = insGenBtn.getBoundingClientRect();
+        const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
+        const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.transition = '';
+        cursor.style.opacity = '1';
+        cursor.style.transform = `translate(${x}px,${y}px)`;
+        cursor.classList.add('clicking');
+        spawnClickBurst(x + 4, y - 14);
+        punchZoomAt(x + 10, y + 8);
+        setTimeout(() => cursor.classList.remove('clicking'), 460);
+        playInsightsLoading(() => {
+          showInsightsResults();
+          _heroDemoTimer = setTimeout(loop, 3400);
+        });
+      });
+    }
+    if (insRefreshBtn) {
+      insRefreshBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearTimeout(_heroDemoTimer);
+        clearInterval(_insLoadTimer);
+        const cardRect = card.getBoundingClientRect();
+        const btnRect = insRefreshBtn.getBoundingClientRect();
         const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
         const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
         cursor.style.transition = '';

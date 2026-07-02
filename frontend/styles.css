@@ -1312,7 +1312,8 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
    above, for the real /insights page) at a scale that fits the small
    demo card. */
 .land-ins-stage{height:100%;display:flex;flex-direction:column;justify-content:center;position:relative}
-.land-ins-empty,.land-ins-loading,.land-ins-results{display:flex;flex-direction:column;align-items:center;text-align:center}
+.land-ins-empty,.land-ins-loading{display:flex;flex-direction:column;align-items:center;text-align:center}
+.land-ins-results{display:flex;flex-direction:column;align-items:stretch;text-align:left;justify-content:center;height:100%}
 .land-ins-in{animation:aiCardIn .5s cubic-bezier(.34,1.1,.64,1) both}
 
 .land-ins-orb{position:relative;width:38px;height:38px;margin:0 auto 10px}
@@ -1354,20 +1355,69 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-ins-steps .ai-loading-step{font-size:9.5px}
 .land-ins-prog-track{width:150px;height:3px;margin:0 auto}
 
-.land-ins-verdict{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.land-ins-ring-wrap{position:relative;width:46px;height:46px;flex-shrink:0}
+.land-ins-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.land-ins-head-title{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#fff}
+.land-ins-head-ts{font-size:9px;color:rgba(255,255,255,.35)}
+.land-ins-refresh{
+  margin-left:auto;width:20px;height:20px;border-radius:6px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);
+  cursor:pointer;transition:background .2s,color .2s;
+}
+.land-ins-refresh:hover{background:rgba(124,106,247,.16);color:#c8b8ff}
+
+.land-ins-verdict-box{
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(135deg,rgba(18,14,36,.92),rgba(12,9,24,.96));
+  border:1px solid rgba(124,106,247,.3);border-radius:14px;
+  padding:9px 12px;margin-bottom:11px;
+  box-shadow:0 4px 22px rgba(124,106,247,.16),0 1px 0 rgba(255,255,255,.05) inset;
+}
+.land-ins-verdict-copy{flex:1;min-width:0}
+.land-ins-verdict-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(166,149,255,.6);margin-bottom:4px}
+.land-ins-verdict-text{font-family:'Syne',sans-serif;font-weight:700;font-size:10.5px;color:#fff;line-height:1.4}
+.land-ins-mom-badge{
+  display:inline-flex;align-items:center;gap:3px;margin-top:6px;
+  padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:700;
+  background:rgba(52,211,153,.16);color:#34d399;
+}
+.land-ins-ring-wrap{position:relative;width:44px;height:44px;flex-shrink:0}
 .land-ins-ring-svg{transform:rotate(-90deg);filter:drop-shadow(0 0 8px rgba(124,106,247,.3))}
 .land-ins-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#fff}
-.land-ins-verdict-text{text-align:left}
-.land-ins-verdict-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(166,149,255,.6)}
-.land-ins-verdict-mom{font-size:12px;font-weight:700;color:#34d399;margin-top:3px}
-.land-ins-cards{display:flex;flex-direction:column;gap:7px;width:100%}
-.land-ins-card{border-radius:11px;padding:9px 11px;text-align:left;border:1px solid transparent}
-.land-ins-card-good{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.18)}
-.land-ins-card-warn{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.18)}
-.land-ins-card-title{font-size:11.5px;font-weight:700;color:#fff}
-.land-ins-card-title b{color:#34d399}
-.land-ins-card-sub{font-size:10px;color:rgba(255,255,255,.42);margin-top:3px;line-height:1.4}
+
+.land-ins-section-lbl{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
+  color:rgba(122,121,144,.75);margin-bottom:7px;display:flex;align-items:center;gap:6px;
+}
+.land-ins-section-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+
+.land-ins-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.land-ins-chip{
+  position:relative;overflow:hidden;border-radius:10px;padding:7px 8px 7px 11px;
+  border:1px solid transparent;
+  animation:aiCardIn .45s cubic-bezier(.34,1.1,.64,1) both;
+}
+.land-ins-chip:nth-child(1){animation-delay:.05s}
+.land-ins-chip:nth-child(2){animation-delay:.12s}
+.land-ins-chip:nth-child(3){animation-delay:.19s}
+.land-ins-chip:nth-child(4){animation-delay:.26s}
+.land-ins-chip-accent{position:absolute;top:0;left:0;width:3px;height:100%}
+.land-ins-chip-good{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.2)}
+.land-ins-chip-good .land-ins-chip-accent{background:#34d399}
+.land-ins-chip-good .land-ins-chip-tag{background:rgba(52,211,153,.18);color:#34d399}
+.land-ins-chip-good .land-ins-chip-metric{color:#34d399}
+.land-ins-chip-warn{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.2)}
+.land-ins-chip-warn .land-ins-chip-accent{background:#fbbf24}
+.land-ins-chip-warn .land-ins-chip-tag{background:rgba(251,191,36,.18);color:#fbbf24}
+.land-ins-chip-warn .land-ins-chip-metric{color:#fbbf24}
+.land-ins-chip-bad{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.2)}
+.land-ins-chip-bad .land-ins-chip-accent{background:#f87171}
+.land-ins-chip-bad .land-ins-chip-tag{background:rgba(248,113,113,.18);color:#f87171}
+.land-ins-chip-bad .land-ins-chip-metric{color:#f87171}
+.land-ins-chip-top{display:flex;align-items:flex-start;justify-content:space-between;gap:4px}
+.land-ins-chip-title{font-size:9.5px;font-weight:700;color:#fff;line-height:1.25}
+.land-ins-chip-tag{font-size:6.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1.5px 5px;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.land-ins-chip-metric{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;margin-top:5px}
 
 .land-dash-cursor{
   position:absolute;top:0;left:0;z-index:30;pointer-events:none;
