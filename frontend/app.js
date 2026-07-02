@@ -970,6 +970,25 @@ function initLandingStarField() {
 
 let _heroDemoTimer = null;
 
+// Mock JEE Mains data per filter for the hero "Mock Tests" tab demo.
+const LAND_MT_DATA = {
+  all: {
+    tests: '7', latest: '65.3%', best: '65.3%', avg: '56.2%',
+    bars: [34, 48, 42, 64, 58, 80, 92],
+    subj: { phy: 82, chem: 76, math: 71 }
+  },
+  partial: {
+    tests: '4', latest: '70.0%', best: '74.5%', avg: '62.8%',
+    bars: [45, 58, 66, 74],
+    subj: { phy: 85, chem: 79, math: 74 }
+  },
+  full: {
+    tests: '3', latest: '61.1%', best: '65.3%', avg: '58.7%',
+    bars: [52, 64, 80],
+    subj: { phy: 78, chem: 73, math: 69 }
+  }
+};
+
 function initHeroDemo() {
   const card = document.getElementById('landDemoCard');
   if (!card) return;
@@ -977,10 +996,14 @@ function initHeroDemo() {
   const tabs = Array.from(card.querySelectorAll('.land-dash-tab'));
   const views = Array.from(viewport.querySelectorAll('.land-dash-view'));
   const cursor = document.getElementById('landDemoCursor');
+  const mtFilters = document.getElementById('landMtFilters');
+  const mtGlide = document.getElementById('landMtGlide');
+  const mtBody = document.getElementById('landMtBody');
   const order = ['dashboard', 'tests', 'insights'];
   const activeTab = tabs.find(t => t.classList.contains('active'));
   let idx = order.indexOf(activeTab ? activeTab.dataset.view : 'dashboard');
   if (idx < 0) idx = 0;
+  let currentFilter = 'all';
 
   function moveCursorTo(el, onArrive) {
     if (!el) { if (onArrive) onArrive(); return; }
@@ -994,15 +1017,30 @@ function initHeroDemo() {
     setTimeout(() => {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
-      const ring = document.createElement('div');
-      ring.className = 'land-dash-click-ring pulse';
-      ring.style.left = (x + 10) + 'px';
-      ring.style.top = (y + 8) + 'px';
-      card.appendChild(ring);
-      setTimeout(() => ring.remove(), 650);
-      setTimeout(() => cursor.classList.remove('clicking'), 450);
+      spawnClickBurst(x + 10, y + 8);
+      setTimeout(() => cursor.classList.remove('clicking'), 460);
       if (onArrive) onArrive();
     }, 720);
+  }
+
+  // A premium multi-layer click burst: two colored rings + a bright core dot.
+  function spawnClickBurst(x, y) {
+    const dot = document.createElement('div');
+    dot.className = 'land-dash-click-ring pulse-dot';
+    dot.style.left = x + 'px'; dot.style.top = y + 'px';
+    card.appendChild(dot);
+
+    const ring1 = document.createElement('div');
+    ring1.className = 'land-dash-click-ring pulse';
+    ring1.style.left = x + 'px'; ring1.style.top = y + 'px';
+    card.appendChild(ring1);
+
+    const ring2 = document.createElement('div');
+    ring2.className = 'land-dash-click-ring pulse-2';
+    ring2.style.left = x + 'px'; ring2.style.top = y + 'px';
+    card.appendChild(ring2);
+
+    setTimeout(() => { dot.remove(); ring1.remove(); ring2.remove(); }, 780);
   }
 
   function activateView(name) {
@@ -1013,22 +1051,74 @@ function initHeroDemo() {
     });
     views.forEach(v => v.classList.toggle('active', v.dataset.view === name));
     if (name === 'tests') {
-      viewport.querySelectorAll('.land-mt-filter').forEach(f => f.classList.toggle('active', f.dataset.filter === 'all'));
+      setFilter('all', false);
     }
+  }
+
+  function positionGlide(btn) {
+    if (!mtGlide || !mtFilters || !btn) return;
+    const wrapRect = mtFilters.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    mtGlide.style.width = btnRect.width + 'px';
+    mtGlide.style.transform = `translateX(${btnRect.left - wrapRect.left - 3}px)`;
+  }
+
+  // Swaps in new mock data for the given filter with a zoom-out / zoom-in
+  // transition, so it reads as the tab "processing" a fresh query.
+  function setFilter(filter, animate) {
+    const btn = viewport.querySelector(`.land-mt-filter[data-filter="${filter}"]`);
+    viewport.querySelectorAll('.land-mt-filter').forEach(f => f.classList.toggle('active', f === btn));
+    positionGlide(btn);
+    currentFilter = filter;
+    const data = LAND_MT_DATA[filter] || LAND_MT_DATA.all;
+
+    const applyData = () => {
+      const numTests = document.getElementById('landMtNumTests');
+      const numLatest = document.getElementById('landMtNumLatest');
+      const numBest = document.getElementById('landMtNumBest');
+      const numAvg = document.getElementById('landMtNumAvg');
+      [numTests, numLatest, numBest, numAvg].forEach(el => el && el.classList.remove('land-mt-pop'));
+      if (numTests) numTests.textContent = data.tests;
+      if (numLatest) numLatest.textContent = data.latest;
+      if (numBest) numBest.textContent = data.best;
+      if (numAvg) numAvg.textContent = data.avg;
+
+      const chart = document.getElementById('landMtChart');
+      if (chart) {
+        chart.innerHTML = data.bars.map((h, i) => {
+          const hi = i >= data.bars.length - 2 ? ' land-dash-bar-hi' : '';
+          return `<div class="land-dash-bar${hi}" style="--h:${h}%"></div>`;
+        }).join('');
+      }
+
+      const phy = document.getElementById('landMtSubjPhy');
+      const chem = document.getElementById('landMtSubjChem');
+      const math = document.getElementById('landMtSubjMath');
+      if (phy) phy.textContent = data.subj.phy + '%';
+      if (chem) chem.textContent = data.subj.chem + '%';
+      if (math) math.textContent = data.subj.math + '%';
+
+      requestAnimationFrame(() => {
+        [numTests, numLatest, numBest, numAvg].forEach(el => el && el.classList.add('land-mt-pop'));
+      });
+    };
+
+    if (!animate || !mtBody) { applyData(); return; }
+    mtBody.classList.add('land-mt-zoom');
+    setTimeout(() => {
+      applyData();
+      requestAnimationFrame(() => mtBody.classList.remove('land-mt-zoom'));
+    }, 340);
   }
 
   function toggleFilterDemo() {
     const partial = viewport.querySelector('.land-mt-filter[data-filter="partial"]');
     const all = viewport.querySelector('.land-mt-filter[data-filter="all"]');
     moveCursorTo(partial, () => {
-      if (partial) partial.classList.add('active');
-      if (all) all.classList.remove('active');
+      setFilter('partial', true);
       setTimeout(() => {
-        moveCursorTo(all, () => {
-          if (all) all.classList.add('active');
-          if (partial) partial.classList.remove('active');
-        });
-      }, 1500);
+        moveCursorTo(all, () => setFilter('all', true));
+      }, 1700);
     });
   }
 
@@ -1045,7 +1135,7 @@ function initHeroDemo() {
       activateView(name);
       if (name === 'tests') {
         setTimeout(toggleFilterDemo, 1100);
-        _heroDemoTimer = setTimeout(loop, 5600);
+        _heroDemoTimer = setTimeout(loop, 6000);
       } else {
         _heroDemoTimer = setTimeout(loop, 3400);
       }
@@ -1067,11 +1157,31 @@ function initHeroDemo() {
     viewport.querySelectorAll('.land-mt-filter').forEach(f => {
       f.addEventListener('click', (e) => {
         e.stopPropagation();
-        viewport.querySelectorAll('.land-mt-filter').forEach(x => x.classList.remove('active'));
-        f.classList.add('active');
+        clearTimeout(_heroDemoTimer);
+        const cardRect = card.getBoundingClientRect();
+        const btnRect = f.getBoundingClientRect();
+        const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
+        const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.opacity = '1';
+        cursor.style.transform = `translate(${x}px,${y}px)`;
+        cursor.classList.add('clicking');
+        spawnClickBurst(x + 10, y + 8);
+        setTimeout(() => cursor.classList.remove('clicking'), 460);
+        setFilter(f.dataset.filter, true);
+        _heroDemoTimer = setTimeout(loop, 4600);
       });
     });
+    window.addEventListener('resize', () => {
+      const activeBtn = viewport.querySelector('.land-mt-filter.active');
+      if (activeBtn) positionGlide(activeBtn);
+    });
   }
+
+  // Initial glide-pill position (card may not be laid out on first paint, so defer a frame).
+  requestAnimationFrame(() => {
+    const activeBtn = viewport.querySelector('.land-mt-filter.active') || viewport.querySelector('.land-mt-filter[data-filter="all"]');
+    positionGlide(activeBtn);
+  });
 
   clearTimeout(_heroDemoTimer);
   _heroDemoTimer = setTimeout(loop, 3000);

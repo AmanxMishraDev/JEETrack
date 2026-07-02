@@ -1231,17 +1231,38 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 /* --- Mock Tests mini view --- */
 .land-mt-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .land-mt-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#fff}
-.land-mt-filters{display:flex;gap:4px;background:rgba(0,0,0,.2);border-radius:8px;padding:3px}
+.land-mt-filters{position:relative;display:flex;gap:4px;background:rgba(0,0,0,.2);border-radius:8px;padding:3px}
 .land-mt-filter{
+  position:relative;z-index:1;
   border:none;background:transparent;cursor:pointer;font-family:inherit;
   font-size:9.5px;font-weight:600;color:rgba(255,255,255,.4);padding:4px 8px;border-radius:6px;
-  transition:background .3s ease,color .3s ease;
+  transition:color .3s ease;
 }
-.land-mt-filter.active{background:rgba(255,255,255,.12);color:#fff}
+.land-mt-filter.active{color:#fff}
+.land-mt-filter-glide{
+  position:absolute;top:3px;left:3px;height:calc(100% - 6px);border-radius:6px;
+  background:linear-gradient(135deg,rgba(166,149,255,.32),rgba(244,114,182,.22));
+  box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,0 2px 8px rgba(108,92,231,.35);
+  transition:transform .42s cubic-bezier(.34,1.56,.64,1),width .42s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;z-index:0;
+}
+
+.land-mt-body{
+  transition:transform .38s cubic-bezier(.4,0,.2,1),opacity .32s ease,filter .38s ease;
+  transform-origin:50% 20%;
+  will-change:transform,opacity,filter;
+}
+.land-mt-body.land-mt-zoom{
+  transform:scale(1.045);
+  opacity:.32;
+  filter:blur(3px) saturate(1.3);
+}
 
 .land-mt-stats{display:flex;gap:6px;margin-bottom:14px}
 .land-mt-stat{flex:1;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:7px 4px}
-.land-mt-stat-num{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;line-height:1}
+.land-mt-stat-num{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;line-height:1;display:inline-block}
+.land-mt-stat-num.land-mt-pop{animation:mtNumPop .45s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes mtNumPop{0%{transform:scale(.55);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
 .land-mt-stat-lbl{font-size:8.5px;font-weight:600;color:rgba(255,255,255,.36);text-transform:uppercase;letter-spacing:.03em;margin-top:4px}
 
 .land-dash-chart{display:flex;align-items:flex-end;gap:7px;height:72px;margin-bottom:16px;padding:0 1px}
@@ -1275,22 +1296,38 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   position:absolute;top:0;left:0;z-index:30;pointer-events:none;
   transform:translate(140px,52px);
   transition:transform .78s cubic-bezier(.5,-.2,.3,1.35),opacity .3s ease;
-  filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));opacity:.92;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35));
+  opacity:.92;
 }
 .land-dash-cursor svg{display:block;transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
-.land-dash-cursor.traveling svg{transform:scale(1.28) rotate(-10deg) translateY(-3px)}
-.land-dash-cursor.clicking svg{animation:cursorClick .42s cubic-bezier(.34,1.56,.64,1)}
-@keyframes cursorClick{0%{transform:scale(1) rotate(0)}35%{transform:scale(.62) rotate(4deg)}70%{transform:scale(1.18) rotate(-2deg)}100%{transform:scale(1) rotate(0)}}
+.land-dash-cursor.traveling{filter:drop-shadow(0 6px 16px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(166,149,255,.55))}
+.land-dash-cursor.traveling svg{transform:scale(1.3) rotate(-12deg) translateY(-3px)}
+.land-dash-cursor.clicking svg{animation:cursorClick .46s cubic-bezier(.34,1.56,.64,1)}
+.land-dash-cursor.clicking{animation:cursorClickGlow .46s ease}
+@keyframes cursorClick{0%{transform:scale(1) rotate(0)}30%{transform:scale(.58) rotate(6deg)}62%{transform:scale(1.22) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(244,114,182,.75))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
+
 .land-dash-click-ring{
   position:absolute;top:0;left:0;width:26px;height:26px;margin:-3px 0 0 -3px;
-  border-radius:50%;border:2px solid rgba(166,149,255,.7);
+  border-radius:50%;border:2px solid rgba(166,149,255,.75);
   pointer-events:none;z-index:29;opacity:0;
 }
-.land-dash-click-ring.pulse{animation:clickRingPulse .6s ease-out}
-@keyframes clickRingPulse{0%{opacity:.85;transform:scale(.25)}100%{opacity:0;transform:scale(1.9)}}
+.land-dash-click-ring.pulse{animation:clickRingPulse .68s cubic-bezier(.2,.7,.3,1) both}
+.land-dash-click-ring.pulse-2{
+  border-color:rgba(244,114,182,.6);
+  animation:clickRingPulse .68s cubic-bezier(.2,.7,.3,1) .08s both;
+}
+.land-dash-click-ring.pulse-dot{
+  width:8px;height:8px;margin:5px 0 0 5px;border:none;
+  background:radial-gradient(circle,#fff,rgba(166,149,255,.9) 60%,transparent 75%);
+  box-shadow:0 0 12px 3px rgba(166,149,255,.7);
+  animation:clickDotPulse .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes clickRingPulse{0%{opacity:.9;transform:scale(.2)}70%{opacity:.35}100%{opacity:0;transform:scale(2.1)}}
+@keyframes clickDotPulse{0%{opacity:0;transform:scale(.3)}45%{opacity:1;transform:scale(1.35)}100%{opacity:0;transform:scale(.7)}}
 
 @media(max-width:900px){
-  .land-dash-cursor{display:none}
+  .land-dash-cursor{transform:scale(.88) translate(140px,52px)}
 }
 
 .land-float-card{

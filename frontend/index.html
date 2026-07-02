@@ -352,34 +352,37 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="land-dash-view" data-view="tests">
               <div class="land-mt-head">
                 <span class="land-mt-title">JEE Mains</span>
-                <div class="land-mt-filters">
+                <div class="land-mt-filters" id="landMtFilters">
+                  <span class="land-mt-filter-glide" id="landMtGlide"></span>
                   <button class="land-mt-filter active" data-filter="all">All</button>
                   <button class="land-mt-filter" data-filter="partial">Partial</button>
                   <button class="land-mt-filter" data-filter="full">Full</button>
                 </div>
               </div>
 
-              <div class="land-mt-stats">
-                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#8fa5ff">7</div><div class="land-mt-stat-lbl">Tests</div></div>
-                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#60d6c9">65.3%</div><div class="land-mt-stat-lbl">Latest</div></div>
-                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#34d399">65.3%</div><div class="land-mt-stat-lbl">Best</div></div>
-                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#fbbf24">56.2%</div><div class="land-mt-stat-lbl">Avg</div></div>
-              </div>
+              <div class="land-mt-body" id="landMtBody">
+                <div class="land-mt-stats">
+                  <div class="land-mt-stat"><div class="land-mt-stat-num" id="landMtNumTests" style="color:#8fa5ff">7</div><div class="land-mt-stat-lbl">Tests</div></div>
+                  <div class="land-mt-stat"><div class="land-mt-stat-num" id="landMtNumLatest" style="color:#60d6c9">65.3%</div><div class="land-mt-stat-lbl">Latest</div></div>
+                  <div class="land-mt-stat"><div class="land-mt-stat-num" id="landMtNumBest" style="color:#34d399">65.3%</div><div class="land-mt-stat-lbl">Best</div></div>
+                  <div class="land-mt-stat"><div class="land-mt-stat-num" id="landMtNumAvg" style="color:#fbbf24">56.2%</div><div class="land-mt-stat-lbl">Avg</div></div>
+                </div>
 
-              <div class="land-dash-chart land-dash-chart-sm">
-                <div class="land-dash-bar" style="--h:34%"></div>
-                <div class="land-dash-bar" style="--h:48%"></div>
-                <div class="land-dash-bar" style="--h:42%"></div>
-                <div class="land-dash-bar" style="--h:64%"></div>
-                <div class="land-dash-bar" style="--h:58%"></div>
-                <div class="land-dash-bar land-dash-bar-hi" style="--h:80%"></div>
-                <div class="land-dash-bar land-dash-bar-hi" style="--h:92%"></div>
-              </div>
+                <div class="land-dash-chart land-dash-chart-sm" id="landMtChart">
+                  <div class="land-dash-bar" style="--h:34%"></div>
+                  <div class="land-dash-bar" style="--h:48%"></div>
+                  <div class="land-dash-bar" style="--h:42%"></div>
+                  <div class="land-dash-bar" style="--h:64%"></div>
+                  <div class="land-dash-bar" style="--h:58%"></div>
+                  <div class="land-dash-bar land-dash-bar-hi" style="--h:80%"></div>
+                  <div class="land-dash-bar land-dash-bar-hi" style="--h:92%"></div>
+                </div>
 
-              <div class="land-dash-subjects">
-                <div class="land-dash-subj"><span style="background:#8fa5ff"></span>Physics<b>82%</b></div>
-                <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b>76%</b></div>
-                <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b>71%</b></div>
+                <div class="land-dash-subjects">
+                  <div class="land-dash-subj"><span style="background:#8fa5ff"></span>Physics<b id="landMtSubjPhy">82%</b></div>
+                  <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b id="landMtSubjChem">76%</b></div>
+                  <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b id="landMtSubjMath">71%</b></div>
+                </div>
               </div>
             </div>
 
