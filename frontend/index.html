@@ -299,40 +299,74 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
               Dashboard
             </button>
+            <button class="land-dash-tab" data-view="tests" role="tab" aria-selected="false">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Mock Tests
+            </button>
             <button class="land-dash-tab" data-view="insights" role="tab" aria-selected="false">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v1.1A4.5 4.5 0 0 0 4 12.5 4.5 4.5 0 0 0 8.5 17H9v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2h.5A4.5 4.5 0 0 0 20 12.5a4.5 4.5 0 0 0-3-4.25V7a5 5 0 0 0-5-5z"/></svg>
               AI Insights
-            </button>
-            <button class="land-dash-tab" data-view="test" role="tab" aria-selected="false">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              Mock Test
             </button>
           </div>
 
           <div class="land-dash-viewport" id="landDemoViewport">
 
             <div class="land-dash-view active" data-view="dashboard">
-              <div class="land-dash-score-row">
-                <div>
-                  <div class="land-dash-score-num">248<span>/300</span></div>
-                  <div class="land-dash-score-lbl">Avg. Mock Score</div>
+              <div class="land-dd-greet">
+                <div class="land-dd-greet-name">Good afternoon, <b>Aman</b></div>
+                <div class="land-dd-greet-date"><span class="land-dd-dot"></span>Friday, 10 Apr 2026</div>
+              </div>
+
+              <div class="land-dd-stats">
+                <div class="land-dd-stat">
+                  <div class="land-dd-stat-lbl">Latest Mains</div>
+                  <div class="land-dd-stat-num" style="color:#8fa5ff">196<span>/300</span></div>
+                  <div class="land-dd-stat-pct" style="background:rgba(143,165,255,.14);color:#8fa5ff">65.3%</div>
                 </div>
-                <div class="land-dash-ring">
-                  <svg viewBox="0 0 64 64">
-                    <defs>
-                      <linearGradient id="dashRingGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#a695ff"/>
-                        <stop offset="100%" stop-color="#f472b6"/>
-                      </linearGradient>
-                    </defs>
-                    <circle cx="32" cy="32" r="27" class="land-dash-ring-track"/>
-                    <circle cx="32" cy="32" r="27" class="land-dash-ring-fill"/>
-                  </svg>
-                  <div class="land-dash-ring-num">78%</div>
+                <div class="land-dd-stat">
+                  <div class="land-dd-stat-lbl">Latest Advanced</div>
+                  <div class="land-dd-stat-num" style="color:#f472b6">134<span>/360</span></div>
+                  <div class="land-dd-stat-pct" style="background:rgba(244,114,182,.14);color:#f472b6">74.4%</div>
+                </div>
+                <div class="land-dd-stat">
+                  <div class="land-dd-stat-lbl">No-Backlog</div>
+                  <div class="land-dd-stat-num" style="color:#fbbf24">3<span>d</span></div>
+                  <div class="land-dd-stat-pct" style="background:rgba(251,191,36,.14);color:#fbbf24">best 5d</div>
                 </div>
               </div>
 
-              <div class="land-dash-chart">
+              <div class="land-dd-chart-wrap">
+                <div class="land-dd-chart-head">Score Trend<span>last 90 days</span></div>
+                <svg class="land-dd-chart" viewBox="0 0 300 64" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="ddLineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#a695ff"/>
+                      <stop offset="100%" stop-color="#f472b6"/>
+                    </linearGradient>
+                  </defs>
+                  <polyline class="land-dd-chart-line" points="0,42 40,34 80,37 120,26 160,40 200,16 240,11 300,23" fill="none" stroke="url(#ddLineGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="land-dash-view" data-view="tests">
+              <div class="land-mt-head">
+                <span class="land-mt-title">JEE Mains</span>
+                <div class="land-mt-filters">
+                  <button class="land-mt-filter active" data-filter="all">All</button>
+                  <button class="land-mt-filter" data-filter="partial">Partial</button>
+                  <button class="land-mt-filter" data-filter="full">Full</button>
+                </div>
+              </div>
+
+              <div class="land-mt-stats">
+                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#8fa5ff">7</div><div class="land-mt-stat-lbl">Tests</div></div>
+                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#60d6c9">65.3%</div><div class="land-mt-stat-lbl">Latest</div></div>
+                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#34d399">65.3%</div><div class="land-mt-stat-lbl">Best</div></div>
+                <div class="land-mt-stat"><div class="land-mt-stat-num" style="color:#fbbf24">56.2%</div><div class="land-mt-stat-lbl">Avg</div></div>
+              </div>
+
+              <div class="land-dash-chart land-dash-chart-sm">
                 <div class="land-dash-bar" style="--h:34%"></div>
                 <div class="land-dash-bar" style="--h:48%"></div>
                 <div class="land-dash-bar" style="--h:42%"></div>
@@ -343,7 +377,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               </div>
 
               <div class="land-dash-subjects">
-                <div class="land-dash-subj"><span style="background:#a695ff"></span>Physics<b>82%</b></div>
+                <div class="land-dash-subj"><span style="background:#8fa5ff"></span>Physics<b>82%</b></div>
                 <div class="land-dash-subj"><span style="background:#34d399"></span>Chemistry<b>76%</b></div>
                 <div class="land-dash-subj"><span style="background:#f472b6"></span>Maths<b>71%</b></div>
               </div>
@@ -370,21 +404,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
                   <div class="land-ai-title">Suggested: 20 Organic MCQs</div>
                   <div class="land-ai-sub">Based on your weak-topic pattern</div>
                 </div>
-              </div>
-            </div>
-
-            <div class="land-dash-view" data-view="test">
-              <div class="land-test-top">
-                <span>Question 14/30</span>
-                <span class="land-test-timer">18:42</span>
-              </div>
-              <div class="land-test-progress"><div class="land-test-progress-fill"></div></div>
-              <div class="land-test-q">A block slides down a 30° rough incline. Find its acceleration. <span>g = 10 m/s², μ = 0.2</span></div>
-              <div class="land-test-opts">
-                <div class="land-test-opt" data-opt="a"><span>A</span>3.27 m/s²</div>
-                <div class="land-test-opt" data-opt="b"><span>B</span>4.87 m/s²</div>
-                <div class="land-test-opt" data-opt="c"><span>C</span>5.83 m/s²</div>
-                <div class="land-test-opt" data-opt="d"><span>D</span>6.12 m/s²</div>
               </div>
             </div>
 

@@ -977,7 +977,7 @@ function initHeroDemo() {
   const tabs = Array.from(card.querySelectorAll('.land-dash-tab'));
   const views = Array.from(viewport.querySelectorAll('.land-dash-view'));
   const cursor = document.getElementById('landDemoCursor');
-  const order = ['dashboard', 'insights', 'test'];
+  const order = ['dashboard', 'tests', 'insights'];
   const activeTab = tabs.find(t => t.classList.contains('active'));
   let idx = order.indexOf(activeTab ? activeTab.dataset.view : 'dashboard');
   if (idx < 0) idx = 0;
@@ -989,18 +989,20 @@ function initHeroDemo() {
     const x = elRect.left - cardRect.left + elRect.width / 2 - 10;
     const y = elRect.top - cardRect.top + elRect.height / 2 - 6;
     cursor.style.opacity = '1';
+    cursor.classList.add('traveling');
     cursor.style.transform = `translate(${x}px,${y}px)`;
     setTimeout(() => {
+      cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
       const ring = document.createElement('div');
       ring.className = 'land-dash-click-ring pulse';
       ring.style.left = (x + 10) + 'px';
       ring.style.top = (y + 8) + 'px';
       card.appendChild(ring);
-      setTimeout(() => ring.remove(), 600);
-      setTimeout(() => cursor.classList.remove('clicking'), 400);
+      setTimeout(() => ring.remove(), 650);
+      setTimeout(() => cursor.classList.remove('clicking'), 450);
       if (onArrive) onArrive();
-    }, 750);
+    }, 720);
   }
 
   function activateView(name) {
@@ -1010,19 +1012,24 @@ function initHeroDemo() {
       t.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     views.forEach(v => v.classList.toggle('active', v.dataset.view === name));
-    if (name === 'test') {
-      const fill = viewport.querySelector('.land-test-progress-fill');
-      viewport.querySelectorAll('.land-test-opt').forEach(o => o.classList.remove('selected'));
-      if (fill) {
-        fill.style.width = '0%';
-        setTimeout(() => { fill.style.width = '46%'; }, 150);
-      }
+    if (name === 'tests') {
+      viewport.querySelectorAll('.land-mt-filter').forEach(f => f.classList.toggle('active', f.dataset.filter === 'all'));
     }
   }
 
-  function selectTestOption() {
-    const opt = viewport.querySelector('.land-test-opt[data-opt="b"]');
-    moveCursorTo(opt, () => { if (opt) opt.classList.add('selected'); });
+  function toggleFilterDemo() {
+    const partial = viewport.querySelector('.land-mt-filter[data-filter="partial"]');
+    const all = viewport.querySelector('.land-mt-filter[data-filter="all"]');
+    moveCursorTo(partial, () => {
+      if (partial) partial.classList.add('active');
+      if (all) all.classList.remove('active');
+      setTimeout(() => {
+        moveCursorTo(all, () => {
+          if (all) all.classList.add('active');
+          if (partial) partial.classList.remove('active');
+        });
+      }, 1500);
+    });
   }
 
   function loop() {
@@ -1036,9 +1043,9 @@ function initHeroDemo() {
     const tabEl = tabs.find(t => t.dataset.view === name);
     moveCursorTo(tabEl, () => {
       activateView(name);
-      if (name === 'test') {
-        setTimeout(selectTestOption, 1400);
-        _heroDemoTimer = setTimeout(loop, 5200);
+      if (name === 'tests') {
+        setTimeout(toggleFilterDemo, 1100);
+        _heroDemoTimer = setTimeout(loop, 5600);
       } else {
         _heroDemoTimer = setTimeout(loop, 3400);
       }
@@ -1053,8 +1060,15 @@ function initHeroDemo() {
         const name = t.dataset.view;
         idx = order.indexOf(name);
         activateView(name);
-        if (name === 'test') setTimeout(selectTestOption, 900);
-        _heroDemoTimer = setTimeout(loop, 4200);
+        if (name === 'tests') setTimeout(toggleFilterDemo, 900);
+        _heroDemoTimer = setTimeout(loop, 4600);
+      });
+    });
+    viewport.querySelectorAll('.land-mt-filter').forEach(f => {
+      f.addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewport.querySelectorAll('.land-mt-filter').forEach(x => x.classList.remove('active'));
+        f.classList.add('active');
       });
     });
   }
