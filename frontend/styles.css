@@ -1189,20 +1189,21 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dash-zoom-stage.zoom-punch{animation:landZoomPunch .5s cubic-bezier(.22,1,.36,1) both}
 @keyframes landZoomPunch{
   0%{transform:scale(1)}
-  45%{transform:scale(1.045)}
+  40%{transform:scale(1.045)}
+  75%{transform:scale(.995)}
   100%{transform:scale(1)}
 }
 .land-zoom-flash{
-  position:absolute;width:180px;height:180px;margin:-90px 0 0 -90px;
+  position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;
   border-radius:50%;pointer-events:none;z-index:28;
-  background:radial-gradient(circle,rgba(255,255,255,.5),rgba(166,149,255,.28) 35%,transparent 70%);
+  background:radial-gradient(circle,rgba(255,255,255,.4),rgba(166,149,255,.22) 35%,transparent 70%);
   opacity:0;
 }
-.land-zoom-flash.flash-go{animation:landZoomFlash .55s ease-out both}
+.land-zoom-flash.flash-go{animation:landZoomFlash .48s ease-out both}
 @keyframes landZoomFlash{
-  0%{opacity:0;transform:scale(.15)}
-  35%{opacity:.85}
-  100%{opacity:0;transform:scale(1.15)}
+  0%{opacity:0;transform:scale(.2)}
+  35%{opacity:.65}
+  100%{opacity:0;transform:scale(1.1)}
 }
 @media(prefers-reduced-motion:reduce){
   .land-dash-zoom-stage.zoom-punch{animation:none}
@@ -1223,14 +1224,14 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dash-viewport{position:relative;height:236px}
 .land-dash-view{
   position:absolute;inset:0;opacity:0;pointer-events:none;
-  transform:scale(.93) translateY(10px);
+  transform:scale(.97) translateY(6px);
 }
 .land-dash-view.active{
   opacity:1;pointer-events:auto;
-  animation:viewPop .52s cubic-bezier(.16,1,.3,1) both;
+  animation:viewPop .48s cubic-bezier(.22,1,.36,1) both;
 }
 @keyframes viewPop{
-  0%{opacity:0;transform:scale(.96) translateY(6px)}
+  0%{opacity:0;transform:scale(.97) translateY(6px)}
   100%{opacity:1;transform:scale(1) translateY(0)}
 }
 
@@ -1253,7 +1254,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dd-chart-head span{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.32)}
 .land-dd-chart{display:block;width:100%;height:56px;overflow:visible}
 .land-dd-chart-line{stroke-dasharray:520;stroke-dashoffset:520}
-.land-dash-view.active .land-dd-chart-line{animation:ddLineDraw 1s cubic-bezier(.16,1,.3,1) .1s both}
+.land-dash-view.active .land-dd-chart-line{animation:ddLineDraw 1.1s cubic-bezier(.4,0,.2,1) .1s both}
 @keyframes ddLineDraw{to{stroke-dashoffset:0}}
 
 /* --- Mock Tests mini view --- */
@@ -1276,36 +1277,27 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 }
 
 .land-mt-body{
-  transition:transform .38s cubic-bezier(.4,0,.2,1),opacity .32s ease,filter .38s ease;
+  transition:transform .42s cubic-bezier(.22,1,.36,1),opacity .34s ease,filter .42s ease;
   transform-origin:50% 20%;
   will-change:transform,opacity,filter;
 }
 .land-mt-body.land-mt-zoom{
-  transform:scale(1.045);
-  opacity:.32;
-  filter:blur(3px) saturate(1.3);
-}
-/* Used only for the Mock Tests -> Partial Filter cinematic flow: this
-   transition duration matches the camera's zoom-out (CINEMATIC_OUT_MS in
-   app.js) so the content reveal and the camera pull-back finish together. */
-.land-mt-body.land-mt-zoom-sync{
-  transform:scale(1.035);
-  opacity:.35;
-  filter:blur(2.5px) saturate(1.25);
-  transition:transform .78s cubic-bezier(.16,1,.3,1),opacity .7s ease,filter .78s ease;
+  transform:scale(1.03);
+  opacity:.4;
+  filter:blur(2.5px) saturate(1.2);
 }
 
 .land-mt-stats{display:flex;gap:6px;margin-bottom:14px}
 .land-mt-stat{flex:1;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:7px 4px}
 .land-mt-stat-num{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;line-height:1;display:inline-block}
-.land-mt-stat-num.land-mt-pop{animation:mtNumPop .45s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes mtNumPop{0%{transform:scale(.55);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.land-mt-stat-num.land-mt-pop{animation:mtNumPop .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes mtNumPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
 .land-mt-stat-lbl{font-size:8.5px;font-weight:600;color:rgba(255,255,255,.36);text-transform:uppercase;letter-spacing:.03em;margin-top:4px}
 
 .land-dash-chart{display:flex;align-items:flex-end;gap:7px;height:72px;margin-bottom:16px;padding:0 1px}
 .land-dash-chart-sm{height:60px;margin-bottom:12px}
 .land-dash-bar{flex:1;height:var(--h);border-radius:6px 6px 3px 3px;background:rgba(255,255,255,.09)}
-.land-dash-view.active .land-dash-bar{animation:dashBarGrow .85s cubic-bezier(.16,1,.3,1) .15s both}
+.land-dash-view.active .land-dash-bar{animation:dashBarGrow .9s cubic-bezier(.4,0,.2,1) .15s both}
 .land-dash-bar-hi{background:linear-gradient(180deg,#a695ff,#7c6af7)}
 @keyframes dashBarGrow{from{height:0}to{height:var(--h)}}
 
@@ -1336,13 +1328,18 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35));
   opacity:.92;
 }
+/* Cinematic, deliberately slower travel — Mock Tests tab -> Partial Filter
+   button only. No overshoot/bounce here: a smooth ease-in-out reads as
+   "gliding into a zoom" rather than a snappy UI click. Keep this duration
+   in sync with TRAVEL_SLOW_MS in app.js. */
+.land-dash-cursor.slow-travel{transition:transform 1.15s cubic-bezier(.45,0,.2,1),opacity .3s ease}
 .land-dash-cursor svg{display:block;transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
 .land-dash-cursor.traveling{filter:drop-shadow(0 6px 16px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(166,149,255,.55))}
 .land-dash-cursor.traveling svg{transform:scale(1.3) rotate(-12deg) translateY(-3px)}
-.land-dash-cursor.clicking svg{animation:cursorClick .46s cubic-bezier(.34,1.56,.64,1)}
-.land-dash-cursor.clicking{animation:cursorClickGlow .46s ease}
-@keyframes cursorClick{0%{transform:scale(1) rotate(0)}30%{transform:scale(.58) rotate(6deg)}62%{transform:scale(1.22) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
-@keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(244,114,182,.75))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
+.land-dash-cursor.clicking svg{animation:cursorClick .4s cubic-bezier(.22,1,.36,1)}
+.land-dash-cursor.clicking{animation:cursorClickGlow .4s ease}
+@keyframes cursorClick{0%{transform:scale(1) rotate(0)}35%{transform:scale(.8) rotate(3deg)}70%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(244,114,182,.6))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
 
 .land-dash-click-ring{
   position:absolute;top:0;left:0;width:18px;height:18px;margin:-3px 0 0 -3px;
