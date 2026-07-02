@@ -996,6 +996,7 @@ function initHeroDemo() {
   const tabs = Array.from(card.querySelectorAll('.land-dash-tab'));
   const views = Array.from(viewport.querySelectorAll('.land-dash-view'));
   const cursor = document.getElementById('landDemoCursor');
+  const zoomStage = document.getElementById('landZoomStage');
   const mtFilters = document.getElementById('landMtFilters');
   const mtGlide = document.getElementById('landMtGlide');
   const mtBody = document.getElementById('landMtBody');
@@ -1018,27 +1019,51 @@ function initHeroDemo() {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
       spawnClickBurst(x + 10, y + 8);
+      punchZoomAt(x + 10, y + 8);
       setTimeout(() => cursor.classList.remove('clicking'), 460);
       if (onArrive) onArrive();
     }, 720);
   }
 
+  // Premium "camera punch" — the whole tab zooms in toward the exact click
+  // point, then eases back out, like a SaaS product micro-interaction.
+  function punchZoomAt(x, y) {
+    if (!zoomStage) return;
+    const w = card.clientWidth || 1;
+    const h = card.clientHeight || 1;
+    const ox = Math.min(100, Math.max(0, (x / w) * 100));
+    const oy = Math.min(100, Math.max(0, (y / h) * 100));
+    zoomStage.style.transformOrigin = `${ox}% ${oy}%`;
+    zoomStage.classList.remove('zoom-punch');
+    void zoomStage.offsetWidth; // force reflow so the animation restarts every click
+    zoomStage.classList.add('zoom-punch');
+
+    const flash = document.createElement('div');
+    flash.className = 'land-zoom-flash';
+    flash.style.left = x + 'px';
+    flash.style.top = y + 'px';
+    zoomStage.appendChild(flash);
+    requestAnimationFrame(() => flash.classList.add('flash-go'));
+    setTimeout(() => flash.remove(), 600);
+  }
+
   // A premium multi-layer click burst: two colored rings + a bright core dot.
   function spawnClickBurst(x, y) {
+    const host = zoomStage || card;
     const dot = document.createElement('div');
     dot.className = 'land-dash-click-ring pulse-dot';
     dot.style.left = x + 'px'; dot.style.top = y + 'px';
-    card.appendChild(dot);
+    host.appendChild(dot);
 
     const ring1 = document.createElement('div');
     ring1.className = 'land-dash-click-ring pulse';
     ring1.style.left = x + 'px'; ring1.style.top = y + 'px';
-    card.appendChild(ring1);
+    host.appendChild(ring1);
 
     const ring2 = document.createElement('div');
     ring2.className = 'land-dash-click-ring pulse-2';
     ring2.style.left = x + 'px'; ring2.style.top = y + 'px';
-    card.appendChild(ring2);
+    host.appendChild(ring2);
 
     setTimeout(() => { dot.remove(); ring1.remove(); ring2.remove(); }, 780);
   }
@@ -1149,6 +1174,17 @@ function initHeroDemo() {
         clearTimeout(_heroDemoTimer);
         const name = t.dataset.view;
         idx = order.indexOf(name);
+        const cardRect = card.getBoundingClientRect();
+        const btnRect = t.getBoundingClientRect();
+        const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
+        const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.opacity = '1';
+        cursor.classList.remove('traveling');
+        cursor.style.transform = `translate(${x}px,${y}px)`;
+        cursor.classList.add('clicking');
+        spawnClickBurst(x + 10, y + 8);
+        punchZoomAt(x + 10, y + 8);
+        setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
         if (name === 'tests') setTimeout(toggleFilterDemo, 900);
         _heroDemoTimer = setTimeout(loop, 4600);
@@ -1166,6 +1202,7 @@ function initHeroDemo() {
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
         spawnClickBurst(x + 10, y + 8);
+        punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         setFilter(f.dataset.filter, true);
         _heroDemoTimer = setTimeout(loop, 4600);

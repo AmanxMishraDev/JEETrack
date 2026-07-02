@@ -1180,6 +1180,36 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 }
 .land-hero-visual:hover .land-dash-card{transform:perspective(1400px) rotateY(-3deg) rotateX(1deg)}
 
+.land-dash-zoom-stage{
+  position:relative;
+  transform-origin:50% 50%;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+.land-dash-zoom-stage.zoom-punch{animation:landZoomPunch .62s cubic-bezier(.22,1,.36,1) both}
+@keyframes landZoomPunch{
+  0%{transform:scale(1)}
+  38%{transform:scale(1.16)}
+  70%{transform:scale(.985)}
+  100%{transform:scale(1)}
+}
+.land-zoom-flash{
+  position:absolute;width:180px;height:180px;margin:-90px 0 0 -90px;
+  border-radius:50%;pointer-events:none;z-index:28;
+  background:radial-gradient(circle,rgba(255,255,255,.5),rgba(166,149,255,.28) 35%,transparent 70%);
+  opacity:0;
+}
+.land-zoom-flash.flash-go{animation:landZoomFlash .55s ease-out both}
+@keyframes landZoomFlash{
+  0%{opacity:0;transform:scale(.15)}
+  35%{opacity:.85}
+  100%{opacity:0;transform:scale(1.15)}
+}
+@media(prefers-reduced-motion:reduce){
+  .land-dash-zoom-stage.zoom-punch{animation:none}
+  .land-zoom-flash{display:none}
+}
+
 .land-dash-tabs{display:flex;gap:4px;padding:4px;margin-bottom:16px;background:rgba(0,0,0,.22);border-radius:11px;border:1px solid rgba(255,255,255,.05)}
 .land-dash-tab{
   flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
@@ -1330,30 +1360,8 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-dash-cursor{transform:scale(.88) translate(140px,52px)}
 }
 
-.land-float-card{
-  position:absolute;z-index:2;display:flex;align-items:center;gap:10px;
-  padding:11px 15px;background:linear-gradient(160deg,rgba(24,22,36,.92),rgba(15,13,24,.92));
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.1);border-radius:14px;
-  box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;
-  animation:floatCard 5.5s ease-in-out infinite;
-  transition:transform .35s ease,box-shadow .35s ease;
-}
-.land-float-card:hover{box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05) inset}
-.land-float-streak{top:-18px;right:-16px;animation-delay:0s}
-@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-
-.land-float-icon{
-  width:32px;height:32px;border-radius:9px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-}
-.land-float-icon-orange{background:linear-gradient(140deg,rgba(251,191,36,.28),rgba(251,191,36,.08));box-shadow:0 0 0 1px rgba(251,191,36,.16) inset}
-
-.land-float-title{font-size:12.5px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap}
-.land-float-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;white-space:nowrap}
-
 @media(prefers-reduced-motion:reduce){
-  .land-hero-visual,.land-hero-glow,.land-float-card,.land-dash-bar,.land-dash-view,.land-dd-chart-line{animation:none}
+  .land-hero-visual,.land-hero-glow,.land-dash-bar,.land-dash-view,.land-dd-chart-line{animation:none}
   .land-hero-visual:hover .land-dash-card{transform:none}
   .land-dash-view.active{opacity:1;transform:none;pointer-events:auto}
   .land-dash-cursor{display:none}
@@ -1665,11 +1673,6 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-right{padding:0 1.4rem 7rem}
   .land-hero-visual{max-width:400px}
   .land-hero-glow{inset:-40px}
-  .land-float-card{padding:9px 12px;gap:8px}
-  .land-float-icon{width:28px;height:28px;border-radius:8px}
-  .land-float-title{font-size:11px}
-  .land-float-sub{font-size:9px}
-  .land-float-streak{top:8px;right:8px}
   .land-dash-tab{font-size:9.5px;padding:7px 3px}
   .land-dash-tab svg{display:none}
   .land-dash-viewport{height:250px}
@@ -1678,8 +1681,6 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-left{padding:1.8rem 1rem 1.4rem}
   .slide-title{font-size:1.65rem}
   .land-trusted{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem}
-  .land-float-title{white-space:normal;max-width:110px}
-  .land-float-sub{white-space:normal;max-width:110px}
 }
 
 #onboarding{
