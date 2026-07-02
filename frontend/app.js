@@ -1047,14 +1047,14 @@ function initHeroDemo() {
     if (opts.cinematic) {
       // Start the camera push-in the instant the cursor starts moving toward
       // the Partial Filter button, timed to land exactly as the cursor arrives.
-      zoomCinematicIn(x + 10, y + 8, travelMs);
+      zoomCinematicIn(x + 3, y + 3, travelMs);
     }
 
     setTimeout(() => {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
-      spawnClickBurst(x + 4, y - 14);
-      if (!opts.cinematic) punchZoomAt(x + 10, y + 8);
+      spawnClickBurst(x + 3, y + 3);
+      if (!opts.cinematic) punchZoomAt(x + 3, y + 3);
       setTimeout(() => cursor.classList.remove('clicking'), 460);
       cursor.style.transition = '';
       if (onArrive) onArrive();
@@ -1366,8 +1366,8 @@ function initHeroDemo() {
         cursor.classList.remove('traveling');
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 14);
-        punchZoomAt(x + 10, y + 8);
+        spawnClickBurst(x + 3, y + 3);
+        punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
         if (name === 'tests') {
@@ -1393,8 +1393,8 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 14);
-        punchZoomAt(x + 10, y + 8);
+        spawnClickBurst(x + 3, y + 3);
+        punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         setFilter(f.dataset.filter, true);
         _heroDemoTimer = setTimeout(loop, 4600);
@@ -1414,8 +1414,8 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 14);
-        punchZoomAt(x + 10, y + 8);
+        spawnClickBurst(x + 3, y + 3);
+        punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         playInsightsLoading(() => {
           showInsightsResults();
@@ -1436,8 +1436,8 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 14);
-        punchZoomAt(x + 10, y + 8);
+        spawnClickBurst(x + 3, y + 3);
+        punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         playInsightsLoading(() => {
           showInsightsResults();

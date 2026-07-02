@@ -1783,6 +1783,12 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-left{padding:1.8rem 1rem 1.4rem}
   .slide-title{font-size:1.65rem}
   .land-trusted{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem}
+  /* Below ~400px the demo card is too narrow for a 2-column insight grid —
+     stack to one column. That makes the results taller than the fixed
+     viewport, so let this one panel scroll internally instead of being
+     clipped by the card's overflow:hidden. */
+  .land-ins-chips{grid-template-columns:1fr}
+  .land-ins-results{overflow-y:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
 }
 
 #onboarding{
