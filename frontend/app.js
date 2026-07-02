@@ -1006,23 +1006,76 @@ function initHeroDemo() {
   if (idx < 0) idx = 0;
   let currentFilter = 'all';
 
-  function moveCursorTo(el, onArrive) {
+  // Timing for the one special leg of the demo — Mock Tests tab -> Partial
+  // Filter button — where the cursor travels slightly slower so the cinematic
+  // camera push-in has room to read. Every other move stays on the default
+  // CSS-driven speed (CURSOR_MS mirrors the stylesheet's .78s transition).
+  const CURSOR_MS = 780;
+  const CURSOR_SLOW_MS = 1180;
+  const CINEMATIC_ZOOM_SCALE = 1.09;
+  const CINEMATIC_HOLD_MS = 170;
+  const CINEMATIC_OUT_MS = 780;
+
+  function moveCursorTo(el, onArrive, opts) {
+    opts = opts || {};
     if (!el) { if (onArrive) onArrive(); return; }
     const cardRect = card.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
     const x = elRect.left - cardRect.left + elRect.width / 2 - 10;
     const y = elRect.top - cardRect.top + elRect.height / 2 - 6;
+    const slow = !!opts.slow;
+    const travelMs = slow ? CURSOR_SLOW_MS : CURSOR_MS;
+
     cursor.style.opacity = '1';
+    // Only this one leg gets a custom (slower) transition; everywhere else
+    // falls back to the stylesheet's default cursor speed/easing untouched.
+    cursor.style.transition = slow
+      ? `transform ${CURSOR_SLOW_MS}ms cubic-bezier(.45,0,.15,1), opacity .3s ease`
+      : '';
     cursor.classList.add('traveling');
     cursor.style.transform = `translate(${x}px,${y}px)`;
+
+    if (opts.cinematic) {
+      // Start the camera push-in the instant the cursor starts moving toward
+      // the Partial Filter button, timed to land exactly as the cursor arrives.
+      zoomCinematicIn(x + 10, y + 8, travelMs);
+    }
+
     setTimeout(() => {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
-      spawnClickBurst(x + 4, y - 6);
-      punchZoomAt(x + 10, y + 8);
+      spawnClickBurst(x + 4, y - 14);
+      if (!opts.cinematic) punchZoomAt(x + 10, y + 8);
       setTimeout(() => cursor.classList.remove('clicking'), 460);
+      cursor.style.transition = '';
       if (onArrive) onArrive();
-    }, 720);
+    }, travelMs);
+  }
+
+  // Slow, continuous camera push-in used only for the Mock Tests -> Partial
+  // Filter leg — distinct from the quick "punch" used on ordinary clicks.
+  function zoomCinematicIn(x, y, durationMs) {
+    if (!zoomStage) return;
+    const w = card.clientWidth || 1;
+    const h = card.clientHeight || 1;
+    const ox = Math.min(100, Math.max(0, (x / w) * 100));
+    const oy = Math.min(100, Math.max(0, (y / h) * 100));
+    zoomStage.style.transformOrigin = `${ox}% ${oy}%`;
+    zoomStage.style.transition = `transform ${durationMs}ms cubic-bezier(.45,0,.15,1)`;
+    zoomStage.style.transform = `scale(${CINEMATIC_ZOOM_SCALE})`;
+  }
+
+  // Smooth camera pull-back that pairs with the synced content swap in
+  // setFilter() so the zoom-out and the chart/content transition read as a
+  // single continuous motion instead of two separate animations.
+  function zoomCinematicOut() {
+    if (!zoomStage) return;
+    zoomStage.style.transition = `transform ${CINEMATIC_OUT_MS}ms cubic-bezier(.16,1,.3,1)`;
+    zoomStage.style.transform = 'scale(1)';
+    setTimeout(() => {
+      zoomStage.style.transition = '';
+      zoomStage.style.transform = '';
+    }, CINEMATIC_OUT_MS + 40);
   }
 
   // Premium "camera punch" — the whole tab zooms in toward the exact click
@@ -1090,7 +1143,8 @@ function initHeroDemo() {
 
   // Swaps in new mock data for the given filter with a zoom-out / zoom-in
   // transition, so it reads as the tab "processing" a fresh query.
-  function setFilter(filter, animate) {
+  function setFilter(filter, animate, opts) {
+    opts = opts || {};
     const btn = viewport.querySelector(`.land-mt-filter[data-filter="${filter}"]`);
     viewport.querySelectorAll('.land-mt-filter').forEach(f => f.classList.toggle('active', f === btn));
     positionGlide(btn);
@@ -1129,6 +1183,20 @@ function initHeroDemo() {
     };
 
     if (!animate || !mtBody) { applyData(); return; }
+
+    if (opts.syncZoomOut) {
+      // Partial Filter cinematic flow: hold briefly on the click so it reads,
+      // then let the camera zoom-out and the chart/content swap begin in the
+      // same instant, sharing the same duration so they finish together.
+      mtBody.classList.add('land-mt-zoom-sync');
+      setTimeout(() => {
+        applyData();
+        zoomCinematicOut();
+        requestAnimationFrame(() => mtBody.classList.remove('land-mt-zoom-sync'));
+      }, CINEMATIC_HOLD_MS);
+      return;
+    }
+
     mtBody.classList.add('land-mt-zoom');
     setTimeout(() => {
       applyData();
@@ -1139,12 +1207,15 @@ function initHeroDemo() {
   function toggleFilterDemo() {
     const partial = viewport.querySelector('.land-mt-filter[data-filter="partial"]');
     const all = viewport.querySelector('.land-mt-filter[data-filter="all"]');
+    // Cursor speed stays normal for the Mock Tests tab click itself (handled
+    // by the caller); only this leg — traveling to Partial Filter — is slowed
+    // and paired with the cinematic camera push-in.
     moveCursorTo(partial, () => {
-      setFilter('partial', true);
+      setFilter('partial', true, { syncZoomOut: true });
       setTimeout(() => {
         moveCursorTo(all, () => setFilter('all', true));
       }, 1700);
-    });
+    }, { slow: true, cinematic: true });
   }
 
   function loop() {
@@ -1160,9 +1231,9 @@ function initHeroDemo() {
       activateView(name);
       if (name === 'tests') {
         setTimeout(toggleFilterDemo, 1100);
-        _heroDemoTimer = setTimeout(loop, 6000);
+        _heroDemoTimer = setTimeout(loop, 6400);
       } else {
-        _heroDemoTimer = setTimeout(loop, 3400);
+        _heroDemoTimer = setTimeout(loop, 2600);
       }
     });
   }
@@ -1178,16 +1249,20 @@ function initHeroDemo() {
         const btnRect = t.getBoundingClientRect();
         const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
         const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.transition = '';
         cursor.style.opacity = '1';
         cursor.classList.remove('traveling');
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 6);
+        spawnClickBurst(x + 4, y - 14);
         punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
         if (name === 'tests') setTimeout(toggleFilterDemo, 900);
-        _heroDemoTimer = setTimeout(loop, 4600);
+        // Dashboard/Insights settle quickly, so resume the demo sooner there;
+        // Mock Tests needs the full Partial-filter cinematic sequence to play out.
+        const resumeDelay = name === 'tests' ? 6400 : name === 'insights' ? 3000 : 2200;
+        _heroDemoTimer = setTimeout(loop, resumeDelay);
       });
     });
     viewport.querySelectorAll('.land-mt-filter').forEach(f => {
@@ -1198,10 +1273,11 @@ function initHeroDemo() {
         const btnRect = f.getBoundingClientRect();
         const x = btnRect.left - cardRect.left + btnRect.width / 2 - 10;
         const y = btnRect.top - cardRect.top + btnRect.height / 2 - 6;
+        cursor.style.transition = '';
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 4, y - 6);
+        spawnClickBurst(x + 4, y - 14);
         punchZoomAt(x + 10, y + 8);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         setFilter(f.dataset.filter, true);

@@ -1186,11 +1186,10 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   will-change:transform;
   backface-visibility:hidden;
 }
-.land-dash-zoom-stage.zoom-punch{animation:landZoomPunch .62s cubic-bezier(.22,1,.36,1) both}
+.land-dash-zoom-stage.zoom-punch{animation:landZoomPunch .5s cubic-bezier(.22,1,.36,1) both}
 @keyframes landZoomPunch{
   0%{transform:scale(1)}
-  38%{transform:scale(1.16)}
-  70%{transform:scale(.985)}
+  45%{transform:scale(1.045)}
   100%{transform:scale(1)}
 }
 .land-zoom-flash{
@@ -1228,11 +1227,10 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 }
 .land-dash-view.active{
   opacity:1;pointer-events:auto;
-  animation:viewPop .55s cubic-bezier(.34,1.56,.64,1) both;
+  animation:viewPop .52s cubic-bezier(.16,1,.3,1) both;
 }
 @keyframes viewPop{
-  0%{opacity:0;transform:scale(.93) translateY(10px)}
-  55%{opacity:1;transform:scale(1.03) translateY(-2px)}
+  0%{opacity:0;transform:scale(.96) translateY(6px)}
   100%{opacity:1;transform:scale(1) translateY(0)}
 }
 
@@ -1255,7 +1253,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dd-chart-head span{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.32)}
 .land-dd-chart{display:block;width:100%;height:56px;overflow:visible}
 .land-dd-chart-line{stroke-dasharray:520;stroke-dashoffset:520}
-.land-dash-view.active .land-dd-chart-line{animation:ddLineDraw 1.1s cubic-bezier(.4,0,.2,1) .1s both}
+.land-dash-view.active .land-dd-chart-line{animation:ddLineDraw 1s cubic-bezier(.16,1,.3,1) .1s both}
 @keyframes ddLineDraw{to{stroke-dashoffset:0}}
 
 /* --- Mock Tests mini view --- */
@@ -1287,6 +1285,15 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   opacity:.32;
   filter:blur(3px) saturate(1.3);
 }
+/* Used only for the Mock Tests -> Partial Filter cinematic flow: this
+   transition duration matches the camera's zoom-out (CINEMATIC_OUT_MS in
+   app.js) so the content reveal and the camera pull-back finish together. */
+.land-mt-body.land-mt-zoom-sync{
+  transform:scale(1.035);
+  opacity:.35;
+  filter:blur(2.5px) saturate(1.25);
+  transition:transform .78s cubic-bezier(.16,1,.3,1),opacity .7s ease,filter .78s ease;
+}
 
 .land-mt-stats{display:flex;gap:6px;margin-bottom:14px}
 .land-mt-stat{flex:1;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:7px 4px}
@@ -1298,7 +1305,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dash-chart{display:flex;align-items:flex-end;gap:7px;height:72px;margin-bottom:16px;padding:0 1px}
 .land-dash-chart-sm{height:60px;margin-bottom:12px}
 .land-dash-bar{flex:1;height:var(--h);border-radius:6px 6px 3px 3px;background:rgba(255,255,255,.09)}
-.land-dash-view.active .land-dash-bar{animation:dashBarGrow .9s cubic-bezier(.4,0,.2,1) .15s both}
+.land-dash-view.active .land-dash-bar{animation:dashBarGrow .85s cubic-bezier(.16,1,.3,1) .15s both}
 .land-dash-bar-hi{background:linear-gradient(180deg,#a695ff,#7c6af7)}
 @keyframes dashBarGrow{from{height:0}to{height:var(--h)}}
 
