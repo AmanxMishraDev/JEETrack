@@ -1,12 +1,12 @@
-// ============================================================
-// JEETrack Analytics — PostHog Integration
-// File: frontend/analytics.js
-// ============================================================
 
-// PostHog SDK stub
+
+
+
+
+
 (function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js";(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;void 0!==a?u=e[a]=[]:a="posthog";u.people=u.people||[];u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e};u.people.toString=function(){return u.toString(1)+".people (stub)"};o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" ");for(var c=0;c<o.length;c++)g(u,o[c]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]));
 
-// Key /api/config se fetch hogi — host hardcoded (safe hai, secret nahi)
+
 async function initAnalytics() {
   try {
     const res = await fetch('/api/config');
@@ -17,7 +17,7 @@ async function initAnalytics() {
     }
 
     posthog.init(cfg.posthogKey, {
-      api_host: 'https://us.i.posthog.com',  // hardcoded — correct JS SDK host
+      api_host: 'https://us.i.posthog.com',  
       capture_pageview: false,
       capture_pageleave: true,
       autocapture: false,
@@ -39,7 +39,7 @@ async function initAnalytics() {
   }
 }
 
-// User identify karo — login ke baad call hoga
+
 window._jtIdentify = function(user, profile) {
   if (!user?.id) return;
   try {
@@ -55,15 +55,15 @@ window._jtIdentify = function(user, profile) {
   } catch(e) {}
 };
 
-// Generic event tracker
+
 window._jtTrack = function(event, props) {
   try { posthog.capture(event, props || {}); } catch(e) {}
 };
 
-// Sab patches attach karo — PostHog load hone ke baad
+
 function attachPatches() {
 
-  // ── Page tracking — mobNavTo patch ──────────────────────
+  
   const _patchNav = function() {
     if (typeof mobNavTo !== 'function') { setTimeout(_patchNav, 300); return; }
     const _orig = mobNavTo;
@@ -75,7 +75,7 @@ function attachPatches() {
   };
   _patchNav();
 
-  // ── User identify — showApp patch ───────────────────────
+  
   const _patchShowApp = function() {
     if (typeof showApp !== 'function') { setTimeout(_patchShowApp, 300); return; }
     const _orig = showApp;
@@ -92,7 +92,7 @@ function attachPatches() {
   };
   _patchShowApp();
 
-  // ── Auth — doAuth patch ─────────────────────────────────
+  
   const _patchAuth = function() {
     if (typeof doAuth !== 'function') { setTimeout(_patchAuth, 300); return; }
     const _orig = doAuth;
@@ -111,7 +111,7 @@ function attachPatches() {
   };
   _patchAuth();
 
-  // ── Google Auth ─────────────────────────────────────────
+  
   const _patchGoogle = function() {
     if (typeof doGoogleAuth !== 'function') { setTimeout(_patchGoogle, 300); return; }
     const _orig = doGoogleAuth;
@@ -122,7 +122,7 @@ function attachPatches() {
   };
   _patchGoogle();
 
-  // ── Sign Out ────────────────────────────────────────────
+  
   const _patchSignOut = function() {
     if (typeof signOut !== 'function') { setTimeout(_patchSignOut, 300); return; }
     const _orig = signOut;
@@ -134,7 +134,7 @@ function attachPatches() {
   };
   _patchSignOut();
 
-  // ── Onboarding ──────────────────────────────────────────
+  
   const _patchOnboard = function() {
     if (typeof finishOnboarding !== 'function') { setTimeout(_patchOnboard, 300); return; }
     const _orig = finishOnboarding;
@@ -145,7 +145,7 @@ function attachPatches() {
   };
   _patchOnboard();
 
-  // ── Save — feature usage track karo ────────────────────
+  
   const _patchSave = function() {
     if (typeof save !== 'function') { setTimeout(_patchSave, 400); return; }
     let _prev = { tests:0, hours:0, backlogs:0, todos:0, sylPh:0, sylCh:0, sylMa:0 };
@@ -190,7 +190,7 @@ function attachPatches() {
             const l = (S.todos || []).filter(t => !t.done).slice(-1)[0] || {};
             _jtTrack('todo_task_added', { subject: l.subject || '', priority: l.priority || '' });
           }
-          // Only fire if ONLY syllabus changed (not other data changing too)
+          
           const _onlySyl = cur.tests === _prev.tests && cur.hours === _prev.hours && cur.backlogs === _prev.backlogs && cur.todos === _prev.todos;
           if (_onlySyl && cur.sylPh > _prev.sylPh) _jtTrack('chapter_marked', { subject: 'physics', count: cur.sylPh - _prev.sylPh });
           if (_onlySyl && cur.sylCh > _prev.sylCh) _jtTrack('chapter_marked', { subject: 'chemistry', count: cur.sylCh - _prev.sylCh });
@@ -205,7 +205,7 @@ function attachPatches() {
   };
   _patchSave();
 
-  // ── AI Insights button ──────────────────────────────────
+  
   const _watchAI = function() {
     const btn = document.querySelector('[onclick*="generateInsights"],[onclick*="getInsights"],#ai-gen-btn,.ai-generate-btn');
     if (!btn) { setTimeout(_watchAI, 1000); return; }
@@ -220,7 +220,7 @@ function attachPatches() {
   };
   _watchAI();
 
-  // ── Feedback ────────────────────────────────────────────
+  
   const _watchFeedback = function() {
     if (typeof sendFeedback !== 'function') { setTimeout(_watchFeedback, 800); return; }
     const _orig = sendFeedback;
@@ -231,7 +231,7 @@ function attachPatches() {
   };
   _watchFeedback();
 
-  // ── Export PDF ──────────────────────────────────────────
+  
   const _watchExport = function() {
     if (typeof exportPDF !== 'function') { setTimeout(_watchExport, 800); return; }
     const _orig = exportPDF;
@@ -243,5 +243,5 @@ function attachPatches() {
   _watchExport();
 }
 
-// Start!
+
 initAnalytics();

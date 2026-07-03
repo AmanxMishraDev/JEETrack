@@ -353,7 +353,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .splash-title span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .splash-sub{color:var(--mu);font-size:12px;margin-top:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;animation:splashUp .6s cubic-bezier(.34,1.2,.64,1) .55s both}
 
-/* ── 404 Not Found ── */
+
 #not-found{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:24px}
 #not-found.hidden{display:none}
 .nf-orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;animation:orbFloat 7s ease-in-out infinite}
@@ -1167,10 +1167,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   will-change:transform;
 }
 
-/* Soft light sheen that tracks the pointer, layered on top of the card's
-   content but beneath the demo's own cursor/click-burst (z-index 30+).
-   Its position is driven by --glare-x/--glare-y, set in app.js on
-   mousemove; it only fades in while the visual is actually hovered. */
+
 .land-card-glare{
   position:absolute;inset:0;z-index:5;pointer-events:none;
   border-radius:inherit;opacity:0;transition:opacity .35s ease;
@@ -1233,7 +1230,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   100%{opacity:1;transform:scale(1) translateY(0)}
 }
 
-/* --- Dashboard mini view --- */
+
 .land-dd-greet{margin-bottom:16px}
 .land-dd-greet-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,.75)}
 .land-dd-greet-name b{color:#fff;font-weight:700}
@@ -1255,7 +1252,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dash-view.active .land-dd-chart-line{animation:ddLineDraw 1.1s cubic-bezier(.4,0,.2,1) .1s both}
 @keyframes ddLineDraw{to{stroke-dashoffset:0}}
 
-/* --- Mock Tests mini view --- */
+
 .land-mt-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .land-mt-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#fff}
 .land-mt-filters{position:relative;display:flex;gap:4px;background:rgba(0,0,0,.2);border-radius:8px;padding:3px}
@@ -1304,11 +1301,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-dash-subj span{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .land-dash-subj b{color:#fff;font-weight:700;margin-left:1px}
 
-/* --- AI Insights mini view (hero demo) — reuses the real AI Insights
-   page's color tokens, gradients, and keyframes (aiOrbPulse, aiOrbRing,
-   aiTextPulse, aiSpin, aiCardIn, aiProgShimmer are all defined once,
-   above, for the real /insights page) at a scale that fits the small
-   demo card. */
+
 .land-ins-stage{height:100%;display:flex;flex-direction:column;justify-content:center;position:relative}
 .land-ins-empty,.land-ins-loading{display:flex;flex-direction:column;align-items:center;text-align:center}
 .land-ins-results{display:flex;flex-direction:column;align-items:stretch;text-align:left;justify-content:center;height:100%}
@@ -1424,10 +1417,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35));
   opacity:.92;
 }
-/* Cinematic, deliberately slower travel — Mock Tests tab -> Partial Filter
-   button only. No overshoot/bounce here: a smooth ease-in-out reads as
-   "gliding into a zoom" rather than a snappy UI click. Keep this duration
-   in sync with TRAVEL_SLOW_MS in app.js. */
+
 .land-dash-cursor.slow-travel{transition:transform 1.15s cubic-bezier(.45,0,.2,1),opacity .3s ease}
 .land-dash-cursor svg{display:block;transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
 .land-dash-cursor.traveling{filter:drop-shadow(0 6px 16px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(166,149,255,.55))}
@@ -1437,19 +1427,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 @keyframes cursorClick{0%{transform:scale(1) rotate(0)}35%{transform:scale(.8) rotate(3deg)}70%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(244,114,182,.6))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
 
-/* Click-burst rings now live INSIDE .land-dash-cursor (appended as its
-   children — see spawnClickBurst in app.js) instead of being dropped into
-   the zoom stage. Two problems that used to make the effect "come out
-   behind the cursor" are fixed by this:
-   1) Stacking: as later DOM children of the cursor element they always
-      paint on top of the cursor's arrow SVG, never underneath it.
-   2) Position drift: the zoom stage scales up during the click-zoom
-      animation, but the cursor lives outside it — so anything appended to
-      the zoom stage would drift away from the cursor mid-animation. As
-      children of the cursor itself, the rings are pinned exactly to it.
-   The anchor (left/top) below is the pixel position of the arrow's tip
-   inside the cursor's own 20x20 box; translate(-50%,-50%) centers every
-   ring/dot on that exact point regardless of its own size. */
+
 .land-dash-click-ring{
   position:absolute;top:2px;left:3px;width:18px;height:18px;
   transform:translate(-50%,-50%) scale(.2);
@@ -1795,10 +1773,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-left{padding:1.8rem 1rem 1.4rem}
   .slide-title{font-size:1.65rem}
   .land-trusted{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem}
-  /* Below ~400px the demo card is too narrow for a 2-column insight grid —
-     stack to one column. That makes the results taller than the fixed
-     viewport, so let this one panel scroll internally instead of being
-     clipped by the card's overflow:hidden. */
+  
   .land-ins-chips{grid-template-columns:1fr}
   .land-ins-results{overflow-y:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
 }
@@ -4260,7 +4235,7 @@ select.fc.adv-fc {
   .pmo-hrs-inp-wrap{ width:28px }
 }
 
-/* ── Sticky Timer Widget ── */
+
 .lhs-widget {
   position:fixed;bottom:24px;right:20px;z-index:500;
   display:flex;flex-direction:column;
@@ -4304,7 +4279,7 @@ select.fc.adv-fc {
   .lhs-widget{bottom:80px;right:12px}
 }
 
-/* ── Log Hours: Direct / Timer tabs ── */
+
 .lh-tabs {
   display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
   border-radius:12px;padding:4px;margin-bottom:14px;position:relative;z-index:1
@@ -4359,7 +4334,7 @@ select.fc.adv-fc {
 .lh-save-btn:active{transform:scale(.96)}
 .lh-save-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 
-/* ── Study Timer (modal) ── */
+
 .lh-timer-wrap {
   background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));
   border:1px solid rgba(124,106,247,.22);
@@ -4382,7 +4357,7 @@ select.fc.adv-fc {
   padding:3px 8px;border:1px solid rgba(124,106,247,.28)
 }
 
-/* Circular progress stage — the timer's centerpiece */
+
 .lh-timer-stage {
   position:relative;display:flex;align-items:center;justify-content:center;
   width:200px;height:200px;margin:0 auto 14px;z-index:1
@@ -4399,12 +4374,7 @@ select.fc.adv-fc {
   font-family:'Syne',sans-serif;font-weight:800;
   text-align:center;color:var(--tx);letter-spacing:-.03em;line-height:1;
   font-variant-numeric:tabular-nums;position:relative;z-index:1;
-  /* Fixed box well inside the ring's inner edge (ring r=91 of a 200px stage,
-     stroke-width 6 → inner clear diameter ~ 164px). A plain fixed px size
-     (not vw-based) so it renders identically on every screen instead of
-     ballooning up on wide desktop viewports; overflow is visible rather
-     than clipped so a rare overflow is never worse than "sits a hair
-     outside center" instead of a chopped-off digit. */
+  
   width:160px;max-width:160px;font-size:19px;
   white-space:nowrap
 }
@@ -4887,7 +4857,7 @@ select.fc.adv-fc {
 .ls-free-dots span:nth-child(3) { animation-delay: .4s; background: rgba(162,155,254,.2); }
 @keyframes lsFreeDot { 0%,100%{transform:scale(1);opacity:.3} 50%{transform:scale(1.5);opacity:1} }
 
-/* ── Review Modal Stars ── */
+
 .rev-star {
   display: inline-flex;
   cursor: pointer;

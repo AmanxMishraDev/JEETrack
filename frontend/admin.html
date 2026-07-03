@@ -44,18 +44,18 @@ body::before{
 ::selection{background:rgba(124,106,247,.35)}
 a{color:inherit}
 
-/* scrollbar */
+
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:99px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
 
-/* ── BRAND LOGO (matches index.html .logo) ───────────────── */
+
 .brand{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--tx);display:inline-flex;align-items:baseline;gap:.05em;line-height:1;white-space:nowrap}
 .brand .b2{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .brand-badge{font-size:.6rem;font-weight:700;background:rgba(124,106,247,.14);color:var(--ac2);padding:.18rem .5rem;border-radius:99px;border:1px solid rgba(124,106,247,.35);letter-spacing:.04em;text-transform:uppercase;margin-left:.5rem;vertical-align:middle}
 
-/* ── LOGIN ────────────────────────────────────────────────── */
+
 #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;overflow:hidden}
 #login-screen::before{
   content:'';position:absolute;inset:0;
@@ -84,7 +84,7 @@ a{color:inherit}
 .login-btn:active{transform:translateY(0)}
 .login-err{color:var(--rd);font-size:.78rem;margin-top:.9rem;display:none;background:var(--rdm);border:1px solid rgba(248,113,113,.25);border-radius:8px;padding:.5rem .7rem}
 
-/* ── SIDEBAR ──────────────────────────────────────────────── */
+
 #sidebar{
   width:var(--sidebar);background:var(--sf);border-right:1px solid var(--bd);
   display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:20;
@@ -109,7 +109,7 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .logout-btn{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--rs);cursor:pointer;font-size:.825rem;font-weight:500;color:var(--rd);transition:all .16s var(--ease);width:100%;border:none;background:none;font-family:inherit}
 .logout-btn:hover{background:rgba(248,113,113,.08)}
 
-/* ── MAIN ─────────────────────────────────────────────────── */
+
 #main{margin-left:var(--sidebar);flex:1;display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;min-width:0;width:0}
 .topbar{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.75rem;
@@ -130,12 +130,12 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .icon-btn:hover{background:var(--sf3);border-color:var(--bd2);transform:rotate(-8deg)}
 .icon-btn svg{width:14px;height:14px}
 
-/* ── CONTENT ──────────────────────────────────────────────── */
+
 .content{padding:1.5rem 1.75rem 3rem;max-width:1440px;width:100%;overflow-x:hidden}
 .section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--mu2);font-weight:700;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
 .section-title .line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
 
-/* ── STAT CARDS ───────────────────────────────────────────── */
+
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:.9rem;margin-bottom:1.75rem}
 .stat{
   background:linear-gradient(165deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:var(--r);
@@ -157,13 +157,13 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .stats-grid .stat:nth-child(9){animation-delay:.26s}.stats-grid .stat:nth-child(10){animation-delay:.29s}
 .stats-grid .stat:nth-child(11){animation-delay:.32s}.stats-grid .stat:nth-child(12){animation-delay:.35s}
 
-/* ── GRID LAYOUTS ─────────────────────────────────────────── */
+
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.4rem}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.4rem}
 .grid-main-side{display:grid;grid-template-columns:1.6fr 1fr;gap:1rem;margin-bottom:1.4rem}
 @media(max-width:980px){.grid-2,.grid-3,.grid-main-side{grid-template-columns:1fr}}
 
-/* ── CARDS ────────────────────────────────────────────────── */
+
 .card{
   background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem 1.3rem;
   transition:border-color .2s,box-shadow .2s;
@@ -173,7 +173,7 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .card h3 .ic{font-size:.95rem}
 .card-foot{font-size:.7rem;color:var(--mu2);margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--bd)}
 
-/* ── BAR CHART ────────────────────────────────────────────── */
+
 .bar-chart{display:flex;flex-direction:column;gap:.65rem}
 .bar-row{display:flex;align-items:center;gap:.7rem}
 .bar-label{font-size:.74rem;color:var(--mu);width:128px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -181,11 +181,11 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .bar-fill{height:100%;border-radius:99px;transition:width .7s var(--ease);background:var(--grad)}
 .bar-count{font-size:.72rem;color:var(--mu);width:34px;text-align:right;flex-shrink:0;font-family:'Space Grotesk',sans-serif}
 
-/* ── LINE CHART ───────────────────────────────────────────── */
+
 .line-wrap{position:relative;height:115px;margin-top:.5rem}
 .line-wrap svg{width:100%;height:100%}
 
-/* ── FUNNEL ───────────────────────────────────────────────── */
+
 .funnel{display:flex;flex-direction:column;gap:.55rem}
 .f-step{display:flex;align-items:center;gap:.65rem}
 .f-n{font-size:.68rem;color:var(--mu2);width:16px;text-align:center;font-weight:700}
@@ -195,7 +195,7 @@ nav{flex:1;padding:.9rem .65rem;overflow-y:auto}
 .f-pct{font-size:.7rem;color:var(--mu);width:38px;text-align:right;font-family:'Space Grotesk',sans-serif}
 .f-drop{font-size:.66rem;color:var(--rd);width:50px;text-align:right}
 
-/* ── TABLE ────────────────────────────────────────────────── */
+
 .table-wrap{overflow-x:auto;border-radius:var(--rs)}
 table{width:100%;border-collapse:collapse;font-size:.79rem}
 th{text-align:left;color:var(--mu);font-weight:600;padding:.6rem .8rem;border-bottom:1px solid var(--bd);font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;cursor:default}
@@ -222,7 +222,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .user-cell{display:flex;align-items:center;gap:.6rem}
 .avatar{width:30px;height:30px;border-radius:9px;background:var(--grad-soft);color:var(--ac2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0;font-family:'Syne',sans-serif}
 
-/* ── FILTER BAR ───────────────────────────────────────────── */
+
 .filter-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.1rem;align-items:center}
 .fselect,.fsearch{
   background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);
@@ -234,7 +234,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .filter-clear{font-size:.74rem;color:var(--ac2);cursor:pointer;padding:.55rem .5rem;font-weight:600}
 .filter-clear:hover{text-decoration:underline}
 
-/* ── ACTION BTNS ──────────────────────────────────────────── */
+
 .action-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem 1.3rem}
 .action-card h3{font-size:.85rem;font-weight:700;margin-bottom:.35rem;font-family:'Syne',sans-serif}
 .action-card p{font-size:.76rem;color:var(--mu);margin-bottom:1rem;line-height:1.55}
@@ -254,7 +254,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .result-ok{background:var(--gd);color:var(--gn);border:1px solid rgba(52,211,153,.25)}
 .result-err{background:var(--rdm);color:var(--rd);border:1px solid rgba(248,113,113,.25)}
 
-/* ── LEADERBOARD / PODIUM ────────────────────────────────────*/
+
 .podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-bottom:1.4rem}
 .podium-card{
   position:relative;border-radius:var(--r);padding:1.2rem 1rem 1.1rem;text-align:center;overflow:hidden;
@@ -274,7 +274,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .podium-score-label{font-size:.62rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.05em}
 @media(max-width:700px){.podium{grid-template-columns:1fr;}.podium-card{order:0!important}}
 
-/* ── DISTRIBUTION DONUT/BAR ───────────────────────────────── */
+
 .dist-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
 .dist-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0}
 .dist-label{font-size:.78rem;flex:1;color:var(--tx)}
@@ -282,13 +282,13 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .dist-track{flex:2;background:var(--sf3);border-radius:99px;height:7px;overflow:hidden}
 .dist-fill{height:100%;border-radius:99px;transition:width .7s var(--ease)}
 
-/* ── STREAK FLAME LIST ───────────────────────────────────────*/
+
 .streak-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .streak-row:last-child{border-bottom:none}
 .streak-fire{font-size:1.1rem;width:28px;text-align:center}
 .streak-days{font-weight:800;font-size:1rem;font-family:'Space Grotesk',sans-serif;color:var(--am);width:46px}
 
-/* ── KPI HERO ROW (consistency/leaderboard top callouts) ─────*/
+
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:1.4rem}
 .kpi-card{
   border-radius:var(--r);padding:1.2rem 1.3rem;position:relative;overflow:hidden;
@@ -299,7 +299,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .kpi-card .kpi-name{font-size:1.05rem;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:.15rem}
 .kpi-card .kpi-sub{font-size:.72rem;color:var(--ac2);font-weight:600}
 
-/* ── USER DETAIL MODAL ───────────────────────────────────────*/
+
 .modal-overlay{position:fixed;inset:0;background:rgba(5,5,8,.78);backdrop-filter:blur(6px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem}
 .modal{
   background:linear-gradient(165deg,var(--sf),#0d0d13);border:1px solid var(--bd2);border-radius:var(--rl);
@@ -336,14 +336,14 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 .subject-bar-mini .fil{height:100%;border-radius:99px;transition:width .6s var(--ease)}
 .subject-bar-mini .pctval{font-size:.7rem;width:34px;text-align:right;color:var(--mu);font-family:'Space Grotesk',sans-serif}
 
-/* ── LOADING / EMPTY ──────────────────────────────────────── */
+
 .loading{text-align:center;padding:2.2rem;color:var(--mu)}
 .spinner{width:26px;height:26px;border:2.5px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .8rem}
 @keyframes spin{to{transform:rotate(360deg)}}
 .no-data{text-align:center;padding:1.8rem;color:var(--mu);font-size:.82rem}
 .no-data .emoji{font-size:1.6rem;display:block;margin-bottom:.4rem;opacity:.6}
 
-/* ── TOAST ────────────────────────────────────────────────── */
+
 .toast{
   position:fixed;bottom:1.5rem;right:1.5rem;background:rgba(28,28,39,.96);backdrop-filter:blur(14px);
   border:1px solid var(--bd2);border-radius:12px;padding:.8rem 1.1rem;font-size:.82rem;font-weight:500;
@@ -352,20 +352,20 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 }
 .toast.show{transform:translateY(0) scale(1);opacity:1}
 
-/* ── PAGES ────────────────────────────────────────────────── */
+
 .page{display:none}
 .page.active{display:block;animation:pageIn .35s var(--ease)}
 @keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ── DAU LABELS ───────────────────────────────────────────── */
+
 .dau-labels{display:flex;justify-content:space-between;margin-top:.4rem}
 .dau-labels span{font-size:.64rem;color:var(--mu2)}
 
-/* ── PAGINATION ───────────────────────────────────────────── */
+
 .pagination{display:flex;align-items:center;gap:.85rem;margin-top:1.1rem}
 .page-info{font-size:.78rem;color:var(--mu)}
 
-/* ── MOBILE ───────────────────────────────────────────────── */
+
 .mobile-topbar{display:none}
 @media(max-width:880px){
   :root{--sidebar:0px}
@@ -379,7 +379,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02)}
 }
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
 .sb-overlay.show{display:block}
-/* ── FEEDBACK EXPANDABLE MESSAGE ── */
+
 .fb-msg-cell{cursor:pointer;position:relative;}
 .fb-msg-cell:hover .fb-msg-preview{color:var(--tx);}
 .fb-msg-preview{font-size:.75rem;color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .15s;}
@@ -408,7 +408,7 @@ tr.fb-expand-row{background:transparent!important;}
 </head>
 <body>
 
-<!-- LOGIN -->
+
 <div id="login-screen">
   <div class="login-box">
     <div class="brand">JEE<span class="b2">Track</span></div>
@@ -420,7 +420,7 @@ tr.fb-expand-row{background:transparent!important;}
   </div>
 </div>
 
-<!-- SIDEBAR -->
+
 <div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar(false)"></div>
 <div id="sidebar">
   <div class="sb-logo">
@@ -493,7 +493,7 @@ tr.fb-expand-row{background:transparent!important;}
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
+
 <div id="main">
   <div class="topbar">
     <div class="topbar-left">
@@ -519,7 +519,7 @@ tr.fb-expand-row{background:transparent!important;}
 
   <div class="content">
 
-    <!-- OVERVIEW PAGE -->
+    
     <div class="page active" id="page-overview">
       <div class="section-title">Key Metrics<span class="line"></span></div>
       <div class="stats-grid" id="stats-grid">
@@ -547,7 +547,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- FEATURES PAGE -->
+    
     <div class="page" id="page-features">
       <div class="section-title">Feature Usage<span class="line"></span></div>
       <div class="card" style="margin-bottom:1.4rem">
@@ -556,7 +556,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- FUNNEL PAGE -->
+    
     <div class="page" id="page-funnel">
       <div class="section-title">User Journey Funnel<span class="line"></span></div>
       <div class="card" style="margin-bottom:1.25rem;">
@@ -564,7 +564,7 @@ tr.fb-expand-row{background:transparent!important;}
         <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">All steps sourced from Supabase — counts are <strong>distinct users</strong> who reached each milestone. Range is controlled by the <strong>7D / 30D / 90D</strong> buttons above.</p>
         <div class="funnel" id="funnel-steps"><div class="loading"><div class="spinner"></div></div></div>
       </div>
-      <!-- Retention card -->
+      
       <div class="card">
         <h3><span class="ic">🔄</span>Retention (Cohort)</h3>
         <p style="font-size:.76rem;color:var(--mu);margin-bottom:1rem;">"Active on Day N" = user logged a test or study session exactly N days after signup.</p>
@@ -577,7 +577,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- DAU PAGE -->
+    
     <div class="page" id="page-dau">
       <div class="section-title">Daily Active Users<span class="line"></span></div>
       <div class="card">
@@ -587,11 +587,11 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- NEW USERS PAGE -->
+    
     <div class="page" id="page-new_users">
       <div class="section-title">New User Signups<span class="line"></span></div>
 
-      <!-- KPI cards -->
+      
       <div class="stats-grid" id="nu-kpi-grid" style="margin-bottom:1.25rem;grid-template-columns:repeat(3,1fr);">
         <div class="stat" style="--stat-bg:rgba(124,106,247,.16)">
           <div class="stat-icon-wrap">🆕</div>
@@ -613,7 +613,7 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
       </div>
 
-      <!-- Chart -->
+      
       <div class="card" style="margin-bottom:1.25rem;">
         <h3><span class="ic">📊</span>Daily Signups Chart</h3>
         <div class="line-wrap" style="height:220px;position:relative;" id="nu-chart-wrap">
@@ -621,7 +621,7 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
       </div>
 
-      <!-- Day-wise table -->
+      
       <div class="card" style="padding:0;">
         <div style="padding:1rem 1.25rem .75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
           <h3 style="margin:0;"><span class="ic">🗓️</span>Day-wise Breakdown</h3>
@@ -644,7 +644,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- USERS PAGE -->
+    
     <div class="page" id="page-users">
       <div class="section-title">All Users — Full Profile Data<span class="line"></span></div>
       <div class="filter-bar">
@@ -689,7 +689,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- LEADERBOARD PAGE -->
+    
     <div class="page" id="page-leaderboard">
       <div class="section-title">Test Leaderboard<span class="line"></span></div>
       <div class="filter-bar">
@@ -720,7 +720,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- CONSISTENCY PAGE -->
+    
     <div class="page" id="page-consistency">
       <div class="section-title">Consistency Analytics<span class="line"></span></div>
       <div class="kpi-row" id="consistency-kpis">
@@ -754,7 +754,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- DEMOGRAPHICS / SEGMENTATION PAGE -->
+    
     <div class="page" id="page-demographics">
       <div class="section-title">User Segmentation<span class="line"></span></div>
       <div class="grid-2">
@@ -773,7 +773,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- DB STATS PAGE -->
+    
     <div class="page" id="page-db">
       <div class="section-title">Supabase Database Stats<span class="line"></span></div>
       <div class="stats-grid" id="db-stats-grid">
@@ -781,7 +781,7 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
     </div>
 
-    <!-- ACTIONS PAGE -->
+    
     <div class="page" id="page-actions">
       <div class="section-title">Admin Controls<span class="line"></span></div>
       <div class="grid-2">
@@ -827,13 +827,13 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
 
       </div>
-    </div><!-- /page-actions -->
+    </div>
 
-    <!-- ══ EMAIL COMPOSER ══════════════════════════════════ -->
+    
     <div class="page" id="page-email">
       <div class="section-title">Email Composer<span class="line"></span></div>
 
-      <!-- MODE TABS -->
+      
       <div style="display:flex;gap:.5rem;margin-bottom:1.1rem;flex-wrap:wrap;">
         <button class="rtab active" onclick="setEmailMode('compose',this)" id="mode-compose">✉️ Compose with Preset</button>
         <button class="rtab" onclick="setEmailMode('custom',this)" id="mode-custom">🧑‍💻 Custom (No Wrapper)</button>
@@ -841,10 +841,10 @@ tr.fb-expand-row{background:transparent!important;}
 
       <div class="email-composer">
 
-        <!-- LEFT — Compose / Custom -->
+        
         <div>
 
-          <!-- COMPOSE MODE -->
+          
           <div id="em-compose-mode">
             <div class="compose-card" style="margin-bottom:1rem;">
               <h3>✉️ Compose with Preset Template</h3>
@@ -874,7 +874,7 @@ tr.fb-expand-row{background:transparent!important;}
                 <input class="compose-input" id="ce-subject" placeholder="Hey {{name}}, something exciting!"/>
               </div>
 
-              <!-- CTA BUILDER -->
+              
               <div class="compose-field">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
                   <span class="compose-label" style="margin:0;">CTA Button</span>
@@ -923,7 +923,7 @@ tr.fb-expand-row{background:transparent!important;}
             </div>
           </div>
 
-          <!-- CUSTOM MODE -->
+          
           <div id="em-custom-mode" style="display:none;">
             <div class="compose-card" style="margin-bottom:1rem;">
               <h3>🧑‍💻 Custom Email — No Wrapper</h3>
@@ -952,20 +952,20 @@ tr.fb-expand-row{background:transparent!important;}
                 <input class="compose-input" id="ce-subject-custom" placeholder="Subject line here..."/>
               </div>
 
-              <!-- Custom sub-tabs: Plain Text vs Full HTML -->
+              
               <div class="compose-field">
                 <div style="display:flex;gap:.4rem;margin-bottom:.75rem;">
                   <button class="rtab active" id="custom-sub-plain" onclick="setCustomSubMode('plain',this)">📝 Plain Text</button>
                   <button class="rtab" id="custom-sub-html" onclick="setCustomSubMode('html',this)">&lt;/&gt; Full HTML</button>
                 </div>
 
-                <!-- Plain text sub-mode -->
+                
                 <div id="em-custom-plain">
                   <span class="compose-label">Message <span class="hint-tag">Sent as plain text email</span></span>
                   <textarea class="compose-textarea" id="ce-plain-body" style="min-height:320px;font-family:monospace;font-size:.85rem;" placeholder="Hi {{name}},&#10;&#10;Write your plain text email here.&#10;&#10;No HTML — just text.&#10;&#10;— Aman Mishra&#10;Founder, JEETrack"></textarea>
                 </div>
 
-                <!-- Full HTML sub-mode -->
+                
                 <div id="em-custom-html" style="display:none;">
                   <span class="compose-label">Full HTML <span class="hint-tag">Complete email — sent exactly as written</span></span>
                   <textarea class="compose-textarea" id="ce-html-body" style="min-height:360px;font-family:monospace;font-size:.78rem;" placeholder="<!DOCTYPE html>&#10;<html>&#10;<body>&#10;  Your full email HTML here...&#10;  Use {{name}} for personalization&#10;</body>&#10;</html>"></textarea>
@@ -984,7 +984,7 @@ tr.fb-expand-row{background:transparent!important;}
             </div>
           </div>
 
-          <!-- PREVIEW -->
+          
           <div class="compose-card" id="ce-preview-card" style="display:none;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
               <h3 style="margin:0;">👁️ Preview</h3>
@@ -998,7 +998,7 @@ tr.fb-expand-row{background:transparent!important;}
           </div>
         </div>
 
-        <!-- RIGHT — Recipients -->
+        
         <div>
           <div class="compose-card" style="margin-bottom:1rem;">
             <h3>👥 Recipients</h3>
@@ -1009,9 +1009,9 @@ tr.fb-expand-row{background:transparent!important;}
               <button class="rtab" onclick="setRecipientTab('custom',this)">Custom</button>
             </div>
 
-            <!-- Select users panel -->
+            
             <div class="recipient-panel active" id="rp-select">
-              <!-- Search -->
+              
               <div style="position:relative;margin-bottom:.6rem;">
                 <svg style="position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--mu);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                 <input class="compose-input" id="email-user-search" placeholder="Search by name or email..." style="padding-left:2rem;" oninput="filterEmailUsers(this.value)"/>
@@ -1028,28 +1028,28 @@ tr.fb-expand-row{background:transparent!important;}
               </div>
             </div>
 
-            <!-- All active -->
+            
             <div class="recipient-panel" id="rp-all_active">
               <div style="background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
                 📨 Sends to all users <strong style="color:var(--tx)">active in last 30 days</strong>.
               </div>
             </div>
 
-            <!-- All -->
+            
             <div class="recipient-panel" id="rp-all">
               <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.85rem;font-size:.8rem;line-height:1.6;color:var(--mu);">
                 ⚠️ Sends to <strong style="color:#f87171">ALL users</strong>. Use carefully!
               </div>
             </div>
 
-            <!-- Custom -->
+            
             <div class="recipient-panel" id="rp-custom">
               <span class="compose-label">Emails (one per line or comma separated)</span>
               <textarea class="compose-textarea" id="ce-custom-emails" style="min-height:120px;" placeholder="user1@gmail.com&#10;user2@gmail.com"></textarea>
             </div>
           </div>
 
-          <!-- Tips -->
+          
           <div class="compose-card">
             <h3>💡 Tips</h3>
             <div style="font-size:.75rem;color:var(--mu);line-height:1.9;">
@@ -1063,15 +1063,15 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
 
       </div>
-    </div><!-- /page-email -->
+    </div>
 
 
 
-    <!-- ══ FEEDBACK ANALYTICS ══════════════════════════════ -->
+    
     <div class="page" id="page-feedback">
       <div class="section-title">Feedback Analytics<span class="line"></span></div>
 
-      <!-- Stats row -->
+      
       <div class="stats-grid" id="fb-stats-grid" style="margin-bottom:1.25rem;">
         <div class="stat" style="--stat-bg:rgba(45,212,191,.14)"><div class="stat-icon-wrap">💬</div><div class="stat-label">Total Feedbacks</div><div class="stat-value" id="fb-total">—</div></div>
         <div class="stat" style="--stat-bg:rgba(96,165,250,.14)"><div class="stat-icon-wrap">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="fb-this-month">—</div></div>
@@ -1080,22 +1080,22 @@ tr.fb-expand-row{background:transparent!important;}
       </div>
 
       <div class="grid-2" style="margin-bottom:1.25rem;">
-        <!-- Category breakdown -->
+        
         <div class="card">
           <h3>🏷️ Feedback by Category</h3>
           <div class="bar-chart" id="fb-cat-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
-        <!-- Rating distribution -->
+        
         <div class="card">
           <h3>⭐ Rating Distribution</h3>
           <div class="bar-chart" id="fb-rating-chart"><div class="loading"><div class="spinner"></div></div></div>
-          <!-- Monthly trend below -->
+          
           <h3 style="margin-top:1.1rem;">📈 Monthly Trend</h3>
           <div class="bar-chart" id="fb-month-chart"><div class="loading"><div class="spinner"></div></div></div>
         </div>
       </div>
 
-      <!-- All feedbacks table -->
+      
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;flex-wrap:wrap;gap:.5rem;">
           <h3 style="margin:0;">📋 All Feedbacks</h3>
@@ -1123,9 +1123,9 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
       </div>
 
-    </div><!-- /page-feedback -->
-  </div><!-- /content -->
-</div><!-- /main -->
+    </div>
+  </div>
+</div>
 <style>
 .email-composer { display: grid; grid-template-columns: 1fr 380px; gap: 1.1rem; }
 @media(max-width:900px){ .email-composer { grid-template-columns: 1fr; } }
@@ -1164,7 +1164,7 @@ tr.fb-expand-row{background:transparent!important;}
 .tbtn:hover { background: var(--sf2); color: var(--tx); }
 </style>
 
-<!-- USER DETAIL MODAL -->
+
 <div class="modal-overlay" id="user-modal">
   <div class="modal">
     <div class="modal-header">
@@ -1189,12 +1189,12 @@ tr.fb-expand-row{background:transparent!important;}
   </div>
 </div>
 
-<!-- TOAST -->
+
 <div class="toast" id="toast"></div>
 
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────────
+
 const API_BASE = '/api/admin';
 let _token = null;
 let _days = 7;
@@ -1202,10 +1202,10 @@ let _currentPage = 'overview';
 let _modalUserId = null;
 let _modalData = null;
 
-// Paginated page state — scoped per feature to prevent cross-contamination
+
 const _pagination = { users: 0, feedback: 0 };
-let _userPage = 0;   // alias kept for inline onclick handlers
-let _fbPage   = 0;   // alias kept for inline onclick handlers
+let _userPage = 0;   
+let _fbPage   = 0;   
 
 let _userSort = { by: 'created_at', dir: 'desc' };
 let _userSearchTimer = null;
@@ -1233,7 +1233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── AUTH ─────────────────────────────────────────────────────
+
 async function doLogin() {
   const pwd = document.getElementById('pwd-input').value;
   const errEl = document.getElementById('login-err');
@@ -1268,13 +1268,13 @@ function doLogout() {
   location.reload();
 }
 
-// ── SIDEBAR (mobile) ─────────────────────────────────────────
+
 function toggleSidebar(open) {
   document.getElementById('sidebar').classList.toggle('open', open);
   document.getElementById('sb-overlay').classList.toggle('show', open);
 }
 
-// ── API CALL ─────────────────────────────────────────────────
+
 async function api(action, extra = '') {
   const res = await fetch(`${API_BASE}?action=${action}&days=${_days}${extra}`, {
     headers: { 'Authorization': `Bearer ${_token}` }
@@ -1297,7 +1297,7 @@ async function apiPost(action, body = {}) {
   return res.json();
 }
 
-// ── NAVIGATION ───────────────────────────────────────────────
+
 const PAGE_META = {
   overview:      { title: 'Overview',          sub: 'Platform-wide snapshot' },
   features:      { title: 'Feature Analytics', sub: 'Usage across every feature' },
@@ -1357,7 +1357,7 @@ function setRange(days, btn) {
 
 function loadAll() { loadCurrentPage(); }
 
-// ── OVERVIEW ─────────────────────────────────────────────────
+
 async function loadOverview() {
   loadStats();
   loadPagesChart();
@@ -1457,7 +1457,7 @@ async function loadDAUMini() {
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
-// ── FEATURES ─────────────────────────────────────────────────
+
 async function loadFeatures() {
   const el = document.getElementById('features-chart');
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -1467,7 +1467,7 @@ async function loadFeatures() {
 
     const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff'];
 
-    // Header
+    
     let html = `<div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem;display:flex;justify-content:space-between;">
       <span>Feature</span>
       <span>% of all users who ever used it · (${data.totalUsers} total users)</span>
@@ -1501,7 +1501,7 @@ async function loadFeatures() {
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
-// ── FUNNEL ───────────────────────────────────────────────────
+
 async function loadFunnel() {
   const el = document.getElementById('funnel-steps');
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -1527,7 +1527,7 @@ async function loadFunnel() {
       `;
     }).join('');
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
-  // Also load retention on the same page
+  
   loadRetention();
 }
 
@@ -1549,7 +1549,7 @@ async function loadRetention() {
   }
 }
 
-// ── DAU ──────────────────────────────────────────────────────
+
 async function loadDAU() {
   const el = document.getElementById('dau-big');
   const labelsEl = document.getElementById('dau-labels');
@@ -1564,7 +1564,7 @@ async function loadDAU() {
   } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
 }
 
-// ── NEW USERS ─────────────────────────────────────────────────
+
 async function loadNewUsers() {
   const chartWrap = document.getElementById('nu-chart-wrap');
   const table     = document.getElementById('nu-table');
@@ -1575,17 +1575,17 @@ async function loadNewUsers() {
     const d = await api('new_users');
     const { labels = [], values = [], total = 0, avg = 0, peak = 0, peakDay } = d;
 
-    // KPI cards
+    
     document.getElementById('nu-total').textContent     = fmt(total);
     document.getElementById('nu-total-sub').textContent = `in last ${_days} days`;
     document.getElementById('nu-avg').textContent       = avg % 1 === 0 ? avg : avg.toFixed(1);
     document.getElementById('nu-peak').textContent      = fmt(peak);
     document.getElementById('nu-peak-date').textContent = peakDay ? fmtDate(peakDay) : '—';
 
-    // Chart
+    
     chartWrap.innerHTML = renderLineChart(values, labels, 220);
 
-    // Day-wise table — newest first
+    
     const days_arr = labels.map((l, i) => ({ label: l, count: values[i] })).reverse();
     const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const avgVal = avg || 0;
@@ -1620,7 +1620,7 @@ async function loadNewUsers() {
   }
 }
 
-// ── USERS ────────────────────────────────────────────────────
+
 function debounceUserSearch() {
   clearTimeout(_userSearchTimer);
   _userSearchTimer = setTimeout(() => loadUsers(0), 350);
@@ -1706,7 +1706,7 @@ async function loadUsers(page = 0) {
   }
 }
 
-// ── USER DETAIL MODAL (rich profile) ──────────────────────────
+
 async function viewUser(id, name) {
   _modalUserId = id;
   document.getElementById('modal-title').textContent = name || 'Loading…';
@@ -1876,7 +1876,7 @@ function closeModal() {
   _modalData = null;
 }
 
-// ── LEADERBOARD ──────────────────────────────────────────────
+
 async function loadLeaderboard() {
   const podiumEl = document.getElementById('podium-wrap');
   const tbody = document.getElementById('leaderboard-table');
@@ -1951,7 +1951,7 @@ function rankBadge(rank) {
   return `<span class="rank-badge ${cls}">${rank}</span>`;
 }
 
-// ── CONSISTENCY ──────────────────────────────────────────────
+
 async function loadConsistency() {
   const kpiEl = document.getElementById('consistency-kpis');
   const dauEl = document.getElementById('consistency-dau');
@@ -2033,7 +2033,7 @@ async function loadConsistency() {
   }
 }
 
-// ── DEMOGRAPHICS / SEGMENTATION ───────────────────────────────
+
 async function loadDemographics() {
   const classEl = document.getElementById('class-dist');
   const coachEl = document.getElementById('coaching-dist');
@@ -2064,7 +2064,7 @@ function renderDistribution(list, colors) {
   `).join('');
 }
 
-// ── DB STATS ─────────────────────────────────────────────────
+
 async function loadDBStats() {
   const el = document.getElementById('db-stats-grid');
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -2090,7 +2090,7 @@ async function loadDBStats() {
   } catch(e) { el.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`; }
 }
 
-// ── ACTIONS ──────────────────────────────────────────────────
+
 async function triggerAction(action, resultId) {
   const resultEl = document.getElementById(resultId);
   resultEl.style.display = 'none';
@@ -2109,7 +2109,7 @@ async function triggerAction(action, resultId) {
   }
 }
 
-// ── LINE CHART ────────────────────────────────────────────────
+
 function renderLineChart(values, labels, height) {
   if (!values || !values.length) return emptyState('No data');
   const w = 600; const h = height - 20;
@@ -2135,7 +2135,7 @@ function renderLineChart(values, labels, height) {
   `;
 }
 
-// ── HELPERS ───────────────────────────────────────────────────
+
 function fmt(n) {
   if (!n) return '0';
   if (n >= 1000) return (n/1000).toFixed(1) + 'k';
@@ -2170,9 +2170,9 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── ACTIONS PAGE ─────────────────────────────────────────────
+
 async function loadActionsPage() {
-  // Show unread feedback count
+  
   try {
     const d = await api('feedback_stats');
     const el = document.getElementById('action-unread-count');
@@ -2215,7 +2215,7 @@ async function exportUsersCSV() {
   }
 }
 
-// ── INIT ─────────────────────────────────────────────────────
+
 const saved = sessionStorage.getItem('jt_admin_token');
 if (saved) {
   _token = saved;
@@ -2231,9 +2231,9 @@ document.getElementById('user-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-// Delegated handler for any rendered "view profile" row/button — uses data
-// attributes (not inline onclick string interpolation) so names containing
-// quotes, apostrophes, or other special characters never break the markup.
+
+
+
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.user-row-btn');
   if (btn) {
@@ -2247,7 +2247,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ══ EMAIL COMPOSER ════════════════════════════════════════════
+
 let _recipientTab = 'select';
 let _emailUsers   = [];
 let _emailMode    = 'compose';
@@ -2262,7 +2262,7 @@ async function loadSupabaseConfig() {
   } catch(e) {}
 }
 
-// ── Mode switching ────────────────────────────────────────────
+
 let _customSubMode = 'plain';
 
 function setEmailMode(mode, btn) {
@@ -2289,7 +2289,7 @@ function toggleCTA() {
   document.getElementById('ce-cta-fields').style.pointerEvents = en ? 'auto' : 'none';
 }
 
-// ── User list ─────────────────────────────────────────────────
+
 async function loadEmailUsers() {
   const el = document.getElementById('user-check-list');
   if (_emailUsers.length) { renderEmailUsers(_emailUsers); return; }
@@ -2319,7 +2319,7 @@ function renderEmailUsers(users) {
     el.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mu);font-size:.8rem;">No users found</div>';
     return;
   }
-  // Keep previously checked state
+  
   const checked = new Set([...document.querySelectorAll('.user-email-cb:checked')].map(c => c.value));
   el.innerHTML = users.map(u => `
     <label class="user-check-item">
@@ -2348,7 +2348,7 @@ function updateSelectedCount() {
 
 function setRecipientTab(tab, btn) {
   _recipientTab = tab;
-  // Only deactivate tabs within recipient-tabs containers (not mode-select tabs)
+  
   document.querySelectorAll('.recipient-tabs .rtab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.recipient-panel').forEach(p => p.classList.remove('active'));
@@ -2381,7 +2381,7 @@ function getCustomEmails() {
   return raw.split(/[\n,]/).map(e => e.trim()).filter(e => e.includes('@'));
 }
 
-// ── Toolbar ───────────────────────────────────────────────────
+
 function insertTag(open, close) {
   const ta = document.getElementById(_emailMode === 'html' ? 'ce-html-body' : 'ce-body');
   if (!ta) return;
@@ -2396,8 +2396,8 @@ function insertTag(open, close) {
 function insertSnippet(type) {
   const ta = document.getElementById('ce-body');
   if (!ta) return;
-  // Using <br> tags because textarea content is sent as HTML email body
-  // Use <br> for line breaks — works in both textarea and email
+  
+  
   const snippets = {
     greeting: `Dear <strong>{{name}}</strong>,<br><br>Hope your JEE prep is going strong! 🚀<br><br>`,
     review:   `Dear <strong>{{name}}</strong>,<br><br>You've been using JEETrack for a while — I'd love your feedback! 🙏<br><br>Could you spare 2 minutes to share what you think? It really helps us improve.<br><br>`,
@@ -2410,7 +2410,7 @@ function insertSnippet(type) {
   ta.focus();
 }
 
-// ── Email HTML builder ────────────────────────────────────────
+
 function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
   const cta = (includeCTA && ctaText && ctaText.trim()) ? `
       <tr>
@@ -2434,7 +2434,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
 <table width="620" cellpadding="0" cellspacing="0" border="0"
   style="max-width:620px;background:#0B1020;border:1px solid #1A2035;border-radius:20px;overflow:hidden;">
 
-  <!-- Logo -->
+  
   <tr>
     <td align="center" style="padding:40px 30px 20px;">
       <img src="https://jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" width="260"
@@ -2442,21 +2442,21 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
     </td>
   </tr>
 
-  <!-- Divider -->
+  
   <tr>
     <td>
       <div style="height:1px;background:linear-gradient(90deg,transparent,#A855F7,#EC4899,transparent);"></div>
     </td>
   </tr>
 
-  <!-- Body -->
+  
   <tr>
     <td style="padding:40px;color:#B4BCD0;font-size:16px;line-height:1.9;">
       ${bodyHtml.replace(/\{\{name\}\}/g, name).replace(/\n/g, '<br>')}
     </td>
   </tr>
 
-  <!-- Signature -->
+  
   <tr>
     <td style="padding:0 40px 40px;">
       <table width="100%" cellpadding="0" cellspacing="0"
@@ -2474,7 +2474,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
 
   ${cta}
 
-  <!-- Footer -->
+  
   <tr>
     <td align="center" style="padding:24px;border-top:1px solid #1A2035;">
       <p style="margin:0;color:#6B7280;font-size:13px;">© 2026 JEETrack • Built for JEE Aspirants</p>
@@ -2497,10 +2497,10 @@ function getFromAddress() {
 
 function updateFromPreview() {
   const addr = getFromAddress();
-  // Update tips card
+  
   const tipEl = document.getElementById('tips-from-addr');
   if (tipEl) tipEl.textContent = addr;
-  // Update live preview if open
+  
   const prevFrom = document.getElementById('prev-from');
   if (prevFrom && document.getElementById('ce-preview-card').style.display !== 'none') {
     const fromName = document.getElementById(_emailMode === 'custom' ? 'ce-from-name-custom' : 'ce-from-name')?.value || 'JEETrack';
@@ -2508,7 +2508,7 @@ function updateFromPreview() {
   }
 }
 
-// ── Preview ───────────────────────────────────────────────────
+
 function previewEmail() {
   const body = document.getElementById('ce-body')?.value || '';
   const subject = document.getElementById('ce-subject')?.value || '';
@@ -2526,7 +2526,7 @@ function previewCustom() {
   if (_customSubMode === 'plain') {
     const body = document.getElementById('ce-plain-body')?.value || '';
     if (!body.trim()) { showToast('Write your message first!'); return; }
-    // Render plain text as preformatted in a simple wrapper
+    
     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:40px 20px;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:15px;line-height:1.9;color:#B4BCD0;background:#050816;white-space:pre-wrap;word-wrap:break-word}a{color:#D8B4FE}</style></head><body>${body.replace(/\{\{name\}\}/g,'Aman').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</body></html>`;
     _renderPreview(html, subject, fromName);
   } else {
@@ -2548,7 +2548,7 @@ function _renderPreview(html, subject, fromName) {
   card.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-// ── Send ──────────────────────────────────────────────────────
+
 async function sendCustomEmail() {
   const isCustom  = _emailMode === 'custom';
   const subject   = (document.getElementById(isCustom?'ce-subject-custom':'ce-subject')?.value||'').trim();
@@ -2563,7 +2563,7 @@ async function sendCustomEmail() {
     if (_customSubMode === 'plain') {
       const body = (document.getElementById('ce-plain-body')?.value||'').trim();
       if (!body) { showToast('Write your message first!'); return; }
-      // Send as plain text wrapped minimally — Resend handles text field
+      
       htmlBody = body.replace(/\{\{name\}\}/g, '{{name}}');
       isRawHtml = false;
     } else {
@@ -2643,7 +2643,7 @@ async function sendCustomEmail() {
   }
 }
 
-// Expose for feedback page redirect
+
 window.openEmailComposerWith = function(subject, toUserIds) {
   showPage('email', document.querySelector('.nav-item[onclick*="email"]'));
   setTimeout(() => {
@@ -2663,9 +2663,9 @@ window.openEmailComposerWith = function(subject, toUserIds) {
 document.addEventListener('input', e => {
   if (e.target.id === 'ce-custom-emails') updateRecipientCount();
 });
-// ══ END EMAIL COMPOSER ═══════════════════════════════════════
 
-// ══ FEEDBACK ANALYTICS ════════════════════════════════════════
+
+
 let _allFeedbacks = [];
 let _filteredFeedbacks = [];
 
@@ -2680,7 +2680,7 @@ async function loadFeedbackStats() {
       const top = Object.entries(d.categories).sort((a,b) => b[1]-a[1])[0];
       document.getElementById('fb-top-cat').textContent = top ? top[0] : '—';
     }
-    // Category chart
+    
     const catEl = document.getElementById('fb-cat-chart');
     if (d.categories) {
       const sorted = Object.entries(d.categories).sort((a,b) => b[1]-a[1]);
@@ -2693,7 +2693,7 @@ async function loadFeedbackStats() {
           <div class="bar-count">${count}</div>
         </div>`).join('') || '<div class="no-data">No data yet</div>';
     }
-    // Rating distribution chart
+    
     const ratingEl = document.getElementById('fb-rating-chart');
     if (d.ratingDist && d.ratedCount > 0) {
       const maxR = Math.max(...Object.values(d.ratingDist), 1);
@@ -2710,7 +2710,7 @@ async function loadFeedbackStats() {
     } else {
       ratingEl.innerHTML = '<div class="no-data">No ratings yet</div>';
     }
-    // Monthly chart
+    
     const monthEl = document.getElementById('fb-month-chart');
     if (d.byMonth) {
       const sorted = Object.entries(d.byMonth).sort((a,b) => a[0].localeCompare(b[0])).slice(-6);
@@ -2724,7 +2724,7 @@ async function loadFeedbackStats() {
     }
   } catch(e) {
     console.error('Feedback stats:', e);
-    // Show error in UI so it's not silently invisible
+    
     ['fb-total','fb-this-month','fb-avg-rating','fb-top-cat'].forEach(id => {
       const el = document.getElementById(id);
       if (el && el.textContent === '—') el.textContent = 'err';
@@ -2791,7 +2791,7 @@ function renderFeedbackTable(feedbacks) {
     </tr>`;
   }).join('');
 
-  // Store full messages for expand
+  
   tbody._feedbacks = feedbacks;
 }
 
@@ -2803,14 +2803,14 @@ function toggleFeedbackExpand(i, cell) {
 
   const existingRow = document.getElementById(`fb-expand-${i}`);
   if (existingRow) {
-    // Collapse
+    
     existingRow.remove();
     const arrow = cell.querySelector('span');
     if (arrow) arrow.textContent = '▼';
     return;
   }
 
-  // Expand — insert row after fb-row-i
+  
   const mainRow = document.getElementById(`fb-row-${i}`);
   if (!mainRow) return;
 
@@ -2830,20 +2830,20 @@ function toggleFeedbackExpand(i, cell) {
 }
 
 function replyToFeedback(userId, email, subject) {
-  // Go to email page
+  
   const navEl = document.querySelector('.nav-item[onclick*=\'email\']');
   if (navEl) showPage('email', navEl);
 
   setTimeout(() => {
-    // Set subject
+    
     const replySubject = subject ? `Re: ${subject}` : 'Thank You for Your Feedback!';
     document.getElementById('ce-subject').value = replySubject;
 
-    // Pre-fill body
+    
     document.getElementById('ce-body').value =
       `Dear <strong>{{name}}</strong>,\n\nThank you for your valuable feedback and kind words about JEETrack.\n\n${subject ? `Regarding: "<em>${subject}</em>"\n\n` : ''}[Write your reply here...]\n\nIf you have any further questions or suggestions, feel free to reach out at <a href="mailto:support@jeetrack.in" style="color:#D8B4FE;text-decoration:none;font-weight:600;">support@jeetrack.in</a>.`;
 
-    // Set custom email recipient — find by text content, not index (safe against reordering)
+    
     const customBtn = [...document.querySelectorAll('#page-email .recipient-tabs .rtab')]
       .find(b => b.textContent.trim().toLowerCase() === 'custom');
     if (customBtn) setRecipientTab('custom', customBtn);
@@ -2854,7 +2854,7 @@ function replyToFeedback(userId, email, subject) {
   }, 350);
 }
 
-// ══ END FEEDBACK ANALYTICS ════════════════════════════════════
+
 
 </script>
 

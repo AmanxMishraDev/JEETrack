@@ -721,6 +721,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="ls-footer-links">
       <a href="/features">Features</a>
       <span class="ls-footer-sep">·</span>
+      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;">How it works</a>
+      <span class="ls-footer-sep">·</span>
       <a href="/faq">FAQ</a>
       <span class="ls-footer-sep">·</span>
       <a href="/about">About</a>
@@ -921,7 +923,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
 
           <div class="ob-grid" id="ob-year-grid">
-            <!-- populated dynamically by renderObYearOptions() — see app.js -->
+            
           </div>
 
           
@@ -2026,7 +2028,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="settings-row">
             <div class="settings-row-l"><div class="settings-row-title">Target JEE Year</div><div class="settings-row-sub">Which year are you targeting?</div></div>
             <select class="fs" id="settings-year" style="width:175px;padding:8px 12px;font-size:13px">
-              <!-- populated dynamically by renderSettingsYearOptions() — see app.js -->
+              
             </select>
           </div>
           <div class="settings-row">
@@ -2739,7 +2741,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <input type="date" class="pmo-input" id="lh-date"/>
     </div>
 
-    <!-- ── Direct Entry / Timer tabs ── -->
+    
     <div class="lh-tabs">
       <button class="lh-tab active" id="lh-tab-direct" onclick="lhSwitchTab('direct')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -2752,7 +2754,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       </button>
     </div>
 
-    <!-- ── Direct Entry panel ── -->
+    
     <div class="lh-panel active" id="lh-panel-direct">
       <div class="pmo-hrs-rows">
         <div class="pmo-hrs-row pmo-hrs-lec">
@@ -2836,7 +2838,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       </div>
     </div>
 
-    <!-- ── Timer panel ── -->
+    
     <div class="lh-panel" id="lh-panel-timer">
       <div class="lh-session-pills">
         <button class="lh-session-pill active" id="lh-sess-lecture" onclick="lhSetSession('lecture',this)">
@@ -2853,7 +2855,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         </button>
       </div>
 
-      <!-- ── Study Timer ── -->
+      
       <div class="lh-timer-wrap" id="lh-timer-wrap">
         <div class="lh-timer-label">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -2861,14 +2863,14 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <span class="lh-timer-mode-tag" id="lh-timer-mode-tag">Stopwatch</span>
         </div>
 
-        <!-- Countdown target row (hidden by default) -->
+        
         <div class="lh-countdown-row" id="lh-countdown-row" style="display:none">
           <label class="lh-countdown-lbl">Set goal</label>
           <div class="lh-cd-field"><input type="number" id="lh-cd-h" class="lh-cd-inp" min="0" max="23" placeholder="0" title="hours"/><span>h</span></div>
           <div class="lh-cd-field"><input type="number" id="lh-cd-m" class="lh-cd-inp" min="0" max="59" placeholder="30" title="minutes"/><span>m</span></div>
         </div>
 
-        <!-- Circular progress stage — depletes for Countdown, glows/pulses for Stopwatch -->
+        
         <div class="lh-timer-stage" id="lh-timer-stage">
           <svg class="lh-timer-ring" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
             <defs>
@@ -2907,7 +2909,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
         </div>
 
-        <!-- Save bar — appears once there's time on the clock -->
+        
         <div class="lh-save-bar" id="lh-save-bar" style="display:none">
           <div class="lh-save-bar-info">Logged so far: <strong id="lh-apply-time">00:00:00</strong></div>
           <button class="lh-save-btn" id="lh-save-timer-btn" onclick="lhSaveTimerSession()">
@@ -3212,7 +3214,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 </div>
 
-<!-- ── Contextual Review Modal (shared, content injected by JS) ── -->
+
 <div class="mo" id="modal-reviewPrompt" onclick="if(event.target===this)closeReviewModal()">
   <div class="pmo" style="max-width:420px">
     <div class="pmo-glow pmo-glow-violet"></div>
@@ -3750,13 +3752,13 @@ let undoTimer=null;
 let currentQLType='lecture';
 let dismissedNotifs=new Set();
 
-// The "default" JEE target year for a new/unset user, advancing automatically
-// every June 1st — JEE Mains/Advanced for year Y wraps up by ~May of year Y,
-// so from June 1 onward the natural "next" JEE year becomes Y+1.
+
+
+
 function getDefaultJeeYear(){
   const now=new Date();
   const y=now.getFullYear();
-  const juneFirst=new Date(y,5,1); // month is 0-indexed: 5 = June
+  const juneFirst=new Date(y,5,1); 
   return now>=juneFirst ? y+1 : y;
 }
 function getTargetYear(){ return parseInt(userProfile?.target_year || localStorage.getItem('jt_target_year') || String(getDefaultJeeYear()), 10); }
@@ -4256,8 +4258,8 @@ const _pageTitles = {
 };
 const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback'];
 
-// Static pages served directly by vercel.json rewrites (not part of the SPA's own router)
-const _staticPages = ['/faq','/privacy','/terms','/admin','/features','/about'];
+
+const _staticPages = ['/faq','/privacy','/terms','/admin'];
 
 function _isKnownPath(path){
   if(path==='/index.html') return true;
@@ -4405,9 +4407,9 @@ const openM=function(id,preset){
     ['lh-l-h','lh-l-m','lh-p-h','lh-p-m','lh-r-h','lh-r-m'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('lh-tot').textContent='0m';
     _lhClearHrsErr();
-    _lhTimerReset(); // only clears if no time is on the clock — a running/paused session survives
+    _lhTimerReset(); 
     if (_lhTimer.running || _lhLoggable()>0) {
-      // a session is already in progress — reflect it and jump straight to the Timer tab
+      
       document.querySelectorAll('#modal-logHours .pmo-subj-pill').forEach(p=>{
         p.classList.toggle('active', p.getAttribute('onclick')?.includes("'"+_lhTimer.subject+"'"));
       });
@@ -4464,8 +4466,8 @@ function toggleExam(){
   document.getElementById('at-max').value=v==='advanced'?360:300;
   _atUpdateBar();
 }
-// ── Study Timer ─────────────────────────────────────────────────────────────
-// ── Study Timer (Sticky + PiP) — global, persists across modal open/close ───
+
+
 let _lhTimer = { running:false, mode:'stopwatch', elapsed:0, goal:0, interval:null, snapshot:0, startTs:null, subject:'physics', session:'lecture' };
 let _lhPipWindow = null;
 let _lhPipInterval = null;
@@ -4478,15 +4480,15 @@ function _lhFmt(secs) {
 
 function _lhCap(s){ return s ? s[0].toUpperCase()+s.slice(1) : ''; }
 
-// Loggable time differs from raw elapsed in countdown mode: elapsed counts DOWN to 0,
-// so the time actually worth saving is (goal - elapsed), not elapsed itself.
+
+
 function _lhLoggable(){ return _lhTimer.mode==='countdown' ? Math.max(0,_lhTimer.goal-_lhTimer.elapsed) : _lhTimer.elapsed; }
 
-const LH_RING_C = 571.77; // 2 * PI * 91 — must match the r=91 circle in the timer's SVG ring
-// Drives the circular progress ring in the Study Timer: depletes proportionally
-// in Countdown mode (mirrors the old linear bar's math), and shows a solid
-// glow (pulsing while running, steady while paused) in Stopwatch mode since
-// there's no fixed goal to measure progress against.
+const LH_RING_C = 571.77; 
+
+
+
+
 function _lhUpdateRingVisual() {
   const ring = document.getElementById('lh-timer-ring-progress');
   if (!ring) return;
@@ -4567,7 +4569,7 @@ function _lhStickyUpdate() {
 
 async function lhOpenPip() {
   if (!('documentPictureInPicture' in window)) {
-    // Fallback: open a small popup (used on mobile / unsupported desktop browsers)
+    
     if (_lhPipWindow && !_lhPipWindow.closed) { _lhPipWindow.focus(); return; }
     _lhPipWindow = window.open('','_blank','width=240,height=230,top=100,left=100,toolbar=no,menubar=no,scrollbars=no,resizable=yes,status=no');
     if (!_lhPipWindow) { toast('Allow popups for this site to use the floating timer.', 'error'); return; }
@@ -4623,11 +4625,11 @@ function _lhBuildPipContent() {
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       </button>
     </div>`;
-  // Wire buttons — opener reference
+  
   _lhPipWindow.document.getElementById('pip-toggle').onclick = () => { window.lhTimerToggle?.(); };
   _lhPipWindow.document.getElementById('pip-reset').onclick  = () => { window.lhTimerReset?.(); };
   _lhPipWindow.document.getElementById('pip-save').onclick   = () => { window.lhSaveTimerSession?.(); };
-  // poll icon state (running/paused) since the PiP window can't react to opener-side state changes on its own
+  
   clearInterval(_lhPipInterval);
   _lhPipInterval = setInterval(() => {
     if (!_lhPipWindow||_lhPipWindow.closed) { clearInterval(_lhPipInterval); return; }
@@ -4665,8 +4667,8 @@ function lhTimerStart() {
   _lhUpdateLiveDot();
   _lhStickyUpdate();
   _lhRenderAll();
-  // Starting the timer hands off to the sticky widget / PiP — no need to keep
-  // the modal open in front of the user while it runs in the background.
+  
+  
   closeM('logHours');
 }
 
@@ -4747,16 +4749,16 @@ function lhTimerToggleMode() {
   _lhUpdateSaveBar();
 }
 
-// Save the timer's logged time straight into S.hours — works from modal, sticky widget, or PiP.
+
 function lhSaveTimerSession() {
   const finalSecs = _lhLoggable();
   if (!finalSecs || finalSecs < 30) { toast('Run the timer a bit before saving', 'info'); return; }
 
-  // If the timer is still running, stop it first so the snapshot is accurate.
+  
   if (_lhTimer.running) lhTimerStop(false);
 
   const hrs = +(finalSecs/3600).toFixed(2);
-  const rounded = Math.round(hrs*4)/4; // nearest 0.25h, keeps logs tidy
+  const rounded = Math.round(hrs*4)/4; 
   const loggedHrs = rounded || +hrs.toFixed(2);
   const field = _lhTimer.session || 'lecture';
   const dateInput = document.getElementById('lh-date');
@@ -4779,13 +4781,13 @@ function lhSaveTimerSession() {
   renderHours(); renderOverview();
   toast(`Saved ${loggedHrs}h ${field} ✓`, 'success');
 
-  // Reset the clock for the next session, but keep subject/session selection.
+  
   lhTimerReset();
 }
 
 function _lhTimerReset() {
-  if (_lhTimer.running) return; // keep alive if user is mid-session
-  if (_lhLoggable() > 0) return; // don't nuke a paused-but-unsaved (or just-finished) session either
+  if (_lhTimer.running) return; 
+  if (_lhLoggable() > 0) return; 
   _lhTimer.mode = _lhTimer.mode || 'stopwatch';
   _lhTimer.elapsed = 0; _lhTimer.snapshot = 0; _lhTimer.goal = 0;
   const md=document.getElementById('lh-timer-display'); if(md) md.textContent='00:00:00';
@@ -4798,8 +4800,8 @@ function _lhTimerReset() {
   _lhUpdateSaveBar();
 }
 
-// Sync the modal's timer panel UI to whatever _lhTimer's actual state is —
-// called every time the modal opens so a running/paused session is reflected correctly.
+
+
 function _lhSyncModalFromState() {
   const md=document.getElementById('lh-timer-display'); if(md) md.textContent=_lhFmt(_lhTimer.elapsed);
   const at=document.getElementById('lh-apply-time'); if(at) at.textContent=_lhFmt(_lhLoggable());
@@ -4844,11 +4846,11 @@ function lhSwitchTab(tab) {
   if (directSaveBtn) directSaveBtn.style.display = tab==='direct' ? 'flex' : 'none';
 }
 
-// Reads a subject's hour+minute pair as a decimal-hours number, e.g. 1h 30m -> 1.5
+
 function _lhDur(hId, mId){
   return (+document.getElementById(hId).value||0) + (+document.getElementById(mId).value||0)/60;
 }
-// Formats decimal hours as a short, unambiguous "Xh Ym" string instead of a raw decimal
+
 function _lhFmtHM(decHours){
   const totalMin = Math.round(decHours*60);
   const h = Math.floor(totalMin/60), m = totalMin%60;
@@ -4859,7 +4861,7 @@ function _lhFmtHM(decHours){
 function _lhClampH(el){ let v=+el.value; if(isNaN(v)||v<0) v=0; if(v>24) v=24; el.value=v||''; }
 function _lhClampM(el){ let v=+el.value; if(isNaN(v)||v<0) v=0; if(v>59) v=59; el.value=v||''; }
 function _lhClearHrsErr(){ ['lh-l-h','lh-l-m','lh-p-h','lh-p-m','lh-r-h','lh-r-m'].forEach(id=>clearFieldErr(id,'lh-hrs-err')); }
-// Stepper buttons — tap to nudge hours by 1 without opening the keyboard
+
 function _lhStepH(hId, delta){
   const el=document.getElementById(hId); if(!el) return;
   let v=(+el.value||0)+delta;
@@ -4867,8 +4869,8 @@ function _lhStepH(hId, delta){
   el.value=v||'';
   calcTotal(); _lhClearHrsErr();
 }
-// Minute stepper — steps by 5 and rolls over into the hour field so 55m + 5m
-// becomes 1h 0m instead of a confusing "60m"
+
+
 function _lhStepM(hId, mId, delta){
   const hEl=document.getElementById(hId), mEl=document.getElementById(mId);
   if(!hEl||!mEl) return;
@@ -6685,7 +6687,7 @@ async function generateInsights(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session){toast('Sign in to use AI Insights', 'info');return;}
 
-  // ── Weekly limit check ──
+  
   if(!_aiCanGenerate()){
     const days=_aiDaysUntilReset();
     toast(`Weekly limit reached (3/3) — resets in ${days} day${days===1?'':'s'} 🔄`, 'info');
@@ -7125,7 +7127,7 @@ function renderInsights(d){
 </script>
 <script src="/analytics.js"></script>
 <script src="app.js"></script>
-<!-- ── Sticky Study Timer ── -->
+
 <div id="lh-sticky" style="display:none" class="lhs-widget">
   <div class="lhs-inner">
     <div class="lhs-top">

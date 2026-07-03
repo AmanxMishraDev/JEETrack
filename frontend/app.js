@@ -1,23 +1,23 @@
 
 
-// ── Auto-reload when a new Service Worker takes control ─────────────────────
-// Without this, a deployed update can sit "active" in the background forever
-// while an already-open tab keeps rendering the OLD html/css/js it loaded with.
-// This does NOT clear any storage/session — it only reloads the document so the
-// browser re-fetches index.html/app.js/styles.css fresh. Sessions are untouched.
+
+
+
+
+
 if ('serviceWorker' in navigator) {
   let _swReloadingAlready = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (_swReloadingAlready) return; // guard against a reload loop
+    if (_swReloadingAlready) return; 
     _swReloadingAlready = true;
     window.location.reload();
   });
-  // Browsers normally only re-check sw.js on navigation, which can be slow to
-  // notice a fresh deploy on a long-lived open tab. Nudge it along.
+  
+  
   navigator.serviceWorker.getRegistration().then(reg => {
     if (!reg) return;
     reg.update().catch(()=>{});
-    setInterval(() => reg.update().catch(()=>{}), 60 * 60 * 1000); // hourly
+    setInterval(() => reg.update().catch(()=>{}), 60 * 60 * 1000); 
   }).catch(()=>{});
 }
 
@@ -43,7 +43,7 @@ async function initSupabase(){
     if(!_authResolved) showAuthScreen();
   }, 6000);
 
-  // Fetch config — retry with cache-bust if first attempt fails
+  
   try {
     const res = await fetch('/api/config');
     if(res.ok){
@@ -51,13 +51,13 @@ async function initSupabase(){
       SUPABASE_URL = cfg.url;
       SUPABASE_ANON_KEY = cfg.key;
     } else {
-      // Try again with cache-bust
+      
       const res2 = await fetch('/api/config?_=' + Date.now());
       if(res2.ok){ const cfg2=await res2.json(); SUPABASE_URL=cfg2.url; SUPABASE_ANON_KEY=cfg2.key; }
     }
   } catch(e) {
     console.warn('Could not fetch /api/config \u2014 running in offline/demo mode', e);
-    // One more try with cache-bust
+    
     try {
       const res3 = await fetch('/api/config?_=' + Date.now());
       if(res3.ok){ const cfg3=await res3.json(); SUPABASE_URL=cfg3.url; SUPABASE_ANON_KEY=cfg3.key; }
@@ -149,11 +149,11 @@ function switchAuthMode(mode){
   if (!viewport || !current || !next) { authTab = mode; return; }
 
   _authSlideAnimating = true;
-  const goingForward = mode === 'signup'; // signup slides in from the right, login from the left
+  const goingForward = mode === 'signup'; 
   current.classList.add(goingForward ? 'slide-out-left' : 'slide-out-right');
   next.classList.add('active', goingForward ? 'slide-in-right' : 'slide-in-left');
 
-  // measure the incoming slide's natural height so the viewport animates to fit it
+  
   next.style.position='absolute'; next.style.visibility='hidden'; next.style.display='block';
   const nextHeight = next.scrollHeight;
   next.style.position=''; next.style.visibility=''; next.style.display='';
@@ -171,7 +171,7 @@ function switchAuthMode(mode){
   }, 420);
 }
 
-// Back-compat shim: anything still calling switchAuthTab (e.g. nav "Sign In" / "Get Started" buttons) routes through the new slide-aware switcher.
+
 function switchAuthTab(tab){ switchAuthMode(tab); }
 
 function togglePassVisPro(mode){
@@ -217,7 +217,7 @@ function showAuthInfoPro(mode, msg){
   i.textContent=msg; i.style.display='block';
   const e=document.getElementById('auth-err-'+mode); if(e) e.style.display='none';
 }
-// Back-compat shims for any other call sites still using the single-mode versions
+
 function showAuthErr(msg){ showAuthErrPro(authTab, msg); }
 function showAuthInfo(msg){ showAuthInfoPro(authTab, msg); }
 
@@ -249,7 +249,7 @@ async function doAuthPro(mode){
   }
   btn.disabled = false; btn.classList.remove('loading');
 }
-// Back-compat shim for any remaining callers of the old single-mode doAuth
+
 function doAuth(){ return doAuthPro(authTab); }
 
 async function doGoogleAuth(){
@@ -302,8 +302,8 @@ function showAuthScreen(){
   setTimeout(_initScrollReveal, 150);
   history.replaceState({page:'login'}, '', '/login');
   document.title = 'JEETrack — Sign In';
-  // Disabled: star/particle field was causing lag on lower-end devices
-  // setTimeout(initLandingStarField, 50);
+  
+  
   setTimeout(initSlideshow, 100);
   setTimeout(initHeroDemo, 200);
 }
@@ -543,7 +543,7 @@ async function loadUserData(){
     }
   }catch(e){
     console.error('Load error:',e);
-    // Wait 1.5s and retry once before falling back to localStorage
+    
     try {
       await new Promise(r => setTimeout(r, 1500));
       const uid2 = currentUser.id;
@@ -970,7 +970,7 @@ function initLandingStarField() {
 
 let _heroDemoTimer = null;
 
-// Mock JEE Mains data per filter for the hero "Mock Tests" tab demo.
+
 const LAND_MT_DATA = {
   all: {
     tests: '7', latest: '65.3%', best: '65.3%', avg: '56.2%',
@@ -1014,14 +1014,14 @@ function initHeroDemo() {
   let currentFilter = 'all';
   let _insLoadTimer = null;
 
-  // ── Premium 3D pointer-tilt for the whole demo card, the kind of touch
-  // premium SaaS showcases (Linear, Stripe, etc.) use on their hero visuals.
-  // It runs its own lerp-based loop each frame rather than leaning on CSS
-  // transitions, since a transition re-triggering on every mousemove event
-  // fights itself and looks laggy. The automated cursor's clicks and
-  // cinematic zooms below call kickTilt() to add a one-off "camera impact"
-  // nudge on top of whatever the current tilt is, which then eases back out
-  // on its own via the same loop — no separate timers needed for the decay.
+  
+  
+  
+  
+  
+  
+  
+  
   const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const TILT_REST = { rx: 2, ry: -8, tz: 0 };
   const tiltState = { cur: { rx: 2, ry: -8, tz: 0 }, target: { rx: 2, ry: -8 } };
@@ -1041,7 +1041,7 @@ function initHeroDemo() {
       if (!r.width || !r.height) return;
       const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
       const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
-      const nx = px * 2 - 1, ny = py * 2 - 1; // -1..1, center-relative
+      const nx = px * 2 - 1, ny = py * 2 - 1; 
       tiltState.target.ry = TILT_REST.ry + nx * 9;
       tiltState.target.rx = TILT_REST.rx - ny * 6;
       if (tiltGlare) {
@@ -1059,7 +1059,7 @@ function initHeroDemo() {
       const s = tiltState.cur, t = tiltState.target;
       s.rx += (t.rx - s.rx) * 0.12;
       s.ry += (t.ry - s.ry) * 0.12;
-      s.tz += (0 - s.tz) * 0.16; // tz always rests at 0; kicks push it up transiently
+      s.tz += (0 - s.tz) * 0.16; 
       card.style.transform = `perspective(1400px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg) translateZ(${s.tz.toFixed(2)}px)`;
       requestAnimationFrame(tick);
     })();
@@ -1074,11 +1074,11 @@ function initHeroDemo() {
 
   setupHeroTilt();
 
-  // Timing for the two cinematic legs of the demo — Mock Tests tab ->
-  // Partial Filter, and AI Insights tab -> Generate Insights — where the
-  // cursor travels slightly slower so the camera push-in has room to read.
-  // Every other move stays on the default CSS-driven speed (CURSOR_MS
-  // mirrors the stylesheet's .78s transition).
+  
+  
+  
+  
+  
   const CURSOR_MS = 780;
   const CURSOR_SLOW_MS = 1180;
   const CINEMATIC_ZOOM_SCALE = 1.55;
@@ -1096,8 +1096,8 @@ function initHeroDemo() {
     const travelMs = slow ? CURSOR_SLOW_MS : CURSOR_MS;
 
     cursor.style.opacity = '1';
-    // Only this one leg gets a custom (slower) transition; everywhere else
-    // falls back to the stylesheet's default cursor speed/easing untouched.
+    
+    
     cursor.style.transition = slow
       ? `transform ${CURSOR_SLOW_MS}ms cubic-bezier(.45,0,.15,1), opacity .3s ease`
       : '';
@@ -1105,8 +1105,8 @@ function initHeroDemo() {
     cursor.style.transform = `translate(${x}px,${y}px)`;
 
     if (opts.cinematic) {
-      // Start the camera push-in the instant the cursor starts moving toward
-      // the Partial Filter button, timed to land exactly as the cursor arrives.
+      
+      
       zoomCinematicIn(x + 3, y + 3, travelMs);
     }
 
@@ -1121,14 +1121,14 @@ function initHeroDemo() {
     }, travelMs);
   }
 
-  // Slow, continuous camera push-in used only for the Mock Tests -> Partial
-  // Filter leg — distinct from the quick "punch" used on ordinary clicks.
+  
+  
   function zoomCinematicIn(x, y, durationMs) {
     if (!zoomStage) return;
     kickTilt(-2.2, 3.2, 16);
-    // A finished zoom-punch animation still holds transform via its
-    // fill-mode:both, which would silently override the inline transform
-    // below. Detach it first so the cinematic zoom actually takes effect.
+    
+    
+    
     zoomStage.classList.remove('zoom-punch');
     void zoomStage.offsetWidth;
     const w = card.clientWidth || 1;
@@ -1140,9 +1140,9 @@ function initHeroDemo() {
     zoomStage.style.transform = `scale(${CINEMATIC_ZOOM_SCALE})`;
   }
 
-  // Smooth camera pull-back that pairs with the synced content swap in
-  // setFilter() so the zoom-out and the chart/content transition read as a
-  // single continuous motion instead of two separate animations.
+  
+  
+  
   function zoomCinematicOut() {
     if (!zoomStage) return;
     kickTilt(1, -1.6, -6);
@@ -1154,8 +1154,8 @@ function initHeroDemo() {
     }, CINEMATIC_OUT_MS + 40);
   }
 
-  // Premium "camera punch" — the whole tab zooms in toward the exact click
-  // point, then eases back out, like a SaaS product micro-interaction.
+  
+  
   function punchZoomAt(x, y) {
     if (!zoomStage) return;
     kickTilt(-1.2, 1.8, 9);
@@ -1165,7 +1165,7 @@ function initHeroDemo() {
     const oy = Math.min(100, Math.max(0, (y / h) * 100));
     zoomStage.style.transformOrigin = `${ox}% ${oy}%`;
     zoomStage.classList.remove('zoom-punch');
-    void zoomStage.offsetWidth; // force reflow so the animation restarts every click
+    void zoomStage.offsetWidth; 
     zoomStage.classList.add('zoom-punch');
 
     const flash = document.createElement('div');
@@ -1177,12 +1177,12 @@ function initHeroDemo() {
     setTimeout(() => flash.remove(), 600);
   }
 
-  // A premium multi-layer click burst: two colored rings + a bright core dot.
-  // These are appended as children of the cursor itself (not the zoom
-  // stage) and anchored purely via CSS to the cursor's tip — see the
-  // .land-dash-click-ring comment in styles.css for why. That keeps the
-  // burst glued to the tip and painted above the cursor's arrow no matter
-  // what the zoom stage is doing at the time.
+  
+  
+  
+  
+  
+  
   function spawnClickBurst() {
     const dot = document.createElement('div');
     dot.className = 'land-dash-click-ring pulse-dot';
@@ -1213,8 +1213,8 @@ function initHeroDemo() {
     }
   }
 
-  // Restores the AI Insights mini view to its empty "Generate Insights"
-  // state — mirrors the real /insights page always starting from empty.
+  
+  
   const INS_LOAD_STEPS = 4;
   function resetInsightsDemo() {
     if (!insEmpty) return;
@@ -1235,9 +1235,9 @@ function initHeroDemo() {
     insEmpty.classList.add('land-ins-in');
   }
 
-  // Same staged-message + step-dot pattern as the real generateInsights()
-  // loading sequence, compressed to fit a few-second hero demo instead of
-  // an actual API round trip.
+  
+  
+  
   const INS_LOAD_MSGS = ['Reading your test scores...', 'Scanning study hours...', 'Checking syllabus gaps...', 'Generating insights...'];
   function playInsightsLoading(onDone) {
     insEmpty.style.display = 'none';
@@ -1276,10 +1276,10 @@ function initHeroDemo() {
     insResults.classList.add('land-ins-in');
   }
 
-  // Generate Insights cinematic click — identical treatment to the Partial
-  // Filter leg (slow cursor + camera push-in timed to the arrival), then a
-  // synced hold/zoom-out into the loading state, matching setFilter's
-  // syncZoomOut pairing of camera pull-back with the content swap.
+  
+  
+  
+  
   function runInsightsGenerateDemo() {
     if (!insGenBtn) return;
     moveCursorTo(insGenBtn, () => {
@@ -1294,8 +1294,8 @@ function initHeroDemo() {
     }, { slow: true, cinematic: true });
   }
 
-  // Cursor travels from Partial Filter straight to the AI Insights tab
-  // (no stop at "All"), clicks it, then the Generate Insights leg runs.
+  
+  
   function goToInsightsAndGenerate() {
     const insightsTab = tabs.find(t => t.dataset.view === 'insights');
     idx = order.indexOf('insights');
@@ -1307,18 +1307,18 @@ function initHeroDemo() {
 
   function positionGlide(btn) {
     if (!mtGlide || !mtFilters || !btn) return;
-    // Use layout-space offsetLeft/offsetWidth, not getBoundingClientRect.
-    // The card has a permanent 3D transform (perspective + rotateY/rotateX),
-    // which perspective-distorts screen-space rect measurements more the
-    // further right an element sits — that's what was making the glide pill
-    // grow wider/misaligned under "Partial" and "Full". offsetLeft/offsetWidth
-    // reflect the pre-transform box layout, so they stay accurate everywhere.
+    
+    
+    
+    
+    
+    
     mtGlide.style.width = btn.offsetWidth + 'px';
     mtGlide.style.transform = `translateX(${btn.offsetLeft - mtGlide.offsetLeft}px)`;
   }
 
-  // Swaps in new mock data for the given filter with a zoom-out / zoom-in
-  // transition, so it reads as the tab "processing" a fresh query.
+  
+  
   function setFilter(filter, animate, opts) {
     opts = opts || {};
     const btn = viewport.querySelector(`.land-mt-filter[data-filter="${filter}"]`);
@@ -1361,9 +1361,9 @@ function initHeroDemo() {
     if (!animate || !mtBody) { applyData(); return; }
 
     if (opts.syncZoomOut) {
-      // Partial Filter cinematic flow: hold briefly on the click so it reads,
-      // then let the camera zoom-out and the chart/content swap begin in the
-      // same instant, sharing the same duration so they finish together.
+      
+      
+      
       mtBody.classList.add('land-mt-zoom-sync');
       setTimeout(() => {
         applyData();
@@ -1382,9 +1382,9 @@ function initHeroDemo() {
 
   function toggleFilterDemo() {
     const partial = viewport.querySelector('.land-mt-filter[data-filter="partial"]');
-    // Cursor speed stays normal for the Mock Tests tab click itself (handled
-    // by the caller); only this leg — traveling to Partial Filter — is slowed
-    // and paired with the cinematic camera push-in.
+    
+    
+    
     moveCursorTo(partial, () => {
       setFilter('partial', true, { syncZoomOut: true });
       setTimeout(goToInsightsAndGenerate, 1700);
@@ -1404,10 +1404,10 @@ function initHeroDemo() {
       activateView(name);
       if (name === 'tests') {
         setTimeout(toggleFilterDemo, 1100);
-        // No generic resume timer here — toggleFilterDemo now chains all the
-        // way through Partial Filter -> AI Insights tab -> Generate Insights
-        // -> results, and schedules the next loop() call itself once that
-        // whole cinematic sequence finishes.
+        
+        
+        
+        
       } else {
         _heroDemoTimer = setTimeout(loop, 2600);
       }
@@ -1436,9 +1436,9 @@ function initHeroDemo() {
         activateView(name);
         if (name === 'tests') {
           setTimeout(toggleFilterDemo, 900);
-          // toggleFilterDemo's cinematic chain schedules its own resume once
-          // Partial Filter -> AI Insights -> Generate Insights -> results
-          // finishes playing out — don't race it with a generic timer here.
+          
+          
+          
         } else {
           const resumeDelay = name === 'insights' ? 3000 : 2200;
           _heroDemoTimer = setTimeout(loop, resumeDelay);
@@ -1515,7 +1515,7 @@ function initHeroDemo() {
     });
   }
 
-  // Initial glide-pill position (card may not be laid out on first paint, so defer a frame).
+  
   requestAnimationFrame(() => {
     const activeBtn = viewport.querySelector('.land-mt-filter.active') || viewport.querySelector('.land-mt-filter[data-filter="all"]');
     positionGlide(activeBtn);
@@ -1615,7 +1615,7 @@ function landScrollTo(id) {
 function _initLandFabScroll() {
   const fab = document.getElementById('mob-land-cta');
   if (!fab) return;
-  if (fab.dataset.fabScrollInited === '1') return; // prevent stacking duplicate listeners on repeat visits to the landing screen
+  if (fab.dataset.fabScrollInited === '1') return; 
   fab.dataset.fabScrollInited = '1';
 
   let lastScroll = 0;
@@ -1657,8 +1657,8 @@ function landingOpenAuth(mode) {
   }
 }
 
-// Jumps straight to the requested auth slide with no transition — used when the modal is opening fresh,
-// so we never briefly show the "wrong" card (e.g. login flashing before signup) on open.
+
+
 function setAuthModeInstant(mode) {
   authTab = mode;
   const login = document.getElementById('auth-slide-login');
@@ -1684,7 +1684,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Back-compat shims — old names some code paths may still reference.
+
 function mobileLandingShowAuth() { landingOpenAuth('signup'); }
 function landingCloseAuth() { closeAuthModal(); }
 function closeMobAuthOverlay() { closeAuthModal(); }
@@ -1887,8 +1887,8 @@ function removeObAvatar() {
 function renderObYearOptions() {
   const baseYear = typeof getDefaultJeeYear === 'function' ? getDefaultJeeYear() : (new Date().getFullYear()+1);
 
-  // Class-step hints: a Class 12 student sits JEE at the end of THIS academic
-  // year (baseYear); a Class 11 student sits it the year after (baseYear+1).
+  
+  
   const c12 = document.getElementById('ob-class12-yr');
   const c11 = document.getElementById('ob-class11-yr');
   if (c12) c12.textContent = 'JEE ' + baseYear;
@@ -2220,9 +2220,9 @@ function renderSettingsYearOptions() {
   const sel = document.getElementById('settings-year');
   if (!sel) return;
   const baseYear = typeof getDefaultJeeYear === 'function' ? getDefaultJeeYear() : (new Date().getFullYear()+1);
-  // Always include the user's currently-saved year too, even if it's since
-  // fallen outside the rolling 3-year window, so their existing choice never
-  // silently disappears from the list.
+  
+  
+  
   const saved = userProfile?.target_year && /^\d{4}$/.test(userProfile.target_year) ? parseInt(userProfile.target_year,10) : null;
   const years = new Set([baseYear, baseYear+1, baseYear+2]);
   if (saved) years.add(saved);
@@ -2746,7 +2746,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
 
-  // Fix mobile nav lag — fire on touchstart instead of waiting for click (removes 300ms delay)
+  
   setTimeout(() => {
     document.querySelectorAll('.mob-nav-item').forEach(btn => {
       btn.addEventListener('touchstart', function(e) {
@@ -2759,7 +2759,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }, { passive: false });
     });
-  }, 1000); // wait for DOM to be fully ready
+  }, 1000); 
   
   const dropzone = document.getElementById('settings-avatar-dropzone');
   if (dropzone) {
@@ -2874,8 +2874,8 @@ async function sendFeedback() {
   }
 }
 
-/* ── Contextual Review System ── */
-// Each feature has its own localStorage key and context config
+
+
 const REVIEW_CONFIGS = {
   test: {
     key: 'jt_rev_test',
@@ -2912,7 +2912,7 @@ const REVIEW_CONFIGS = {
 };
 
 let _reviewRating = 0;
-let _reviewContext = null; // which feature is being reviewed
+let _reviewContext = null; 
 
 function _openReviewModal(type) {
   const cfg = REVIEW_CONFIGS[type];
@@ -2922,31 +2922,31 @@ function _openReviewModal(type) {
   const isRecurring = type === 'test' || type === 'hours';
 
   if (stored) {
-    // Non-recurring types (syllabus, ai): any stored value = permanently done
+    
     if (!isRecurring) {
-      // Check if permanent flag set
+      
       try {
         const p = JSON.parse(stored);
         if (p.permanent) return;
-      } catch(e) { return; } // old string format — treat as permanent
+      } catch(e) { return; } 
       return;
     }
 
-    // Recurring types (test, hours): check 3-day cooldown from last action
+    
     try {
       const parsed = JSON.parse(stored);
       const ts = parsed.snoozedAt || parsed.submittedAt || 0;
       const daysSince = (Date.now() - ts) / (1000 * 60 * 60 * 24);
-      if (daysSince < 3) return; // still in cooldown — don't show
+      if (daysSince < 3) return; 
     } catch(e) {
-      // Malformed or old 'submitted' string — treat as expired, allow showing
+      
     }
   }
 
   _reviewRating = 0;
   _reviewContext = type;
 
-  // Inject context-specific content
+  
   document.getElementById('rev-icon').innerHTML = cfg.icon;
   document.getElementById('rev-title').textContent = cfg.title;
   document.getElementById('rev-sub').textContent = cfg.sub;
@@ -2961,25 +2961,25 @@ function _openReviewModal(type) {
   document.getElementById('modal-reviewPrompt').classList.add('open');
 }
 
-// ── Trigger: after 3rd test ──
+
 function maybeShowReviewPrompt() {
   if (!S || !S.tests || S.tests.length < 3) return;
-  // Trigger at 3rd test, then every 5 after (3, 8, 13, 18, 23...)
+  
   const n = S.tests.length;
   if (n !== 3 && (n - 3) % 5 !== 0) return;
   setTimeout(() => _openReviewModal('test'), 500);
 }
 
-// ── Trigger: after 10th hours session, then every 5 ──
+
 function maybeShowHoursReview() {
   if (!S || !S.hours || S.hours.length < 10) return;
-  // Trigger at 10th session, then every 5 after (10, 15, 20, 25...)
+  
   const n = S.hours.length;
   if (n !== 10 && (n - 10) % 5 !== 0) return;
   setTimeout(() => _openReviewModal('hours'), 500);
 }
 
-// ── Trigger: after syllabus hits 50% ──
+
 function maybeShowSyllabusReview() {
   const all = ['physics','chemistry','maths'].flatMap(s => S.syllabus[s] || []);
   if (!all.length) return;
@@ -2989,13 +2989,13 @@ function maybeShowSyllabusReview() {
   setTimeout(() => _openReviewModal('syllabus'), 500);
 }
 
-// ── Trigger: after AI insights generated ──
+
 function maybeShowAiReview() {
-  // _openReviewModal handles the guard internally for ai type
-  setTimeout(() => _openReviewModal('ai'), 1500); // slight delay after insights render
+  
+  setTimeout(() => _openReviewModal('ai'), 1500); 
 }
 
-// ── Star UI ──
+
 function setReviewStar(val) {
   _reviewRating = val;
   _renderReviewStars(val);
@@ -3012,17 +3012,17 @@ function _renderReviewStars(val) {
   });
 }
 
-// ── Close ──
+
 function closeReviewModal() {
   document.getElementById('modal-reviewPrompt').classList.remove('open');
   if (_reviewContext) {
-    // Snooze for 3 days — not permanent dismiss
+    
     localStorage.setItem(REVIEW_CONFIGS[_reviewContext].key, JSON.stringify({ snoozedAt: Date.now() }));
     _reviewContext = null;
   }
 }
 
-// ── Submit ──
+
 async function submitReview() {
   if (!_reviewRating || !_reviewContext) return;
   const cfg = REVIEW_CONFIGS[_reviewContext];
@@ -3044,7 +3044,7 @@ async function submitReview() {
     console.warn('Review insert failed:', e);
   }
 
-  // Recurring: store timestamp for 3-day cooldown. Others: permanent dismiss.
+  
   const isRecurringType = _reviewContext === 'test' || _reviewContext === 'hours';
   localStorage.setItem(cfg.key, isRecurringType
     ? JSON.stringify({ submittedAt: Date.now() })
@@ -3055,12 +3055,12 @@ async function submitReview() {
   setTimeout(() => toast(`Thanks for the ${rating}★ review! 🙏`, 'success'), 300);
 }
 
-/* ── AI Insights Weekly Limit (3 per week, resets Sunday midnight) ── */
+
 const AI_LIMIT_KEY = 'jt_ai_weekly';
 const AI_WEEKLY_MAX = 3;
 
 function _getAiWeekKey() {
-  // Returns "YYYY-Www" — unique per calendar week (Mon-Sun)
+  
   const now = new Date();
   const jan1 = new Date(now.getFullYear(), 0, 1);
   const week = Math.ceil(((now - jan1) / 86400000 + jan1.getDay() + 1) / 7);
@@ -3072,7 +3072,7 @@ function _getAiUsage() {
     const raw = localStorage.getItem(AI_LIMIT_KEY);
     if (!raw) return { week: _getAiWeekKey(), count: 0 };
     const parsed = JSON.parse(raw);
-    // If stored week != current week → auto reset (Sunday has passed)
+    
     if (parsed.week !== _getAiWeekKey()) return { week: _getAiWeekKey(), count: 0 };
     return parsed;
   } catch(e) { return { week: _getAiWeekKey(), count: 0 }; }
@@ -3090,7 +3090,7 @@ function _aiIncrementUsage() {
 }
 
 function _aiDaysUntilReset() {
-  // Days until next Sunday midnight
+  
   const now = new Date();
   const daysUntilSun = (7 - now.getDay()) % 7 || 7;
   return daysUntilSun;

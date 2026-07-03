@@ -1,5 +1,5 @@
-// Cache version is set at build/deploy time via a version endpoint
-// Falls back to timestamp-based versioning so every deploy auto-invalidates
+
+
 const CACHE_VERSION = 'jeetrack-v4';
 const CACHE_NAME = CACHE_VERSION;
 
@@ -8,16 +8,16 @@ const STATIC_ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js'
 ];
 
-// Never cache these — always fetch fresh
+
 const NEVER_CACHE = [
   '/api/',
   '/api/config',
 ];
 
-// Core app shell — these three files must always be fetched together as a
-// matching set from the SAME deploy. Caching them independently risks
-// serving e.g. new HTML with old CSS after a deploy, which can break the
-// page layout in ways that are very hard to diagnose. Always network-only.
+
+
+
+
 const APP_SHELL = [
   '/index.html',
   '/app.js',
@@ -52,22 +52,22 @@ self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
-  // Never cache API calls or auth-related requests
+  
   if (NEVER_CACHE.some(p => url.pathname.startsWith(p))) {
     e.respondWith(fetch(e.request));
     return;
   }
 
-  // App shell (HTML/CSS/app.js) — always network-only, no cache read or
-  // write, so these three files can never be served as a mismatched set
-  // from old + new deploys mixed together.
+  
+  
+  
   if (APP_SHELL.some(p => url.pathname === p) || url.pathname === '/') {
     e.respondWith(fetch(e.request));
     return;
   }
 
-  // For HTML pages — network first, fall back to cache
-  // This ensures users always get latest HTML on good connections
+  
+  
   if (e.request.headers.get('accept')?.includes('text/html')) {
     e.respondWith(
       fetch(e.request)
@@ -83,7 +83,7 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // For CSS/JS/fonts — network first, cache as backup
+  
   e.respondWith(
     fetch(e.request)
       .then(res => {

@@ -12,9 +12,7 @@
     { "source": "/faq", "destination": "/faq.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/features", "destination": "/features.html" },
-    { "source": "/about", "destination": "/about.html" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
+    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
   ]
 }

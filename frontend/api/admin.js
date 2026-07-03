@@ -1,13 +1,13 @@
-// ============================================================
-// JEETrack Admin API — api/admin.js
-// 100% Supabase — no PostHog dependency
-// ============================================================
+
+
+
+
 
 const ADMIN_PASSWORD       = process.env.ADMIN_PASSWORD;
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Human-friendly labels for coaching institute ids (see COACHING_BY_MODE in app.js)
+
 const COACHING_LABELS = {
   pw_online: 'PW Online', allen_online: 'Allen Online', unacademy: 'Unacademy',
   vedantu: 'Vedantu', aakash_online: 'Aakash Digital', motion_online: 'Motion Online',
@@ -26,14 +26,14 @@ function classLabel(id) {
   return CLASS_LABELS[id] || id;
 }
 
-// ── CORS headers ─────────────────────────────────────────────
+
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://admin.jeetrack.in');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
-// ── Supabase REST helper ──────────────────────────────────────
+
 async function sbQuery(path, method = 'GET', body = null) {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
   const opts = {
@@ -51,7 +51,7 @@ async function sbQuery(path, method = 'GET', body = null) {
   return res.json();
 }
 
-// ── Supabase COUNT helper (uses Range header trick) ──────────
+
 async function sbCount(table, filter = '') {
   const url = `${SUPABASE_URL}/rest/v1/${table}?select=*${filter ? '&' + filter : ''}`;
   const res = await fetch(url, {
@@ -67,15 +67,15 @@ async function sbCount(table, filter = '') {
   return parseInt(range.split('/')[1] || '0', 10);
 }
 
-// ── Supabase Auth Admin — list all users (paginated) ─────────
-// Returns the full auth.users list ({ id, email, created_at, ... }).
-// This is the only reliable source for email addresses — the
-// user_preferences table never stores email itself.
+
+
+
+
 async function sbAuthListAllUsers() {
   const perPage = 1000;
   let page = 1;
   let all = [];
-  for (let i = 0; i < 20; i++) { // hard cap: 20k users
+  for (let i = 0; i < 20; i++) { 
     const url = `${SUPABASE_URL}/auth/v1/admin/users?page=${page}&per_page=${perPage}`;
     const res = await fetch(url, {
       headers: {
@@ -93,7 +93,7 @@ async function sbAuthListAllUsers() {
   return all;
 }
 
-// ── Trigger Supabase Edge Function ───────────────────────────
+
 async function triggerEdgeFunction(fnName, body = {}) {
   const url = `${SUPABASE_URL}/functions/v1/${fnName}`;
   const res = await fetch(url, {
@@ -108,17 +108,17 @@ async function triggerEdgeFunction(fnName, body = {}) {
   try { return JSON.parse(text); } catch { return { message: text }; }
 }
 
-// ── Helpers ──────────────────────────────────────────────────
+
 function dateFrom(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toISOString().split('T')[0];
 }
 
-// Build a single combined roster: auth users + user_preferences, keyed by user_id.
-// This is the backbone for Users / Demographics / Leaderboard / Consistency —
-// all sourced from Supabase (reliable) instead of PostHog persons (often empty,
-// since the app never actually calls posthog.identify with matching property names).
+
+
+
+
 let _rosterCache = null, _rosterCacheAt = 0;
 async function buildRoster({ fresh = false } = {}) {
   if (!fresh && _rosterCache && Date.now() - _rosterCacheAt < 30000) return _rosterCache;
@@ -131,8 +131,8 @@ async function buildRoster({ fresh = false } = {}) {
   const prefMap = {};
   prefs.forEach(p => { prefMap[p.user_id] = p; });
 
-  // Some users may have a user_preferences row but be missing from the
-  // auth list (rare edge cases), or vice versa for brand-new signups. Union both.
+  
+  
   const ids = new Set([...authUsers.map(u => u.id), ...prefs.map(p => p.user_id)]);
   const authMap = {};
   authUsers.forEach(u => { authMap[u.id] = u; });
@@ -160,19 +160,19 @@ async function buildRoster({ fresh = false } = {}) {
   return roster;
 }
 
-// ── MAIN HANDLER ─────────────────────────────────────────────
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Parse body manually (Vercel doesn't auto-parse JSON body)
+  
   if (req.method === 'POST' && typeof req.body === 'string') {
     try { req.body = JSON.parse(req.body); } catch {}
   }
 
   const { action } = req.query;
 
-  // ── AUTH: login is public ──────────────────────────────────
+  
   if (action === 'login') {
     const { password } = req.body || {};
     if (password === ADMIN_PASSWORD) {
@@ -181,7 +181,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Wrong password' });
   }
 
-  // All other actions require valid token
+  
   const auth = req.headers['authorization'] || '';
   const token = auth.replace('Bearer ', '');
   const validToken = Buffer.from(ADMIN_PASSWORD).toString('base64');
@@ -192,12 +192,12 @@ export default async function handler(req, res) {
   try {
     const days = parseInt(req.query.days || '7');
 
-    // ── OVERVIEW STATS ────────────────────────────────────────
-    // Source of truth: Supabase for counts, PostHog for behavioral events
+    
+    
     if (action === 'stats') {
       const cutoff = dateFrom(days);
 
-      // Active users = distinct users who opened app in last N days (from Supabase)
+      
       const activePrefs = await sbQuery(
         `user_preferences?select=user_id,last_active_at&last_active_at=gte.${cutoff}T00:00:00Z`
       ).catch(() => []);
@@ -214,17 +214,17 @@ export default async function handler(req, res) {
         sbCount('todos').catch(() => 0),
         sbCount('feedback').catch(() => 0),
         sbQuery('syllabus?select=user_id,theory,practice').catch(() => []),
-        // AI Insights used = distinct users who have ai_insights_count > 0 in user_preferences
-        // Run SQL to add this column first: ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS ai_insights_count integer DEFAULT 0;
+        
+        
         sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0`).catch(() => []),
       ]);
 
-      // Syllabus % — avg completion across all users
-      const totalPossible = syllabusRows.length * 2; // theory + practice each
+      
+      const totalPossible = syllabusRows.length * 2; 
       const totalMarked   = syllabusRows.filter(r => r.theory).length + syllabusRows.filter(r => r.practice).length;
       const syllabusPercent = totalPossible > 0 ? Math.round((totalMarked / totalPossible) * 100) : 0;
 
-      // Distinct AI users in the period
+      
       const aiInsightsCount = new Set(aiInsightsUsers.map(u => u.user_id)).size;
 
       return res.status(200).json({
@@ -236,18 +236,18 @@ export default async function handler(req, res) {
         todos:            totalTodos,
         feedbacks:        totalFeedbacks,
         syllabusPercent,
-        aiInsights:       aiInsightsCount,   // distinct users who ever used AI Insights
-        pageViews:        activePrefs.length, // same as activeUsers — app opens in period
+        aiInsights:       aiInsightsCount,   
+        pageViews:        activePrefs.length, 
       });
     }
 
-    // ── FEATURE ANALYTICS (% of users who use each feature) ─
+    
     if (action === 'features') {
       const cutoff = dateFrom(days);
 
       const totalAll = await sbCount('user_preferences').catch(() => 1);
 
-      // Get unique users per feature from Supabase — 100% reliable
+      
       const [testUsers, hoursUsers, backlogUsers, todoUsers, syllabusUsers, feedbackUsers, aiUsers] = await Promise.all([
         sbQuery(`tests?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
         sbQuery(`hours?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
@@ -273,7 +273,7 @@ export default async function handler(req, res) {
         pct: totalAll > 0 ? Math.round((f.users / totalAll) * 100) : 0,
       })).sort((a, b) => b.pct - a.pct);
 
-      // DAU per feature — active unique users in period per feature
+      
       const dauFeatures = [
         { feature: 'Mock Tests',  dauPct: Math.round(uniq(testUsers)     / totalAll * 100), dau: uniq(testUsers)     },
         { feature: 'Study Hours', dauPct: Math.round(uniq(hoursUsers)    / totalAll * 100), dau: uniq(hoursUsers)    },
@@ -284,9 +284,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ features, dauFeatures, totalUsers: totalAll });
     }
 
-    // ── DAU TREND ─────────────────────────────────────────────
+    
     if (action === 'dau') {
-      // 100% Supabase — bucket last_active_at by day
+      
       const prefs = await sbQuery('user_preferences?select=last_active_at').catch(() => []);
       const byDay = {};
       const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
@@ -307,13 +307,13 @@ export default async function handler(req, res) {
       return res.status(200).json({ labels, values, source: 'supabase' });
     }
 
-    // ── NEW USER SIGNUPS ──────────────────────────────────────
-    // Day-wise new signups from auth.users created_at
+    
+    
     if (action === 'new_users') {
       const authUsers = await sbAuthListAllUsers().catch(() => []);
       const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
 
-      // Bucket by day (only within selected range)
+      
       const byDay = {};
       authUsers.forEach(u => {
         if (!u.created_at) return;
@@ -323,7 +323,7 @@ export default async function handler(req, res) {
         byDay[key] = (byDay[key] || 0) + 1;
       });
 
-      // Build full day-by-day series
+      
       const labels = [], values = [];
       for (let i = days - 1; i >= 0; i--) {
         const d = new Date(); d.setDate(d.getDate() - i);
@@ -339,7 +339,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({ labels, values, total, avg, peak, peakDay });
     }
-    // 100% Supabase — distinct users per feature in period
+    
     if (action === 'pages') {
       const cutoff = dateFrom(days);
       const [tests, hours, backlogs, todos, syllabus, feedback, ai] = await Promise.all([
@@ -363,8 +363,8 @@ export default async function handler(req, res) {
       ].sort((a, b) => b.count - a.count));
     }
 
-    // ── SUBJECT BREAKDOWN ─────────────────────────────────────
-    // Use Supabase hours table grouped by subject (more reliable)
+    
+    
     if (action === 'subjects') {
       const [phys, chem, math] = await Promise.all([
         sbCount('hours', 'subject=eq.physics').catch(() => 0),
@@ -378,8 +378,8 @@ export default async function handler(req, res) {
       ]);
     }
 
-    // ── EXAM TYPE BREAKDOWN ───────────────────────────────────
-    // Use Supabase tests table grouped by type
+    
+    
     if (action === 'exams') {
       const [mains, advanced] = await Promise.all([
         sbCount('tests', 'exam=eq.mains').catch(() => 0),
@@ -391,26 +391,26 @@ export default async function handler(req, res) {
       ]);
     }
 
-    // ── FUNNEL ────────────────────────────────────────────────
-    // 100% Supabase — no PostHog, no fake data.
-    // Each step = distinct users who have reached that milestone.
+    
+    
+    
     if (action === 'funnel') {
       const [
         totalUsers,
         usersWithTests, usersWithHours, usersWithBacklogs,
         usersWithSyllabus, usersWithAI,
       ] = await Promise.all([
-        // Step 1: anyone who signed up (has a user_preferences row)
+        
         sbCount('user_preferences').catch(() => 0),
-        // Step 2: users who logged at least one mock test
+        
         sbQuery('tests?select=user_id').catch(() => []),
-        // Step 3: users who logged at least one study hour session
+        
         sbQuery('hours?select=user_id').catch(() => []),
-        // Step 4: users who added at least one backlog item
+        
         sbQuery('backlogs?select=user_id').catch(() => []),
-        // Step 5: users who touched syllabus tracker
+        
         sbQuery('syllabus?select=user_id').catch(() => []),
-        // Step 6: users who used AI Insights (ai_insights_count > 0)
+        
         sbQuery('user_preferences?select=user_id&ai_insights_count=gt.0').catch(() => []),
       ]);
 
@@ -430,16 +430,16 @@ export default async function handler(req, res) {
       ]);
     }
 
-    // ── USER LIST ─────────────────────────────────────────────
-    // Sourced from Supabase (auth.users + user_preferences) — reliable,
-    // always populated, supports search + class/coaching filters + sorting.
+    
+    
+    
     if (action === 'users') {
       const page        = parseInt(req.query.page || '0');
       const pageSize     = parseInt(req.query.pageSize || '20');
       const search       = (req.query.search || '').toLowerCase().trim();
       const classFilter  = req.query.class_year || '';
       const coachFilter  = req.query.coaching || '';
-      const sortBy       = req.query.sort || 'created_at'; // created_at | last_active | name
+      const sortBy       = req.query.sort || 'created_at'; 
       const sortDir      = req.query.dir === 'asc' ? 1 : -1;
 
       let roster = await buildRoster();
@@ -491,10 +491,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── DEMOGRAPHICS ─────────────────────────────────────────
-    // Class + coaching distribution, sourced from Supabase user_preferences
-    // (PostHog person properties are never populated by the app, so they
-    // are not a reliable source for this).
+    
+    
+    
+    
     if (action === 'demographics') {
       const roster = await buildRoster();
       const total = roster.length;
@@ -521,12 +521,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── USER DETAIL ───────────────────────────────────────────
+    
     if (action === 'user_detail') {
       const { distinct_id } = req.query;
       if (!distinct_id) return res.status(400).json({ error: 'distinct_id required' });
 
-      // Fetch everything in parallel
+      
       const [
         testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, authUsers
       ] = await Promise.all([
@@ -543,7 +543,7 @@ export default async function handler(req, res) {
 
       const authUser = authUsers.find(u => u.id === distinct_id) || null;
 
-      // Compute test stats
+      
       const totalTests = testsData.length;
       const mainsTests = testsData.filter(t => t.exam === 'mains');
       const advTests   = testsData.filter(t => t.exam === 'advanced');
@@ -556,14 +556,14 @@ export default async function handler(req, res) {
         ? Math.round(testsData.reduce((s, t) => s + (t.max ? (t.total||0)/t.max*100 : 0), 0) / totalTests)
         : 0;
 
-      // Compute study hours stats
+      
       const totalHoursCount = hoursData.length;
       const totalHoursTime  = hoursData.reduce((s, h) => s + (h.total || 0), 0);
       const physHours = hoursData.filter(h => h.subject === 'physics').reduce((s, h) => s + (h.total || 0), 0);
       const chemHours = hoursData.filter(h => h.subject === 'chemistry').reduce((s, h) => s + (h.total || 0), 0);
       const mathHours = hoursData.filter(h => h.subject === 'maths').reduce((s, h) => s + (h.total || 0), 0);
 
-      // Syllabus completion: chapters synced per subject, marked done = theory && practice
+      
       const subjects = ['physics', 'chemistry', 'maths'];
       const syllabusBySubject = subjects.map(s => {
         const rows = syllabusData.filter(r => r.subject === s);
@@ -579,7 +579,7 @@ export default async function handler(req, res) {
       const syllabusDoneRows  = syllabusData.filter(r => r.theory && r.practice).length;
       const syllabusOverallPct = syllabusTotalRows ? Math.round((syllabusDoneRows / syllabusTotalRows) * 100) : 0;
 
-      // Consistency: unique active dates from hours + tests
+      
       const last30 = new Date(); last30.setDate(last30.getDate() - 30);
       const activityDates = new Set([
         ...hoursData.filter(h => h.date).map(h => h.date),
@@ -587,7 +587,7 @@ export default async function handler(req, res) {
       ]);
       const activeDaysLast30 = [...activityDates].filter(d => new Date(d) > last30).length;
 
-      // Longest streak of consecutive active days (from all logged dates)
+      
       const sortedDates = [...activityDates].sort();
       let longestRun = 0, curRun = 0, prevDate = null;
       sortedDates.forEach(ds => {
@@ -658,11 +658,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── LEADERBOARD ───────────────────────────────────────────
-    // Sourced entirely from Supabase: user_preferences (+ auth) for identity,
-    // tests/hours for performance metrics.
+    
+    
+    
     if (action === 'leaderboard') {
-      const metric = req.query.metric || 'avgScore'; // avgScore | avgScorePct | bestScore | totalTests | totalHours | consistency
+      const metric = req.query.metric || 'avgScore'; 
 
       const roster = await buildRoster();
       if (!roster.length) return res.status(200).json({ leaderboard: [], topper: null });
@@ -672,14 +672,14 @@ export default async function handler(req, res) {
         sbQuery('hours?select=user_id,total,subject,date').catch(() => []),
       ]);
 
-      // Group tests by user
+      
       const userTestMap = {};
       allTests.forEach(t => {
         if (!userTestMap[t.user_id]) userTestMap[t.user_id] = [];
         userTestMap[t.user_id].push(t);
       });
 
-      // Group hours by user
+      
       const userHoursMap = {};
       allHours.forEach(h => {
         if (!userHoursMap[h.user_id]) userHoursMap[h.user_id] = [];
@@ -688,7 +688,7 @@ export default async function handler(req, res) {
 
       const last30 = new Date(); last30.setDate(last30.getDate() - 30);
 
-      // Build leaderboard entries
+      
       const entries = roster.map(u => {
         const uid   = u.id;
         const tests = userTestMap[uid] || [];
@@ -700,7 +700,7 @@ export default async function handler(req, res) {
           ? Math.round(tests.reduce((s, t) => s + (t.max ? (t.total||0)/t.max*100 : 0), 0) / tests.length)
           : 0;
 
-        // Consistency: unique active days (hours entries) last 30 days
+        
         const activeDays = new Set(hours.filter(h => h.date && new Date(h.date) > last30).map(h => h.date)).size;
 
         return {
@@ -714,12 +714,12 @@ export default async function handler(req, res) {
           avgScorePct,
           bestScore,
           totalHours:  Math.round(totalHrsTime * 10) / 10,
-          activeDays,   // consistency metric
+          activeDays,   
           last_active: u.last_active_at,
         };
-      }).filter(e => e.totalTests > 0 || e.totalHours > 0); // only users with data
+      }).filter(e => e.totalTests > 0 || e.totalHours > 0); 
 
-      // Sort by requested metric
+      
       const sortKey = {
         avgScore:    (a, b) => b.avgScore    - a.avgScore,
         avgScorePct: (a, b) => b.avgScorePct - a.avgScorePct,
@@ -738,10 +738,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── CONSISTENCY ANALYTICS ─────────────────────────────────
-    // Daily-active tracking, streaks, and overall consistency ranking.
-    // Activity = any tests/hours row logged on that date (best available
-    // proxy for "opened the app and used it that day").
+    
+    
+    
+    
     if (action === 'consistency') {
       const windowDays = parseInt(req.query.window || '30');
       const roster = await buildRoster();
@@ -754,7 +754,7 @@ export default async function handler(req, res) {
         sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(180)}`).catch(() => []),
       ]);
 
-      // Map user_id -> Set of active dates (capped to last 180d fetched)
+      
       const userDates = {};
       [...allTests, ...allHours].forEach(r => {
         if (!r.date) return;
@@ -769,7 +769,7 @@ export default async function handler(req, res) {
         const datesArr = [...dates].sort();
         const activeInWindow = datesArr.filter(d => d >= cutoffDate).length;
 
-        // Longest consecutive-day streak (all available history)
+        
         let longest = 0, cur = 0, prev = null;
         datesArr.forEach(ds => {
           const d = new Date(ds);
@@ -781,7 +781,7 @@ export default async function handler(req, res) {
           prev = d;
         });
 
-        // Current streak: consecutive days ending today or yesterday
+        
         let current = 0;
         if (datesArr.length) {
           const cursor = new Date(todayStr);
@@ -811,7 +811,7 @@ export default async function handler(req, res) {
       users.sort((a, b) => b.currentStreak - a.currentStreak || b.activeDaysInWindow - a.activeDaysInWindow);
       users.forEach((u, i) => { u.rank = i + 1; });
 
-      // DAU trend for the window: how many distinct users were active each day
+      
       const dauMap = {};
       Object.entries(userDates).forEach(([uid, dates]) => {
         dates.forEach(d => {
@@ -829,19 +829,19 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── TRIGGER MONTHLY REPORT ────────────────────────────────
+    
     if (action === 'trigger_monthly') {
       const result = await triggerEdgeFunction('monthly-report', {});
       return res.status(200).json({ ok: true, result });
     }
 
-    // ── TRIGGER REVIEW EMAIL ──────────────────────────────────
+    
     if (action === 'trigger_review') {
       const result = await triggerEdgeFunction('monthly-report', { type: 'review' });
       return res.status(200).json({ ok: true, result });
     }
 
-    // ── SUPABASE DB STATS ─────────────────────────────────────
+    
     if (action === 'db_stats') {
       const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([
         sbCount('tests').catch(() => 0),
@@ -871,21 +871,21 @@ export default async function handler(req, res) {
     }
 
 
-    // ── FEEDBACK ANALYTICS ──────────────────────────────────
+    
     if (action === 'feedback_list') {
       const limit  = parseInt(req.query.limit || '50');
       const offset = parseInt(req.query.offset || '0');
 
-      // Get feedbacks — include rating (may be null for text-only feedback)
-      // email may be null for review/rating submissions (those don't store email)
+      
+      
       const feedbacks = await sbQuery(
         `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
       ).catch(() => []);
 
-      // Get total count
+      
       const total = await sbCount('feedback').catch(() => 0);
 
-      // Enrich with username from roster where email is missing
+      
       const roster = await buildRoster().catch(() => []);
       const rosterMap = {};
       roster.forEach(u => { rosterMap[u.id] = u; });
@@ -899,13 +899,13 @@ export default async function handler(req, res) {
       return res.status(200).json({ feedbacks: enriched, total });
     }
 
-    // ── FEEDBACK STATS ──────────────────────────────────────
+    
     if (action === 'feedback_stats') {
       const feedbacks = await sbQuery(
         'feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=500'
       ).catch(() => []);
 
-      // Categorize by subject keywords
+      
       const categories = {};
       const keywords = {
         'Bug / Error':      ['bug','error','crash','broken','not working','issue','problem','fix'],
@@ -932,14 +932,14 @@ export default async function handler(req, res) {
         if (!matched) categories['Other'] = (categories['Other'] || 0) + 1;
       });
 
-      // Monthly trend
+      
       const byMonth = {};
       feedbacks.forEach(f => {
         const m = f.created_at?.slice(0, 7) || 'unknown';
         byMonth[m] = (byMonth[m] || 0) + 1;
       });
 
-      // Rating distribution (only entries with a numeric rating)
+      
       const ratedItems = feedbacks.filter(f => f.rating != null && !isNaN(f.rating));
       const ratingDist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       ratedItems.forEach(f => {
@@ -961,9 +961,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── RETENTION ─────────────────────────────────────────────
-    // Cohort-based Day-1 / Day-7 / Day-30 retention.
-    // "Active" = has a test or hours entry on that date.
+    
+    
+    
     if (action === 'retention') {
       const roster = await buildRoster();
       if (!roster.length) return res.status(200).json({ d1: 0, d7: 0, d30: 0, cohorts: [] });
@@ -973,7 +973,7 @@ export default async function handler(req, res) {
         sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(45)}`).catch(() => []),
       ]);
 
-      // Map user_id -> Set of active dates
+      
       const userDates = {};
       [...allTests, ...allHours].forEach(r => {
         if (!r.date) return;
@@ -981,7 +981,7 @@ export default async function handler(req, res) {
         userDates[r.user_id].add(r.date);
       });
 
-      // For each user, check if they were active on day 1, 7, 30 after signup
+      
       const d1Users = [], d7Users = [], d30Users = [];
       let d1Eligible = 0, d7Eligible = 0, d30Eligible = 0;
 
