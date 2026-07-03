@@ -1053,7 +1053,7 @@ function initHeroDemo() {
     setTimeout(() => {
       cursor.classList.remove('traveling');
       cursor.classList.add('clicking');
-      spawnClickBurst(x + 3, y + 3);
+      spawnClickBurst();
       if (!opts.cinematic) punchZoomAt(x + 3, y + 3);
       setTimeout(() => cursor.classList.remove('clicking'), 460);
       cursor.style.transition = '';
@@ -1115,22 +1115,23 @@ function initHeroDemo() {
   }
 
   // A premium multi-layer click burst: two colored rings + a bright core dot.
-  function spawnClickBurst(x, y) {
-    const host = zoomStage || card;
+  // These are appended as children of the cursor itself (not the zoom
+  // stage) and anchored purely via CSS to the cursor's tip — see the
+  // .land-dash-click-ring comment in styles.css for why. That keeps the
+  // burst glued to the tip and painted above the cursor's arrow no matter
+  // what the zoom stage is doing at the time.
+  function spawnClickBurst() {
     const dot = document.createElement('div');
     dot.className = 'land-dash-click-ring pulse-dot';
-    dot.style.left = x + 'px'; dot.style.top = y + 'px';
-    host.appendChild(dot);
+    cursor.appendChild(dot);
 
     const ring1 = document.createElement('div');
     ring1.className = 'land-dash-click-ring pulse';
-    ring1.style.left = x + 'px'; ring1.style.top = y + 'px';
-    host.appendChild(ring1);
+    cursor.appendChild(ring1);
 
     const ring2 = document.createElement('div');
     ring2.className = 'land-dash-click-ring pulse-2';
-    ring2.style.left = x + 'px'; ring2.style.top = y + 'px';
-    host.appendChild(ring2);
+    cursor.appendChild(ring2);
 
     setTimeout(() => { dot.remove(); ring1.remove(); ring2.remove(); }, 780);
   }
@@ -1366,7 +1367,7 @@ function initHeroDemo() {
         cursor.classList.remove('traveling');
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 3, y + 3);
+        spawnClickBurst();
         punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         activateView(name);
@@ -1393,7 +1394,7 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 3, y + 3);
+        spawnClickBurst();
         punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         setFilter(f.dataset.filter, true);
@@ -1414,7 +1415,7 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 3, y + 3);
+        spawnClickBurst();
         punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         playInsightsLoading(() => {
@@ -1436,7 +1437,7 @@ function initHeroDemo() {
         cursor.style.opacity = '1';
         cursor.style.transform = `translate(${x}px,${y}px)`;
         cursor.classList.add('clicking');
-        spawnClickBurst(x + 3, y + 3);
+        spawnClickBurst();
         punchZoomAt(x + 3, y + 3);
         setTimeout(() => cursor.classList.remove('clicking'), 460);
         playInsightsLoading(() => {

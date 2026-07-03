@@ -1439,10 +1439,24 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 @keyframes cursorClick{0%{transform:scale(1) rotate(0)}35%{transform:scale(.8) rotate(3deg)}70%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes cursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(244,114,182,.6))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
 
+/* Click-burst rings now live INSIDE .land-dash-cursor (appended as its
+   children — see spawnClickBurst in app.js) instead of being dropped into
+   the zoom stage. Two problems that used to make the effect "come out
+   behind the cursor" are fixed by this:
+   1) Stacking: as later DOM children of the cursor element they always
+      paint on top of the cursor's arrow SVG, never underneath it.
+   2) Position drift: the zoom stage scales up during the click-zoom
+      animation, but the cursor lives outside it — so anything appended to
+      the zoom stage would drift away from the cursor mid-animation. As
+      children of the cursor itself, the rings are pinned exactly to it.
+   The anchor (left/top) below is the pixel position of the arrow's tip
+   inside the cursor's own 20x20 box; translate(-50%,-50%) centers every
+   ring/dot on that exact point regardless of its own size. */
 .land-dash-click-ring{
-  position:absolute;top:0;left:0;width:18px;height:18px;margin:-3px 0 0 -3px;
+  position:absolute;top:2px;left:3px;width:18px;height:18px;
+  transform:translate(-50%,-50%) scale(.2);
   border-radius:50%;border:1.5px solid rgba(166,149,255,.5);
-  pointer-events:none;z-index:29;opacity:0;
+  pointer-events:none;opacity:0;
 }
 .land-dash-click-ring.pulse{animation:clickRingPulse .6s cubic-bezier(.2,.7,.3,1) both}
 .land-dash-click-ring.pulse-2{
@@ -1450,13 +1464,13 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   animation:clickRingPulse .6s cubic-bezier(.2,.7,.3,1) .08s both;
 }
 .land-dash-click-ring.pulse-dot{
-  width:6px;height:6px;margin:5px 0 0 5px;border:none;
+  width:6px;height:6px;border:none;
   background:radial-gradient(circle,#fff,rgba(166,149,255,.85) 60%,transparent 75%);
   box-shadow:0 0 7px 1.5px rgba(166,149,255,.45);
   animation:clickDotPulse .45s cubic-bezier(.34,1.56,.64,1) both;
 }
-@keyframes clickRingPulse{0%{opacity:.55;transform:scale(.2)}70%{opacity:.2}100%{opacity:0;transform:scale(1.5)}}
-@keyframes clickDotPulse{0%{opacity:0;transform:scale(.3)}45%{opacity:.75;transform:scale(1.15)}100%{opacity:0;transform:scale(.6)}}
+@keyframes clickRingPulse{0%{opacity:.55;transform:translate(-50%,-50%) scale(.2)}70%{opacity:.2}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+@keyframes clickDotPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}45%{opacity:.75;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(.6)}}
 
 @media(max-width:900px){
   .land-dash-cursor{transform:scale(.88) translate(140px,52px)}
@@ -4203,23 +4217,50 @@ select.fc.adv-fc {
 .pmo-score-bar-wrap { height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-bottom:12px }
 .pmo-score-bar-fill { height:100%;background:linear-gradient(90deg,#7c6af7,#f472b6);border-radius:99px;transition:width .4s cubic-bezier(.34,1.2,.64,1);min-width:0 }
 
-.pmo-hours-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px }
-.pmo-hrs-card {
+.pmo-hrs-rows { display:flex;flex-direction:column;gap:7px;margin-bottom:8px }
+.pmo-hrs-row {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;
-  transition:border-color .18s
+  border-radius:12px;padding:9px 10px;transition:border-color .18s,background .18s
 }
 .pmo-hrs-lec:focus-within  { border-color:rgba(96,165,250,.4);background:rgba(96,165,250,.07) }
 .pmo-hrs-prac:focus-within { border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.07) }
 .pmo-hrs-rev:focus-within  { border-color:rgba(166,149,255,.4);background:rgba(166,149,255,.07) }
-.pmo-hrs-label { font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:3px }
-.pmo-hrs-inp {
-  width:100%;background:transparent;border:none;color:var(--tx);
-  font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;
-  outline:none;padding:2px 0
+.pmo-hrs-row-label {
+  display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+  color:var(--tx);flex-shrink:0;font-family:'DM Sans',sans-serif
 }
-.pmo-hrs-inp::placeholder { color:rgba(255,255,255,.18);font-size:22px }
-.pmo-hrs-unit { font-size:10px;color:var(--mu);font-weight:600 }
+.pmo-hrs-row-label svg{flex-shrink:0;opacity:.8}
+.pmo-hrs-row-controls{ display:flex;align-items:center;gap:6px }
+.pmo-hrs-stepper{
+  display:flex;align-items:center;gap:1px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:2px
+}
+.pmo-hrs-stepbtn{
+  width:20px;height:26px;border-radius:7px;border:none;background:transparent;
+  color:var(--mu);font-size:13px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent
+}
+.pmo-hrs-stepbtn:hover{ background:rgba(124,106,247,.18);color:var(--ac2) }
+.pmo-hrs-stepbtn:active{ transform:scale(.88) }
+.pmo-hrs-inp-wrap{ display:flex;flex-direction:column;align-items:center;width:32px }
+.pmo-hrs-inp{
+  width:100%;background:transparent;border:none;color:var(--tx);
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:800;text-align:center;
+  outline:none;padding:0;-moz-appearance:textfield
+}
+.pmo-hrs-inp::-webkit-outer-spin-button,.pmo-hrs-inp::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }
+.pmo-hrs-inp::placeholder{ color:rgba(255,255,255,.22) }
+.pmo-hrs-suf{
+  font-size:8px;color:var(--mu);font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;margin-top:-1px
+}
+@media(max-width:380px){
+  .pmo-hrs-row{ padding:8px }
+  .pmo-hrs-stepbtn{ width:18px }
+  .pmo-hrs-inp-wrap{ width:28px }
+}
 
 /* ── Sticky Timer Widget ── */
 .lhs-widget {
@@ -4322,33 +4363,55 @@ select.fc.adv-fc {
 
 /* ── Study Timer (modal) ── */
 .lh-timer-wrap {
-  background:rgba(124,106,247,.06);border:1px solid rgba(124,106,247,.18);
-  border-radius:14px;padding:14px 14px 12px;margin-bottom:14px;position:relative;z-index:1
+  background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));
+  border:1px solid rgba(124,106,247,.22);
+  border-radius:18px;padding:18px 16px 14px;margin-bottom:14px;position:relative;z-index:1;
+  overflow:hidden
+}
+.lh-timer-wrap::before{
+  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:220px;height:160px;background:radial-gradient(ellipse,rgba(124,106,247,.25),transparent 70%);
+  pointer-events:none;z-index:0
 }
 .lh-timer-label {
-  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--mu);display:flex;align-items:center;gap:5px;margin-bottom:10px
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mu);display:flex;align-items:center;gap:5px;margin-bottom:12px;
+  position:relative;z-index:1
 }
 .lh-timer-mode-tag {
   margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-  color:rgba(124,106,247,.8);background:rgba(124,106,247,.12);border-radius:99px;
-  padding:2px 7px;border:1px solid rgba(124,106,247,.2)
+  color:#c9bfff;background:rgba(124,106,247,.16);border-radius:99px;
+  padding:3px 8px;border:1px solid rgba(124,106,247,.28)
 }
+
+/* Circular progress stage — the timer's centerpiece */
+.lh-timer-stage {
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:176px;height:176px;margin:0 auto 14px;z-index:1
+}
+.lh-timer-ring { position:absolute;top:0;left:0;filter:drop-shadow(0 0 10px rgba(124,106,247,.25)) }
+.lh-timer-ring-track { fill:none;stroke:rgba(255,255,255,.07);stroke-width:7 }
+.lh-timer-ring-progress {
+  fill:none;stroke:url(#lhRingGrad);stroke-width:7;stroke-linecap:round;
+  transition:stroke-dashoffset .45s cubic-bezier(.34,1,.64,1)
+}
+.lh-timer-ring-progress.lh-ring-pulse{ animation:lhRingPulse 1.8s ease-in-out infinite }
+@keyframes lhRingPulse{0%,100%{opacity:1;filter:drop-shadow(0 0 2px rgba(244,114,182,.4))}50%{opacity:.55;filter:drop-shadow(0 0 10px rgba(244,114,182,.7))}}
 .lh-timer-display {
-  font-family:'Syne',sans-serif;font-size:36px;font-weight:800;
-  text-align:center;color:var(--tx);letter-spacing:.05em;line-height:1;
-  margin-bottom:10px
+  font-family:'Syne',sans-serif;font-size:29px;font-weight:800;
+  text-align:center;color:var(--tx);letter-spacing:.02em;line-height:1;
+  font-variant-numeric:tabular-nums;position:relative;z-index:1
 }
 .lh-timer-bar-wrap {
   height:4px;background:rgba(255,255,255,.06);border-radius:99px;
-  overflow:hidden;margin-bottom:10px
+  overflow:hidden;margin-bottom:10px;position:relative;z-index:1
 }
 .lh-timer-bar {
   height:100%;width:0%;border-radius:99px;
   background:linear-gradient(90deg,#7c6af7,#a78bfa);
   transition:width .5s linear
 }
-.lh-timer-controls { display:flex;align-items:center;gap:6px }
+.lh-timer-controls { display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1 }
 .lh-timer-btn {
   display:flex;align-items:center;gap:5px;padding:6px 12px;
   border-radius:8px;border:1px solid rgba(255,255,255,.1);
@@ -4359,10 +4422,14 @@ select.fc.adv-fc {
 .lh-timer-btn:hover { background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18) }
 .lh-timer-btn:active { transform:scale(.96) }
 .lh-timer-toggle {
-  background:linear-gradient(135deg,rgba(124,106,247,.3),rgba(124,106,247,.15));
-  border-color:rgba(124,106,247,.4);flex:1;justify-content:center
+  flex-basis:100%;justify-content:center;padding:12px 12px;border-radius:99px;
+  font-size:13.5px;font-weight:700;letter-spacing:.01em;border:none;color:#fff;
+  background:linear-gradient(135deg,#7c6af7,#a78bfa);
+  box-shadow:0 6px 20px rgba(124,106,247,.4),inset 0 1px 0 rgba(255,255,255,.15)
 }
-.lh-timer-toggle:hover { background:linear-gradient(135deg,rgba(124,106,247,.45),rgba(124,106,247,.25)) }
+.lh-timer-toggle:hover { box-shadow:0 8px 24px rgba(124,106,247,.55),inset 0 1px 0 rgba(255,255,255,.2);transform:translateY(-1px) }
+.lh-timer-toggle:active { transform:scale(.97) }
+.lh-timer-subcontrols{ display:flex;align-items:center;gap:6px;flex-basis:100%;flex-wrap:wrap }
 .lh-timer-use {
   background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(52,211,153,.08));
   border-color:rgba(52,211,153,.35);color:rgb(52,211,153)
@@ -4374,27 +4441,35 @@ select.fc.adv-fc {
   border-radius:8px;border:1px solid rgba(255,255,255,.08);
   background:rgba(255,255,255,.04);color:var(--mu);
   font-size:10px;font-weight:700;cursor:pointer;
-  transition:background .15s,color .15s
+  transition:background .15s,color .15s;margin-left:auto
 }
 .lh-timer-pip-btn:hover{background:rgba(124,106,247,.15);color:var(--ac2);border-color:rgba(124,106,247,.25)}
 .lh-timer-pip-btn svg{flex-shrink:0}
 .lh-timer-mode-btn {
-  margin-left:auto;font-size:10px;font-weight:700;padding:5px 10px;
+  font-size:10px;font-weight:700;padding:5px 10px;
   border-radius:8px;border:1px solid rgba(255,255,255,.08);
   background:rgba(255,255,255,.04);color:var(--mu);cursor:pointer;
   transition:background .15s,color .15s;white-space:nowrap
 }
 .lh-timer-mode-btn:hover { background:rgba(255,255,255,.09);color:var(--tx) }
 .lh-countdown-row {
-  display:flex;align-items:center;gap:5px;margin-bottom:10px;font-size:12px;color:var(--mu)
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;
+  font-size:12px;color:var(--mu);position:relative;z-index:1
 }
 .lh-countdown-lbl { font-weight:600;font-size:11px }
-.lh-cd-inp {
-  width:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:6px;color:var(--tx);font-family:'Syne',sans-serif;font-weight:700;
-  font-size:13px;text-align:center;padding:4px 2px;outline:none
+.lh-cd-field{
+  display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:4px 9px 4px 4px;
+  transition:border-color .18s
 }
-.lh-cd-inp:focus { border-color:rgba(124,106,247,.5) }
+.lh-cd-field:focus-within{ border-color:rgba(124,106,247,.5) }
+.lh-cd-field span{ font-size:10.5px;color:var(--mu);font-weight:700;text-transform:uppercase }
+.lh-cd-inp {
+  width:32px;background:transparent;border:none;
+  color:var(--tx);font-family:'Syne',sans-serif;font-weight:800;
+  font-size:15px;text-align:center;padding:2px;outline:none;-moz-appearance:textfield
+}
+.lh-cd-inp::-webkit-outer-spin-button,.lh-cd-inp::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }
 .lh-timer-apply {
   margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)
 }

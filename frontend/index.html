@@ -2757,37 +2757,85 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
     <!-- ── Direct Entry panel ── -->
     <div class="lh-panel active" id="lh-panel-direct">
-      <div class="pmo-hours-grid">
-        <div class="pmo-hrs-card pmo-hrs-lec">
-          <div class="pmo-hrs-label">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <div class="pmo-hrs-rows">
+        <div class="pmo-hrs-row pmo-hrs-lec">
+          <div class="pmo-hrs-row-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Lecture
           </div>
-          <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-l" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal();clearFieldErr('lh-l','lh-hrs-err');clearFieldErr('lh-p','lh-hrs-err');clearFieldErr('lh-r','lh-hrs-err')"/>
-          <div class="pmo-hrs-unit">hrs</div>
+          <div class="pmo-hrs-row-controls">
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-l-h',-1)" aria-label="Decrease lecture hours">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="lh-l-h" placeholder="0" aria-label="Lecture hours" oninput="_lhClampH(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">hr</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-l-h',1)" aria-label="Increase lecture hours">+</button>
+            </div>
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-l-h','lh-l-m',-5)" aria-label="Decrease lecture minutes">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="lh-l-m" placeholder="0" aria-label="Lecture minutes" oninput="_lhClampM(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">min</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-l-h','lh-l-m',5)" aria-label="Increase lecture minutes">+</button>
+            </div>
+          </div>
         </div>
-        <div class="pmo-hrs-card pmo-hrs-prac">
-          <div class="pmo-hrs-label">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="pmo-hrs-row pmo-hrs-prac">
+          <div class="pmo-hrs-row-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             Practice
           </div>
-          <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-p" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/>
-          <div class="pmo-hrs-unit">hrs</div>
+          <div class="pmo-hrs-row-controls">
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-p-h',-1)" aria-label="Decrease practice hours">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="lh-p-h" placeholder="0" aria-label="Practice hours" oninput="_lhClampH(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">hr</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-p-h',1)" aria-label="Increase practice hours">+</button>
+            </div>
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-p-h','lh-p-m',-5)" aria-label="Decrease practice minutes">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="lh-p-m" placeholder="0" aria-label="Practice minutes" oninput="_lhClampM(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">min</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-p-h','lh-p-m',5)" aria-label="Increase practice minutes">+</button>
+            </div>
+          </div>
         </div>
-        <div class="pmo-hrs-card pmo-hrs-rev">
-          <div class="pmo-hrs-label">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <div class="pmo-hrs-row pmo-hrs-rev">
+          <div class="pmo-hrs-row-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             Revision
           </div>
-          <input type="number" step="0.5" min="0" max="24" class="pmo-hrs-inp" id="lh-r" placeholder="0" oninput="if(+this.value>24)this.value=24;calcTotal()"/>
-          <div class="pmo-hrs-unit">hrs</div>
+          <div class="pmo-hrs-row-controls">
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-r-h',-1)" aria-label="Decrease revision hours">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="lh-r-h" placeholder="0" aria-label="Revision hours" oninput="_lhClampH(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">hr</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('lh-r-h',1)" aria-label="Increase revision hours">+</button>
+            </div>
+            <div class="pmo-hrs-stepper">
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-r-h','lh-r-m',-5)" aria-label="Decrease revision minutes">−</button>
+              <div class="pmo-hrs-inp-wrap">
+                <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="lh-r-m" placeholder="0" aria-label="Revision minutes" oninput="_lhClampM(this);calcTotal();_lhClearHrsErr()"/>
+                <span class="pmo-hrs-suf">min</span>
+              </div>
+              <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('lh-r-h','lh-r-m',5)" aria-label="Increase revision minutes">+</button>
+            </div>
+          </div>
         </div>
       </div>
       <span class="fi-err-msg" id="lh-hrs-err" style="margin-bottom:8px"></span>
 
       <div class="pmo-total-pill">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Total: <strong id="lh-tot" style="color:var(--ac2);margin-left:3px">0 hrs</strong>
+        Total: <strong id="lh-tot" style="color:var(--ac2);margin-left:3px">0m</strong>
       </div>
     </div>
 
@@ -2819,11 +2867,26 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <!-- Countdown target row (hidden by default) -->
         <div class="lh-countdown-row" id="lh-countdown-row" style="display:none">
           <label class="lh-countdown-lbl">Set goal</label>
-          <input type="number" id="lh-cd-h" class="lh-cd-inp" min="0" max="23" placeholder="0" title="hours"/> h
-          <input type="number" id="lh-cd-m" class="lh-cd-inp" min="0" max="59" placeholder="30" title="minutes"/> m
+          <div class="lh-cd-field"><input type="number" id="lh-cd-h" class="lh-cd-inp" min="0" max="23" placeholder="0" title="hours"/><span>h</span></div>
+          <div class="lh-cd-field"><input type="number" id="lh-cd-m" class="lh-cd-inp" min="0" max="59" placeholder="30" title="minutes"/><span>m</span></div>
         </div>
 
-        <div class="lh-timer-display" id="lh-timer-display">00:00:00</div>
+        <!-- Circular progress stage — depletes for Countdown, glows/pulses for Stopwatch -->
+        <div class="lh-timer-stage" id="lh-timer-stage">
+          <svg class="lh-timer-ring" viewBox="0 0 176 176" width="176" height="176" aria-hidden="true">
+            <defs>
+              <linearGradient id="lhRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7c6af7"/>
+                <stop offset="100%" stop-color="#f472b6"/>
+              </linearGradient>
+            </defs>
+            <circle class="lh-timer-ring-track" cx="88" cy="88" r="80"/>
+            <g transform="rotate(-90 88 88)">
+              <circle class="lh-timer-ring-progress" id="lh-timer-ring-progress" cx="88" cy="88" r="80" stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+            </g>
+          </svg>
+          <div class="lh-timer-display" id="lh-timer-display">00:00:00</div>
+        </div>
 
         <div class="lh-timer-bar-wrap" id="lh-timer-bar-wrap" style="display:none">
           <div class="lh-timer-bar" id="lh-timer-bar"></div>
@@ -2831,18 +2894,20 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
         <div class="lh-timer-controls">
           <button class="lh-timer-btn lh-timer-toggle" id="lh-timer-toggle" onclick="lhTimerToggle()">
-            <svg id="lh-play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <svg id="lh-pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <svg id="lh-play-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="lh-pause-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             <span id="lh-timer-btn-txt">Start</span>
           </button>
-          <button class="lh-timer-btn lh-timer-reset" onclick="lhTimerReset()" title="Reset">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          </button>
-          <button class="lh-timer-mode-btn" id="lh-timer-mode-btn" onclick="lhTimerToggleMode()">⏱ Countdown</button>
-          <button class="lh-timer-pip-btn" onclick="lhOpenPip()" title="Float timer on top of all windows">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><rect x="12" y="11" width="8" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
-            Pop out
-          </button>
+          <div class="lh-timer-subcontrols">
+            <button class="lh-timer-btn lh-timer-reset" onclick="lhTimerReset()" title="Reset">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </button>
+            <button class="lh-timer-mode-btn" id="lh-timer-mode-btn" onclick="lhTimerToggleMode()">⏱ Countdown</button>
+            <button class="lh-timer-pip-btn" onclick="lhOpenPip()" title="Float timer on top of all windows">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><rect x="12" y="11" width="8" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+              Pop out
+            </button>
+          </div>
         </div>
 
         <!-- Save bar — appears once there's time on the clock -->
@@ -2853,6 +2918,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             Save Session
           </button>
         </div>
+
       </div>
     </div>
 
@@ -4339,9 +4405,9 @@ const openM=function(id,preset){
   if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset){document.getElementById('sch-exam').value=preset;document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));document.querySelector('#modal-scheduleTest .pmo-pill[onclick*="'+preset+'"]')?.classList.add('active');}}
   if(id==='logHours'){
     document.getElementById('lh-date').value=td();
-    ['lh-l','lh-p','lh-r'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('lh-tot').textContent='0 hrs';
-    ['lh-l','lh-p','lh-r'].forEach(i=>clearFieldErr(i,'lh-hrs-err'));
+    ['lh-l-h','lh-l-m','lh-p-h','lh-p-m','lh-r-h','lh-r-m'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('lh-tot').textContent='0m';
+    _lhClearHrsErr();
     _lhTimerReset(); // only clears if no time is on the clock — a running/paused session survives
     if (_lhTimer.running || _lhLoggable()>0) {
       // a session is already in progress — reflect it and jump straight to the Timer tab
@@ -4419,6 +4485,27 @@ function _lhCap(s){ return s ? s[0].toUpperCase()+s.slice(1) : ''; }
 // so the time actually worth saving is (goal - elapsed), not elapsed itself.
 function _lhLoggable(){ return _lhTimer.mode==='countdown' ? Math.max(0,_lhTimer.goal-_lhTimer.elapsed) : _lhTimer.elapsed; }
 
+const LH_RING_C = 502.65; // 2 * PI * 80 — must match the r=80 circle in the timer's SVG ring
+// Drives the circular progress ring in the Study Timer: depletes proportionally
+// in Countdown mode (mirrors the old linear bar's math), and shows a solid
+// glow (pulsing while running, steady while paused) in Stopwatch mode since
+// there's no fixed goal to measure progress against.
+function _lhUpdateRingVisual() {
+  const ring = document.getElementById('lh-timer-ring-progress');
+  if (!ring) return;
+  const t = _lhTimer;
+  ring.classList.remove('lh-ring-pulse');
+  if (t.mode === 'countdown' && t.goal) {
+    const pct = Math.max(0, Math.min(100, ((t.goal - t.elapsed) / t.goal) * 100));
+    ring.style.strokeDashoffset = LH_RING_C - (pct / 100) * LH_RING_C;
+  } else if (t.mode === 'stopwatch' && (t.running || t.elapsed > 0)) {
+    ring.style.strokeDashoffset = 0;
+    if (t.running) ring.classList.add('lh-ring-pulse');
+  } else {
+    ring.style.strokeDashoffset = LH_RING_C;
+  }
+}
+
 function _lhRenderAll() {
   const t = _lhTimer;
   const disp = _lhFmt(t.elapsed);
@@ -4428,6 +4515,7 @@ function _lhRenderAll() {
     const pct = Math.min(100, ((t.goal - t.elapsed) / t.goal) * 100);
     const bar = document.getElementById('lh-timer-bar'); if(bar) bar.style.width = pct + '%';
   }
+  _lhUpdateRingVisual();
   const loggable = _lhLoggable();
   const at = document.getElementById('lh-apply-time'); if(at) at.textContent = _lhFmt(loggable);
   _lhUpdateSaveBar();
@@ -4627,6 +4715,7 @@ function lhTimerReset() {
   document.querySelectorAll('#modal-logHours .pmo-subj-pill').forEach(p=>p.disabled=false);
   const cr=document.getElementById('lh-countdown-row');
   if(cr) cr.style.display=_lhTimer.mode==='countdown'?'flex':'none';
+  _lhUpdateRingVisual();
   if (_lhPipWindow&&!_lhPipWindow.closed) {
     const pd=_lhPipWindow.document.getElementById('pip-display'); if(pd) pd.textContent='00:00:00';
     const pb=_lhPipWindow.document.getElementById('pip-bar'); if(pb) pb.style.width='0%';
@@ -4654,6 +4743,7 @@ function lhTimerToggleMode() {
   const md=document.getElementById('lh-timer-display'); if(md) md.textContent='00:00:00';
   const bar=document.getElementById('lh-timer-bar'); if(bar) bar.style.width='0%';
   const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
+  _lhUpdateRingVisual();
   _lhUpdateSaveBar();
 }
 
@@ -4704,6 +4794,7 @@ function _lhTimerReset() {
   const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display='';
   const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display='none';
   const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
+  _lhUpdateRingVisual();
   _lhUpdateSaveBar();
 }
 
@@ -4731,6 +4822,7 @@ function _lhSyncModalFromState() {
     p.disabled = _lhTimer.running;
   });
   document.querySelectorAll('#modal-logHours .pmo-subj-pill').forEach(p=>p.disabled=_lhTimer.running);
+  _lhUpdateRingVisual();
   _lhUpdateSaveBar();
   _lhUpdateLiveDot();
 }
@@ -4752,10 +4844,43 @@ function lhSwitchTab(tab) {
   if (directSaveBtn) directSaveBtn.style.display = tab==='direct' ? 'flex' : 'none';
 }
 
+// Reads a subject's hour+minute pair as a decimal-hours number, e.g. 1h 30m -> 1.5
+function _lhDur(hId, mId){
+  return (+document.getElementById(hId).value||0) + (+document.getElementById(mId).value||0)/60;
+}
+// Formats decimal hours as a short, unambiguous "Xh Ym" string instead of a raw decimal
+function _lhFmtHM(decHours){
+  const totalMin = Math.round(decHours*60);
+  const h = Math.floor(totalMin/60), m = totalMin%60;
+  if (h && m) return h+'h '+m+'m';
+  if (h) return h+'h';
+  return m+'m';
+}
+function _lhClampH(el){ let v=+el.value; if(isNaN(v)||v<0) v=0; if(v>24) v=24; el.value=v||''; }
+function _lhClampM(el){ let v=+el.value; if(isNaN(v)||v<0) v=0; if(v>59) v=59; el.value=v||''; }
+function _lhClearHrsErr(){ ['lh-l-h','lh-l-m','lh-p-h','lh-p-m','lh-r-h','lh-r-m'].forEach(id=>clearFieldErr(id,'lh-hrs-err')); }
+// Stepper buttons — tap to nudge hours by 1 without opening the keyboard
+function _lhStepH(hId, delta){
+  const el=document.getElementById(hId); if(!el) return;
+  let v=(+el.value||0)+delta;
+  if(v<0) v=0; if(v>24) v=24;
+  el.value=v||'';
+  calcTotal(); _lhClearHrsErr();
+}
+// Minute stepper — steps by 5 and rolls over into the hour field so 55m + 5m
+// becomes 1h 0m instead of a confusing "60m"
+function _lhStepM(hId, mId, delta){
+  const hEl=document.getElementById(hId), mEl=document.getElementById(mId);
+  if(!hEl||!mEl) return;
+  let h=+hEl.value||0, m=(+mEl.value||0)+delta;
+  if(m>=60){ h=Math.min(24,h+Math.floor(m/60)); m=m%60; }
+  else if(m<0){ if(h>0){ h-=1; m+=60; } else m=0; }
+  hEl.value=h||''; mEl.value=m||'';
+  calcTotal(); _lhClearHrsErr();
+}
 function calcTotal(){
-  const l=+document.getElementById('lh-l').value||0,p=+document.getElementById('lh-p').value||0,r=+document.getElementById('lh-r').value||0;
-  const tot=(l+p+r).toFixed(1);
-  const el=document.getElementById('lh-tot');if(el)el.textContent=tot+'h';
+  const l=_lhDur('lh-l-h','lh-l-m'), p=_lhDur('lh-p-h','lh-p-m'), r=_lhDur('lh-r-h','lh-r-m');
+  const el=document.getElementById('lh-tot'); if(el) el.textContent=_lhFmtHM(l+p+r);
 }
 function quickLog(type){currentQLType=type;document.getElementById('ql-title').textContent='Quick Log — '+cap(type);document.getElementById('ql-hrs').value='';openM('quickLog')}
 
@@ -5141,14 +5266,14 @@ function saveSchedule(){
   renderMains();renderAdv();renderOverview();
 }
 function saveHours(){
-  const l=+document.getElementById('lh-l').value||0,p=+document.getElementById('lh-p').value||0,r=+document.getElementById('lh-r').value||0;
+  const l=_lhDur('lh-l-h','lh-l-m'), p=_lhDur('lh-p-h','lh-p-m'), r=_lhDur('lh-r-h','lh-r-m');
   if(!l&&!p&&!r){
-    ['lh-l','lh-p','lh-r'].forEach(id=>document.getElementById(id)?.classList.add('fi-error'));
-    showFieldErr('lh-l','lh-hrs-err','Enter at least one value');
+    ['lh-l-h','lh-l-m','lh-p-h','lh-p-m','lh-r-h','lh-r-m'].forEach(id=>document.getElementById(id)?.classList.add('fi-error'));
+    showFieldErr('lh-l-h','lh-hrs-err','Enter at least one value');
     return;
   }
-  ['lh-l','lh-p','lh-r'].forEach(id=>clearFieldErr(id,'lh-hrs-err'));
-  const e={id:Date.now(),date:document.getElementById('lh-date').value,subject:document.getElementById('lh-subj').value,lecture:l,practice:p,revision:r,total:+(l+p+r).toFixed(1)};
+  _lhClearHrsErr();
+  const e={id:Date.now(),date:document.getElementById('lh-date').value,subject:document.getElementById('lh-subj').value,lecture:+l.toFixed(2),practice:+p.toFixed(2),revision:+r.toFixed(2),total:+(l+p+r).toFixed(2)};
   S.hours.push(e);save();closeM('logHours');maybeShowHoursReview();
   pushUndo('hours',e,'Hours logged ✓',false);
   navMarkDirty('hours');navMarkDirty('overview');
