@@ -1160,25 +1160,23 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid rgba(255,255,255,.1);
-  padding:22px 22px 20px;
-  box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset,0 45px 120px rgba(108,92,231,.16);
-  transform:perspective(1400px) rotateY(-8deg) rotateX(2deg);
-  transition:transform .6s cubic-bezier(.34,1,.64,1);
-}
-.land-hero-visual:hover .land-dash-card{transform:perspective(1400px) rotateY(-3deg) rotateX(1deg)}
-
-.land-dash-card{
-  position:relative;z-index:1;border-radius:22px;
-  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid rgba(255,255,255,.1);
   padding:16px 18px 20px;
   box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset,0 45px 120px rgba(108,92,231,.16);
   transform:perspective(1400px) rotateY(-8deg) rotateX(2deg);
-  transition:transform .6s cubic-bezier(.34,1,.64,1);
   overflow:hidden;
+  will-change:transform;
 }
-.land-hero-visual:hover .land-dash-card{transform:perspective(1400px) rotateY(-3deg) rotateX(1deg)}
+
+/* Soft light sheen that tracks the pointer, layered on top of the card's
+   content but beneath the demo's own cursor/click-burst (z-index 30+).
+   Its position is driven by --glare-x/--glare-y, set in app.js on
+   mousemove; it only fades in while the visual is actually hovered. */
+.land-card-glare{
+  position:absolute;inset:0;z-index:5;pointer-events:none;
+  border-radius:inherit;opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,.15),transparent 55%);
+}
+.land-card-glare.active{opacity:1}
 
 .land-dash-zoom-stage{
   position:relative;
@@ -1478,7 +1476,7 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 
 @media(prefers-reduced-motion:reduce){
   .land-hero-visual,.land-hero-glow,.land-dash-bar,.land-dash-view,.land-dd-chart-line{animation:none}
-  .land-hero-visual:hover .land-dash-card{transform:none}
+  .land-dash-card{transform:none}
   .land-dash-view.active{opacity:1;transform:none;pointer-events:auto}
   .land-dash-cursor{display:none}
 }

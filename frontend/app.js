@@ -1014,6 +1014,66 @@ function initHeroDemo() {
   let currentFilter = 'all';
   let _insLoadTimer = null;
 
+  // ── Premium 3D pointer-tilt for the whole demo card, the kind of touch
+  // premium SaaS showcases (Linear, Stripe, etc.) use on their hero visuals.
+  // It runs its own lerp-based loop each frame rather than leaning on CSS
+  // transitions, since a transition re-triggering on every mousemove event
+  // fights itself and looks laggy. The automated cursor's clicks and
+  // cinematic zooms below call kickTilt() to add a one-off "camera impact"
+  // nudge on top of whatever the current tilt is, which then eases back out
+  // on its own via the same loop — no separate timers needed for the decay.
+  const REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TILT_REST = { rx: 2, ry: -8, tz: 0 };
+  const tiltState = { cur: { rx: 2, ry: -8, tz: 0 }, target: { rx: 2, ry: -8 } };
+  let tiltGlare = null;
+
+  function setupHeroTilt() {
+    if (REDUCE_MOTION) return;
+    const visual = card.closest('.land-hero-visual') || card;
+
+    tiltGlare = document.createElement('div');
+    tiltGlare.className = 'land-card-glare';
+    card.appendChild(tiltGlare);
+
+    visual.addEventListener('mouseenter', () => { if (tiltGlare) tiltGlare.classList.add('active'); });
+    visual.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+      const nx = px * 2 - 1, ny = py * 2 - 1; // -1..1, center-relative
+      tiltState.target.ry = TILT_REST.ry + nx * 9;
+      tiltState.target.rx = TILT_REST.rx - ny * 6;
+      if (tiltGlare) {
+        tiltGlare.style.setProperty('--glare-x', (px * 100) + '%');
+        tiltGlare.style.setProperty('--glare-y', (py * 100) + '%');
+      }
+    });
+    visual.addEventListener('mouseleave', () => {
+      tiltState.target.rx = TILT_REST.rx;
+      tiltState.target.ry = TILT_REST.ry;
+      if (tiltGlare) tiltGlare.classList.remove('active');
+    });
+
+    (function tick() {
+      const s = tiltState.cur, t = tiltState.target;
+      s.rx += (t.rx - s.rx) * 0.12;
+      s.ry += (t.ry - s.ry) * 0.12;
+      s.tz += (0 - s.tz) * 0.16; // tz always rests at 0; kicks push it up transiently
+      card.style.transform = `perspective(1400px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg) translateZ(${s.tz.toFixed(2)}px)`;
+      requestAnimationFrame(tick);
+    })();
+  }
+
+  function kickTilt(drx, dry, dtz) {
+    if (REDUCE_MOTION) return;
+    tiltState.cur.rx += drx || 0;
+    tiltState.cur.ry += dry || 0;
+    tiltState.cur.tz += dtz || 0;
+  }
+
+  setupHeroTilt();
+
   // Timing for the two cinematic legs of the demo — Mock Tests tab ->
   // Partial Filter, and AI Insights tab -> Generate Insights — where the
   // cursor travels slightly slower so the camera push-in has room to read.
@@ -1065,6 +1125,7 @@ function initHeroDemo() {
   // Filter leg — distinct from the quick "punch" used on ordinary clicks.
   function zoomCinematicIn(x, y, durationMs) {
     if (!zoomStage) return;
+    kickTilt(-2.2, 3.2, 16);
     // A finished zoom-punch animation still holds transform via its
     // fill-mode:both, which would silently override the inline transform
     // below. Detach it first so the cinematic zoom actually takes effect.
@@ -1084,6 +1145,7 @@ function initHeroDemo() {
   // single continuous motion instead of two separate animations.
   function zoomCinematicOut() {
     if (!zoomStage) return;
+    kickTilt(1, -1.6, -6);
     zoomStage.style.transition = `transform ${CINEMATIC_OUT_MS}ms cubic-bezier(.16,1,.3,1)`;
     zoomStage.style.transform = 'scale(1)';
     setTimeout(() => {
@@ -1096,6 +1158,7 @@ function initHeroDemo() {
   // point, then eases back out, like a SaaS product micro-interaction.
   function punchZoomAt(x, y) {
     if (!zoomStage) return;
+    kickTilt(-1.2, 1.8, 9);
     const w = card.clientWidth || 1;
     const h = card.clientHeight || 1;
     const ox = Math.min(100, Math.max(0, (x / w) * 100));
