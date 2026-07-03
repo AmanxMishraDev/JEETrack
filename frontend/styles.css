@@ -4387,20 +4387,26 @@ select.fc.adv-fc {
 /* Circular progress stage — the timer's centerpiece */
 .lh-timer-stage {
   position:relative;display:flex;align-items:center;justify-content:center;
-  width:176px;height:176px;margin:0 auto 14px;z-index:1
+  width:200px;height:200px;margin:0 auto 14px;z-index:1
 }
 .lh-timer-ring { position:absolute;top:0;left:0;filter:drop-shadow(0 0 10px rgba(124,106,247,.25)) }
-.lh-timer-ring-track { fill:none;stroke:rgba(255,255,255,.07);stroke-width:7 }
+.lh-timer-ring-track { fill:none;stroke:rgba(255,255,255,.07);stroke-width:6 }
 .lh-timer-ring-progress {
-  fill:none;stroke:url(#lhRingGrad);stroke-width:7;stroke-linecap:round;
+  fill:none;stroke:url(#lhRingGrad);stroke-width:6;stroke-linecap:round;
   transition:stroke-dashoffset .45s cubic-bezier(.34,1,.64,1)
 }
 .lh-timer-ring-progress.lh-ring-pulse{ animation:lhRingPulse 1.8s ease-in-out infinite }
 @keyframes lhRingPulse{0%,100%{opacity:1;filter:drop-shadow(0 0 2px rgba(244,114,182,.4))}50%{opacity:.55;filter:drop-shadow(0 0 10px rgba(244,114,182,.7))}}
 .lh-timer-display {
-  font-family:'Syne',sans-serif;font-size:29px;font-weight:800;
-  text-align:center;color:var(--tx);letter-spacing:.02em;line-height:1;
-  font-variant-numeric:tabular-nums;position:relative;z-index:1
+  font-family:'Syne',sans-serif;font-weight:800;
+  text-align:center;color:var(--tx);letter-spacing:-.01em;line-height:1;
+  font-variant-numeric:tabular-nums;position:relative;z-index:1;
+  /* Fixed box well inside the ring's inner edge (ring r=91 of a 200px stage,
+     stroke-width 6 → inner clear diameter ~ 164px). Sized in ch units so
+     "00:00:00" always fits without spilling past the ring regardless of
+     font metrics, shrinking automatically if the string gets longer. */
+  width:140px;max-width:140px;font-size:clamp(17px,7.2vw,25px);
+  white-space:nowrap;overflow:hidden;text-overflow:clip
 }
 .lh-timer-bar-wrap {
   height:4px;background:rgba(255,255,255,.06);border-radius:99px;

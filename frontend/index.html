@@ -2873,16 +2873,16 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
         <!-- Circular progress stage — depletes for Countdown, glows/pulses for Stopwatch -->
         <div class="lh-timer-stage" id="lh-timer-stage">
-          <svg class="lh-timer-ring" viewBox="0 0 176 176" width="176" height="176" aria-hidden="true">
+          <svg class="lh-timer-ring" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
             <defs>
               <linearGradient id="lhRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#7c6af7"/>
                 <stop offset="100%" stop-color="#f472b6"/>
               </linearGradient>
             </defs>
-            <circle class="lh-timer-ring-track" cx="88" cy="88" r="80"/>
-            <g transform="rotate(-90 88 88)">
-              <circle class="lh-timer-ring-progress" id="lh-timer-ring-progress" cx="88" cy="88" r="80" stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+            <circle class="lh-timer-ring-track" cx="100" cy="100" r="91"/>
+            <g transform="rotate(-90 100 100)">
+              <circle class="lh-timer-ring-progress" id="lh-timer-ring-progress" cx="100" cy="100" r="91" stroke-dasharray="571.77" stroke-dashoffset="571.77"/>
             </g>
           </svg>
           <div class="lh-timer-display" id="lh-timer-display">00:00:00</div>
@@ -4485,7 +4485,7 @@ function _lhCap(s){ return s ? s[0].toUpperCase()+s.slice(1) : ''; }
 // so the time actually worth saving is (goal - elapsed), not elapsed itself.
 function _lhLoggable(){ return _lhTimer.mode==='countdown' ? Math.max(0,_lhTimer.goal-_lhTimer.elapsed) : _lhTimer.elapsed; }
 
-const LH_RING_C = 502.65; // 2 * PI * 80 — must match the r=80 circle in the timer's SVG ring
+const LH_RING_C = 571.77; // 2 * PI * 91 — must match the r=91 circle in the timer's SVG ring
 // Drives the circular progress ring in the Study Timer: depletes proportionally
 // in Countdown mode (mirrors the old linear bar's math), and shows a solid
 // glow (pulsing while running, steady while paused) in Stopwatch mode since
@@ -4668,6 +4668,9 @@ function lhTimerStart() {
   _lhUpdateLiveDot();
   _lhStickyUpdate();
   _lhRenderAll();
+  // Starting the timer hands off to the sticky widget / PiP — no need to keep
+  // the modal open in front of the user while it runs in the background.
+  closeM('logHours');
 }
 
 function lhTimerStop(finished) {
