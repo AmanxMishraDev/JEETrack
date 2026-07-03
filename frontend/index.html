@@ -721,8 +721,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="ls-footer-links">
       <a href="/features">Features</a>
       <span class="ls-footer-sep">·</span>
-      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;">How it works</a>
-      <span class="ls-footer-sep">·</span>
       <a href="/faq">FAQ</a>
       <span class="ls-footer-sep">·</span>
       <a href="/about">About</a>
@@ -4259,7 +4257,7 @@ const _pageTitles = {
 const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback'];
 
 // Static pages served directly by vercel.json rewrites (not part of the SPA's own router)
-const _staticPages = ['/faq','/privacy','/terms','/admin'];
+const _staticPages = ['/faq','/privacy','/terms','/admin','/features','/about'];
 
 function _isKnownPath(path){
   if(path==='/index.html') return true;

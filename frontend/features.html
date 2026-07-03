@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>JEETrack Features — Dashboard, AI Insights & More</title>
+<meta name="description" content="Explore JEETrack's features: Dashboard, AI Insights, Mock Test Tracker, Study Hours, Syllabus Tracker, Backlog Manager. Built specifically for JEE Mains and Advanced."/>
+<meta property="og:title" content="JEETrack Features — Dashboard, AI Insights & More"/>
+<meta property="og:url" content="https://jeetrack.in/features"/>
+<meta property="og:site_name" content="JEETrack"/>
+<meta property="og:image" content="https://jeetrack.in/icon-512.png"/>
+<link rel="canonical" href="https://jeetrack.in/features"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--sf:#111118;--sf2:#18181f;--sf3:#1e1e28;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12);
+  --tx:#f0eff5;--mu:#7a7990;--mu2:#4a4960;
+  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--bl:#60a5fa;
+}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.8);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav-links a.active{color:var(--ac2)}
+.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s}
+.nav-cta:hover{opacity:.85}
+/* HERO */
+.hero{position:relative;overflow:hidden}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px)}
+.o1{width:550px;height:550px;background:rgba(124,106,247,.14);top:-180px;left:28%;transform:translateX(-50%)}
+.o2{width:320px;height:320px;background:rgba(244,114,182,.1);top:60px;right:6%;filter:blur(70px)}
+.o3{width:220px;height:220px;background:rgba(52,211,153,.07);bottom:-30px;left:6%;filter:blur(60px)}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;max-width:1100px;margin:0 auto;padding:5.5rem 2.5rem 4.5rem}
+.hero-pill{display:inline-flex;align-items:center;gap:.45rem;background:rgba(124,106,247,.1);border:1px solid rgba(124,106,247,.25);color:var(--ac2);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.3rem .85rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.75rem}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--ac2);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:1.25rem}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--mu);font-size:.95rem;line-height:1.85;margin-bottom:2rem;max-width:420px}
+.hero-btns{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn-p{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.7rem 1.6rem;border-radius:10px;font-size:.88rem;font-weight:600;transition:opacity .15s}
+.btn-p:hover{opacity:.88}
+.btn-g{display:inline-flex;align-items:center;gap:.4rem;color:var(--ac2);text-decoration:none;padding:.65rem 1.35rem;border-radius:10px;font-size:.85rem;font-weight:600;border:1px solid rgba(124,106,247,.28);transition:all .15s}
+.btn-g:hover{background:rgba(124,106,247,.08);border-color:rgba(124,106,247,.4)}
+/* DEMO CARD */
+.demo-wrap{position:relative;width:100%;max-width:100%;min-width:0}
+.demo-glow{position:absolute;inset:-2px;background:linear-gradient(135deg,rgba(124,106,247,.28),rgba(244,114,182,.18));border-radius:22px;filter:blur(22px);z-index:0;opacity:.55}
+.demo-card{position:relative;z-index:1;min-width:0;background:linear-gradient(160deg,rgba(28,22,48,.98),rgba(13,11,24,.98));border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset}
+.demo-bar{display:flex;align-items:center;gap:.45rem;padding:.65rem 1rem;background:rgba(0,0,0,.22);border-bottom:1px solid rgba(255,255,255,.055)}
+.demo-dot{width:8px;height:8px;border-radius:50%}
+.demo-bar-title{font-size:.62rem;color:rgba(255,255,255,.28);margin-left:auto;font-family:'Syne',sans-serif;letter-spacing:.06em}
+.demo-tabs{display:flex;gap:3px;padding:.6rem .7rem;background:rgba(0,0,0,.14);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}
+.demo-tabs::-webkit-scrollbar{display:none}
+.dtab{display:flex;align-items:center;gap:.35rem;padding:.38rem .7rem;border-radius:8px;border:none;background:none;color:rgba(255,255,255,.32);font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0}
+.dtab.active{color:#fff;background:linear-gradient(135deg,rgba(166,149,255,.2),rgba(244,114,182,.12));box-shadow:0 0 0 1px rgba(255,255,255,.07) inset}
+.dtab:not(.active):hover{color:rgba(255,255,255,.62)}
+.demo-vp{height:240px;position:relative;overflow:hidden}
+/* Zoom stage wraps the tabs + viewport (not the window-chrome bar) so a
+   click can visually "punch" the whole interactive area toward the cursor,
+   exactly like the landing-page hero demo. */
+.demo-zoom-stage{position:relative;transform-origin:50% 50%;will-change:transform;backface-visibility:hidden}
+.demo-zoom-stage.zoom-punch{animation:demoZoomPunch .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes demoZoomPunch{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.045)}
+  75%{transform:scale(.995)}
+  100%{transform:scale(1)}
+}
+.demo-zoom-flash{
+  position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;
+  border-radius:50%;pointer-events:none;z-index:28;
+  background:radial-gradient(circle,rgba(255,255,255,.4),rgba(166,149,255,.22) 35%,transparent 70%);
+  opacity:0;
+}
+.demo-zoom-flash.flash-go{animation:demoZoomFlash .48s ease-out both}
+@keyframes demoZoomFlash{
+  0%{opacity:0;transform:scale(.2)}
+  35%{opacity:.65}
+  100%{opacity:0;transform:scale(1.1)}
+}
+/* Auto cursor — lives directly on .demo-card (not inside .demo-vp), so it
+   can travel freely over the tabs row too instead of being clipped by the
+   viewport's overflow:hidden (that clipping was why it used to disappear
+   behind the tabs). z-index:30 keeps it above every layer in the card. */
+.demo-cursor{
+  position:absolute;top:0;left:0;z-index:30;width:20px;height:20px;
+  pointer-events:none;opacity:0;
+  transform:translate(8px,8px);
+  transition:transform .78s cubic-bezier(.5,-.2,.3,1.35),opacity .3s ease;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35));
+}
+.demo-cursor svg{display:block;width:100%;height:100%;transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+.demo-cursor.visible{opacity:.92}
+.demo-cursor.traveling{filter:drop-shadow(0 6px 16px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(166,149,255,.55))}
+.demo-cursor.traveling svg{transform:scale(1.3) rotate(-12deg) translateY(-3px)}
+.demo-cursor.clicking svg{animation:demoCursorClick .4s cubic-bezier(.22,1,.36,1)}
+.demo-cursor.clicking{animation:demoCursorClickGlow .4s ease}
+@keyframes demoCursorClick{0%{transform:scale(1) rotate(0)}35%{transform:scale(.8) rotate(3deg)}70%{transform:scale(1.08) rotate(-1deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes demoCursorClickGlow{0%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(244,114,182,0))}40%{filter:drop-shadow(0 4px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(244,114,182,.6))}100%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35))}}
+/* Multi-layer click burst (two colored rings + a bright core dot) —
+   appended to .demo-card so its coordinates share the exact same frame
+   the cursor itself uses. */
+.demo-click-ring{
+  position:absolute;top:0;left:0;width:18px;height:18px;margin:-3px 0 0 -3px;
+  border-radius:50%;border:1.5px solid rgba(166,149,255,.5);
+  pointer-events:none;z-index:29;opacity:0;
+}
+.demo-click-ring.pulse{animation:demoClickRingPulse .6s cubic-bezier(.2,.7,.3,1) both}
+.demo-click-ring.pulse-2{border-color:rgba(244,114,182,.4);animation:demoClickRingPulse .6s cubic-bezier(.2,.7,.3,1) .08s both}
+.demo-click-ring.pulse-dot{
+  width:6px;height:6px;margin:5px 0 0 5px;border:none;
+  background:radial-gradient(circle,#fff,rgba(166,149,255,.85) 60%,transparent 75%);
+  box-shadow:0 0 7px 1.5px rgba(166,149,255,.45);
+  animation:demoClickDotPulse .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes demoClickRingPulse{0%{opacity:.55;transform:scale(.2)}70%{opacity:.2}100%{opacity:0;transform:scale(1.5)}}
+@keyframes demoClickDotPulse{0%{opacity:0;transform:scale(.3)}45%{opacity:.75;transform:scale(1.15)}100%{opacity:0;transform:scale(.6)}}
+@media(prefers-reduced-motion:reduce){
+  .demo-zoom-stage.zoom-punch{animation:none}
+  .demo-zoom-flash{display:none}
+  .demo-cursor{display:none}
+}
+.dview{position:absolute;inset:0;padding:.9rem 1rem;opacity:0;pointer-events:none;transition:opacity .2s;display:flex;flex-direction:column;gap:.65rem}
+.dview.active{opacity:1;pointer-events:auto}
+/* DASHBOARD VIEW */
+.dv-top{display:flex;justify-content:space-between;align-items:center}
+.dv-name{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.85)}
+.dv-name b{color:#a695ff}
+.dv-date{font-size:.62rem;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:.3rem}
+.dv-dot{width:5px;height:5px;border-radius:50%;background:#34d399}
+.dv-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem}
+.dv-kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:.55rem .65rem}
+.dv-kpi-lbl{font-size:.58rem;color:rgba(255,255,255,.32);margin-bottom:.18rem}
+.dv-kpi-val{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;line-height:1}
+.dv-kpi-sub{font-size:.58rem;font-weight:600;padding:.1rem .3rem;border-radius:4px;display:inline-block;margin-top:.2rem}
+.dv-chart{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:9px;padding:.6rem .7rem;flex:1;min-height:0}
+.dv-chart-hd{display:flex;justify-content:space-between;font-size:.6rem;color:rgba(255,255,255,.28);margin-bottom:.4rem}
+.ln{stroke-dasharray:500;stroke-dashoffset:500;animation:drawln 1.2s cubic-bezier(.4,0,.2,1) .15s forwards}
+@keyframes drawln{to{stroke-dashoffset:0}}
+/* TESTS VIEW */
+.tv-hd{display:flex;justify-content:space-between;align-items:center}
+.tv-ttl{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800;color:#fff}
+.tv-fltrs{display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:6px;padding:2px}
+.tv-f{padding:.18rem .45rem;border-radius:4px;border:none;background:none;color:rgba(255,255,255,.3);font-size:.6rem;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tv-f.active{background:rgba(255,255,255,.1);color:#fff}
+.tv-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
+.tv-k{text-align:center}
+.tv-k-num{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800}
+.tv-k-lbl{font-size:.56rem;color:rgba(255,255,255,.32);margin-top:.08rem}
+.tv-bars{display:flex;align-items:flex-end;gap:4px;height:60px;padding:0 2px}
+.tv-bar{flex:1;border-radius:4px 4px 2px 2px;background:rgba(255,255,255,.07)}
+.tv-bar-hi{background:linear-gradient(180deg,#a695ff,#7c6af7)}
+.dview.active .tv-bar{animation:barUp .8s cubic-bezier(.4,0,.2,1) .1s both}
+@keyframes barUp{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+.tv-subj{display:flex;justify-content:space-between;padding-top:.45rem;border-top:1px solid rgba(255,255,255,.055)}
+.tv-s{display:flex;align-items:center;gap:.28rem;font-size:.6rem;color:rgba(255,255,255,.38)}
+.tv-s span{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tv-s b{color:#fff;font-weight:700}
+/* AI VIEW */
+.av-hd{display:flex;align-items:center;gap:.55rem}
+.av-ico{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(244,114,182,.14));border:1px solid rgba(124,106,247,.28);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.av-ttl{font-size:.75rem;font-weight:700;color:#fff}
+.av-sub{font-size:.6rem;color:rgba(255,255,255,.32)}
+.av-verdict{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(124,106,247,.1),rgba(244,114,182,.06));border:1px solid rgba(124,106,247,.18);border-radius:10px;padding:.6rem .8rem}
+.av-v-lbl{font-size:.58rem;color:rgba(255,255,255,.38);margin-bottom:.18rem}
+.av-v-txt{font-size:.72rem;font-weight:600;color:#fff;max-width:170px;line-height:1.35}
+.av-badge{display:inline-block;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.22);color:#34d399;font-size:.55rem;font-weight:700;padding:.12rem .38rem;border-radius:4px;letter-spacing:.06em;margin-top:.28rem}
+.av-ring-wrap{position:relative;width:42px;height:42px;flex-shrink:0}
+.av-ring-num{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff}
+.av-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:.35rem}
+.av-chip{border-radius:8px;padding:.45rem .6rem;border:1px solid}
+.av-chip-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.18rem}
+.av-chip-ttl{font-size:.62rem;font-weight:600}
+.av-chip-tag{font-size:.52rem;font-weight:700;padding:.08rem .28rem;border-radius:3px;letter-spacing:.05em}
+.av-chip-met{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:800}
+.av-gn{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.17)}.av-gn .av-chip-ttl,.av-gn .av-chip-met{color:#34d399}.av-gn .av-chip-tag{background:rgba(52,211,153,.14);color:#34d399}
+.av-am{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.16)}.av-am .av-chip-ttl,.av-am .av-chip-met{color:#fbbf24}.av-am .av-chip-tag{background:rgba(251,191,36,.14);color:#fbbf24}
+.av-rd{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.15)}.av-rd .av-chip-ttl,.av-rd .av-chip-met{color:#f87171}.av-rd .av-chip-tag{background:rgba(248,113,113,.13);color:#f87171}
+/* SYLLABUS VIEW */
+.sv-ttl{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800;color:#fff}
+.sv-sub{font-size:.6rem;color:rgba(255,255,255,.32);margin-bottom:.65rem}
+.sv-row{margin-bottom:.5rem}
+.sv-rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:.22rem}
+.sv-s{font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:.35rem}
+.sv-p{font-size:.62rem;color:rgba(255,255,255,.35)}
+.sv-track{height:5px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.sv-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1) .2s}
+.sv-chips{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.3rem}
+.sv-ch{font-size:.58rem;font-weight:500;padding:.1rem .45rem;border-radius:99px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.32)}
+.sv-ch-done{background:rgba(52,211,153,.11);color:#34d399}
+/* BACKLOG VIEW */
+.bl-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem}
+.bl-ttl{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800;color:#fff}
+.bl-cnt{background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.24);color:#f87171;font-size:.6rem;font-weight:700;padding:.12rem .45rem;border-radius:5px}
+.bl-item{display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:8px;margin-bottom:.3rem}
+.bl-cb{width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.bl-cb-done{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.38)}
+.bl-txt{flex:1;min-width:0}
+.bl-name{font-size:.68rem;font-weight:500;color:rgba(255,255,255,.82)}
+.bl-s{font-size:.58rem;color:rgba(255,255,255,.28);margin-top:.06rem}
+.bl-pri{font-size:.56rem;font-weight:700;padding:.08rem .32rem;border-radius:3px}
+.pri-hi{background:rgba(248,113,113,.14);color:#f87171}
+.pri-md{background:rgba(251,191,36,.11);color:#fbbf24}
+.pri-lo{background:rgba(96,165,250,.11);color:#60a5fa}
+/* FEATURES */
+.wrap{max-width:1100px;margin:0 auto;padding:0 2.5rem 6rem}
+.sec-lbl{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem}
+.sec-line{width:22px;height:1px;background:var(--mu)}
+.sec-h{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:.55rem;line-height:1.2}
+.sec-h em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-sub{color:var(--mu);font-size:.9rem;line-height:1.75;max-width:500px;margin-bottom:2.25rem}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:.9rem}
+.fc{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:1.65rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.fc::before{content:'';position:absolute;inset:0;background:var(--fg,transparent);pointer-events:none}
+.fc:hover{border-color:var(--bd2);transform:translateY(-2px)}
+.fw{grid-column:span 2}
+.ficon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1.15rem;flex-shrink:0}
+.ftitle{font-family:'Syne',sans-serif;font-size:.97rem;font-weight:800;margin-bottom:.45rem;letter-spacing:-.01em;line-height:1.3}
+.fdesc{color:var(--mu);font-size:.82rem;line-height:1.8}
+.ftag{display:inline-flex;align-items:center;gap:.28rem;margin-top:.85rem;padding:.18rem .55rem;border-radius:99px;font-size:.63rem;font-weight:700}
+.mini{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.055);border-radius:9px;padding:.65rem;margin-top:.9rem;overflow:hidden}
+/* HOW IT WORKS */
+.hiw{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;position:relative;margin-bottom:.9rem}
+.hiw::before{content:'';position:absolute;top:27px;left:calc(12.5% + 14px);right:calc(12.5% + 14px);height:1px;background:linear-gradient(90deg,transparent,rgba(124,106,247,.3),rgba(244,114,182,.25),transparent)}
+.hstep{text-align:center;padding:0 .4rem}
+.hnum{width:54px;height:54px;border-radius:15px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800}
+.httl{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;margin-bottom:.35rem}
+.hdesc{font-size:.77rem;color:var(--mu);line-height:1.7}
+/* FREE BAND */
+.fband{background:linear-gradient(135deg,rgba(124,106,247,.08),rgba(244,114,182,.05));border:1px solid rgba(124,106,247,.17);border-radius:22px;padding:3.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;margin-top:.9rem}
+.fband::before{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(124,106,247,.07);filter:blur(55px);top:-90px;left:50%;transform:translateX(-50%);pointer-events:none}
+.fband h2{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.7rem}
+.fband p{color:var(--mu);font-size:.93rem;max-width:400px;margin:0 auto 1.85rem;line-height:1.75}
+.cta-row{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem}
+.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
+.foot a:hover{color:var(--tx)}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:2.5rem;padding:4rem 1.5rem 3rem}
+  .hero-sub{max-width:100%}
+  .feats{grid-template-columns:repeat(2,1fr)}
+  .fw{grid-column:span 2}
+  .hiw{grid-template-columns:repeat(2,1fr)}.hiw::before{display:none}
+  .wrap{padding:0 1.5rem 4rem}
+}
+@media(max-width:640px){
+  .nav{padding:0 1.1rem}.nav-links{display:none}
+  .hero-inner{padding:3rem 1.1rem 2.5rem;gap:2rem}
+  .hero h1{font-size:clamp(1.7rem,7vw,2rem)}
+  .hero-sub{font-size:.88rem}
+  .hero-btns{flex-direction:column;gap:.55rem}
+  .btn-p,.btn-g{justify-content:center;width:100%}
+  .demo-tabs{gap:2px;padding:.5rem .6rem}
+  .dtab{font-size:.64rem;padding:.32rem .55rem}
+  .feats{grid-template-columns:1fr}.fw{grid-column:span 1}
+  .fc-split{grid-template-columns:1fr!important;gap:1.5rem!important}
+  .hiw{grid-template-columns:1fr}
+  .fband{padding:2.25rem 1.25rem}
+  .fband h2{font-size:1.4rem}
+  .wrap{padding:0 1.1rem 3rem}
+  .sec-h{font-size:1.4rem}
+}
+@media(max-width:380px){
+  .hero h1{font-size:1.55rem}
+  .dtab span{display:none}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features" class="active">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+  </div>
+  <a class="nav-cta" href="/">Get Started Free →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-orb o1"></div>
+  <div class="hero-orb o2"></div>
+  <div class="hero-orb o3"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-pill"><span class="pill-dot"></span>All Features</div>
+      <h1>Everything you need<br>to <em>crack JEE</em></h1>
+      <p class="hero-sub">Five powerful modules, AI weekly coaching, and a streak system — built specifically for the JEE pattern. Free forever, no paywall.</p>
+      <div class="hero-btns">
+        <a class="btn-p" href="/">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Start for Free
+        </a>
+        <a class="btn-g" href="/about">About JEETrack →</a>
+      </div>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-glow"></div>
+      <div class="demo-card" id="demoCard">
+        <div class="demo-bar">
+          <div class="demo-dot" style="background:#ff5f57"></div>
+          <div class="demo-dot" style="background:#febc2e"></div>
+          <div class="demo-dot" style="background:#28c840"></div>
+          <span class="demo-bar-title">JEETrack</span>
+        </div>
+        <div class="demo-zoom-stage" id="demoZoomStage">
+        <div class="demo-tabs" id="demoTabsBar">
+          <button class="dtab active" data-v="dash">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="dtab" data-v="tests">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Mock Tests</span>
+          </button>
+          <button class="dtab" data-v="ai">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>
+            <span>AI Insights</span>
+          </button>
+          <button class="dtab" data-v="syl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>Syllabus</span>
+          </button>
+          <button class="dtab" data-v="bl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Backlog</span>
+          </button>
+        </div>
+        <div class="demo-vp" id="demoVp">
+          <div class="dview active" data-v="dash">
+            <div class="dv-top">
+              <div class="dv-name">Good afternoon, <b>Aman</b></div>
+              <div class="dv-date"><span class="dv-dot"></span>10 Jun 2026</div>
+            </div>
+            <div class="dv-kpis">
+              <div class="dv-kpi">
+                <div class="dv-kpi-lbl">Latest Mains</div>
+                <div class="dv-kpi-val" style="color:#8fa5ff">196<span style="font-size:.55rem;color:rgba(255,255,255,.28)">/300</span></div>
+                <div class="dv-kpi-sub" style="background:rgba(143,165,255,.11);color:#8fa5ff">65.3%</div>
+              </div>
+              <div class="dv-kpi">
+                <div class="dv-kpi-lbl">Latest Adv.</div>
+                <div class="dv-kpi-val" style="color:#f472b6">134<span style="font-size:.55rem;color:rgba(255,255,255,.28)">/360</span></div>
+                <div class="dv-kpi-sub" style="background:rgba(244,114,182,.11);color:#f472b6">37.2%</div>
+              </div>
+              <div class="dv-kpi">
+                <div class="dv-kpi-lbl">Streak</div>
+                <div class="dv-kpi-val" style="color:#fbbf24">🔥 14<span style="font-size:.55rem;color:rgba(255,255,255,.28)">d</span></div>
+                <div class="dv-kpi-sub" style="background:rgba(251,191,36,.11);color:#fbbf24">best 21d</div>
+              </div>
+            </div>
+            <div class="dv-chart">
+              <div class="dv-chart-hd"><span>Score Trend</span><span>last 90 days</span></div>
+              <svg viewBox="0 0 300 46" preserveAspectRatio="none" style="width:100%;height:46px">
+                <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                <polyline class="ln" points="0,36 40,28 80,32 120,20 160,34 200,12 240,7 300,16" fill="none" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <!-- TESTS -->
+          <div class="dview" data-v="tests">
+            <div class="tv-hd">
+              <span class="tv-ttl">JEE Mains</span>
+              <div class="tv-fltrs">
+                <button class="tv-f active">All</button>
+                <button class="tv-f">Full</button>
+                <button class="tv-f">Partial</button>
+              </div>
+            </div>
+            <div class="tv-kpis">
+              <div class="tv-k"><div class="tv-k-num" style="color:#8fa5ff">7</div><div class="tv-k-lbl">Tests</div></div>
+              <div class="tv-k"><div class="tv-k-num" style="color:#2dd4bf">65.3%</div><div class="tv-k-lbl">Latest</div></div>
+              <div class="tv-k"><div class="tv-k-num" style="color:#34d399">65.3%</div><div class="tv-k-lbl">Best</div></div>
+              <div class="tv-k"><div class="tv-k-num" style="color:#fbbf24">56.2%</div><div class="tv-k-lbl">Avg</div></div>
+            </div>
+            <div class="tv-bars">
+              <div class="tv-bar" style="height:34%"></div>
+              <div class="tv-bar" style="height:50%"></div>
+              <div class="tv-bar" style="height:43%"></div>
+              <div class="tv-bar" style="height:65%"></div>
+              <div class="tv-bar" style="height:57%"></div>
+              <div class="tv-bar tv-bar-hi" style="height:80%"></div>
+              <div class="tv-bar tv-bar-hi" style="height:95%"></div>
+            </div>
+            <div class="tv-subj">
+              <div class="tv-s"><span style="background:#60a5fa"></span>Physics <b>58%</b></div>
+              <div class="tv-s"><span style="background:#34d399"></span>Chemistry <b>72%</b></div>
+              <div class="tv-s"><span style="background:#f472b6"></span>Maths <b>61%</b></div>
+            </div>
+          </div>
+          <!-- AI -->
+          <div class="dview" data-v="ai">
+            <div class="av-hd">
+              <div class="av-ico">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>
+              </div>
+              <div><div class="av-ttl">AI Analysis</div><div class="av-sub">10 Jun · Weekly Report</div></div>
+            </div>
+            <div class="av-verdict">
+              <div>
+                <div class="av-v-lbl">Overall Assessment</div>
+                <div class="av-v-txt">Scores rising fast, but syllabus is only 37% done.</div>
+                <div class="av-badge">↑ RISING</div>
+              </div>
+              <div class="av-ring-wrap">
+                <svg width="42" height="42" viewBox="0 0 42 42">
+                  <circle cx="21" cy="21" r="16" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4"/>
+                  <circle cx="21" cy="21" r="16" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="101" stroke-dashoffset="24"/>
+                  <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                </svg>
+                <div class="av-ring-num">76</div>
+              </div>
+            </div>
+            <div class="av-chips">
+              <div class="av-chip av-gn"><div class="av-chip-top"><span class="av-chip-ttl">Scores rising</span><span class="av-chip-tag">Trend</span></div><div class="av-chip-met">+54 pts</div></div>
+              <div class="av-chip av-am"><div class="av-chip-top"><span class="av-chip-ttl">Revise Thermo</span><span class="av-chip-tag">Weak</span></div><div class="av-chip-met">−6% acc</div></div>
+              <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Syllabus gap</span><span class="av-chip-tag">Low</span></div><div class="av-chip-met">37% done</div></div>
+              <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Backlogs</span><span class="av-chip-tag">Urgent</span></div><div class="av-chip-met">4 pending</div></div>
+            </div>
+          </div>
+          <!-- SYLLABUS -->
+          <div class="dview" data-v="syl">
+            <div class="sv-ttl">Syllabus Tracker</div>
+            <div class="sv-sub">Physics · Chemistry · Maths</div>
+            <div class="sv-row">
+              <div class="sv-rh">
+                <span class="sv-s"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg><span style="color:#60a5fa">Physics</span></span>
+                <span class="sv-p">54%</span>
+              </div>
+              <div class="sv-track"><div class="sv-fill" style="width:54%;background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <div class="sv-chips"><span class="sv-ch sv-ch-done">Mechanics ✓</span><span class="sv-ch sv-ch-done">Optics ✓</span><span class="sv-ch">Waves</span><span class="sv-ch">Thermo</span></div>
+            </div>
+            <div class="sv-row">
+              <div class="sv-rh">
+                <span class="sv-s"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg><span style="color:#34d399">Chemistry</span></span>
+                <span class="sv-p">71%</span>
+              </div>
+              <div class="sv-track"><div class="sv-fill" style="width:71%;background:linear-gradient(90deg,#34d399,#6ee7b7)"></div></div>
+            </div>
+            <div class="sv-row">
+              <div class="sv-rh">
+                <span class="sv-s"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg><span style="color:#f472b6">Maths</span></span>
+                <span class="sv-p">38%</span>
+              </div>
+              <div class="sv-track"><div class="sv-fill" style="width:38%;background:linear-gradient(90deg,#f472b6,#f9a8d4)"></div></div>
+            </div>
+          </div>
+          <!-- BACKLOG -->
+          <div class="dview" data-v="bl">
+            <div class="bl-hd"><span class="bl-ttl">Backlog</span><span class="bl-cnt">4 pending</span></div>
+            <div class="bl-item">
+              <div class="bl-cb bl-cb-done"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="bl-txt"><div class="bl-name">Electromagnetic Induction</div><div class="bl-s">Physics</div></div>
+              <span class="bl-pri pri-lo">Low</span>
+            </div>
+            <div class="bl-item">
+              <div class="bl-cb"></div>
+              <div class="bl-txt"><div class="bl-name">Waves &amp; Oscillations</div><div class="bl-s">Physics</div></div>
+              <span class="bl-pri pri-hi">High</span>
+            </div>
+            <div class="bl-item">
+              <div class="bl-cb"></div>
+              <div class="bl-txt"><div class="bl-name">Organic — Reactions</div><div class="bl-s">Chemistry</div></div>
+              <span class="bl-pri pri-hi">High</span>
+            </div>
+            <div class="bl-item">
+              <div class="bl-cb"></div>
+              <div class="bl-txt"><div class="bl-name">Integration — DPP #14</div><div class="bl-s">Maths</div></div>
+              <span class="bl-pri pri-md">Medium</span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="demo-cursor" id="demoCursor">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 3l6.5 16.5 2.4-6.6 6.6-2.4z" fill="#fff" stroke="#0c0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div style="padding-top:1.5rem">
+    <div class="sec-lbl"><span class="sec-line"></span>What's inside</div>
+    <h2 class="sec-h">Built for JEE.<br><em>Nothing generic.</em></h2>
+    <p class="sec-sub">Every module designed around the JEE syllabus, scoring pattern, and preparation strategy — not a generic study app.</p>
+  </div>
+
+  <div class="feats">
+    <!-- Mock Tests — wide -->
+    <div class="fc fw" style="--fg:linear-gradient(135deg,rgba(124,106,247,.07),transparent)">
+      <div class="ficon" style="background:rgba(124,106,247,.14);box-shadow:0 0 0 1px rgba(124,106,247,.22)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="ftitle">Mock Test Analytics</div>
+      <div class="fdesc">Log JEE Mains and Advanced mock tests with Physics, Chemistry, Maths scores separately. Track trends, accuracy by subject, and exactly which chapters are dragging your rank down. The chart never lies.</div>
+      <div class="mini">
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:rgba(255,255,255,.3);margin-bottom:.38rem"><span>Score Trend</span><span>last 7 tests</span></div>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:38px">
+          <div style="flex:1;height:34%;border-radius:3px 3px 2px 2px;background:rgba(255,255,255,.07)"></div>
+          <div style="flex:1;height:50%;border-radius:3px 3px 2px 2px;background:rgba(255,255,255,.07)"></div>
+          <div style="flex:1;height:43%;border-radius:3px 3px 2px 2px;background:rgba(255,255,255,.07)"></div>
+          <div style="flex:1;height:66%;border-radius:3px 3px 2px 2px;background:rgba(255,255,255,.07)"></div>
+          <div style="flex:1;height:57%;border-radius:3px 3px 2px 2px;background:rgba(255,255,255,.07)"></div>
+          <div style="flex:1;height:82%;border-radius:3px 3px 2px 2px;background:linear-gradient(180deg,#a695ff,#7c6af7)"></div>
+          <div style="flex:1;height:97%;border-radius:3px 3px 2px 2px;background:linear-gradient(180deg,#f472b6,#a695ff)"></div>
+        </div>
+      </div>
+      <span class="ftag" style="background:rgba(124,106,247,.12);color:var(--ac2);border:1px solid rgba(124,106,247,.2)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Score Intelligence
+      </span>
+    </div>
+
+    <!-- AI Insights -->
+    <div class="fc" style="--fg:linear-gradient(135deg,rgba(244,114,182,.07),transparent)">
+      <div class="ficon" style="background:rgba(244,114,182,.13);box-shadow:0 0 0 1px rgba(244,114,182,.22)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>
+      </div>
+      <div class="ftitle">AI Weekly Insights</div>
+      <div class="fdesc">Your personal AI coach analyzes scores, hours, syllabus gaps, and backlogs — then delivers a brutally honest breakdown. No generic advice. Powered by Groq.</div>
+      <span class="ftag" style="background:rgba(244,114,182,.11);color:var(--pk);border:1px solid rgba(244,114,182,.2)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46z"/></svg>
+        AI Powered
+      </span>
+    </div>
+
+    <!-- Study Hours — wide with analytics -->
+    <div class="fc fw" style="--fg:linear-gradient(135deg,rgba(52,211,153,.06),transparent)">
+      <div class="ficon" style="background:rgba(52,211,153,.12);box-shadow:0 0 0 1px rgba(52,211,153,.2)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
+      </div>
+      <div class="ftitle">Study Hours Analytics</div>
+      <div class="fdesc">Log lecture, practice, and revision hours daily by subject — Physics, Chemistry, Maths. See your daily breakdown, weekly totals, and subject distribution. Know exactly where your time is going and where to shift focus.</div>
+      <div class="mini">
+        <div style="display:flex;gap:1.5rem;align-items:flex-end">
+          <!-- Bar chart -->
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;font-size:.6rem;color:rgba(255,255,255,.3);margin-bottom:.4rem"><span>This Week</span><span>23.5h total</span></div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:52px">
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:60%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.7);height:40%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.7);height:35%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.7);height:25%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:80%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.7);height:38%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.7);height:42%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.7);height:20%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:45%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.7);height:35%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.7);height:40%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.7);height:25%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:95%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.85);height:36%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.85);height:38%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.85);height:26%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:70%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.7);height:40%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.7);height:35%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.7);height:25%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:55%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.7);height:38%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.7);height:32%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.7);height:30%"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:1px;height:88%;justify-content:flex-end">
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(96,165,250,.9);height:37%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(52,211,153,.9);height:40%"></div>
+                <div style="border-radius:2px 2px 1px 1px;background:rgba(244,114,182,.9);height:23%"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.58rem;color:rgba(255,255,255,.25);margin-top:.3rem"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </div>
+          <!-- Subject breakdown -->
+          <div style="flex-shrink:0;display:flex;flex-direction:column;gap:.35rem;min-width:120px">
+            <div style="font-size:.6rem;color:rgba(255,255,255,.3);margin-bottom:.15rem">By Subject</div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.2rem"><span style="color:#60a5fa;font-weight:600">Physics</span><span style="color:rgba(255,255,255,.6)">9.5h</span></div>
+              <div style="height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden"><div style="height:100%;width:40%;background:#60a5fa;border-radius:99px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.2rem"><span style="color:#34d399;font-weight:600">Chemistry</span><span style="color:rgba(255,255,255,.6)">8h</span></div>
+              <div style="height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden"><div style="height:100%;width:34%;background:#34d399;border-radius:99px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.2rem"><span style="color:#f472b6;font-weight:600">Maths</span><span style="color:rgba(255,255,255,.6)">6h</span></div>
+              <div style="height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden"><div style="height:100%;width:26%;background:#f472b6;border-radius:99px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="ftag" style="background:rgba(52,211,153,.1);color:var(--gn);border:1px solid rgba(52,211,153,.2)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/></svg>
+        Time Intelligence
+      </span>
+    </div>
+
+    <!-- Syllabus -->
+    <div class="fc" style="--fg:linear-gradient(135deg,rgba(251,191,36,.06),transparent)">
+      <div class="ficon" style="background:rgba(251,191,36,.11);box-shadow:0 0 0 1px rgba(251,191,36,.2)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <div class="ftitle">Full Syllabus Tracker</div>
+      <div class="fdesc">Map every chapter of Physics, Chemistry, and Maths. Mark theory and practice separately. See completion percentage and untouched chapters at a glance.</div>
+      <span class="ftag" style="background:rgba(251,191,36,.1);color:var(--am);border:1px solid rgba(251,191,36,.18)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Syllabus Command
+      </span>
+    </div>
+
+    <!-- Backlog -->
+    <div class="fc" style="--fg:linear-gradient(135deg,rgba(248,113,113,.06),transparent)">
+      <div class="ficon" style="background:rgba(248,113,113,.11);box-shadow:0 0 0 1px rgba(248,113,113,.2)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="ftitle">Zero Backlog System</div>
+      <div class="fdesc">Every skipped chapter, unsolved DPP, and low-accuracy area goes into Backlog. Prioritize, clear daily, and make sure nothing slips through the cracks.</div>
+      <span class="ftag" style="background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.18)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Zero Tolerance
+      </span>
+    </div>
+
+    <!-- Streak + Monthly Reports — wide bottom -->
+    <div class="fc fw" style="--fg:linear-gradient(135deg,rgba(96,165,250,.06),transparent)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem" class="fc-split">
+        <div>
+          <div class="ficon" style="background:rgba(96,165,250,.11);box-shadow:0 0 0 1px rgba(96,165,250,.2)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="ftitle">Streak & Consistency</div>
+          <div class="fdesc">Your daily study streak keeps you accountable. Consistency is the single biggest differentiator between students who crack JEE and those who don't.</div>
+          <span class="ftag" style="background:rgba(96,165,250,.1);color:var(--bl);border:1px solid rgba(96,165,250,.18)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            Accountability
+          </span>
+        </div>
+        <div>
+          <div class="ficon" style="background:rgba(124,106,247,.12);box-shadow:0 0 0 1px rgba(124,106,247,.2)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="ftitle">Monthly Email Reports</div>
+          <div class="fdesc">At month end, JEETrack emails you a detailed report — mock summary, hours breakdown, syllabus progress, key stats. Automatic. No effort needed.</div>
+          <span class="ftag" style="background:rgba(124,106,247,.12);color:var(--ac2);border:1px solid rgba(124,106,247,.2)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
+            Automated
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div style="padding-top:3rem;margin-bottom:2rem">
+    <div class="sec-lbl"><span class="sec-line"></span>Getting started</div>
+    <h2 class="sec-h">Up and running in <em>2 minutes</em></h2>
+  </div>
+  <div class="hiw">
+    <div class="hstep">
+      <div class="hnum" style="background:rgba(124,106,247,.12);box-shadow:0 0 0 1px rgba(124,106,247,.2);color:#a695ff">1</div>
+      <div class="httl">Create free account</div>
+      <div class="hdesc">Sign up with Google or email. 10 seconds. No credit card, no setup fee.</div>
+    </div>
+    <div class="hstep">
+      <div class="hnum" style="background:rgba(244,114,182,.1);box-shadow:0 0 0 1px rgba(244,114,182,.2);color:#f472b6">2</div>
+      <div class="httl">Complete onboarding</div>
+      <div class="hdesc">Tell us your class, target year, and coaching. JEETrack calibrates accordingly.</div>
+    </div>
+    <div class="hstep">
+      <div class="hnum" style="background:rgba(52,211,153,.09);box-shadow:0 0 0 1px rgba(52,211,153,.18);color:#34d399">3</div>
+      <div class="httl">Log your first mock</div>
+      <div class="hdesc">Enter your JEE Mains or Advanced scores. See your subject-wise breakdown instantly.</div>
+    </div>
+    <div class="hstep">
+      <div class="hnum" style="background:rgba(251,191,36,.09);box-shadow:0 0 0 1px rgba(251,191,36,.18);color:#fbbf24">4</div>
+      <div class="httl">Track. Improve. Repeat.</div>
+      <div class="hdesc">AI insights weekly, streaks daily. Log hours, clear backlogs, watch scores climb.</div>
+    </div>
+  </div>
+
+  <!-- FREE BAND -->
+  <div class="fband">
+    <h2>All of this. Completely free.</h2>
+    <p>No subscription. No paywall. No ads. JEETrack is free for every JEE aspirant, forever.</p>
+    <div class="cta-row">
+      <a class="btn-p" href="/">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Create Free Account
+      </a>
+      <a class="btn-g" href="/about">About JEETrack →</a>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  © 2026 JEETrack · Built for JEE Aspirants across India
+</footer>
+
+<script>
+// ── Manual tab switching ─────────────────────────────────────
+const allTabs  = document.querySelectorAll('.dtab');
+const allViews = document.querySelectorAll('.dview');
+
+function switchToView(v) {
+  allTabs.forEach(x  => x.classList.toggle('active',  x.dataset.v === v));
+  allViews.forEach(x => x.classList.toggle('active', x.dataset.v === v));
+}
+
+allTabs.forEach(t => t.addEventListener('click', () => {
+  stopAuto();
+  switchToView(t.dataset.v);
+  // resume auto after 6s idle
+  resumeTimer = setTimeout(startAuto, 6000);
+}));
+
+// ── Auto cursor demo ─────────────────────────────────────────
+const ORDER    = ['dash','tests','ai','syl','bl'];
+const HOLD_MS  = 2600;   // how long each view is shown
+const TRAVEL_MS = 780;   // cursor travel time — mirrors the hero demo's CURSOR_MS
+const PAUSE_MS = 420;    // pause before the cursor starts moving
+
+const card    = document.getElementById('demoCard');
+const zoomStage = document.getElementById('demoZoomStage');
+const tabsBar = document.getElementById('demoTabsBar');
+const cursor  = document.getElementById('demoCursor');
+
+let autoIdx = 0;
+let autoTimer = null;
+let resumeTimer = null;
+let running = false;
+
+function getTabEl(v) {
+  return tabsBar.querySelector(`[data-v="${v}"]`);
+}
+
+// Multi-layer click burst (two colored rings + a bright core dot) — same
+// visual as the landing-page hero demo. Appended to .demo-card so it shares
+// the exact coordinate frame the cursor itself is positioned in.
+function spawnBurst(x, y) {
+  const dot = document.createElement('div');
+  dot.className = 'demo-click-ring pulse-dot';
+  dot.style.left = x + 'px'; dot.style.top = y + 'px';
+  card.appendChild(dot);
+
+  const ring1 = document.createElement('div');
+  ring1.className = 'demo-click-ring pulse';
+  ring1.style.left = x + 'px'; ring1.style.top = y + 'px';
+  card.appendChild(ring1);
+
+  const ring2 = document.createElement('div');
+  ring2.className = 'demo-click-ring pulse-2';
+  ring2.style.left = x + 'px'; ring2.style.top = y + 'px';
+  card.appendChild(ring2);
+
+  setTimeout(() => { dot.remove(); ring1.remove(); ring2.remove(); }, 780);
+}
+
+// Premium "camera punch" — the whole tabs+viewport area zooms in toward the
+// exact click point, then eases back out. Same effect/timing as the hero.
+function punchZoomAt(x, y) {
+  if (!zoomStage) return;
+  const w = card.clientWidth || 1;
+  const h = card.clientHeight || 1;
+  const ox = Math.min(100, Math.max(0, (x / w) * 100));
+  const oy = Math.min(100, Math.max(0, (y / h) * 100));
+  zoomStage.style.transformOrigin = `${ox}% ${oy}%`;
+  zoomStage.classList.remove('zoom-punch');
+  void zoomStage.offsetWidth; // force reflow so the animation restarts every click
+  zoomStage.classList.add('zoom-punch');
+
+  const flash = document.createElement('div');
+  flash.className = 'demo-zoom-flash';
+  flash.style.left = x + 'px';
+  flash.style.top = y + 'px';
+  card.appendChild(flash);
+  requestAnimationFrame(() => flash.classList.add('flash-go'));
+  setTimeout(() => flash.remove(), 600);
+}
+
+// Cursor lives directly on .demo-card, so its position is computed relative
+// to the whole card (not .demo-vp) — it can now travel freely over the tabs
+// row instead of being clipped by the viewport's overflow:hidden.
+function moveCursorTo(tabEl, onArrive) {
+  if (!tabEl || !card) { onArrive && onArrive(); return; }
+
+  const cardRect = card.getBoundingClientRect();
+  const tabRect  = tabEl.getBoundingClientRect();
+
+  const x = tabRect.left - cardRect.left + tabRect.width / 2 - 10;
+  const y = tabRect.top  - cardRect.top  + tabRect.height / 2 - 6;
+
+  cursor.classList.add('visible');
+  cursor.classList.add('traveling');
+  cursor.style.transform = `translate(${x}px,${y}px)`;
+
+  setTimeout(() => {
+    cursor.classList.remove('traveling');
+    cursor.classList.add('clicking');
+    spawnBurst(x + 3, y + 3);
+    punchZoomAt(x + 3, y + 3);
+    setTimeout(() => cursor.classList.remove('clicking'), 460);
+    onArrive && onArrive();
+  }, TRAVEL_MS);
+}
+
+function autoStep() {
+  if (!running) return;
+  autoIdx = (autoIdx + 1) % ORDER.length;
+  const v     = ORDER[autoIdx];
+  const tabEl = getTabEl(v);
+
+  setTimeout(() => {
+    moveCursorTo(tabEl, () => {
+      switchToView(v);
+      autoTimer = setTimeout(autoStep, HOLD_MS);
+    });
+  }, PAUSE_MS);
+}
+
+function startAuto() {
+  if (running) return;
+  running   = true;
+  autoIdx   = 0;
+  switchToView(ORDER[0]);
+  // kick off first step after initial hold
+  autoTimer = setTimeout(autoStep, HOLD_MS);
+}
+
+function stopAuto() {
+  running = false;
+  clearTimeout(autoTimer);
+  clearTimeout(resumeTimer);
+  cursor.classList.remove('visible');
+}
+
+// Start when card is visible (IntersectionObserver)
+if ('IntersectionObserver' in window) {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { startAuto(); obs.disconnect(); }
+    });
+  }, { threshold: .3 });
+  if (card) obs.observe(card);
+} else {
+  startAuto();
+}
+</script>
+</body>
+</html>
