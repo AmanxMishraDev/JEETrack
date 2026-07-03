@@ -4399,14 +4399,16 @@ select.fc.adv-fc {
 @keyframes lhRingPulse{0%,100%{opacity:1;filter:drop-shadow(0 0 2px rgba(244,114,182,.4))}50%{opacity:.55;filter:drop-shadow(0 0 10px rgba(244,114,182,.7))}}
 .lh-timer-display {
   font-family:'Syne',sans-serif;font-weight:800;
-  text-align:center;color:var(--tx);letter-spacing:-.01em;line-height:1;
+  text-align:center;color:var(--tx);letter-spacing:-.03em;line-height:1;
   font-variant-numeric:tabular-nums;position:relative;z-index:1;
   /* Fixed box well inside the ring's inner edge (ring r=91 of a 200px stage,
-     stroke-width 6 → inner clear diameter ~ 164px). Sized in ch units so
-     "00:00:00" always fits without spilling past the ring regardless of
-     font metrics, shrinking automatically if the string gets longer. */
-  width:140px;max-width:140px;font-size:clamp(17px,7.2vw,25px);
-  white-space:nowrap;overflow:hidden;text-overflow:clip
+     stroke-width 6 → inner clear diameter ~ 164px). A plain fixed px size
+     (not vw-based) so it renders identically on every screen instead of
+     ballooning up on wide desktop viewports; overflow is visible rather
+     than clipped so a rare overflow is never worse than "sits a hair
+     outside center" instead of a chopped-off digit. */
+  width:160px;max-width:160px;font-size:19px;
+  white-space:nowrap
 }
 .lh-timer-bar-wrap {
   height:4px;background:rgba(255,255,255,.06);border-radius:99px;
