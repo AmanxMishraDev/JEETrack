@@ -105,339 +105,230 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="logo-mark.svg"/>
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--sf:#111118;--sf2:#18181f;--sf3:#1e1e28;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12);
+  --tx:#f0eff5;--mu:#7a7990;--mu2:#4a4960;
+  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--bl:#60a5fa;
+}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 
-  :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --border: rgba(255,255,255,0.07);
-    --purple: #7c6af7;
-    --purple-light: #a695ff;
-    --green: #34d399;
-    --text: #e8e8f0;
-    --muted: #7a7990;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.8);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav-links a.active{color:var(--ac2)}
+.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.85}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
+/* HERO */
+.hero{position:relative;padding:6rem 2.5rem 5rem;text-align:center;overflow:hidden}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px)}
+.hero-orb-1{width:600px;height:600px;background:rgba(124,106,247,.14);top:-200px;left:50%;transform:translateX(-50%)}
+.hero-orb-2{width:350px;height:350px;background:rgba(244,114,182,.1);top:0;right:5%;filter:blur(70px)}
+.hero-pill{display:inline-flex;align-items:center;gap:.45rem;background:rgba(124,106,247,.1);border:1px solid rgba(124,106,247,.25);color:var(--ac2);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.3rem .85rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.75rem}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--ac2);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:1.5rem}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--mu);font-size:1.05rem;line-height:1.8;max-width:560px;margin:0 auto}
 
-  /* NAV */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: 60px;
-    background: rgba(10,10,15,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-head);
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: #fff;
-    text-decoration: none;
-  }
-  .nav-logo-text { color: #fff; }
-  .nav-logo-track { background: linear-gradient(135deg,#a29bfe,#fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  @media (max-width: 640px) {
-    .nav-cta-desktop { display: none !important; }
-  }
-  .nav-cta {
-    background: linear-gradient(135deg, var(--purple), var(--purple-light));
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-  }
+/* CONTENT */
+.page-wrap{max-width:760px;margin:0 auto;padding:0 2.5rem 6rem}
 
-  /* HERO */
-  .hero {
-    text-align: center;
-    padding: 5rem 1.5rem 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 600px; height: 300px;
-    background: radial-gradient(ellipse at center, rgba(124,106,247,0.15) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(124,106,247,0.12);
-    border: 1px solid rgba(124,106,247,0.25);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--purple-light);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-  }
-  .hero-badge-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-  .hero h1 {
-    font-family: var(--font-head);
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 1rem;
-  }
-  .hero h1 em { background: linear-gradient(135deg, #a29bfe, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; }
-  .hero p {
-    color: var(--muted);
-    font-size: 1rem;
-    max-width: 480px;
-    margin: 0 auto;
-  }
+/* SECTION LABEL */
+.section-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin:0 0 .9rem;display:flex;align-items:center;gap:.5rem}
+.section-label-line{width:20px;height:1px;background:var(--mu)}
 
-  /* FAQ */
-  .faq-section {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 1rem 1.5rem 5rem;
-  }
-  .faq-item {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--surface);
-    margin-bottom: 12px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .faq-item:hover { border-color: rgba(124,106,247,0.3); }
-  .faq-item.open { border-color: rgba(124,106,247,0.4); }
-  .faq-q {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.1rem 1.4rem;
-    background: none;
-    border: none;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-  }
-  .faq-icon {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
-    background: rgba(124,106,247,0.1);
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.25s, background 0.2s;
-  }
-  .faq-item.open .faq-icon {
-    transform: rotate(45deg);
-    background: rgba(124,106,247,0.25);
-  }
-  .faq-a {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-    padding: 0 1.4rem;
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.7;
-  }
-  .faq-item.open .faq-a {
-    max-height: 200px;
-    padding: 0 1.4rem 1.2rem;
-  }
+/* FAQ LIST */
+.faq-list{display:flex;flex-direction:column;gap:.75rem;margin-bottom:2.5rem}
+.faq-item{background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.faq-item:hover{border-color:var(--bd2)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.15rem 1.4rem;background:none;border:none;color:var(--tx);font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;text-align:left;cursor:pointer}
+.faq-icon{width:22px;height:22px;border-radius:7px;background:rgba(124,106,247,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .25s,background .2s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:rgba(124,106,247,.28)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 1.4rem;color:var(--mu);font-size:.88rem;line-height:1.8}
+.faq-item.open .faq-a{max-height:260px;padding:0 1.4rem 1.3rem}
 
-  /* CTA SECTION */
-  .cta-section {
-    text-align: center;
-    padding: 3rem 1.5rem 5rem;
-    border-top: 1px solid var(--border);
-  }
-  .cta-section h2 {
-    font-family: var(--font-head);
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 0.75rem;
-  }
-  .cta-section p {
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-  }
-  .cta-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--purple), var(--purple-light));
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    padding: 12px 28px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* CTA BAND */
+.cta-band{background:linear-gradient(135deg,rgba(124,106,247,.09),rgba(244,114,182,.06));border:1px solid rgba(124,106,247,.2);border-radius:22px;padding:3.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(124,106,247,.08);filter:blur(60px);top:-80px;left:50%;transform:translateX(-50%);pointer-events:none}
+.cta-band h2{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.75rem}
+.cta-band p{color:var(--mu);font-size:.95rem;margin-bottom:2rem;line-height:1.7;max-width:440px;margin-left:auto;margin-right:auto}
+.cta-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.75rem 1.75rem;border-radius:10px;font-size:.9rem;font-weight:600;transition:opacity .15s}
+.btn-primary:hover{opacity:.88}
+.btn-ghost{display:inline-flex;align-items:center;gap:.5rem;color:var(--ac2);text-decoration:none;padding:.7rem 1.5rem;border-radius:10px;font-size:.88rem;font-weight:600;border:1px solid rgba(124,106,247,.28);transition:all .15s}
+.btn-ghost:hover{background:rgba(124,106,247,.08);border-color:rgba(124,106,247,.4)}
 
-  /* FOOTER */
-  footer {
-    text-align: center;
-    padding: 1.5rem;
-    color: var(--muted);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border);
-  }
-  footer a { color: var(--purple-light); text-decoration: none; }
+/* FOOTER */
+.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem}
+.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
+.foot a:hover{color:var(--tx)}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+
+@media(max-width:700px){
+  .nav{padding:0 1.25rem}
+  .nav-links{display:none}
+  .hero{padding:4rem 1.25rem 3rem}
+  .page-wrap{padding:0 1.25rem 4rem}
+  .cta-band{padding:2.25rem 1.5rem}
+  .faq-q{font-size:.88rem;padding:1rem 1.1rem}
+  .faq-a{padding:0 1.1rem}
+  .faq-item.open .faq-a{padding:0 1.1rem 1.1rem}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="https://jeetrack.in" class="nav-logo">
-    <span class="nav-logo-text">JEE<span class="nav-logo-track">Track</span></span>
-  </a>
-  <a href="https://jeetrack.in" class="nav-cta nav-cta-desktop">Get Started Free →</a>
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq" class="active">FAQ</a>
+    <a href="/about">About</a>
+  </div>
+  <a class="nav-cta" href="/">Get Started Free →</a>
 </nav>
 
 <section class="hero">
-  <div class="hero-badge"><span class="hero-badge-dot"></span>Help Centre</div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-pill"><span class="hero-pill-dot"></span>Help Centre</div>
   <h1>Frequently Asked<br><em>Questions</em></h1>
-  <p>Everything you need to know about JEETrack and how it helps you crack JEE.</p>
+  <p class="hero-sub">Everything you need to know about JEETrack and how it helps you crack JEE.</p>
 </section>
 
-<section class="faq-section">
+<div class="page-wrap">
 
-  <div class="faq-item open">
-    <button class="faq-q" onclick="toggle(this)">
-      What is JEETrack?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">JEETrack is a free web app built for JEE aspirants to track mock test scores, study hours, syllabus progress, backlogs, and get AI-powered weekly analysis — all in one place. No spreadsheets, no chaos.</div>
+  <div class="section-label"><span class="section-label-line"></span>General</div>
+  <div class="faq-list">
+
+    <div class="faq-item open">
+      <button class="faq-q" onclick="toggle(this)">
+        What is JEETrack?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">JEETrack is a free web app built for JEE aspirants to track mock test scores, study hours, syllabus progress, backlogs, and get AI-powered weekly analysis — all in one place. No spreadsheets, no chaos.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Is JEETrack completely free?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">Yes, JEETrack is 100% free. Create an account and start tracking your entire JEE preparation — mock tests, hours, syllabus, AI insights — at no cost.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Does JEETrack support both JEE Mains and Advanced?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">Yes. JEETrack has dedicated modules for both JEE Mains and JEE Advanced with separate score tracking, subject-wise accuracy analysis, trend charts, and a side-by-side comparison view.</div>
+    </div>
+
   </div>
 
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      Is JEETrack completely free?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">Yes, JEETrack is 100% free. Create an account and start tracking your entire JEE preparation — mock tests, hours, syllabus, AI insights — at no cost.</div>
+  <div class="section-label"><span class="section-label-line"></span>Features</div>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How does the AI Insights feature work?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">The AI looks at your mock test scores, study hours, syllabus completion, and backlog data and gives you a brutally honest weekly breakdown — what to fix, what's working, and where to focus. No fluff, just actionable advice.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Can I track my daily study hours?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">Yes. Log lecture, practice, and revision hours for Physics, Chemistry, and Maths every day. JEETrack shows a visual heatmap, daily averages, and streaks — so you can see exactly where your time is going.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        What is the Syllabus Tracker?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">The Syllabus Tracker covers every chapter of Physics, Chemistry, and Maths for JEE Mains and Advanced. Mark chapters done for theory and practice separately, and see your completion percentage at a glance.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        What is the Backlog feature?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">The Backlog module is where skipped chapters, unsolved DPPs, and missed revisions go. Clear them one by one, build your streak, and make sure nothing falls through the cracks as your exam approaches.</div>
+    </div>
+
   </div>
 
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      Does JEETrack support both JEE Mains and Advanced?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">Yes. JEETrack has dedicated modules for both JEE Mains and JEE Advanced with separate score tracking, subject-wise accuracy analysis, trend charts, and a side-by-side comparison view.</div>
+  <div class="section-label"><span class="section-label-line"></span>Access &amp; Getting Started</div>
+  <div class="faq-list" style="margin-bottom:3.5rem">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Is JEETrack available on mobile?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">Yes. JEETrack is a Progressive Web App (PWA) that works on all devices — Android, iPhone, tablet, and desktop. You can install it directly on your phone's home screen for quick access, no app store needed.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        Will JEETrack work on slow internet?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">JEETrack caches key assets so the app loads quickly even on slow connections. A stable internet connection is needed to sync and save your data to the cloud.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        How do I get started?
+        <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </button>
+      <div class="faq-a">Go to jeetrack.in, click "Create free account", complete the 2-minute onboarding (name, class, target year, coaching), and you're in. Start logging mock tests and study hours straight away.</div>
+    </div>
+
   </div>
 
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      How does the AI Insights feature work?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">The AI looks at your mock test scores, study hours, syllabus completion, and backlog data and gives you a brutally honest weekly breakdown — what to fix, what's working, and where to focus. No fluff, just actionable advice.</div>
+  <!-- CTA -->
+  <div class="cta-band">
+    <h2>Ready to get serious about JEE?</h2>
+    <p>Join students already using JEETrack to track their preparation with clarity and consistency. Free forever.</p>
+    <div class="cta-btns">
+      <a class="btn-primary" href="/">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Start Tracking for Free
+      </a>
+      <a class="btn-ghost" href="/features">Explore Features →</a>
+    </div>
   </div>
 
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      Can I track my daily study hours?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">Yes. Log lecture, practice, and revision hours for Physics, Chemistry, and Maths every day. JEETrack shows a visual heatmap, daily averages, and streaks — so you can see exactly where your time is going.</div>
+</div>
+
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
   </div>
-
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      What is the Syllabus Tracker?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">The Syllabus Tracker covers every chapter of Physics, Chemistry, and Maths for JEE Mains and Advanced. Mark chapters done for theory and practice separately, and see your completion percentage at a glance.</div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
   </div>
-
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      What is the Backlog feature?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">The Backlog module is where skipped chapters, unsolved DPPs, and missed revisions go. Clear them one by one, build your streak, and make sure nothing falls through the cracks as your exam approaches.</div>
-  </div>
-
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      Is JEETrack available on mobile?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">Yes. JEETrack is a Progressive Web App (PWA) that works on all devices — Android, iPhone, tablet, and desktop. You can install it directly on your phone's home screen for quick access, no app store needed.</div>
-  </div>
-
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      Will JEETrack work on slow internet?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">JEETrack caches key assets so the app loads quickly even on slow connections. A stable internet connection is needed to sync and save your data to the cloud.</div>
-  </div>
-
-  <div class="faq-item">
-    <button class="faq-q" onclick="toggle(this)">
-      How do I get started?
-      <span class="faq-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="11" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="6" x2="11" y2="6" stroke="#a695ff" stroke-width="2" stroke-linecap="round"/></svg></span>
-    </button>
-    <div class="faq-a">Go to jeetrack.in, click "Create free account", complete the 2-minute onboarding (name, class, target year, coaching), and you're in. Start logging mock tests and study hours straight away.</div>
-  </div>
-
-</section>
-
-<section class="cta-section">
-  <h2>Ready to get serious about JEE?</h2>
-  <p>Join hundreds of aspirants already tracking their prep on JEETrack.</p>
-  <a href="https://jeetrack.in" class="cta-btn">Start Tracking for Free →</a>
-</section>
-
-<footer>
-  <p>© 2025 JEETrack · <a href="https://jeetrack.in">Home</a> · Built for JEE aspirants across India</p>
+  © 2026 JEETrack · Built for JEE Aspirants across India
 </footer>
 
 <script>
