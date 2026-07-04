@@ -1767,15 +1767,15 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .land-hero-glow{inset:-40px}
   .land-dash-tab{font-size:9.5px;padding:7px 3px}
   .land-dash-tab svg{display:none}
-  .land-dash-viewport{height:250px}
+  .land-dash-viewport{height:280px}
+  .land-ins-chips{grid-template-columns:1fr}
+  .land-ins-results{overflow-y:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start;align-content:flex-start}
+  .land-ins-stage{justify-content:flex-start}
 }
 @media(max-width:400px){
   .land-left{padding:1.8rem 1rem 1.4rem}
   .slide-title{font-size:1.65rem}
   .land-trusted{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem}
-  
-  .land-ins-chips{grid-template-columns:1fr}
-  .land-ins-results{overflow-y:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start}
 }
 
 #onboarding{

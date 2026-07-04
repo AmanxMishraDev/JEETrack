@@ -1026,8 +1026,6 @@ function initHeroDemo() {
   const TILT_REST = { rx: 2, ry: -8, tz: 0 };
   const tiltState = { cur: { rx: 2, ry: -8, tz: 0 }, target: { rx: 2, ry: -8 } };
   let tiltGlare = null;
-  let tiltMouseActive = false;
-  let tiltIdleT = 0;
 
   function setupHeroTilt() {
     if (REDUCE_MOTION) return;
@@ -1037,44 +1035,50 @@ function initHeroDemo() {
     tiltGlare.className = 'land-card-glare';
     card.appendChild(tiltGlare);
 
-    visual.addEventListener('mouseenter', () => { tiltMouseActive = true; if (tiltGlare) tiltGlare.classList.add('active'); });
+    visual.addEventListener('mouseenter', () => { if (tiltGlare) tiltGlare.classList.add('active'); });
     visual.addEventListener('mousemove', (e) => {
       const r = card.getBoundingClientRect();
       if (!r.width || !r.height) return;
-      tiltMouseActive = true;
+      setTiltFromPoint(e.clientX - r.left, e.clientY - r.top);
       const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
       const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
-      const nx = px * 2 - 1, ny = py * 2 - 1; 
-      tiltState.target.ry = TILT_REST.ry + nx * 9;
-      tiltState.target.rx = TILT_REST.rx - ny * 6;
       if (tiltGlare) {
         tiltGlare.style.setProperty('--glare-x', (px * 100) + '%');
         tiltGlare.style.setProperty('--glare-y', (py * 100) + '%');
       }
     });
     visual.addEventListener('mouseleave', () => {
-      tiltMouseActive = false;
-      tiltState.target.rx = TILT_REST.rx;
-      tiltState.target.ry = TILT_REST.ry;
+      resetTilt();
       if (tiltGlare) tiltGlare.classList.remove('active');
     });
 
     (function tick() {
-      tiltIdleT += 1;
       const s = tiltState.cur, t = tiltState.target;
-      
-      
-      let tRx = t.rx, tRy = t.ry;
-      if (!tiltMouseActive) {
-        tRx += Math.sin(tiltIdleT * 0.012) * 1.8;
-        tRy += Math.cos(tiltIdleT * 0.009) * 2.6;
-      }
-      s.rx += (tRx - s.rx) * 0.07;
-      s.ry += (tRy - s.ry) * 0.07;
-      s.tz += (0 - s.tz) * 0.1; 
+      s.rx += (t.rx - s.rx) * 0.16;
+      s.ry += (t.ry - s.ry) * 0.16;
+      s.tz += (0 - s.tz) * 0.16;
       card.style.transform = `perspective(1400px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg) translateZ(${s.tz.toFixed(2)}px)`;
       requestAnimationFrame(tick);
     })();
+  }
+
+  
+  
+  function setTiltFromPoint(x, y) {
+    if (REDUCE_MOTION) return;
+    const r = card.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const px = Math.min(1, Math.max(0, x / r.width));
+    const py = Math.min(1, Math.max(0, y / r.height));
+    const nx = px * 2 - 1, ny = py * 2 - 1;
+    tiltState.target.ry = TILT_REST.ry + nx * 9;
+    tiltState.target.rx = TILT_REST.rx - ny * 6;
+  }
+
+  function resetTilt() {
+    if (REDUCE_MOTION) return;
+    tiltState.target.rx = TILT_REST.rx;
+    tiltState.target.ry = TILT_REST.ry;
   }
 
   function kickTilt(drx, dry, dtz) {
@@ -1108,6 +1112,8 @@ function initHeroDemo() {
     const slow = !!opts.slow;
     const travelMs = slow ? CURSOR_SLOW_MS : CURSOR_MS;
 
+    setTiltFromPoint(x + 3, y + 3);
+
     cursor.style.opacity = '1';
     
     
@@ -1138,8 +1144,8 @@ function initHeroDemo() {
   
   function zoomCinematicIn(x, y, durationMs) {
     if (!zoomStage) return;
-    kickTilt(-4.5, 6.5, 26);
-    
+    setTiltFromPoint(x, y);
+    kickTilt(0, 0, 22);
     
     
     zoomStage.classList.remove('zoom-punch');
@@ -1158,7 +1164,8 @@ function initHeroDemo() {
   
   function zoomCinematicOut() {
     if (!zoomStage) return;
-    kickTilt(2.2, -3.2, -10);
+    resetTilt();
+    kickTilt(0, 0, -8);
     zoomStage.style.transition = `transform ${CINEMATIC_OUT_MS}ms cubic-bezier(.16,1,.3,1)`;
     zoomStage.style.transform = 'scale(1)';
     setTimeout(() => {
@@ -1171,7 +1178,8 @@ function initHeroDemo() {
   
   function punchZoomAt(x, y) {
     if (!zoomStage) return;
-    kickTilt(-2.6, 3.8, 18);
+    setTiltFromPoint(x, y);
+    kickTilt(0, 0, 14);
     const w = card.clientWidth || 1;
     const h = card.clientHeight || 1;
     const ox = Math.min(100, Math.max(0, (x / w) * 100));
@@ -1272,7 +1280,7 @@ function initHeroDemo() {
         else if (mi > s - 1) { el.classList.remove('active'); el.classList.add('done'); }
       }
       mi++;
-      if (mi <= INS_LOAD_STEPS) kickTilt((Math.random() * 2.6 - 1.3), (Math.random() * 3.8 - 1.9), 6);
+      if (mi <= INS_LOAD_STEPS) kickTilt((Math.random() * 1.6 - 0.8), (Math.random() * 2.4 - 1.2), 5);
       if (mi > INS_LOAD_STEPS) {
         clearInterval(_insLoadTimer);
         onDone && onDone();
@@ -1288,7 +1296,7 @@ function initHeroDemo() {
     insResults.classList.remove('land-ins-in');
     void insResults.offsetWidth;
     insResults.classList.add('land-ins-in');
-    kickTilt(-5, 7.5, 28);
+    kickTilt(-3, 4.5, 20);
   }
 
   
