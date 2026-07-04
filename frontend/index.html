@@ -26,7 +26,7 @@
 <meta name="twitter:description" content="Free JEE Mains & Advanced tracker. Log mock scores, study hours, and syllabus progress — get AI-powered weekly insights built for serious aspirants."/>
 <meta name="twitter:image" content="https://www.jeetrack.in/icon-512.png"/>
 
-<meta name="robots" content="index, follow"/>
+<meta name="robots" id="meta-robots" content="index, follow"/>
 <link rel="sitemap" type="application/xml" href="https://www.jeetrack.in/sitemap.xml"/>
 
 <script type="application/ld+json">
@@ -4303,9 +4303,18 @@ function show404(){
   document.title = 'Page Not Found — JEETrack';
 }
 
+function _setRobotsMeta(shouldIndex){
+  const m = document.getElementById('meta-robots');
+  if(m) m.setAttribute('content', shouldIndex ? 'index, follow' : 'noindex, follow');
+}
+
 function _handleRoute(){
   const path = window.location.pathname;
   const tab = new URLSearchParams(window.location.search).get('tab');
+  
+  
+  const _indexablePaths = ['/', '/dashboard', '/faq', '/features', '/about', '/privacy', '/terms'];
+  _setRobotsMeta(_indexablePaths.includes(path));
   
   if(path === '/login'){ showAuthScreen(); return; }
   if(path === '/onboarding'){

@@ -307,8 +307,12 @@ function showAuthScreen(fromSignOut){
   if(fromSignOut){
     history.replaceState({page:'login'}, '', '/login');
     document.title = 'JEETrack — Sign In';
+    if(typeof _setRobotsMeta === 'function') _setRobotsMeta(false);
   } else if(window.location.pathname === '/login'){
     document.title = 'JEETrack — Sign In';
+    if(typeof _setRobotsMeta === 'function') _setRobotsMeta(false);
+  } else if(typeof _setRobotsMeta === 'function'){
+    _setRobotsMeta(true);
   }
   
   setTimeout(initSlideshow, 100);
