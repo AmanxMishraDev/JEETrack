@@ -7029,8 +7029,8 @@ function renderInsights(d){
   </div>
 
   
-  <div class="ai-verdict-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-    <div style="flex:1;min-width:0;position:relative;z-index:1">
+  <div class="ai-verdict-card">
+    <div class="ai-verdict-main">
       <div class="ai-verdict-label">Overall Assessment</div>
       <div class="ai-verdict-text">${d.overallVerdict||'Analysis complete'}</div>
       <div class="ai-mom-badge" style="background:${momBg};color:${momColor}">
@@ -7038,7 +7038,7 @@ function renderInsights(d){
         <span>${(d.momentum||'STABLE').toUpperCase()}</span>
       </div>
     </div>
-    <div class="ai-score-ring-wrap" style="width:96px;height:96px">
+    <div class="ai-score-ring-wrap">
       <svg class="ai-score-ring-svg" width="96" height="96" viewBox="0 0 96 96">
         <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
         <circle cx="48" cy="48" r="38" fill="none" stroke="url(#ringGrad)" stroke-width="7"
