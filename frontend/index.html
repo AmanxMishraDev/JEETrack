@@ -7004,7 +7004,7 @@ function renderInsights(d){
   const momIcon=d.momentum==='rising'?'↑':d.momentum==='declining'?'↓':'→';
   const score=d.overallScore||0;
   const insights=d.insights||[];
-  const circumference=2*Math.PI*38;
+  const circumference=2*Math.PI*45;
   const dashOffset=circumference*(1-(score/100));
   const ts=new Date().toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 
@@ -7039,9 +7039,9 @@ function renderInsights(d){
       </div>
     </div>
     <div class="ai-score-ring-wrap">
-      <svg class="ai-score-ring-svg" width="96" height="96" viewBox="0 0 96 96">
-        <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
-        <circle cx="48" cy="48" r="38" fill="none" stroke="url(#ringGrad)" stroke-width="7"
+      <svg class="ai-score-ring-svg" width="108" height="108" viewBox="0 0 108 108">
+        <circle cx="54" cy="54" r="45" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+        <circle cx="54" cy="54" r="45" fill="none" stroke="url(#ringGrad)" stroke-width="7"
           stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
           style="transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)"/>
         <defs>
@@ -7051,8 +7051,10 @@ function renderInsights(d){
           </linearGradient>
         </defs>
       </svg>
-      <div class="ai-score-ring-num">${score}</div>
-      <div class="ai-score-ring-label">/ 100</div>
+      <div class="ai-score-ring-inner">
+        <div class="ai-score-ring-num">${score}</div>
+        <div class="ai-score-ring-label">/ 100</div>
+      </div>
     </div>
   </div>
 

@@ -3519,7 +3519,7 @@ select.fc.adv-fc {
   color:var(--tx);line-height:1.6;position:relative;z-index:1;
 }
 .ai-score-ring-wrap{
-  position:relative;flex-shrink:0;width:96px;height:96px;
+  position:relative;flex-shrink:0;width:108px;height:108px;
   display:flex;align-items:center;justify-content:center;
 }
 @media(max-width:600px){
@@ -3528,14 +3528,19 @@ select.fc.adv-fc {
   .ai-score-ring-wrap{align-self:center;margin:0 auto}
 }
 .ai-score-ring-svg{transform:rotate(-90deg);filter:drop-shadow(0 0 10px rgba(124,106,247,.3))}
+.ai-score-ring-inner{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;pointer-events:none;
+}
 .ai-score-ring-num{
-  position:absolute;text-align:center;
-  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.8rem;
-  line-height:1;color:var(--tx);
+  font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.9rem;
+  line-height:1;letter-spacing:-.01em;
+  background:linear-gradient(135deg,#c9befa,#f4a6c8);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#fff;
 }
 .ai-score-ring-label{
-  position:absolute;bottom:12px;text-align:center;width:100%;
-  font-size:9px;color:var(--mu);letter-spacing:.04em;
+  font-size:9px;font-weight:600;color:var(--mu);letter-spacing:.12em;
+  text-transform:uppercase;opacity:.65;line-height:1;
 }
 .ai-mom-badge{
   display:inline-flex;align-items:center;gap:4px;
