@@ -115,7 +115,7 @@ async function initSupabase(){
       _appInitialized = false;
       currentUser = null;
       S = getDefaultState();
-      showAuthScreen();
+      showAuthScreen(true);
       setTimeout(initSlideshow, 100);
     } else if(event === 'SIGNED_IN' && session?.user){
       if(_appInitialized) return; 
@@ -281,7 +281,7 @@ async function signOut(){
   currentUser = null;
   S = getDefaultState();
   localStorage.removeItem('jt3');
-  showAuthScreen();
+  showAuthScreen(true);
 }
 
 function hideSplash(){
@@ -291,7 +291,7 @@ function hideSplash(){
   setTimeout(() => { sp.style.display = 'none'; }, 650);
 }
 
-function showAuthScreen(){
+function showAuthScreen(fromSignOut){
   hideSplash();
   const landingEl = document.getElementById('landing');
   landingEl.classList.remove('hidden');
@@ -300,9 +300,16 @@ function showAuthScreen(){
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
   setTimeout(_initScrollReveal, 150);
-  history.replaceState({page:'login'}, '', '/login');
-  document.title = 'JEETrack — Sign In';
+
   
+  
+  
+  if(fromSignOut){
+    history.replaceState({page:'login'}, '', '/login');
+    document.title = 'JEETrack — Sign In';
+  } else if(window.location.pathname === '/login'){
+    document.title = 'JEETrack — Sign In';
+  }
   
   setTimeout(initSlideshow, 100);
   setTimeout(initHeroDemo, 200);
