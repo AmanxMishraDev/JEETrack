@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jeetrack.in/sitemap.xml
+Sitemap: https://www.jeetrack.in/sitemap.xml

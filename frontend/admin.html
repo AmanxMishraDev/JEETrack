@@ -884,7 +884,7 @@ tr.fb-expand-row{background:transparent!important;}
                 </div>
                 <div id="ce-cta-fields" style="display:flex;gap:.5rem;flex-wrap:wrap;opacity:.35;pointer-events:none;">
                   <input class="compose-input" id="ce-cta-text" placeholder="Button text e.g. Open JEETrack →" style="flex:1;min-width:140px;"/>
-                  <input class="compose-input" id="ce-cta-url" placeholder="URL e.g. https://jeetrack.in" style="flex:1;min-width:180px;"/>
+                  <input class="compose-input" id="ce-cta-url" placeholder="URL e.g. https://www.jeetrack.in" style="flex:1;min-width:180px;"/>
                 </div>
               </div>
 
@@ -896,7 +896,7 @@ tr.fb-expand-row{background:transparent!important;}
                   <button class="tbtn" onclick="insertTag('<strong>','</strong>')"><b>B</b></button>
                   <button class="tbtn" onclick="insertTag('<em>','</em>')"><i>I</i></button>
                   <button class="tbtn" onclick="insertTag('<br><br>','')">↵ Para</button>
-                  <button class="tbtn" onclick="insertTag('<a href=&quot;https://jeetrack.in&quot; style=&quot;color:#D8B4FE;text-decoration:none;font-weight:600&quot;>','</a>')">🔗 Link</button>
+                  <button class="tbtn" onclick="insertTag('<a href=&quot;https://www.jeetrack.in&quot; style=&quot;color:#D8B4FE;text-decoration:none;font-weight:600&quot;>','</a>')">🔗 Link</button>
                   <button class="tbtn" onclick="insertTag('<h2 style=&quot;color:#A855F7;margin:16px 0 8px&quot;>','</h2>')">H2</button>
                   <button class="tbtn" onclick="insertTag('<ul style=&quot;padding-left:20px&quot;><li>','</li></ul>')">• List</button>
                   <span style="width:1px;background:var(--bd);margin:0 .2rem;"></span>
@@ -2415,7 +2415,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
   const cta = (includeCTA && ctaText && ctaText.trim()) ? `
       <tr>
         <td align="center" style="padding:0 40px 40px;">
-          <a href="${ctaUrl||'https://jeetrack.in'}"
+          <a href="${ctaUrl||'https://www.jeetrack.in'}"
             style="display:inline-block;background:linear-gradient(135deg,#A855F7,#EC4899);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:600;">
             ${ctaText.trim()}
           </a>
@@ -2437,7 +2437,7 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
   
   <tr>
     <td align="center" style="padding:40px 30px 20px;">
-      <img src="https://jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" width="260"
+      <img src="https://www.jeetrack.in/jeetrack-logo-email.png" alt="JEETrack" width="260"
         style="display:block;border:0;max-width:260px;height:auto;">
     </td>
   </tr>
@@ -2575,7 +2575,7 @@ async function sendCustomEmail() {
     const body = (document.getElementById('ce-body')?.value||'').trim();
     const ctaEnabled = document.getElementById('ce-cta-enabled')?.checked || false;
     const ctaText = ctaEnabled ? (document.getElementById('ce-cta-text')?.value||'').trim() : '';
-    const ctaUrl  = ctaEnabled ? (document.getElementById('ce-cta-url')?.value||'https://jeetrack.in').trim() : '';
+    const ctaUrl  = ctaEnabled ? (document.getElementById('ce-cta-url')?.value||'https://www.jeetrack.in').trim() : '';
     if (!body) { showToast('Email body required!'); return; }
     htmlBody = buildEmailHTML('{{name}}', body, ctaText, ctaUrl, ctaEnabled);
     isRawHtml = true;
