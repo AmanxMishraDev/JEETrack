@@ -1259,6 +1259,7 @@ function initHeroDemo() {
         else if (mi > s - 1) { el.classList.remove('active'); el.classList.add('done'); }
       }
       mi++;
+      if (mi <= INS_LOAD_STEPS) kickTilt((Math.random() * 1.4 - 0.7), (Math.random() * 2.2 - 1.1), 3);
       if (mi > INS_LOAD_STEPS) {
         clearInterval(_insLoadTimer);
         onDone && onDone();
@@ -1274,6 +1275,7 @@ function initHeroDemo() {
     insResults.classList.remove('land-ins-in');
     void insResults.offsetWidth;
     insResults.classList.add('land-ins-in');
+    kickTilt(-2.4, 3.6, 14);
   }
 
   
@@ -2155,6 +2157,8 @@ function showSettingsPanel(id, btn) {
     alerts: 'Alerts',
     appearance: 'Appearance',
     account: 'Account',
+    feedback: 'Feedback',
+    contact: 'Contact',
   };
   const sub = document.querySelector('#page-settings .ps');
   if (sub) sub.textContent = subtitles[id] || 'Profile, data & preferences';
@@ -2163,7 +2167,7 @@ function showSettingsPanel(id, btn) {
   if (id === 'alerts') { loadAlertsSettings(); }
   
   if(window.innerWidth <= 768){
-    const names={profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data & Backup',account:'Account',feedback:'Feedback'};
+    const names={profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data & Backup',account:'Account',feedback:'Feedback',contact:'Contact'};
     updateMobTopbarTitle('settings', names[id] || '');
   }
 }

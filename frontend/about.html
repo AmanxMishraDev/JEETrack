@@ -122,7 +122,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
   .page-wrap{padding:0 1.25rem 4rem}
   .story-grid{grid-template-columns:1fr}
   .card-full{grid-column:span 1}
-  .stats-row{grid-template-columns:1fr!important;gap:1rem}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
   .values-grid{grid-template-columns:1fr}
   .cta-band{padding:2.25rem 1.5rem}
 }
@@ -292,14 +292,11 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 </div>
 
 <footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
   <div class="foot-links">
-    <a href="/">JEETrack</a>
-    <a href="/features">Features</a>
-    <a href="/faq">FAQ</a>
-    <a href="/about">About</a>
-    <a href="/privacy">Privacy</a>
-    <a href="/terms">Terms</a>
-    <a href="mailto:support@jeetrack.in">Contact</a>
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
   </div>
   © 2026 JEETrack · Built for JEE Aspirants across India
 </footer>

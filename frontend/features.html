@@ -99,6 +99,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)) drop-shadow(0 0 14px rgba(166,149,255,.35));
 }
 .demo-cursor svg{display:block;width:100%;height:100%;transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+.demo-cursor.slow-travel{transition:transform 1.18s cubic-bezier(.45,0,.15,1),opacity .3s ease}
 .demo-cursor.visible{opacity:.92}
 .demo-cursor.traveling{filter:drop-shadow(0 6px 16px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(166,149,255,.55))}
 .demo-cursor.traveling svg{transform:scale(1.3) rotate(-12deg) translateY(-3px)}
@@ -155,6 +156,8 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .tv-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
 .tv-k{text-align:center}
 .tv-k-num{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800}
+.tv-k-num.tv-pop{animation:tvNumPop .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes tvNumPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
 .tv-k-lbl{font-size:.56rem;color:rgba(255,255,255,.32);margin-top:.08rem}
 .tv-bars{display:flex;align-items:flex-end;gap:4px;height:60px;padding:0 2px}
 .tv-bar{flex:1;border-radius:4px 4px 2px 2px;background:rgba(255,255,255,.07)}
@@ -166,6 +169,39 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .tv-s span{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .tv-s b{color:#fff;font-weight:700}
 /* AI VIEW */
+.av-stage{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0}
+.av-empty,.av-loading{display:flex;flex-direction:column;align-items:center;text-align:center}
+.av-results{display:flex;flex-direction:column;gap:.65rem}
+.av-in{animation:avFadeIn .5s cubic-bezier(.34,1.1,.64,1) both}
+@keyframes avFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.av-orb{position:relative;width:34px;height:34px;margin:0 auto .5rem}
+.av-orb-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(124,106,247,.18);animation:avOrbRing 3s ease-in-out infinite}
+.av-orb-core{position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(244,114,182,.14));border:1px solid rgba(124,106,247,.3);display:flex;align-items:center;justify-content:center;animation:avOrbPulse 3s ease-in-out infinite;box-shadow:0 0 20px rgba(124,106,247,.18)}
+@keyframes avOrbRing{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.12);opacity:.15}}
+@keyframes avOrbPulse{0%,100%{box-shadow:0 0 20px rgba(124,106,247,.18)}50%{box-shadow:0 0 28px rgba(124,106,247,.32)}}
+.av-empty-ttl{font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;background:linear-gradient(135deg,#c8b8ff,#a695ff 45%,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.av-empty-sub{font-size:.6rem;color:rgba(255,255,255,.42);line-height:1.5;max-width:190px;margin:0 auto .7rem}
+.av-gen-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:10px;border:none;cursor:pointer;font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;background:linear-gradient(135deg,#7c6af7,#a695ff 50%,#f472b6);color:#fff;box-shadow:0 6px 18px rgba(124,106,247,.35);transition:transform .18s,box-shadow .18s}
+.av-gen-btn:hover{box-shadow:0 8px 22px rgba(124,106,247,.45)}
+.av-gen-btn:active{transform:scale(.96)}
+.av-gen-btn:disabled{opacity:.6;cursor:not-allowed}
+.av-ls-spinner{position:relative;width:34px;height:34px;margin:0 auto .5rem}
+.av-ls-ring,.av-ls-ring2,.av-ls-ring3{position:absolute;inset:0;border-radius:50%;border:2px solid transparent}
+.av-ls-ring{border-top-color:#a695ff;animation:avSpin 1s linear infinite}
+.av-ls-ring2{inset:5px;border-right-color:#f472b6;animation:avSpin 1.4s linear infinite reverse}
+.av-ls-ring3{inset:10px;border-bottom-color:#34d399;animation:avSpin 1.8s linear infinite}
+.av-ls-dot{position:absolute;inset:13px;border-radius:50%;background:radial-gradient(circle,#fff,rgba(166,149,255,.7));animation:avDotPulse 1.2s ease-in-out infinite}
+@keyframes avSpin{to{transform:rotate(360deg)}}
+@keyframes avDotPulse{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+.av-loading-msg{font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;color:#a695ff;margin-bottom:.5rem;animation:avTextPulse 2s ease-in-out infinite}
+@keyframes avTextPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.av-loading-steps{display:flex;flex-direction:column;gap:.2rem;text-align:left;margin:0 auto .5rem;min-width:130px}
+.av-loading-step{display:flex;align-items:center;gap:.35rem;font-size:.56rem;color:rgba(255,255,255,.3);transition:color .2s}
+.av-loading-step.active{color:#a695ff}
+.av-loading-step.done{color:rgba(52,211,153,.8)}
+.av-loading-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.av-prog-track{width:130px;height:3px;margin:0 auto;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.av-prog-fill{height:100%;width:0%;background:linear-gradient(90deg,#a695ff,#f472b6);border-radius:99px;transition:width .4s ease}
 .av-hd{display:flex;align-items:center;gap:.55rem}
 .av-ico{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,rgba(124,106,247,.22),rgba(244,114,182,.14));border:1px solid rgba(124,106,247,.28);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .av-ttl{font-size:.75rem;font-weight:700;color:#fff}
@@ -197,20 +233,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .sv-chips{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.3rem}
 .sv-ch{font-size:.58rem;font-weight:500;padding:.1rem .45rem;border-radius:99px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.32)}
 .sv-ch-done{background:rgba(52,211,153,.11);color:#34d399}
-/* BACKLOG VIEW */
-.bl-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem}
-.bl-ttl{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:800;color:#fff}
-.bl-cnt{background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.24);color:#f87171;font-size:.6rem;font-weight:700;padding:.12rem .45rem;border-radius:5px}
-.bl-item{display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:8px;margin-bottom:.3rem}
-.bl-cb{width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.bl-cb-done{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.38)}
-.bl-txt{flex:1;min-width:0}
-.bl-name{font-size:.68rem;font-weight:500;color:rgba(255,255,255,.82)}
-.bl-s{font-size:.58rem;color:rgba(255,255,255,.28);margin-top:.06rem}
-.bl-pri{font-size:.56rem;font-weight:700;padding:.08rem .32rem;border-radius:3px}
-.pri-hi{background:rgba(248,113,113,.14);color:#f87171}
-.pri-md{background:rgba(251,191,36,.11);color:#fbbf24}
-.pri-lo{background:rgba(96,165,250,.11);color:#60a5fa}
+#sylWavesChip{cursor:pointer;transition:background .2s,color .2s}
 /* FEATURES */
 .wrap{max-width:1100px;margin:0 auto;padding:0 2.5rem 6rem}
 .sec-lbl{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem}
@@ -331,10 +354,6 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             <span>Syllabus</span>
           </button>
-          <button class="dtab" data-v="bl">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>Backlog</span>
-          </button>
         </div>
         <div class="demo-vp" id="demoVp">
           <div class="dview active" data-v="dash">
@@ -371,19 +390,19 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
           <div class="dview" data-v="tests">
             <div class="tv-hd">
               <span class="tv-ttl">JEE Mains</span>
-              <div class="tv-fltrs">
-                <button class="tv-f active">All</button>
-                <button class="tv-f">Full</button>
-                <button class="tv-f">Partial</button>
+              <div class="tv-fltrs" id="tvFilters">
+                <button class="tv-f active" data-filter="all">All</button>
+                <button class="tv-f" data-filter="full">Full</button>
+                <button class="tv-f" data-filter="partial">Partial</button>
               </div>
             </div>
             <div class="tv-kpis">
-              <div class="tv-k"><div class="tv-k-num" style="color:#8fa5ff">7</div><div class="tv-k-lbl">Tests</div></div>
-              <div class="tv-k"><div class="tv-k-num" style="color:#2dd4bf">65.3%</div><div class="tv-k-lbl">Latest</div></div>
-              <div class="tv-k"><div class="tv-k-num" style="color:#34d399">65.3%</div><div class="tv-k-lbl">Best</div></div>
-              <div class="tv-k"><div class="tv-k-num" style="color:#fbbf24">56.2%</div><div class="tv-k-lbl">Avg</div></div>
+              <div class="tv-k"><div class="tv-k-num" id="tvNumTests" style="color:#8fa5ff">7</div><div class="tv-k-lbl">Tests</div></div>
+              <div class="tv-k"><div class="tv-k-num" id="tvNumLatest" style="color:#2dd4bf">65.3%</div><div class="tv-k-lbl">Latest</div></div>
+              <div class="tv-k"><div class="tv-k-num" id="tvNumBest" style="color:#34d399">65.3%</div><div class="tv-k-lbl">Best</div></div>
+              <div class="tv-k"><div class="tv-k-num" id="tvNumAvg" style="color:#fbbf24">56.2%</div><div class="tv-k-lbl">Avg</div></div>
             </div>
-            <div class="tv-bars">
+            <div class="tv-bars" id="tvBars">
               <div class="tv-bar" style="height:34%"></div>
               <div class="tv-bar" style="height:50%"></div>
               <div class="tv-bar" style="height:43%"></div>
@@ -393,39 +412,78 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
               <div class="tv-bar tv-bar-hi" style="height:95%"></div>
             </div>
             <div class="tv-subj">
-              <div class="tv-s"><span style="background:#60a5fa"></span>Physics <b>58%</b></div>
-              <div class="tv-s"><span style="background:#34d399"></span>Chemistry <b>72%</b></div>
-              <div class="tv-s"><span style="background:#f472b6"></span>Maths <b>61%</b></div>
+              <div class="tv-s"><span style="background:#60a5fa"></span>Physics <b id="tvSubjPhy">58%</b></div>
+              <div class="tv-s"><span style="background:#34d399"></span>Chemistry <b id="tvSubjChem">72%</b></div>
+              <div class="tv-s"><span style="background:#f472b6"></span>Maths <b id="tvSubjMath">61%</b></div>
             </div>
           </div>
           <!-- AI -->
           <div class="dview" data-v="ai">
-            <div class="av-hd">
-              <div class="av-ico">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>
+            <div class="av-stage" id="avStage">
+
+              <div class="av-empty" id="avEmpty">
+                <div class="av-orb">
+                  <div class="av-orb-ring"></div>
+                  <div class="av-orb-core">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="url(#avAiGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <defs><linearGradient id="avAiGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/>
+                      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="av-empty-ttl">Your Personal JEE Coach</div>
+                <div class="av-empty-sub">Scores, hours &amp; syllabus gaps — distilled in seconds.</div>
+                <button class="av-gen-btn" id="avGenBtn" type="button">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Generate Insights
+                </button>
               </div>
-              <div><div class="av-ttl">AI Analysis</div><div class="av-sub">10 Jun · Weekly Report</div></div>
-            </div>
-            <div class="av-verdict">
-              <div>
-                <div class="av-v-lbl">Overall Assessment</div>
-                <div class="av-v-txt">Scores rising fast, but syllabus is only 37% done.</div>
-                <div class="av-badge">↑ RISING</div>
+
+              <div class="av-loading" id="avLoading" style="display:none">
+                <div class="av-ls-spinner">
+                  <div class="av-ls-ring"></div><div class="av-ls-ring2"></div><div class="av-ls-ring3"></div><div class="av-ls-dot"></div>
+                </div>
+                <div class="av-loading-msg" id="avLoadingMsg">Reading your test scores...</div>
+                <div class="av-loading-steps" id="avLoadingSteps">
+                  <div class="av-loading-step active" data-step="1"><span class="av-loading-dot"></span>Test scores</div>
+                  <div class="av-loading-step" data-step="2"><span class="av-loading-dot"></span>Study hours</div>
+                  <div class="av-loading-step" data-step="3"><span class="av-loading-dot"></span>Syllabus gaps</div>
+                  <div class="av-loading-step" data-step="4"><span class="av-loading-dot"></span>Insights</div>
+                </div>
+                <div class="av-prog-track"><div class="av-prog-fill" id="avProgFill"></div></div>
               </div>
-              <div class="av-ring-wrap">
-                <svg width="42" height="42" viewBox="0 0 42 42">
-                  <circle cx="21" cy="21" r="16" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4"/>
-                  <circle cx="21" cy="21" r="16" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="101" stroke-dashoffset="24"/>
-                  <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
-                </svg>
-                <div class="av-ring-num">76</div>
+
+              <div class="av-results" id="avResults" style="display:none">
+                <div class="av-hd">
+                  <div class="av-ico">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>
+                  </div>
+                  <div><div class="av-ttl">AI Analysis</div><div class="av-sub">10 Jun · Weekly Report</div></div>
+                </div>
+                <div class="av-verdict">
+                  <div>
+                    <div class="av-v-lbl">Overall Assessment</div>
+                    <div class="av-v-txt">Scores rising fast, but syllabus is only 37% done.</div>
+                    <div class="av-badge">↑ RISING</div>
+                  </div>
+                  <div class="av-ring-wrap">
+                    <svg width="42" height="42" viewBox="0 0 42 42">
+                      <circle cx="21" cy="21" r="16" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4"/>
+                      <circle cx="21" cy="21" r="16" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="101" stroke-dashoffset="24"/>
+                      <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+                    </svg>
+                    <div class="av-ring-num">76</div>
+                  </div>
+                </div>
+                <div class="av-chips">
+                  <div class="av-chip av-gn"><div class="av-chip-top"><span class="av-chip-ttl">Scores rising</span><span class="av-chip-tag">Trend</span></div><div class="av-chip-met">+54 pts</div></div>
+                  <div class="av-chip av-am"><div class="av-chip-top"><span class="av-chip-ttl">Revise Thermo</span><span class="av-chip-tag">Weak</span></div><div class="av-chip-met">−6% acc</div></div>
+                  <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Syllabus gap</span><span class="av-chip-tag">Low</span></div><div class="av-chip-met">37% done</div></div>
+                  <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Backlogs</span><span class="av-chip-tag">Urgent</span></div><div class="av-chip-met">4 pending</div></div>
+                </div>
               </div>
-            </div>
-            <div class="av-chips">
-              <div class="av-chip av-gn"><div class="av-chip-top"><span class="av-chip-ttl">Scores rising</span><span class="av-chip-tag">Trend</span></div><div class="av-chip-met">+54 pts</div></div>
-              <div class="av-chip av-am"><div class="av-chip-top"><span class="av-chip-ttl">Revise Thermo</span><span class="av-chip-tag">Weak</span></div><div class="av-chip-met">−6% acc</div></div>
-              <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Syllabus gap</span><span class="av-chip-tag">Low</span></div><div class="av-chip-met">37% done</div></div>
-              <div class="av-chip av-rd"><div class="av-chip-top"><span class="av-chip-ttl">Backlogs</span><span class="av-chip-tag">Urgent</span></div><div class="av-chip-met">4 pending</div></div>
+
             </div>
           </div>
           <!-- SYLLABUS -->
@@ -435,10 +493,10 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
             <div class="sv-row">
               <div class="sv-rh">
                 <span class="sv-s"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg><span style="color:#60a5fa">Physics</span></span>
-                <span class="sv-p">54%</span>
+                <span class="sv-p" id="sylPhyPct">54%</span>
               </div>
-              <div class="sv-track"><div class="sv-fill" style="width:54%;background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
-              <div class="sv-chips"><span class="sv-ch sv-ch-done">Mechanics ✓</span><span class="sv-ch sv-ch-done">Optics ✓</span><span class="sv-ch">Waves</span><span class="sv-ch">Thermo</span></div>
+              <div class="sv-track"><div class="sv-fill" id="sylPhyFill" style="width:54%;background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <div class="sv-chips"><span class="sv-ch sv-ch-done">Mechanics ✓</span><span class="sv-ch sv-ch-done">Optics ✓</span><span class="sv-ch" id="sylWavesChip">Waves</span><span class="sv-ch">Thermo</span></div>
             </div>
             <div class="sv-row">
               <div class="sv-rh">
@@ -453,30 +511,6 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
                 <span class="sv-p">38%</span>
               </div>
               <div class="sv-track"><div class="sv-fill" style="width:38%;background:linear-gradient(90deg,#f472b6,#f9a8d4)"></div></div>
-            </div>
-          </div>
-          <!-- BACKLOG -->
-          <div class="dview" data-v="bl">
-            <div class="bl-hd"><span class="bl-ttl">Backlog</span><span class="bl-cnt">4 pending</span></div>
-            <div class="bl-item">
-              <div class="bl-cb bl-cb-done"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <div class="bl-txt"><div class="bl-name">Electromagnetic Induction</div><div class="bl-s">Physics</div></div>
-              <span class="bl-pri pri-lo">Low</span>
-            </div>
-            <div class="bl-item">
-              <div class="bl-cb"></div>
-              <div class="bl-txt"><div class="bl-name">Waves &amp; Oscillations</div><div class="bl-s">Physics</div></div>
-              <span class="bl-pri pri-hi">High</span>
-            </div>
-            <div class="bl-item">
-              <div class="bl-cb"></div>
-              <div class="bl-txt"><div class="bl-name">Organic — Reactions</div><div class="bl-s">Chemistry</div></div>
-              <span class="bl-pri pri-hi">High</span>
-            </div>
-            <div class="bl-item">
-              <div class="bl-cb"></div>
-              <div class="bl-txt"><div class="bl-name">Integration — DPP #14</div><div class="bl-s">Maths</div></div>
-              <span class="bl-pri pri-md">Medium</span>
             </div>
           </div>
         </div>
@@ -729,16 +763,29 @@ function switchToView(v) {
 
 allTabs.forEach(t => t.addEventListener('click', () => {
   stopAuto();
-  switchToView(t.dataset.v);
+  const v = t.dataset.v;
+  switchToView(v);
+  if (v === 'dash')  playDashChart();
+  if (v === 'tests') applyFilter('all');
+  if (v === 'ai')    resetInsightsDemo();
+  if (v === 'syl')   resetSyllabusDemo();
   // resume auto after 6s idle
   resumeTimer = setTimeout(startAuto, 6000);
 }));
 
 // ── Auto cursor demo ─────────────────────────────────────────
-const ORDER    = ['dash','tests','ai','syl','bl'];
+const ORDER    = ['dash','tests','ai','syl'];
 const HOLD_MS  = 2600;   // how long each view is shown
 const TRAVEL_MS = 780;   // cursor travel time — mirrors the hero demo's CURSOR_MS
 const PAUSE_MS = 420;    // pause before the cursor starts moving
+
+// Timing for the cinematic legs (Partial Filter, Generate Insights, the
+// Syllabus chapter checkmark) — the cursor travels slower and the camera
+// push-in gets real scale, exactly mirroring the landing-page hero demo.
+const CURSOR_SLOW_MS     = 1180;
+const CINEMATIC_ZOOM_SCALE = 1.55;
+const CINEMATIC_HOLD_MS  = 170;
+const CINEMATIC_OUT_MS   = 780;
 
 const card    = document.getElementById('demoCard');
 const zoomStage = document.getElementById('demoZoomStage');
@@ -752,6 +799,10 @@ let running = false;
 
 function getTabEl(v) {
   return tabsBar.querySelector(`[data-v="${v}"]`);
+}
+
+function scheduleNext(delay) {
+  autoTimer = setTimeout(autoStep, delay);
 }
 
 // Multi-layer click burst (two colored rings + a bright core dot) — same
@@ -776,8 +827,9 @@ function spawnBurst(x, y) {
   setTimeout(() => { dot.remove(); ring1.remove(); ring2.remove(); }, 780);
 }
 
-// Premium "camera punch" — the whole tabs+viewport area zooms in toward the
-// exact click point, then eases back out. Same effect/timing as the hero.
+// Premium "camera punch" — the whole tabs+viewport area zooms in a touch
+// toward the exact click point, then eases back out. Used for ordinary
+// (non-cinematic) tab arrivals — same effect/timing as the hero.
 function punchZoomAt(x, y) {
   if (!zoomStage) return;
   const w = card.clientWidth || 1;
@@ -798,30 +850,284 @@ function punchZoomAt(x, y) {
   setTimeout(() => flash.remove(), 600);
 }
 
+// Bigger, held cinematic push-in — used for the Partial Filter button, the
+// Generate Insights button, and the Syllabus chapter checkmark. Mirrors the
+// hero demo's zoomCinematicIn/zoomCinematicOut exactly.
+function zoomCinematicIn(x, y, durationMs) {
+  if (!zoomStage) return;
+  zoomStage.classList.remove('zoom-punch');
+  void zoomStage.offsetWidth;
+  const w = card.clientWidth || 1;
+  const h = card.clientHeight || 1;
+  const ox = Math.min(100, Math.max(0, (x / w) * 100));
+  const oy = Math.min(100, Math.max(0, (y / h) * 100));
+  zoomStage.style.transformOrigin = `${ox}% ${oy}%`;
+  zoomStage.style.transition = `transform ${durationMs}ms cubic-bezier(.45,0,.15,1)`;
+  zoomStage.style.transform  = `scale(${CINEMATIC_ZOOM_SCALE})`;
+}
+function zoomCinematicOut() {
+  if (!zoomStage) return;
+  zoomStage.style.transition = `transform ${CINEMATIC_OUT_MS}ms cubic-bezier(.16,1,.3,1)`;
+  zoomStage.style.transform  = 'scale(1)';
+  setTimeout(() => {
+    zoomStage.style.transition = '';
+    zoomStage.style.transform  = '';
+  }, CINEMATIC_OUT_MS + 40);
+}
+
 // Cursor lives directly on .demo-card, so its position is computed relative
-// to the whole card (not .demo-vp) — it can now travel freely over the tabs
-// row instead of being clipped by the viewport's overflow:hidden.
-function moveCursorTo(tabEl, onArrive) {
-  if (!tabEl || !card) { onArrive && onArrive(); return; }
+// to the whole card (not .demo-vp) — it can travel freely over the tabs row
+// instead of being clipped by the viewport's overflow:hidden. Pass
+// { slow: true, cinematic: true } for the Partial Filter / Generate
+// Insights / chapter-checkmark legs — identical to the hero demo.
+function moveCursorTo(el, onArrive, opts) {
+  opts = opts || {};
+  if (!el || !card) { onArrive && onArrive(); return; }
 
   const cardRect = card.getBoundingClientRect();
-  const tabRect  = tabEl.getBoundingClientRect();
+  const elRect   = el.getBoundingClientRect();
 
-  const x = tabRect.left - cardRect.left + tabRect.width / 2 - 10;
-  const y = tabRect.top  - cardRect.top  + tabRect.height / 2 - 6;
+  const x = elRect.left - cardRect.left + elRect.width / 2 - 10;
+  const y = elRect.top  - cardRect.top  + elRect.height / 2 - 6;
+
+  const slow = !!opts.slow;
+  const travelMs = slow ? CURSOR_SLOW_MS : TRAVEL_MS;
 
   cursor.classList.add('visible');
+  cursor.classList.toggle('slow-travel', slow);
   cursor.classList.add('traveling');
   cursor.style.transform = `translate(${x}px,${y}px)`;
 
+  if (opts.cinematic) zoomCinematicIn(x + 3, y + 3, travelMs);
+
   setTimeout(() => {
     cursor.classList.remove('traveling');
+    cursor.classList.remove('slow-travel');
     cursor.classList.add('clicking');
     spawnBurst(x + 3, y + 3);
-    punchZoomAt(x + 3, y + 3);
+    if (!opts.cinematic) punchZoomAt(x + 3, y + 3);
     setTimeout(() => cursor.classList.remove('clicking'), 460);
     onArrive && onArrive();
-  }, TRAVEL_MS);
+  }, travelMs);
+}
+
+// ── Mock Tests: Partial Filter cinematic ─────────────────────
+const TV_DATA = {
+  all:     { tests:'7', latest:'65.3%', best:'65.3%', avg:'56.2%', bars:[34,50,43,65,57,80,95], subj:{phy:58,chem:72,math:61} },
+  full:    { tests:'3', latest:'61.1%', best:'65.3%', avg:'58.7%', bars:[52,64,80],             subj:{phy:55,chem:69,math:58} },
+  partial: { tests:'4', latest:'70.0%', best:'74.5%', avg:'62.8%', bars:[45,58,66,74],          subj:{phy:61,chem:75,math:64} }
+};
+
+function applyFilter(filter) {
+  document.querySelectorAll('.tv-f').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+  const data = TV_DATA[filter] || TV_DATA.all;
+
+  const numEls = ['tvNumTests','tvNumLatest','tvNumBest','tvNumAvg'].map(id => document.getElementById(id));
+  numEls.forEach(el => el && el.classList.remove('tv-pop'));
+  if (numEls[0]) numEls[0].textContent = data.tests;
+  if (numEls[1]) numEls[1].textContent = data.latest;
+  if (numEls[2]) numEls[2].textContent = data.best;
+  if (numEls[3]) numEls[3].textContent = data.avg;
+
+  const barsWrap = document.getElementById('tvBars');
+  if (barsWrap) {
+    barsWrap.innerHTML = data.bars.map((h, i) => {
+      const hi = i >= data.bars.length - 2 ? ' tv-bar-hi' : '';
+      return `<div class="tv-bar${hi}" style="height:${h}%"></div>`;
+    }).join('');
+  }
+
+  const phy  = document.getElementById('tvSubjPhy');
+  const chem = document.getElementById('tvSubjChem');
+  const math = document.getElementById('tvSubjMath');
+  if (phy)  phy.textContent  = data.subj.phy + '%';
+  if (chem) chem.textContent = data.subj.chem + '%';
+  if (math) math.textContent = data.subj.math + '%';
+
+  requestAnimationFrame(() => numEls.forEach(el => el && el.classList.add('tv-pop')));
+}
+
+function runFilterDemo() {
+  const partialBtn = document.querySelector('.tv-f[data-filter="partial"]');
+  if (!partialBtn) { scheduleNext(HOLD_MS); return; }
+  moveCursorTo(partialBtn, () => {
+    setTimeout(() => {
+      applyFilter('partial');
+      zoomCinematicOut();
+      scheduleNext(HOLD_MS);
+    }, CINEMATIC_HOLD_MS);
+  }, { slow: true, cinematic: true });
+}
+
+document.querySelectorAll('.tv-f').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    stopAuto();
+    applyFilter(btn.dataset.filter);
+    resumeTimer = setTimeout(startAuto, 6000);
+  });
+});
+
+// ── AI Insights: Generate Insights cinematic ─────────────────
+const AV_LOAD_MSGS = ['Reading your test scores...', 'Scanning study hours...', 'Checking syllabus gaps...', 'Generating insights...'];
+const AV_LOAD_STEPS = 4;
+let avLoadTimer = null;
+
+function resetInsightsDemo() {
+  const avEmpty   = document.getElementById('avEmpty');
+  const avLoading = document.getElementById('avLoading');
+  const avResults = document.getElementById('avResults');
+  const avGenBtn  = document.getElementById('avGenBtn');
+  if (!avEmpty) return;
+  clearInterval(avLoadTimer);
+  avEmpty.style.display   = 'flex';
+  avLoading.style.display = 'none';
+  avResults.style.display = 'none';
+  document.querySelectorAll('.av-loading-step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i === 0) el.classList.add('active');
+  });
+  const fill = document.getElementById('avProgFill');
+  if (fill) fill.style.width = '0%';
+  if (avGenBtn) avGenBtn.disabled = false;
+}
+
+function playInsightsLoading(onDone) {
+  const avEmpty   = document.getElementById('avEmpty');
+  const avLoading = document.getElementById('avLoading');
+  const avResults = document.getElementById('avResults');
+  const msgEl     = document.getElementById('avLoadingMsg');
+  const fill      = document.getElementById('avProgFill');
+  avEmpty.style.display   = 'none';
+  avLoading.style.display = 'flex';
+  avResults.style.display = 'none';
+
+  let mi = 0;
+  clearInterval(avLoadTimer);
+  const tick = () => {
+    if (msgEl) msgEl.textContent = AV_LOAD_MSGS[Math.min(mi, AV_LOAD_MSGS.length - 1)];
+    if (fill)  fill.style.width  = Math.min(100, (mi + 1) * 25) + '%';
+    document.querySelectorAll('.av-loading-step').forEach(el => {
+      const s = parseInt(el.dataset.step, 10);
+      if (mi === s - 1) { el.classList.add('active'); el.classList.remove('done'); }
+      else if (mi > s - 1) { el.classList.remove('active'); el.classList.add('done'); }
+    });
+    mi++;
+    if (mi > AV_LOAD_STEPS) { clearInterval(avLoadTimer); onDone && onDone(); }
+  };
+  tick();
+  avLoadTimer = setInterval(tick, 480);
+}
+
+function showInsightsResults() {
+  const avLoading = document.getElementById('avLoading');
+  const avResults = document.getElementById('avResults');
+  avLoading.style.display = 'none';
+  avResults.style.display = 'flex';
+  avResults.classList.remove('av-in');
+  void avResults.offsetWidth;
+  avResults.classList.add('av-in');
+}
+
+function runInsightsDemo() {
+  const genBtn = document.getElementById('avGenBtn');
+  if (!genBtn) { scheduleNext(HOLD_MS); return; }
+  moveCursorTo(genBtn, () => {
+    genBtn.disabled = true;
+    setTimeout(() => {
+      playInsightsLoading(() => {
+        showInsightsResults();
+        scheduleNext(HOLD_MS);
+      });
+      zoomCinematicOut();
+    }, CINEMATIC_HOLD_MS);
+  }, { slow: true, cinematic: true });
+}
+
+document.getElementById('avGenBtn')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  stopAuto();
+  e.currentTarget.disabled = true;
+  playInsightsLoading(showInsightsResults);
+  resumeTimer = setTimeout(startAuto, 6000);
+});
+
+// ── Syllabus: chapter checkmark → progress fill ──────────────
+function resetSyllabusDemo() {
+  const chip = document.getElementById('sylWavesChip');
+  const fill = document.getElementById('sylPhyFill');
+  const pct  = document.getElementById('sylPhyPct');
+  if (chip) { chip.classList.remove('sv-ch-done'); chip.textContent = 'Waves'; }
+  if (fill) {
+    // Snap back instantly (no transition) so a leftover 63% from a previous
+    // loop never visibly animates back down to 54% when the tab re-opens —
+    // the bar should only ever rise, in response to the click.
+    fill.style.transition = 'none';
+    fill.style.width = '54%';
+    void fill.offsetWidth;
+    fill.style.transition = '';
+  }
+  if (pct)  pct.textContent  = '54%';
+}
+
+function markWavesDone() {
+  const chip = document.getElementById('sylWavesChip');
+  const fill = document.getElementById('sylPhyFill');
+  const pct  = document.getElementById('sylPhyPct');
+  if (chip) { chip.classList.add('sv-ch-done'); chip.textContent = 'Waves ✓'; }
+  if (fill) fill.style.width = '63%';
+  if (pct)  pct.textContent  = '63%';
+}
+
+function runSyllabusDemo() {
+  const chip = document.getElementById('sylWavesChip');
+  if (!chip) { scheduleNext(HOLD_MS); return; }
+  moveCursorTo(chip, () => {
+    setTimeout(() => {
+      markWavesDone();
+      zoomCinematicOut();
+      scheduleNext(HOLD_MS);
+    }, CINEMATIC_HOLD_MS);
+  }, { slow: true, cinematic: true });
+}
+
+document.getElementById('sylWavesChip')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  stopAuto();
+  markWavesDone();
+  resumeTimer = setTimeout(startAuto, 6000);
+});
+
+// ── Cycle orchestration ───────────────────────────────────────
+// ── Dashboard: replay the score-trend line draw-in ───────────
+// .ln's draw animation is fill-mode:forwards, so left alone it only ever
+// plays once (on first paint) and never again. Restart it explicitly every
+// time the Dashboard tab becomes active, the same way the Mock Tests bars
+// replay by being freshly re-created.
+function playDashChart() {
+  const ln = document.querySelector('.dv-chart .ln');
+  if (!ln) return;
+  ln.style.animation = 'none';
+  void ln.offsetWidth;
+  ln.style.animation = '';
+}
+
+function runViewDemo(v) {
+  if (v === 'dash') {
+    playDashChart();
+    scheduleNext(HOLD_MS);
+  } else if (v === 'tests') {
+    applyFilter('all');
+    setTimeout(runFilterDemo, 900);
+  } else if (v === 'ai') {
+    resetInsightsDemo();
+    setTimeout(runInsightsDemo, 900);
+  } else if (v === 'syl') {
+    resetSyllabusDemo();
+    setTimeout(runSyllabusDemo, 900);
+  } else {
+    scheduleNext(HOLD_MS);
+  }
 }
 
 function autoStep() {
@@ -833,7 +1139,7 @@ function autoStep() {
   setTimeout(() => {
     moveCursorTo(tabEl, () => {
       switchToView(v);
-      autoTimer = setTimeout(autoStep, HOLD_MS);
+      runViewDemo(v);
     });
   }, PAUSE_MS);
 }
@@ -842,7 +1148,11 @@ function startAuto() {
   if (running) return;
   running   = true;
   autoIdx   = 0;
+  applyFilter('all');
+  resetInsightsDemo();
+  resetSyllabusDemo();
   switchToView(ORDER[0]);
+  playDashChart();
   // kick off first step after initial hold
   autoTimer = setTimeout(autoStep, HOLD_MS);
 }
@@ -851,6 +1161,7 @@ function stopAuto() {
   running = false;
   clearTimeout(autoTimer);
   clearTimeout(resumeTimer);
+  clearInterval(avLoadTimer);
   cursor.classList.remove('visible');
 }
 

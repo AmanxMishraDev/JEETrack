@@ -721,8 +721,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="ls-footer-links">
       <a href="/features">Features</a>
       <span class="ls-footer-sep">·</span>
-      <a href="#how-it-works" onclick="landScrollTo('how-it-works');return false;">How it works</a>
-      <span class="ls-footer-sep">·</span>
       <a href="/faq">FAQ</a>
       <span class="ls-footer-sep">·</span>
       <a href="/about">About</a>
@@ -1933,6 +1931,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span class="snl">Feedback</span>
       </button>
+      <button class="settings-nav-item" data-tip="Contact" onclick="showSettingsPanel('contact',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="snl">Contact</span>
+      </button>
     </div>
 
     
@@ -2394,6 +2396,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             </div>
           </div>
         </div>
+      </div>
+
+      
+      <div class="settings-panel" id="sp-contact">
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -2417,6 +2423,26 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="settings-row-l">
               <div class="settings-row-title">Website</div>
               <div class="settings-row-sub">jeetrack.in</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-hdr">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            More
+          </div>
+          <div class="settings-row clickable" onclick="window.open('https://jeetrack.in/about','_blank')">
+            <div class="settings-row-l">
+              <div class="settings-row-title">About Us</div>
+              <div class="settings-row-sub">Learn more about JEETrack</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
+          <div class="settings-row clickable" onclick="window.open('https://jeetrack.in/features','_blank')">
+            <div class="settings-row-l">
+              <div class="settings-row-title">Features</div>
+              <div class="settings-row-sub">See everything JEETrack can do</div>
             </div>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </div>
@@ -4256,7 +4282,7 @@ const _pageTitles = {
   tests:'Tests', hours:'Study Hours', todo:'To-Do', backlog:'Backlog',
   syllabus:'Syllabus', insights:'AI Insights', settings:'Settings',
 };
-const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback'];
+const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback','contact'];
 
 
 const _staticPages = ['/faq','/privacy','/terms','/admin'];
@@ -6569,7 +6595,7 @@ function mobSettingsTab(id, btn){
   const el = document.getElementById('mob-page-title');
   if(el && window.innerWidth<=768){
     const settingsIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
-    const names={profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data',account:'Account',feedback:'Feedback'};
+    const names={profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data',account:'Account',feedback:'Feedback',contact:'Contact'};
     const sectionName = names[id] || 'Settings';
     const words = sectionName.trim().split(' ');
     let coloredTitle;
