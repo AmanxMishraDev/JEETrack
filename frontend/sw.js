@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v4';
+const CACHE_VERSION = 'jeetrack-v5';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
