@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>JEETrack | AI-Powered JEE Preparation Tracker</title>
-<meta name="description" content="Free JEE preparation tracker for JEE Mains & Advanced 2026. Track mock test scores, study hours, syllabus and backlogs — get AI-powered weekly insights."/>
+<meta name="description" content="Free JEE preparation tracker for JEE Mains & Advanced. Track mock test scores, study hours, syllabus, and backlogs — get AI-powered weekly insights."/>
 <meta name="keywords" content="JEE tracker, JEE preparation app, JEE mock test tracker, JEE Mains tracker, JEE Advanced tracker, JEE syllabus tracker, JEE study planner, JEE score tracker, JEE AI insights, JEE 2025, JEE 2026"/>
 <meta name="author" content="JEETrack"/>
 <link rel="canonical" href="https://www.jeetrack.in"/>
@@ -142,9 +142,24 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <span class="nf-logo-text">JEE<span>Track</span></span>
   </a>
   <div class="nf-content">
+    <svg class="nf-mascot" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="32" cy="32" r="27" fill="url(#nfGrad)"/>
+      <g stroke="#1a1625" stroke-width="3.2" stroke-linecap="round">
+        <path d="M20 22l7 7M27 22l-7 7"/>
+        <path d="M37 22l7 7M44 22l-7 7"/>
+      </g>
+      <path d="M21 43c4 5 18 5 22 0" stroke="#1a1625" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <path d="M10 14l3 3M54 14l-3 3M8 32h4M52 32h4" stroke="url(#nfGrad)" stroke-width="2.5" stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="nfGrad" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#a695ff"/>
+          <stop offset="1" stop-color="#f472b6"/>
+        </linearGradient>
+      </defs>
+    </svg>
     <div class="nf-code">404</div>
-    <h1 class="nf-title">Hmmm... Seems like you lost.</h1>
-    <p class="nf-sub">The page vanished, moved, or the link lied to both of us. Let's get you back to tracking your prep.</p>
+    <h1 class="nf-title">This page got negative marking.</h1>
+    <p class="nf-sub">Wrong URL, no partial credit — that's -1 mark. This page doesn't exist, just like a stress-free JEE prep.</p>
     <div class="nf-actions">
       <a href="/" class="nf-btn nf-btn-primary">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -4300,7 +4315,7 @@ function show404(){
   document.getElementById('onboarding')?.classList.remove('show');
   const app=document.getElementById('main-app'); if(app) app.style.display='none';
   document.getElementById('not-found')?.classList.remove('hidden');
-  document.title = 'Page Not Found — JEETrack';
+  document.title = '404 — Negative Marking — JEETrack';
 }
 
 function _setRobotsMeta(shouldIndex){

@@ -363,6 +363,8 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .nf-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--tx);letter-spacing:-.02em}
 .nf-logo-text span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .nf-content{position:relative;z-index:1;max-width:480px;text-align:center;animation:splashUp .5s cubic-bezier(.34,1.2,.64,1) both}
+.nf-mascot{width:52px;height:52px;display:inline-block;margin-bottom:.5rem;animation:nfShake 2.6s ease-in-out infinite}
+@keyframes nfShake{0%,100%{transform:rotate(0deg)}10%{transform:rotate(-10deg)}20%{transform:rotate(9deg)}30%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}50%{transform:rotate(-4deg)}60%{transform:rotate(4deg)}70%,100%{transform:rotate(0deg)}}
 .nf-code{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(4rem,14vw,6.5rem);line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem}
 .nf-title{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(1.2rem,3.5vw,1.6rem);color:var(--tx);margin-bottom:.7rem;letter-spacing:-.01em}
 .nf-sub{color:var(--mu);font-size:.92rem;line-height:1.6;margin-bottom:1.8rem}
