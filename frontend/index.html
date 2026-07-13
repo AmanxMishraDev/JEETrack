@@ -179,6 +179,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
 <script>
 (function(){
+  window.__splashStart = Date.now(); // used by hideSplash()'s minimum-visible guard
+
   const TRACE_DELAY    = 550;   // ms — when the outline starts drawing
   const TRACE_DURATION = 1450;  // ms — how long the draw takes
   const SOLIDIFY_AT     = TRACE_DELAY + TRACE_DURATION; // ~1600ms — draw completes, pop happens here
@@ -216,7 +218,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   const PEN_DURATION = TRACE_DURATION - (PEN_DELAY - TRACE_DELAY);
 
   let bottomLen = 0, maxY = -Infinity;
-  const SCAN_STEPS = 800;
+  const SCAN_STEPS = 150; // enough precision for finding the arrow's lowest point; 800 was overkill and blocked the main thread longer than needed
   for (let i = 0; i <= SCAN_STEPS; i++) {
     const d = (i / SCAN_STEPS) * aLen;
     const p = arrowOnly.getPointAtLength(d);
@@ -280,29 +282,49 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   }
 
 
-  // ---- progress: comet-dot + percentage, timed to finish as things settle ----
+  // ---- progress: driven by REAL app load events, not a fixed timer ----
+  // app.js calls window.jtSplash.setProgress(pct, label) at each real
+  // checkpoint (config fetched, auth resolved, data loaded, etc). Between
+  // real updates we "trickle" forward slowly so the bar never looks frozen,
+  // but real progress always wins and the bar never goes backwards.
   const fill = document.getElementById('sp-scan-fill');
   const dot  = document.getElementById('sp-scan-dot');
   const pct  = document.getElementById('sp-progress-pct');
   const status = document.getElementById('sp-status-text');
-  const messages = ['Preparing dashboard', 'Loading your syllabus', 'Almost ready'];
 
-  const pStart = performance.now() + 250;
-  const pDuration = 2900;
-  function ptick(now){
-    const t = Math.min(1, Math.max(0, (now - pStart) / pDuration));
-    const eased = 1 - Math.pow(1 - t, 3);
-    const value = Math.round(eased * 100);
-    fill.style.width = (eased * 100).toFixed(1) + '%';
-    dot.style.left = (eased * 100).toFixed(1) + '%';
-    pct.textContent = value + '%';
-    if (t < 0.3) status.textContent = messages[0];
-    else if (t < 0.72) status.textContent = messages[1];
-    else status.textContent = messages[2];
-    if (t < 1) requestAnimationFrame(ptick);
-    else { status.textContent = 'Ready'; dot.classList.add('splash-done'); }
+  let shown = 0; // last value actually painted
+  let target = 0; // where real progress says we should be
+
+  function paint(v, label){
+    shown = v;
+    fill.style.width = shown.toFixed(1) + '%';
+    dot.style.left = shown.toFixed(1) + '%';
+    pct.textContent = Math.round(shown) + '%';
+    if (label) status.textContent = label;
+    if (shown >= 100) dot.classList.add('splash-done');
   }
-  requestAnimationFrame(ptick);
+
+  // gentle auto-trickle: creeps toward `target` (or 90% if no real update
+  // yet) so early network latency doesn't look like a stall. Cheap timer,
+  // no rAF loop needed since updates are small/infrequent.
+  const trickle = setInterval(() => {
+    const ceiling = Math.max(target, 90);
+    if (shown < ceiling) paint(Math.min(shown + 1.5, ceiling));
+  }, 140);
+
+  window.jtSplash = {
+    // pct: 0-100, label: optional status text. Never moves backwards.
+    setProgress(p, label){
+      target = Math.max(target, Math.min(100, p));
+      if (target > shown) paint(target, label);
+      else if (label) status.textContent = label;
+    },
+    // call once the app is actually ready to be shown
+    ready(){
+      clearInterval(trickle);
+      paint(100, 'Ready');
+    }
+  };
 })();
 </script>
 

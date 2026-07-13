@@ -44,12 +44,15 @@ async function initSupabase(){
   }, 6000);
 
   
+  if(window.jtSplash) window.jtSplash.setProgress(15, 'Connecting');
+
   try {
     const res = await fetch('/api/config');
     if(res.ok){
       const cfg = await res.json();
       SUPABASE_URL = cfg.url;
       SUPABASE_ANON_KEY = cfg.key;
+      if(window.jtSplash) window.jtSplash.setProgress(35, 'Preparing dashboard');
     } else {
       
       const res2 = await fetch('/api/config?_=' + Date.now());
@@ -70,6 +73,7 @@ async function initSupabase(){
     if(saved){ try{ const p=JSON.parse(saved); if(p&&!p.backlogStreak||p.backlogStreak>365) p.backlogStreak=0; if(p&&(!p.backlogBestStreak||p.backlogBestStreak>365)) p.backlogBestStreak=0; S=p; }catch(e){} }
     _authResolved = true;
     clearTimeout(_splashSafetyTimer);
+    if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');
     hideSplash();
     showApp('Demo User','demo@jeetrack.app');
     return;
@@ -90,8 +94,10 @@ async function initSupabase(){
       if(_appInitialized) return; 
       _appInitialized = true;
       currentUser = session.user;
+      if(window.jtSplash) window.jtSplash.setProgress(55, 'Loading your data');
       loadUserData().then(async () => {
         const profileStatus = await loadUserProfile();
+        if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');
         const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
         if(needsOnboarding){
           hideSplash();
@@ -287,6 +293,17 @@ async function signOut(){
 function hideSplash(){
   const sp = document.getElementById('splash');
   if(!sp || sp.style.display === 'none') return;
+
+  // Don't cut the logo-draw/solidify animation off mid-way on fast loads
+  // (cached session, demo mode, etc). Wait for it to finish first.
+  const MIN_VISIBLE_MS = 1700;
+  const shownFor = Date.now() - (window.__splashStart || 0);
+  if(shownFor < MIN_VISIBLE_MS){
+    setTimeout(hideSplash, MIN_VISIBLE_MS - shownFor);
+    return;
+  }
+
+  if(window.jtSplash) window.jtSplash.ready();
   sp.classList.add('fade-out');
   setTimeout(() => { sp.style.display = 'none'; }, 650);
 }

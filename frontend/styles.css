@@ -410,8 +410,8 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   /* ---------- scan-style progress ---------- */
   .splash-progress-wrap{ margin-top:11%; display:flex; flex-direction:column; align-items:center; gap:8px; z-index:7; opacity:0; animation: fadeUp .5s ease-out 1.9s forwards; }
   .splash-scan-track{ position:relative; width:132px; height:2px; background:rgba(255,255,255,0.1); border-radius:2px; }
-  .splash-scan-fill{ position:absolute; left:0; top:0; height:100%; width:0%; border-radius:2px; background:linear-gradient(90deg, #a695ff, #f472b6); }
-  .splash-scan-dot{ position:absolute; top:50%; left:0%; width:7px; height:7px; border-radius:50%; background:#fff; transform:translate(-50%,-50%);
+  .splash-scan-fill{ position:absolute; left:0; top:0; height:100%; width:0%; border-radius:2px; background:linear-gradient(90deg, #a695ff, #f472b6); transition:width .35s cubic-bezier(.4,0,.2,1); }
+  .splash-scan-dot{ position:absolute; top:50%; left:0%; width:7px; height:7px; border-radius:50%; background:#fff; transform:translate(-50%,-50%); transition:left .35s cubic-bezier(.4,0,.2,1);
     box-shadow:0 0 8px 2px rgba(255,255,255,.85), 0 0 16px 5px rgba(244,114,182,.45); }
   .splash-scan-dot.splash-done{ animation:dotSettle .5s ease-out; }
   @keyframes dotSettle{ 0%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-50%,-50%) scale(1.6); } 100%{ transform:translate(-50%,-50%) scale(1); } }
