@@ -119,6 +119,16 @@ function dateFrom(days) {
 
 
 
+const _cacheStore = {};
+async function cached(key, ttlMs, fn) {
+  const now = Date.now();
+  const hit = _cacheStore[key];
+  if (hit && now - hit.at < ttlMs) return hit.data;
+  const data = await fn();
+  _cacheStore[key] = { data, at: now };
+  return data;
+}
+
 let _rosterCache = null, _rosterCacheAt = 0;
 async function buildRoster({ fresh = false } = {}) {
   if (!fresh && _rosterCache && Date.now() - _rosterCacheAt < 30000) return _rosterCache;
@@ -197,48 +207,43 @@ export default async function handler(req, res) {
     if (action === 'stats') {
       const cutoff = dateFrom(days);
 
-      
-      const activePrefs = await sbQuery(
-        `user_preferences?select=user_id,last_active_at&last_active_at=gte.${cutoff}T00:00:00Z`
-      ).catch(() => []);
+      const data = await cached(`stats_${days}`, 60000, async () => {
+        const activePrefs = await sbQuery(
+          `user_preferences?select=user_id,last_active_at&last_active_at=gte.${cutoff}T00:00:00Z`
+        ).catch(() => []);
 
-      const [
-        totalUsers, totalTests, totalHours, totalBacklogs,
-        totalTodos, totalFeedbacks,
-        syllabusRows, aiInsightsUsers,
-      ] = await Promise.all([
-        sbCount('user_preferences').catch(() => 0),
-        sbCount('tests').catch(() => 0),
-        sbCount('hours').catch(() => 0),
-        sbCount('backlogs').catch(() => 0),
-        sbCount('todos').catch(() => 0),
-        sbCount('feedback').catch(() => 0),
-        sbQuery('syllabus?select=user_id,theory,practice').catch(() => []),
+        const [
+          totalUsers, totalTests, totalHours, totalBacklogs,
+          totalTodos, totalFeedbacks,
+          aiInsightsUsers,
+        ] = await Promise.all([
+          sbCount('user_preferences').catch(() => 0),
+          sbCount('tests').catch(() => 0),
+          sbCount('hours').catch(() => 0),
+          sbCount('backlogs').catch(() => 0),
+          sbCount('todos').catch(() => 0),
+          sbCount('feedback').catch(() => 0),
+          
+          sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0`).catch(() => []),
+        ]);
+
         
-        
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0`).catch(() => []),
-      ]);
+        const aiInsightsCount = new Set(aiInsightsUsers.map(u => u.user_id)).size;
 
-      
-      const totalPossible = syllabusRows.length * 2; 
-      const totalMarked   = syllabusRows.filter(r => r.theory).length + syllabusRows.filter(r => r.practice).length;
-      const syllabusPercent = totalPossible > 0 ? Math.round((totalMarked / totalPossible) * 100) : 0;
-
-      
-      const aiInsightsCount = new Set(aiInsightsUsers.map(u => u.user_id)).size;
-
-      return res.status(200).json({
-        totalUsers,
-        activeUsers:      activePrefs.length,
-        mockTests:        totalTests,
-        studyHours:       totalHours,
-        backlogs:         totalBacklogs,
-        todos:            totalTodos,
-        feedbacks:        totalFeedbacks,
-        syllabusPercent,
-        aiInsights:       aiInsightsCount,   
-        pageViews:        activePrefs.length, 
+        return {
+          totalUsers,
+          activeUsers:      activePrefs.length,
+          mockTests:        totalTests,
+          studyHours:       totalHours,
+          backlogs:         totalBacklogs,
+          todos:            totalTodos,
+          feedbacks:        totalFeedbacks,
+          aiInsights:       aiInsightsCount,
+          pageViews:        activePrefs.length,
+        };
       });
+
+      return res.status(200).json(data);
     }
 
     
@@ -843,31 +848,35 @@ export default async function handler(req, res) {
 
     
     if (action === 'db_stats') {
-      const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([
-        sbCount('tests').catch(() => 0),
-        sbCount('hours').catch(() => 0),
-        sbCount('backlogs').catch(() => 0),
-        sbCount('todos').catch(() => 0),
-        sbCount('syllabus').catch(() => 0),
-        sbCount('feedback').catch(() => 0),
-        sbQuery('user_preferences?select=user_id,email_reports,last_active_at').catch(() => []),
-      ]);
+      const data = await cached('db_stats', 60000, async () => {
+        const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([
+          sbCount('tests').catch(() => 0),
+          sbCount('hours').catch(() => 0),
+          sbCount('backlogs').catch(() => 0),
+          sbCount('todos').catch(() => 0),
+          sbCount('syllabus').catch(() => 0),
+          sbCount('feedback').catch(() => 0),
+          sbQuery('user_preferences?select=user_id,email_reports,last_active_at').catch(() => []),
+        ]);
 
-      const emailOn  = prefs.filter(p => p.email_reports === 'monthly').length;
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
-      const active7d = prefs.filter(p => p.last_active_at && new Date(p.last_active_at) > cutoff).length;
+        const emailOn  = prefs.filter(p => p.email_reports === 'monthly').length;
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+        const active7d = prefs.filter(p => p.last_active_at && new Date(p.last_active_at) > cutoff).length;
 
-      return res.status(200).json({
-        totalTests:     tests,
-        totalHours:     hours,
-        totalBacklogs:  backlogs,
-        totalTodos:     todos,
-        totalSyllabus:  syllabus,
-        totalFeedbacks: feedbackCount,
-        emailReportsOn: emailOn,
-        activeUsers7d:  active7d,
-        totalPrefs:     prefs.length,
+        return {
+          totalTests:     tests,
+          totalHours:     hours,
+          totalBacklogs:  backlogs,
+          totalTodos:     todos,
+          totalSyllabus:  syllabus,
+          totalFeedbacks: feedbackCount,
+          emailReportsOn: emailOn,
+          activeUsers7d:  active7d,
+          totalPrefs:     prefs.length,
+        };
       });
+
+      return res.status(200).json(data);
     }
 
 
@@ -901,9 +910,9 @@ export default async function handler(req, res) {
 
     
     if (action === 'feedback_stats') {
-      const feedbacks = await sbQuery(
+      const feedbacks = await cached('feedback_stats_raw', 60000, () => sbQuery(
         'feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=500'
-      ).catch(() => []);
+      ).catch(() => []));
 
       
       const categories = {};
@@ -968,10 +977,10 @@ export default async function handler(req, res) {
       const roster = await buildRoster();
       if (!roster.length) return res.status(200).json({ d1: 0, d7: 0, d30: 0, cohorts: [] });
 
-      const [allTests, allHours] = await Promise.all([
+      const [allTests, allHours] = await cached('retention_raw', 60000, () => Promise.all([
         sbQuery(`tests?select=user_id,date&date=gte.${dateFrom(45)}`).catch(() => []),
         sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(45)}`).catch(() => []),
-      ]);
+      ]));
 
       
       const userDates = {};

@@ -10,6 +10,8 @@ supabase/.temp/
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+Desktop.ini
 
 # Editor
 .vscode/
