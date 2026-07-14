@@ -296,7 +296,7 @@ function hideSplash(){
 
   // Don't cut the logo-draw/solidify animation off mid-way on fast loads
   // (cached session, demo mode, etc). Wait for it to finish first.
-  const MIN_VISIBLE_MS = 1700;
+  const MIN_VISIBLE_MS = window.__SPLASH_MIN_VISIBLE || 1300;
   const shownFor = Date.now() - (window.__splashStart || 0);
   if(shownFor < MIN_VISIBLE_MS){
     setTimeout(hideSplash, MIN_VISIBLE_MS - shownFor);

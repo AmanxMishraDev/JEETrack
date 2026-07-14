@@ -181,9 +181,15 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 (function(){
   window.__splashStart = Date.now(); // used by hideSplash()'s minimum-visible guard
 
-  const TRACE_DELAY    = 550;   // ms — when the outline starts drawing
-  const TRACE_DURATION = 1450;  // ms — how long the draw takes
-  const SOLIDIFY_AT     = TRACE_DELAY + TRACE_DURATION; // ~1600ms — draw completes, pop happens here
+  const TRACE_DELAY    = 150;   // ms — when the outline starts drawing
+  const TRACE_DURATION = 450;   // ms — how long the draw takes
+  const SOLIDIFY_AT     = TRACE_DELAY + TRACE_DURATION; // ~600ms — draw completes, pop happens here
+
+  // Real completion time of the full hero sequence (logo solidify + wordmark
+  // + tagline settling). hideSplash() in app.js waits at least this long so
+  // fast loads never cut the animation off mid-way — but no longer than
+  // needed, so fast loads still feel fast.
+  window.__SPLASH_MIN_VISIBLE = SOLIDIFY_AT + 700; // ~1300ms
 
   const trace  = document.getElementById('sp-ttrace');
   const chase  = document.getElementById('sp-tchase');
@@ -1756,6 +1762,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <span class="prem-hero-sub-part">Practice</span>
           <span class="prem-hero-sub-dot"></span>
           <span class="prem-hero-sub-part">Revision</span>
+          <span class="prem-hero-sub-dot"></span>
+          <span class="prem-hero-sub-part auto">Mock Analysis<span class="auto-pill">Auto</span></span>
         </div>
       </div>
     </div>
@@ -1785,6 +1793,9 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="prem-stat-grid hrs-stat-grid" id="hr-stats"></div>
 
   
+  <div class="prem-mock-banner" id="hr-mock-banner"></div>
+
+  
   <div class="prem-chart-grid">
     <div class="prem-chart-card">
       <div class="prem-chart-glow"></div>
@@ -1797,8 +1808,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="prem-chart-card">
       <div class="prem-chart-glow"></div>
       <div class="prem-chart-card-hdr">
-        <span class="prem-chart-card-title">Lecture / Practice / Revision</span>
-        <span style="font-size:9.5px;color:var(--mu2)">split breakdown</span>
+        <span class="prem-chart-card-title">Study Breakdown</span>
+        <span style="font-size:9.5px;color:var(--mu2)">% of total, incl. mock analysis</span>
       </div>
       <div class="cw" style="height:196px"><canvas id="hrDC"></canvas></div>
     </div>
@@ -1809,7 +1820,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(166,149,255,.18),transparent)"></div>
       <div class="prem-chart-card-hdr">
         <span class="prem-chart-card-title">Subject-wise Hours</span>
-        <span style="font-size:9.5px;color:var(--mu2)">total per subject</span>
+        <span style="font-size:9.5px;color:var(--mu2)">manual study only</span>
       </div>
       <div class="cw" style="height:170px"><canvas id="hrSC"></canvas></div>
     </div>
@@ -1829,7 +1840,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span class="prem-table-title">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         Recent Entries
-        <span style="font-size:9px;color:var(--mu2);font-weight:400;text-transform:none;letter-spacing:0">(edit or fix mistakes)</span>
       </span>
     </div>
     <div style="padding:.6rem .9rem .9rem" id="hr-list"></div>
@@ -3180,7 +3190,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 <div class="mo" id="modal-allHours" onclick="if(event.target===this)closeM('allHours')"><div class="md" style="max-width:460px">
   <button class="md-close" onclick="closeM('allHours')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   <div class="mt2">Recent Entries</div>
-  <div style="font-size:9px;color:var(--mu2);font-weight:400;margin:-10px 0 12px;letter-spacing:.02em">latest 30 entries · edit or fix mistakes</div>
   <div id="hr-list-all"></div>
 </div></div>
 
@@ -5310,6 +5319,41 @@ function getHrs(){
   else if(F.hours.period==='month'){const c=new Date();c.setDate(c.getDate()-30);h=h.filter(x=>x.date>=c.toISOString().split('T')[0]);}
   return h;
 }
+
+/* ---- Study Hours activity types ----
+   Config-driven so a future 5th/6th activity type (e.g. Doubt Solving) only
+   needs an entry here — every chart/legend/stat below reads from this list
+   instead of hardcoding category names. `manual:true` types are the ones
+   users can log themselves via the Log Hours modal; `manual:false` types
+   are written automatically by other modules (see logMockAnalysisHours). */
+const HOUR_CATS=[
+  {key:'lecture',    label:'Lecture',       color:'#60a5fa', manual:true},
+  {key:'practice',   label:'Practice',      color:'#34d399', manual:true},
+  {key:'revision',   label:'Revision',      color:'#a695ff', manual:true},
+  {key:'mockAnalysis',label:'Mock Analysis',color:'#2dd4bf', manual:false}
+];
+
+/* Entry point for the Mock Test module. Call this once a user finishes
+   analyzing a mock (not when they merely submit a score) — it writes a
+   read-only "auto" entry into Study Hours so the time is reflected in
+   totals, trends and the heatmap without ever appearing as a manually
+   loggable category. Not tied to a single subject, since a full mock spans
+   Physics/Chemistry/Maths — so it's excluded from subject-specific views
+   and only counted when "All Subjects" is selected. */
+function logMockAnalysisHours(hoursSpent,meta){
+  meta=meta||{};
+  const mins=Math.round((+hoursSpent||0)*100)/100;
+  if(mins<=0)return;
+  const e={
+    id:Date.now(),date:meta.date||td(),subject:'mixed',
+    lecture:0,practice:0,revision:0,
+    mockAnalysis:mins,total:mins,
+    source:'auto',label:meta.examLabel||'Mock Test',mockId:meta.mockId||null
+  };
+  S.hours.push(e);save();
+  navMarkDirty('hours');navMarkDirty('overview');
+  renderHours();renderOverview();
+}
 function scoreVal(t,mode,subj){
   if(subj){return mode==='pct'?+pct(t[subj],t.max/3):t[subj];}
   return mode==='pct'?+pct(t.total,t.max):t.total;
@@ -5652,7 +5696,7 @@ function saveHours(){
     const before={...h};
     h.date=document.getElementById('lh-date').value;
     h.subject=document.getElementById('lh-subj').value;
-    h.lecture=+l.toFixed(2);h.practice=+p.toFixed(2);h.revision=+r.toFixed(2);h.total=+(l+p+r).toFixed(2);
+    h.lecture=+l.toFixed(2);h.practice=+p.toFixed(2);h.revision=+r.toFixed(2);h.total=+(l+p+r+(h.mockAnalysis||0)).toFixed(2);
     save();closeM('logHours');
     pushUndo('hours',before,'Hours entry updated ✓',false);
     navMarkDirty('hours');navMarkDirty('overview');
@@ -5660,7 +5704,7 @@ function saveHours(){
     _lhEditId=null;
     return;
   }
-  const e={id:Date.now(),date:document.getElementById('lh-date').value,subject:document.getElementById('lh-subj').value,lecture:+l.toFixed(2),practice:+p.toFixed(2),revision:+r.toFixed(2),total:+(l+p+r).toFixed(2)};
+  const e={id:Date.now(),date:document.getElementById('lh-date').value,subject:document.getElementById('lh-subj').value,lecture:+l.toFixed(2),practice:+p.toFixed(2),revision:+r.toFixed(2),mockAnalysis:0,total:+(l+p+r).toFixed(2),source:'manual'};
   S.hours.push(e);save();closeM('logHours');maybeShowHoursReview();
   pushUndo('hours',e,'Hours logged ✓',false);
   navMarkDirty('hours');navMarkDirty('overview');
@@ -5673,8 +5717,8 @@ function doQuickLog(){
   const subj=document.getElementById('ql-subj').value;
   const ex=S.hours.find(h=>h.date===td()&&h.subject===subj);
   const before=ex?JSON.parse(JSON.stringify(ex)):null;
-  if(ex){ex[currentQLType]=+(ex[currentQLType]+hrs).toFixed(1);ex.total=+(ex.lecture+ex.practice+ex.revision).toFixed(1);}
-  else{const e={id:Date.now(),date:td(),subject:subj,lecture:0,practice:0,revision:0,total:hrs,[currentQLType]:hrs};S.hours.push(e);pushUndo('hours',e,`+${hrs}h ${currentQLType} ✓`,false);}
+  if(ex){ex[currentQLType]=+(ex[currentQLType]+hrs).toFixed(1);ex.total=+(ex.lecture+ex.practice+ex.revision+(ex.mockAnalysis||0)).toFixed(1);}
+  else{const e={id:Date.now(),date:td(),subject:subj,lecture:0,practice:0,revision:0,mockAnalysis:0,total:hrs,source:'manual',[currentQLType]:hrs};S.hours.push(e);pushUndo('hours',e,`+${hrs}h ${currentQLType} ✓`,false);}
   save();closeM('quickLog');navMarkDirty('overview');renderOverview();
 }
 function saveTodo(){
@@ -6260,9 +6304,9 @@ function _renderHours(){
   const now=new Date();
   const thisMD=[...new Set(S.hours.filter(h=>{const d=new Date(h.date+'T00:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).map(h=>h.date))];
   const mAvg=thisMD.length?(S.hours.filter(h=>thisMD.includes(h.date)).reduce((a,b)=>a+b.total,0)/thisMD.length).toFixed(1):0;
-  const tLall=hrs.reduce((a,b)=>a+b.lecture,0),tPall=hrs.reduce((a,b)=>a+b.practice,0),tRall=hrs.reduce((a,b)=>a+b.revision,0);
-  const tTall=tLall+tPall+tRall||0.001;
-  const lpct=Math.round(tLall/tTall*100),ppct=Math.round(tPall/tTall*100),rpct=Math.round(tRall/tTall*100);
+  const mockAll=hrs.reduce((a,b)=>a+(b.mockAnalysis||0),0);
+  const manualAll=total-mockAll;
+  const totalSub=mockAll>0?`${manualAll.toFixed(1)}h manual + ${mockAll.toFixed(1)}h mock analysis`:'in selected period';
   document.getElementById('hr-stats').innerHTML=`
     <div class="prem-stat-card" style="border-color:rgba(124,106,247,.16)">
       <div class="prem-stat-icon-row">
@@ -6270,7 +6314,7 @@ function _renderHours(){
       </div>
       <div class="prem-stat-lbl">Total Hours</div>
       <div class="prem-stat-val" style="color:#a695ff">${total.toFixed(1)}<span style="font-size:.9rem;opacity:.7">h</span></div>
-      <div class="prem-stat-sub">in selected period</div>
+      <div class="prem-stat-sub">${totalSub}</div>
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,#7c6af7,#a695ff);width:100%"></div></div>
     </div>
     <div class="prem-stat-card" style="border-color:rgba(244,114,182,.16)">
@@ -6303,14 +6347,14 @@ function _renderHours(){
     </div>`;
   const last14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().split('T')[0];});
   const sf=F.hours.subj;const hF=h=>sf==='all'||h.subject===sf;
-  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:[{label:'Lecture',data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.lecture,0)),backgroundColor:'#60a5fa',stack:'s',borderRadius:2},{label:'Practice',data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.practice,0)),backgroundColor:'#34d399',stack:'s',borderRadius:2},{label:'Revision',data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.revision,0)),backgroundColor:'#a695ff',stack:'s',borderRadius:2}]};
+  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:HOUR_CATS.map(c=>({label:c.label,data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
   const hrBCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}},tooltip:{callbacks:{title:ctx=>{const idx=ctx[0].dataIndex;const d=last14[idx];const tot=S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.total,0);return `${new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})} — ${tot.toFixed(1)}h total`;},label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}h`}}},scales:{...sO(),x:{...sO().x,stacked:true,ticks:{...sO().x.ticks,maxRotation:45}},y:{...sO().y,stacked:true,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrBC',hrBCData,hrBCOpts)){dc('hrBC');CIs['hrBC']=new Chart(document.getElementById('hrBC').getContext('2d'),{type:'bar',data:hrBCData,options:hrBCOpts});}
-  const tL=hrs.reduce((a,b)=>a+b.lecture,0),tP=hrs.reduce((a,b)=>a+b.practice,0),tR=hrs.reduce((a,b)=>a+b.revision,0);
-  const tTotal=tL+tP+tR||0.001;
-  const tLp=Math.round(tL/tTotal*100),tPp=Math.round(tP/tTotal*100),tRp=Math.round(tR/tTotal*100);
-  const hrDCData={labels:[`Lecture ${tLp}%`,`Practice ${tPp}%`,`Revision ${tRp}%`],datasets:[{data:[tL,tP,tR],backgroundColor:['#60a5fa','#34d399','#a695ff'],borderWidth:0,hoverOffset:4}]};
-  const hrDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}},tooltip:{callbacks:{label:ctx=>`${ctx.label.split(' ')[0]}: ${ctx.parsed.toFixed(1)}h (${ctx.label.split(' ')[1]})`}}}};
+  const catTotals=HOUR_CATS.map(c=>hrs.reduce((a,b)=>a+(b[c.key]||0),0));
+  const catSum=catTotals.reduce((a,b)=>a+b,0)||0.001;
+  const catPct=catTotals.map(v=>Math.round(v/catSum*100));
+  const hrDCData={labels:HOUR_CATS.map((c,i)=>`${c.label} ${catPct[i]}%`),datasets:[{data:catTotals,backgroundColor:HOUR_CATS.map(c=>c.color),borderWidth:0,hoverOffset:4}]};
+  const hrDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}},tooltip:{callbacks:{label:ctx=>`${HOUR_CATS[ctx.dataIndex].label}: ${ctx.parsed.toFixed(1)}h (${catPct[ctx.dataIndex]}%)`}}}};
   if(!uC('hrDC',hrDCData,hrDCOpts)){dc('hrDC');CIs['hrDC']=new Chart(document.getElementById('hrDC').getContext('2d'),{type:'doughnut',data:hrDCData,options:hrDCOpts});}
   const hrSCData={labels:['Physics','Chemistry','Maths'],datasets:[{label:'Hours',data:['physics','chemistry','maths'].map(s=>+hrs.filter(h=>h.subject===s).reduce((a,b)=>a+b.total,0).toFixed(1)),backgroundColor:['#60a5fa','#34d399','#fbbf24'],borderRadius:5,barThickness:28}]};
   const hrSCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
@@ -6332,8 +6376,55 @@ function _renderHours(){
   });
 
   _renderHoursList(hrs);
+  _renderMockBanner(hrs);
+}
+function _renderMockBanner(hrs){
+  const el=document.getElementById('hr-mock-banner');
+  if(!el)return;
+  const mockEntries=hrs.filter(h=>h.source==='auto');
+  const mockHrs=mockEntries.reduce((a,b)=>a+(b.mockAnalysis||0),0);
+  const targetIco=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
+  if(mockEntries.length){
+    const latest=[...mockEntries].sort((a,b)=>b.date.localeCompare(a.date))[0];
+    el.innerHTML=`
+      <div class="prem-mock-banner-ico">${targetIco}</div>
+      <div class="prem-mock-banner-body">
+        <div class="prem-mock-banner-title">Mock Analysis<span class="auto-pill">Auto-logged</span></div>
+        <div class="prem-mock-banner-sub">${mockEntries.length} mock${mockEntries.length===1?'':'s'} analyzed in this period · most recent: ${latest.label||'Mock Test'} on ${fmt(latest.date)}</div>
+      </div>
+      <div class="prem-mock-banner-val">${mockHrs.toFixed(1)}<span>h</span></div>`;
+  } else {
+    el.innerHTML=`
+      <div class="prem-mock-banner-ico">${targetIco}</div>
+      <div class="prem-mock-banner-body">
+        <div class="prem-mock-banner-title">Mock Analysis<span class="auto-pill">Auto-logged</span></div>
+        <div class="prem-mock-banner-sub">Time you spend analyzing a mock in the Mock Test module will show up here automatically — nothing to log yourself.</div>
+      </div>`;
+  }
 }
 function _hoursRowHTML(h,i){
+  if(h.source==='auto'){
+    return `<div class="prem-task source-auto" style="animation-delay:${i*.03}s">
+      <div style="flex:1;min-width:0">
+        <div class="prem-task-title">Mock Analysis <span class="auto-pill" style="margin-left:6px;position:relative;top:-1px">Auto</span> <span style="color:var(--tl);font-weight:700;margin-left:6px">${h.total.toFixed(2)}h</span></div>
+        <div class="prem-task-meta">
+          <span class="subj-chip" style="background:rgba(45,212,191,.12);color:var(--tl)">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="#2dd4bf"/></svg>
+            ${h.label||'Mock Test'} · logged automatically
+          </span>
+          <span class="task-date">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            ${fmt(h.date)}
+          </span>
+        </div>
+      </div>
+      <div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">
+        <button class="prem-del" style="margin-left:0" onclick="deleteHours(${h.id})" title="Remove entry">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }
   const subjColor={physics:'#60a5fa',chemistry:'#34d399',maths:'#fbbf24'};
   const subjChipClass={physics:'subj-phy',chemistry:'subj-che',maths:'subj-mat'};
   const parts=[];
