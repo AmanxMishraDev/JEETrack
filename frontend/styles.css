@@ -970,6 +970,10 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   color:var(--tx);margin-bottom:5px;
 }
 .prem-empty-sub{font-size:12px;color:var(--mu);line-height:1.6;max-width:220px}
+.prem-view-more-btn{width:100%;margin-top:.5rem;padding:9px 14px;border-radius:10px;border:1px solid var(--bd2);background:var(--sf2);color:var(--ac2);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s,border-color .15s,transform .15s}
+.prem-view-more-btn:hover{background:var(--sf3);border-color:var(--ac);transform:translateY(-1px)}
+.prem-view-more-btn svg{transition:transform .15s}
+.prem-view-more-btn:hover svg{transform:translateX(2px)}
 
 .bl-subj-card{
   background:var(--sf);border:1px solid var(--bd);border-radius:14px;

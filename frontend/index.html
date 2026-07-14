@@ -2814,8 +2814,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         </svg>
       </div>
       <div>
-        <div class="pmo-title">Log Test Score</div>
-        <div class="pmo-sub">Record your mock test performance</div>
+        <div class="pmo-title" id="at-modal-title">Log Test Score</div>
+        <div class="pmo-sub" id="at-modal-sub">Record your mock test performance</div>
       </div>
     </div>
 
@@ -2891,7 +2891,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="pmo-btn-cancel" onclick="closeM('addTest')">Cancel</button>
       <button class="pmo-btn-save" onclick="saveTest()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Save Score
+        <span id="at-save-btn-txt">Save Score</span>
       </button>
     </div>
   </div>
@@ -3176,6 +3176,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
   </div>
 </div>
+
+<div class="mo" id="modal-allHours" onclick="if(event.target===this)closeM('allHours')"><div class="md" style="max-width:460px">
+  <button class="md-close" onclick="closeM('allHours')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mt2">Recent Entries</div>
+  <div style="font-size:9px;color:var(--mu2);font-weight:400;margin:-10px 0 12px;letter-spacing:.02em">latest 30 entries · edit or fix mistakes</div>
+  <div id="hr-list-all"></div>
+</div></div>
 
 <div class="mo" id="modal-addTodo" onclick="if(event.target===this)closeM('addTodo')">
   <div class="pmo">
@@ -3652,6 +3659,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div id="td-modal-body"></div>
   <div class="ma">
     <button class="btn brd" onclick="confirmDelTest()" id="td-del-btn">Delete</button>
+    <button class="btn bg2" onclick="editTest(_delId)" title="Edit this test score" style="display:flex;align-items:center;gap:5px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
+      Edit
+    </button>
     <button class="btn bg2" onclick="closeM('testDetail')">Close</button>
   </div>
 </div></div>
@@ -4655,7 +4666,22 @@ function renderAll(){const active=document.querySelector('.page.active');if(acti
 
 const openM=function(id,preset){
   if(id==='resetConfirm'){try{document.getElementById('reset-confirm-input').value='';}catch(e){}}
-  if(id==='addTest'){document.getElementById('at-date').value=td();if(preset)document.getElementById('at-exam').value=preset;toggleExam();}
+  if(id==='addTest'){
+    _atEditId = (preset && typeof preset==='object' && preset.editId) ? preset.editId : null;
+    const titleEl=document.getElementById('at-modal-title'), subEl=document.getElementById('at-modal-sub'), btnEl=document.getElementById('at-save-btn-txt');
+    if(_atEditId){
+      if(titleEl) titleEl.textContent='Edit Test Score';
+      if(subEl) subEl.textContent='Update this test entry';
+      if(btnEl) btnEl.textContent='Update Score';
+    } else {
+      if(titleEl) titleEl.textContent='Log Test Score';
+      if(subEl) subEl.textContent='Record your mock test performance';
+      if(btnEl) btnEl.textContent='Save Score';
+      document.getElementById('at-date').value=td();
+      if(preset)document.getElementById('at-exam').value=preset;
+      toggleExam();
+    }
+  }
   if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset){document.getElementById('sch-exam').value=preset;document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));document.querySelector('#modal-scheduleTest .pmo-pill[onclick*="'+preset+'"]')?.classList.add('active');}}
   if(id==='logHours'){
     _lhEditId = (preset && preset.editId) ? preset.editId : null;
@@ -4711,14 +4737,41 @@ const openM=function(id,preset){
   
   if(id==='addTest'){
     setTimeout(()=>{
-      document.getElementById('at-score-bar').style.width='0%';
-      document.getElementById('at-live-pct').textContent='—%';
-      document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
-      document.getElementById('at-type').value='';
-      const _examPreset = preset || 'mains';
-      document.getElementById('at-exam').value=_examPreset;
-      document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
-      toggleExam();
+      if(_atEditId){
+        const t=S.tests.find(x=>x.id===_atEditId);
+        if(t){
+          document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
+          document.getElementById('at-exam').value=t.exam;
+          document.getElementById(t.exam==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
+          toggleExam();
+          if(t.exam==='advanced') document.getElementById('at-paper').value=t.paper||'p1';
+          document.querySelectorAll('.at-type-pill').forEach(p=>p.classList.remove('active'));
+          document.querySelector(`.at-type-pill[onclick*="'${t.type}'"]`)?.classList.add('active');
+          document.getElementById('at-type').value=t.type;
+          document.getElementById('at-date').value=t.date;
+          document.getElementById('at-phy').value=t.physics||'';
+          document.getElementById('at-chem').value=t.chemistry||'';
+          document.getElementById('at-math').value=t.maths||'';
+          document.getElementById('at-total').value=t.total;
+          document.getElementById('at-max').value=t.max;
+          document.getElementById('at-notes').value=t.notes||'';
+          _atUpdateBar();
+        }
+      } else {
+        document.getElementById('at-score-bar').style.width='0%';
+        document.getElementById('at-live-pct').textContent='—%';
+        document.querySelectorAll('#modal-addTest .pmo-pill').forEach(p=>p.classList.remove('active'));
+        document.getElementById('at-type').value='';
+        document.getElementById('at-phy').value='';
+        document.getElementById('at-chem').value='';
+        document.getElementById('at-math').value='';
+        document.getElementById('at-total').value='';
+        document.getElementById('at-notes').value='';
+        const _examPreset = preset || 'mains';
+        document.getElementById('at-exam').value=_examPreset;
+        document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
+        toggleExam();
+      }
     },50);
   }
   if(id==='howWasTest'){
@@ -4742,6 +4795,7 @@ function toggleExam(){
 
 
 let _lhTimer = { running:false, mode:'stopwatch', elapsed:0, goal:0, interval:null, snapshot:0, startTs:null, subject:'physics', session:'lecture' };
+let _atEditId = null;
 let _lhEditId = null;
 function editHours(id){
   const h=S.hours.find(x=>x.id===id);
@@ -5466,8 +5520,31 @@ function saveTest(){
     return;
   }
 
-  const e={id:Date.now(),exam,session:null,paper:exam==='advanced'?document.getElementById('at-paper').value:null,type:document.getElementById('at-type').value,date,total,max,physics:phy,chemistry:chem,maths:math,notes:document.getElementById('at-notes').value};
-  S.tests.push(e);save();closeM('addTest');maybeShowReviewPrompt();
+  const isEdit = !!_atEditId;
+  const e=isEdit
+    ? S.tests.find(x=>x.id===_atEditId)
+    : {id:Date.now(),exam,session:null,paper:exam==='advanced'?document.getElementById('at-paper').value:null,type:document.getElementById('at-type').value,date,total,max,physics:phy,chemistry:chem,maths:math,notes:document.getElementById('at-notes').value};
+  if(isEdit && !e){ _atEditId=null; closeM('addTest'); return; }
+  if(isEdit){
+    e.exam=exam;
+    e.paper=exam==='advanced'?document.getElementById('at-paper').value:null;
+    e.type=document.getElementById('at-type').value;
+    e.date=date;e.total=total;e.max=max;
+    e.physics=phy;e.chemistry=chem;e.maths=math;
+    e.notes=document.getElementById('at-notes').value;
+  } else {
+    S.tests.push(e);
+  }
+  save();closeM('addTest');
+  if(isEdit){
+    _atEditId=null;
+    navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');
+    renderMains();renderAdv();renderOverview();
+    toast('Test score updated ✓','success');
+    nav(exam==='mains'?'mains':'advanced');
+    return;
+  }
+  maybeShowReviewPrompt();
   pushUndo('test',e,'Test score added',false);
   const gm=getGoalMains(),ga=getGoalAdv();
   if(e.exam==='mains'&&e.total>=gm) setTimeout(()=>celebrate('🏆',`LEGENDARY! ${gm}+ in Mains!`,`You scored ${e.total}/${e.max} — you're on fire!`,true),300);
@@ -5659,6 +5736,12 @@ function execDelete(){
   _delId=null;_delType=null;
 }
 function deleteTest(id){confirmDelete('test',id,'This test score will be permanently deleted.');}
+function editTest(id){
+  const t=S.tests.find(x=>x.id===id);
+  if(!t)return;
+  closeM('testDetail');
+  openM('addTest',{editId:id});
+}
 function confirmDelTest(){
   const titleEl=document.getElementById('td-modal-title');
   const title=titleEl?titleEl.textContent:'this test';
@@ -6250,54 +6333,79 @@ function _renderHours(){
 
   _renderHoursList(hrs);
 }
+function _hoursRowHTML(h,i){
+  const subjColor={physics:'#60a5fa',chemistry:'#34d399',maths:'#fbbf24'};
+  const subjChipClass={physics:'subj-phy',chemistry:'subj-che',maths:'subj-mat'};
+  const parts=[];
+  if(h.lecture)parts.push(`${_lhFmtHM(h.lecture)} Lec`);
+  if(h.practice)parts.push(`${_lhFmtHM(h.practice)} Prac`);
+  if(h.revision)parts.push(`${_lhFmtHM(h.revision)} Rev`);
+  return `<div class="prem-task sub-${h.subject}" style="animation-delay:${i*.03}s">
+    <div style="flex:1;min-width:0">
+      <div class="prem-task-title">${cap(h.subject)} <span style="color:var(--ac2);font-weight:700;margin-left:4px">${h.total.toFixed(2)}h</span></div>
+      <div class="prem-task-meta">
+        <span class="subj-chip ${subjChipClass[h.subject]}">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="${subjColor[h.subject]}"/></svg>
+          ${parts.join(' · ')||'No breakdown'}
+        </span>
+        <span class="task-date">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${fmt(h.date)}
+        </span>
+      </div>
+    </div>
+    <div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">
+      <button class="prem-edit" style="margin-left:0" onclick="editHours(${h.id})" title="Edit entry">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
+      </button>
+      <button class="prem-del" style="margin-left:0" onclick="deleteHours(${h.id})" title="Delete entry">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+function _hoursEmptyHTML(){
+  return `<div class="prem-empty" style="padding:2rem 1rem">
+    <div class="prem-empty-orb">
+      <div class="prem-empty-ring"></div>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
+    </div>
+    <div class="prem-empty-title">No entries yet</div>
+    <div class="prem-empty-sub">Log your study hours to see them here — you can edit or delete any entry later.</div>
+  </div>`;
+}
 function _renderHoursList(hrs){
   const list=document.getElementById('hr-list');
   if(!list)return;
-  const subjColor={physics:'#60a5fa',chemistry:'#34d399',maths:'#fbbf24'};
-  const subjChipClass={physics:'subj-phy',chemistry:'subj-che',maths:'subj-mat'};
   const sorted=[...hrs].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  const LIMIT=30;
-  const shown=sorted.slice(0,LIMIT);
-  if(!shown.length){
-    list.innerHTML=`<div class="prem-empty" style="padding:2rem 1rem">
-      <div class="prem-empty-orb">
-        <div class="prem-empty-ring"></div>
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
-      </div>
-      <div class="prem-empty-title">No entries yet</div>
-      <div class="prem-empty-sub">Log your study hours to see them here — you can edit or delete any entry later.</div>
-    </div>`;
-    return;
+  const PREVIEW_LIMIT=5;
+  const MODAL_LIMIT=30;
+
+  if(!sorted.length){
+    list.innerHTML=_hoursEmptyHTML();
+  } else {
+    const previewRows=sorted.slice(0,PREVIEW_LIMIT).map((h,i)=>_hoursRowHTML(h,i)).join('');
+    const viewMoreBtn=sorted.length>PREVIEW_LIMIT
+      ? `<button class="prem-view-more-btn" onclick="openM('allHours')">
+          View More
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>`
+      : '';
+    list.innerHTML=previewRows+viewMoreBtn;
   }
-  list.innerHTML=shown.map((h,i)=>{
-    const parts=[];
-    if(h.lecture)parts.push(`${_lhFmtHM(h.lecture)} Lec`);
-    if(h.practice)parts.push(`${_lhFmtHM(h.practice)} Prac`);
-    if(h.revision)parts.push(`${_lhFmtHM(h.revision)} Rev`);
-    return `<div class="prem-task sub-${h.subject}" style="animation-delay:${i*.03}s">
-      <div style="flex:1;min-width:0">
-        <div class="prem-task-title">${cap(h.subject)} <span style="color:var(--ac2);font-weight:700;margin-left:4px">${h.total.toFixed(2)}h</span></div>
-        <div class="prem-task-meta">
-          <span class="subj-chip ${subjChipClass[h.subject]}">
-            <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="${subjColor[h.subject]}"/></svg>
-            ${parts.join(' · ')||'No breakdown'}
-          </span>
-          <span class="task-date">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            ${fmt(h.date)}
-          </span>
-        </div>
-      </div>
-      <div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">
-        <button class="prem-edit" style="margin-left:0" onclick="editHours(${h.id})" title="Edit entry">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
-        </button>
-        <button class="prem-del" style="margin-left:0" onclick="deleteHours(${h.id})" title="Delete entry">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </div>`;
-  }).join('') + (sorted.length>LIMIT?`<div style="text-align:center;padding:.7rem 0 .1rem;font-size:11px;color:var(--mu2)">Showing latest ${LIMIT} of ${sorted.length} entries in this period</div>`:'');
+
+  const listAll=document.getElementById('hr-list-all');
+  if(listAll){
+    if(!sorted.length){
+      listAll.innerHTML=_hoursEmptyHTML();
+    } else {
+      const allRows=sorted.slice(0,MODAL_LIMIT).map((h,i)=>_hoursRowHTML(h,i)).join('');
+      const footer=sorted.length>MODAL_LIMIT
+        ? `<div style="text-align:center;padding:.7rem 0 .1rem;font-size:11px;color:var(--mu2)">Showing latest ${MODAL_LIMIT} of ${sorted.length} entries in this period</div>`
+        : '';
+      listAll.innerHTML=allRows+footer;
+    }
+  }
 }
 
 function renderTodo(){
