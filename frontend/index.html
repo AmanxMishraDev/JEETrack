@@ -1763,7 +1763,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <span class="prem-hero-sub-dot"></span>
           <span class="prem-hero-sub-part">Revision</span>
           <span class="prem-hero-sub-dot"></span>
-          <span class="prem-hero-sub-part auto">Mock Analysis<span class="auto-pill">Auto</span></span>
+          <span class="prem-hero-sub-part" style="color:var(--tl)">Mock Analysis</span>
         </div>
       </div>
     </div>
@@ -2895,6 +2895,15 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="pmo-field" style="margin-top:12px">
       <label class="pmo-label">Notes <span style="opacity:.5;font-weight:400">(optional)</span></label>
       <input type="text" class="pmo-input" id="at-notes" maxlength="100" placeholder="e.g. PW Grand Test — felt strong in Physics"/>
+    </div>
+
+    <div class="pmo-field" style="margin-top:12px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);border-radius:10px;padding:10px 12px">
+      <label class="pmo-label" style="display:flex;align-items:center;gap:6px;color:var(--tl)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        Time spent analyzing this mock <span style="opacity:.6;font-weight:400;color:var(--mu)">(optional)</span>
+      </label>
+      <input type="number" class="pmo-input" id="at-analysis-hrs" placeholder="e.g. 1.5" min="0" max="24" step="0.25" style="margin-top:6px"/>
+      <div style="font-size:10.5px;color:var(--mu);margin-top:5px;line-height:1.5">Counts toward Study Hours automatically — no need to log it again there.</div>
     </div>
 
     <div class="pmo-footer">
@@ -4764,6 +4773,8 @@ const openM=function(id,preset){
           document.getElementById('at-total').value=t.total;
           document.getElementById('at-max').value=t.max;
           document.getElementById('at-notes').value=t.notes||'';
+          const _linkedHrs=S.hours.find(h=>h.source==='auto'&&h.mockId===t.id);
+          document.getElementById('at-analysis-hrs').value=_linkedHrs?_linkedHrs.mockAnalysis:'';
           _atUpdateBar();
         }
       } else {
@@ -4776,6 +4787,7 @@ const openM=function(id,preset){
         document.getElementById('at-math').value='';
         document.getElementById('at-total').value='';
         document.getElementById('at-notes').value='';
+        document.getElementById('at-analysis-hrs').value='';
         const _examPreset = preset || 'mains';
         document.getElementById('at-exam').value=_examPreset;
         document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
@@ -5333,24 +5345,26 @@ const HOUR_CATS=[
   {key:'mockAnalysis',label:'Mock Analysis',color:'#2dd4bf', manual:false}
 ];
 
-/* Entry point for the Mock Test module. Call this once a user finishes
-   analyzing a mock (not when they merely submit a score) — it writes a
-   read-only "auto" entry into Study Hours so the time is reflected in
-   totals, trends and the heatmap without ever appearing as a manually
-   loggable category. Not tied to a single subject, since a full mock spans
-   Physics/Chemistry/Maths — so it's excluded from subject-specific views
-   and only counted when "All Subjects" is selected. */
+/* Called whenever a mock's analysis time is known — currently wired to the
+   "Log Test Score" flow (see saveTest) since that's the real place a mock
+   gets entered in this app today. If mockId already has an auto entry it's
+   updated in place instead of duplicated, so editing a test score is safe. */
 function logMockAnalysisHours(hoursSpent,meta){
   meta=meta||{};
-  const mins=Math.round((+hoursSpent||0)*100)/100;
-  if(mins<=0)return;
-  const e={
-    id:Date.now(),date:meta.date||td(),subject:'mixed',
-    lecture:0,practice:0,revision:0,
-    mockAnalysis:mins,total:mins,
-    source:'auto',label:meta.examLabel||'Mock Test',mockId:meta.mockId||null
-  };
-  S.hours.push(e);save();
+  const hrs=Math.round((+hoursSpent||0)*100)/100;
+  const mockId=meta.mockId||null;
+  let e=mockId?S.hours.find(h=>h.source==='auto'&&h.mockId===mockId):null;
+  if(hrs<=0){
+    if(e){S.hours=S.hours.filter(x=>x!==e);save();navMarkDirty('hours');navMarkDirty('overview');renderHours();renderOverview();}
+    return;
+  }
+  if(e){
+    e.mockAnalysis=hrs;e.total=hrs;e.date=meta.date||e.date;e.label=meta.examLabel||e.label;
+  } else {
+    e={id:Date.now(),date:meta.date||td(),subject:'mixed',lecture:0,practice:0,revision:0,mockAnalysis:hrs,total:hrs,source:'auto',label:meta.examLabel||'Mock Test',mockId};
+    S.hours.push(e);
+  }
+  save();
   navMarkDirty('hours');navMarkDirty('overview');
   renderHours();renderOverview();
 }
@@ -5580,6 +5594,8 @@ function saveTest(){
     S.tests.push(e);
   }
   save();closeM('addTest');
+  const _examLabel=`${e.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${e.type==='full'?'Full':'Partial'} — ${fmt(e.date)}`;
+  logMockAnalysisHours(+document.getElementById('at-analysis-hrs').value||0,{mockId:e.id,date:e.date,examLabel:_examLabel});
   if(isEdit){
     _atEditId=null;
     navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');
@@ -6406,7 +6422,7 @@ function _hoursRowHTML(h,i){
   if(h.source==='auto'){
     return `<div class="prem-task source-auto" style="animation-delay:${i*.03}s">
       <div style="flex:1;min-width:0">
-        <div class="prem-task-title">Mock Analysis <span class="auto-pill" style="margin-left:6px;position:relative;top:-1px">Auto</span> <span style="color:var(--tl);font-weight:700;margin-left:6px">${h.total.toFixed(2)}h</span></div>
+        <div class="prem-task-title">Mock Analysis <span style="color:var(--tl);font-weight:700;margin-left:6px">${h.total.toFixed(2)}h</span></div>
         <div class="prem-task-meta">
           <span class="subj-chip" style="background:rgba(45,212,191,.12);color:var(--tl)">
             <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="#2dd4bf"/></svg>
