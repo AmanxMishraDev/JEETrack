@@ -1762,8 +1762,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <span class="prem-hero-sub-part">Practice</span>
           <span class="prem-hero-sub-dot"></span>
           <span class="prem-hero-sub-part">Revision</span>
-          <span class="prem-hero-sub-dot"></span>
-          <span class="prem-hero-sub-part" style="color:var(--tl)">Mock Analysis</span>
+          <span id="hr-hero-mock" style="display:none">
+            <span class="prem-hero-sub-dot"></span>
+            <span class="prem-hero-sub-part" style="color:var(--tl)">Mock Analysis</span>
+          </span>
         </div>
       </div>
     </div>
@@ -1793,7 +1795,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="prem-stat-grid hrs-stat-grid" id="hr-stats"></div>
 
   
-  <div class="prem-mock-banner" id="hr-mock-banner"></div>
+  <div class="prem-mock-banner" id="hr-mock-banner" style="display:none"></div>
 
   
   <div class="prem-chart-grid">
@@ -1808,8 +1810,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="prem-chart-card">
       <div class="prem-chart-glow"></div>
       <div class="prem-chart-card-hdr">
-        <span class="prem-chart-card-title">Study Breakdown</span>
-        <span style="font-size:9.5px;color:var(--mu2)">% of total, incl. mock analysis</span>
+        <span class="prem-chart-card-title" id="hr-dc-title">Lecture / Practice / Revision</span>
+        <span style="font-size:9.5px;color:var(--mu2)" id="hr-dc-sub">split breakdown</span>
       </div>
       <div class="cw" style="height:196px"><canvas id="hrDC"></canvas></div>
     </div>
@@ -1820,7 +1822,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(166,149,255,.18),transparent)"></div>
       <div class="prem-chart-card-hdr">
         <span class="prem-chart-card-title">Subject-wise Hours</span>
-        <span style="font-size:9.5px;color:var(--mu2)">manual study only</span>
+        <span style="font-size:9.5px;color:var(--mu2)" id="hr-sc-sub">total per subject</span>
       </div>
       <div class="cw" style="height:170px"><canvas id="hrSC"></canvas></div>
     </div>
@@ -2897,13 +2899,33 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <input type="text" class="pmo-input" id="at-notes" maxlength="100" placeholder="e.g. PW Grand Test — felt strong in Physics"/>
     </div>
 
-    <div class="pmo-field" style="margin-top:12px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);border-radius:10px;padding:10px 12px">
-      <label class="pmo-label" style="display:flex;align-items:center;gap:6px;color:var(--tl)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
-        Time spent analyzing this mock <span style="opacity:.6;font-weight:400;color:var(--mu)">(optional)</span>
-      </label>
-      <input type="number" class="pmo-input" id="at-analysis-hrs" placeholder="e.g. 1.5" min="0" max="24" step="0.25" style="margin-top:6px"/>
-      <div style="font-size:10.5px;color:var(--mu);margin-top:5px;line-height:1.5">Counts toward Study Hours automatically — no need to log it again there.</div>
+    <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Analyzed this mock?</label>
+      <div class="pmo-pill-row" style="margin-top:6px">
+        <button type="button" class="pmo-pill pmo-pill-sm at-an-pill active" id="at-an-no" onclick="_matToggle(false)">Not yet</button>
+        <button type="button" class="pmo-pill pmo-pill-sm at-an-pill" id="at-an-yes" onclick="_matToggle(true)">Yes</button>
+      </div>
+      <div class="pmo-hrs-row" id="at-an-row" style="display:none;margin-top:10px">
+        <div class="pmo-hrs-row-label">Time spent</div>
+        <div class="pmo-hrs-row-controls">
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('at-an-h',-1)" aria-label="Decrease hours">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="at-an-h" placeholder="0" aria-label="Analysis hours" oninput="_lhClampH(this)"/>
+              <span class="pmo-hrs-suf">hr</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('at-an-h',1)" aria-label="Increase hours">+</button>
+          </div>
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('at-an-h','at-an-m',-5)" aria-label="Decrease minutes">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="at-an-m" placeholder="0" aria-label="Analysis minutes" oninput="_lhClampM(this)"/>
+              <span class="pmo-hrs-suf">min</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('at-an-h','at-an-m',5)" aria-label="Increase minutes">+</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="pmo-footer">
@@ -4774,7 +4796,13 @@ const openM=function(id,preset){
           document.getElementById('at-max').value=t.max;
           document.getElementById('at-notes').value=t.notes||'';
           const _linkedHrs=S.hours.find(h=>h.source==='auto'&&h.mockId===t.id);
-          document.getElementById('at-analysis-hrs').value=_linkedHrs?_linkedHrs.mockAnalysis:'';
+          if(_linkedHrs&&_linkedHrs.mockAnalysis>0){
+            _matToggle(true);
+            document.getElementById('at-an-h').value=Math.floor(_linkedHrs.mockAnalysis);
+            document.getElementById('at-an-m').value=Math.round((_linkedHrs.mockAnalysis%1)*60);
+          } else {
+            _matToggle(false);
+          }
           _atUpdateBar();
         }
       } else {
@@ -4787,7 +4815,7 @@ const openM=function(id,preset){
         document.getElementById('at-math').value='';
         document.getElementById('at-total').value='';
         document.getElementById('at-notes').value='';
-        document.getElementById('at-analysis-hrs').value='';
+        _matToggle(false);
         const _examPreset = preset || 'mains';
         document.getElementById('at-exam').value=_examPreset;
         document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
@@ -5216,6 +5244,12 @@ function lhSwitchTab(tab) {
 }
 
 
+function _matToggle(analyzed){
+  document.querySelectorAll('.at-an-pill').forEach(p=>p.classList.remove('active'));
+  document.getElementById(analyzed?'at-an-yes':'at-an-no').classList.add('active');
+  document.getElementById('at-an-row').style.display=analyzed?'':'none';
+  if(!analyzed){document.getElementById('at-an-h').value='';document.getElementById('at-an-m').value='';}
+}
 function _lhDur(hId, mId){
   return (+document.getElementById(hId).value||0) + (+document.getElementById(mId).value||0)/60;
 }
@@ -5595,7 +5629,9 @@ function saveTest(){
   }
   save();closeM('addTest');
   const _examLabel=`${e.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${e.type==='full'?'Full':'Partial'} — ${fmt(e.date)}`;
-  logMockAnalysisHours(+document.getElementById('at-analysis-hrs').value||0,{mockId:e.id,date:e.date,examLabel:_examLabel});
+  const _analyzed=document.getElementById('at-an-yes').classList.contains('active');
+  const _anHrs=_analyzed?_lhDur('at-an-h','at-an-m'):0;
+  logMockAnalysisHours(_anHrs,{mockId:e.id,date:e.date,examLabel:_examLabel});
   if(isEdit){
     _atEditId=null;
     navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');
@@ -5814,6 +5850,9 @@ function viewTest(id){
   const pct2=(v,mx)=>mx?Math.round(v/mx*100):0;
   const subMax=t.max/3;
   const bar=(v,mx,c)=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:500;color:${c}">${v}</span><span style="color:var(--mu);font-family:'DM Mono',monospace">${pct2(v,mx)}%</span></div><div style="height:5px;background:var(--sf3);border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct2(v,mx)}%;background:${c};border-radius:99px;transition:width .8s ease"></div></div></div>`;
+  const _linked=S.hours.find(h=>h.source==='auto'&&h.mockId===t.id);
+  const _lh=_linked?Math.floor(_linked.mockAnalysis):'';
+  const _lm=_linked?Math.round((_linked.mockAnalysis%1)*60):'';
   document.getElementById('td-modal-title').textContent=`${t.exam==='mains'?'JEE Mains':'JEE Advanced'} — ${fmt(t.date)}`;
   document.getElementById('td-modal-body').innerHTML=`
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
@@ -5833,8 +5872,51 @@ function viewTest(id){
     <div style="font-size:10px;color:var(--mu);margin-top:-6px;margin-bottom:8px">Chemistry</div>
     ${bar(t.maths,subMax,'var(--am)')}
     <div style="font-size:10px;color:var(--mu);margin-top:-6px;margin-bottom:12px">Maths</div>
-    ${t.notes?`<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:.6rem .8rem;font-size:12px;color:var(--mu)"><span style="color:var(--tx);font-weight:500">Notes:</span> ${t.notes}</div>`:''}`;
+    ${t.notes?`<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:.6rem .8rem;font-size:12px;color:var(--mu);margin-bottom:12px"><span style="color:var(--tx);font-weight:500">Notes:</span> ${t.notes}</div>`:''}
+    <div class="pmo-field">
+      <label class="pmo-label">Analyzed this mock?</label>
+      <div class="pmo-pill-row" style="margin-top:6px">
+        <button type="button" class="pmo-pill pmo-pill-sm td-an-pill${_linked?'':' active'}" id="td-an-no" onclick="_matToggleDetail(${t.id},false)">Not yet</button>
+        <button type="button" class="pmo-pill pmo-pill-sm td-an-pill${_linked?' active':''}" id="td-an-yes" onclick="_matToggleDetail(${t.id},true)">Yes</button>
+      </div>
+      <div class="pmo-hrs-row" id="td-an-row" style="display:${_linked?'':'none'};margin-top:10px">
+        <div class="pmo-hrs-row-label">Time spent</div>
+        <div class="pmo-hrs-row-controls">
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',-1);_saveMockAnalysisDetail(${t.id})" aria-label="Decrease hours">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="td-an-h" placeholder="0" value="${_lh}" aria-label="Analysis hours" oninput="_lhClampH(this)" onchange="_saveMockAnalysisDetail(${t.id})"/>
+              <span class="pmo-hrs-suf">hr</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',1);_saveMockAnalysisDetail(${t.id})" aria-label="Increase hours">+</button>
+          </div>
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',-5);_saveMockAnalysisDetail(${t.id})" aria-label="Decrease minutes">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="td-an-m" placeholder="0" value="${_lm}" aria-label="Analysis minutes" oninput="_lhClampM(this)" onchange="_saveMockAnalysisDetail(${t.id})"/>
+              <span class="pmo-hrs-suf">min</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',5);_saveMockAnalysisDetail(${t.id})" aria-label="Increase minutes">+</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
   openM('testDetail');
+}
+function _matToggleDetail(id,analyzed){
+  document.querySelectorAll('.td-an-pill').forEach(p=>p.classList.remove('active'));
+  document.getElementById(analyzed?'td-an-yes':'td-an-no').classList.add('active');
+  document.getElementById('td-an-row').style.display=analyzed?'':'none';
+  if(!analyzed){document.getElementById('td-an-h').value='';document.getElementById('td-an-m').value='';}
+  _saveMockAnalysisDetail(id);
+}
+function _saveMockAnalysisDetail(id){
+  const t=S.tests.find(x=>x.id===id);if(!t)return;
+  const analyzed=document.getElementById('td-an-yes').classList.contains('active');
+  const hrs=analyzed?_lhDur('td-an-h','td-an-m'):0;
+  const examLabel=`${t.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${t.type==='full'?'Full':'Partial'} — ${fmt(t.date)}`;
+  logMockAnalysisHours(hrs,{mockId:t.id,date:t.date,examLabel});
+  if(hrs>0)toast(`${hrs}h saved to Study Hours`);
 }
 function deleteUpcoming(id){const t=S.upcoming.find(x=>x.id===id);if(!t)return;S.upcoming=S.upcoming.filter(x=>x.id!==id);save();dbDelete('upcoming',id);pushUndo('upcoming',t,'Scheduled test deleted',true);navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');renderMains();renderAdv();renderOverview();}
 function deleteHours(id){const h=S.hours.find(x=>x.id===id);if(!h)return;S.hours=S.hours.filter(x=>x.id!==id);save();dbDelete('hours',id);pushUndo('hours',h,'Hours entry deleted',true);navMarkDirty('hours');renderHours();}
@@ -6310,6 +6392,9 @@ function renderHours(){ensureChartJs().then(function(){_renderHours();});}
 function _renderHours(){
   F.hours.subj=document.getElementById('hr-subj').value;
   const hrs=getHrs();
+  const hasMockEver=S.hours.some(h=>(h.mockAnalysis||0)>0);
+  const heroMock=document.getElementById('hr-hero-mock');
+  if(heroMock)heroMock.style.display=hasMockEver?'':'none';
   const total=hrs.reduce((a,b)=>a+b.total,0);
   const days=[...new Set(hrs.map(h=>h.date))].length;
   const avg=days?(total/days).toFixed(1):0;
@@ -6363,15 +6448,20 @@ function _renderHours(){
     </div>`;
   const last14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().split('T')[0];});
   const sf=F.hours.subj;const hF=h=>sf==='all'||h.subject===sf;
-  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:HOUR_CATS.map(c=>({label:c.label,data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
+  const activeCats=HOUR_CATS.filter(c=>c.manual||hasMockEver);
+  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:activeCats.map(c=>({label:c.label,data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
   const hrBCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}},tooltip:{callbacks:{title:ctx=>{const idx=ctx[0].dataIndex;const d=last14[idx];const tot=S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.total,0);return `${new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})} — ${tot.toFixed(1)}h total`;},label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}h`}}},scales:{...sO(),x:{...sO().x,stacked:true,ticks:{...sO().x.ticks,maxRotation:45}},y:{...sO().y,stacked:true,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrBC',hrBCData,hrBCOpts)){dc('hrBC');CIs['hrBC']=new Chart(document.getElementById('hrBC').getContext('2d'),{type:'bar',data:hrBCData,options:hrBCOpts});}
-  const catTotals=HOUR_CATS.map(c=>hrs.reduce((a,b)=>a+(b[c.key]||0),0));
+  const catTotals=activeCats.map(c=>hrs.reduce((a,b)=>a+(b[c.key]||0),0));
   const catSum=catTotals.reduce((a,b)=>a+b,0)||0.001;
   const catPct=catTotals.map(v=>Math.round(v/catSum*100));
-  const hrDCData={labels:HOUR_CATS.map((c,i)=>`${c.label} ${catPct[i]}%`),datasets:[{data:catTotals,backgroundColor:HOUR_CATS.map(c=>c.color),borderWidth:0,hoverOffset:4}]};
-  const hrDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}},tooltip:{callbacks:{label:ctx=>`${HOUR_CATS[ctx.dataIndex].label}: ${ctx.parsed.toFixed(1)}h (${catPct[ctx.dataIndex]}%)`}}}};
+  const hrDCData={labels:activeCats.map((c,i)=>`${c.label} ${catPct[i]}%`),datasets:[{data:catTotals,backgroundColor:activeCats.map(c=>c.color),borderWidth:0,hoverOffset:4}]};
+  const hrDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}},tooltip:{callbacks:{label:ctx=>`${activeCats[ctx.dataIndex].label}: ${ctx.parsed.toFixed(1)}h (${catPct[ctx.dataIndex]}%)`}}}};
   if(!uC('hrDC',hrDCData,hrDCOpts)){dc('hrDC');CIs['hrDC']=new Chart(document.getElementById('hrDC').getContext('2d'),{type:'doughnut',data:hrDCData,options:hrDCOpts});}
+  const dcTitle=document.getElementById('hr-dc-title'),dcSub=document.getElementById('hr-dc-sub'),scSub=document.getElementById('hr-sc-sub');
+  if(dcTitle)dcTitle.textContent=hasMockEver?'Study Breakdown':'Lecture / Practice / Revision';
+  if(dcSub)dcSub.textContent=hasMockEver?'% of total, incl. mock analysis':'split breakdown';
+  if(scSub)scSub.textContent=hasMockEver?'manual study only':'total per subject';
   const hrSCData={labels:['Physics','Chemistry','Maths'],datasets:[{label:'Hours',data:['physics','chemistry','maths'].map(s=>+hrs.filter(h=>h.subject===s).reduce((a,b)=>a+b.total,0).toFixed(1)),backgroundColor:['#60a5fa','#34d399','#fbbf24'],borderRadius:5,barThickness:28}]};
   const hrSCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrSC',hrSCData,hrSCOpts)){dc('hrSC');CIs['hrSC']=new Chart(document.getElementById('hrSC').getContext('2d'),{type:'bar',data:hrSCData,options:hrSCOpts});}
@@ -6398,25 +6488,18 @@ function _renderMockBanner(hrs){
   const el=document.getElementById('hr-mock-banner');
   if(!el)return;
   const mockEntries=hrs.filter(h=>h.source==='auto');
+  if(!mockEntries.length){el.style.display='none';el.innerHTML='';return;}
   const mockHrs=mockEntries.reduce((a,b)=>a+(b.mockAnalysis||0),0);
+  const latest=[...mockEntries].sort((a,b)=>b.date.localeCompare(a.date))[0];
   const targetIco=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
-  if(mockEntries.length){
-    const latest=[...mockEntries].sort((a,b)=>b.date.localeCompare(a.date))[0];
-    el.innerHTML=`
-      <div class="prem-mock-banner-ico">${targetIco}</div>
-      <div class="prem-mock-banner-body">
-        <div class="prem-mock-banner-title">Mock Analysis<span class="auto-pill">Auto-logged</span></div>
-        <div class="prem-mock-banner-sub">${mockEntries.length} mock${mockEntries.length===1?'':'s'} analyzed in this period · most recent: ${latest.label||'Mock Test'} on ${fmt(latest.date)}</div>
-      </div>
-      <div class="prem-mock-banner-val">${mockHrs.toFixed(1)}<span>h</span></div>`;
-  } else {
-    el.innerHTML=`
-      <div class="prem-mock-banner-ico">${targetIco}</div>
-      <div class="prem-mock-banner-body">
-        <div class="prem-mock-banner-title">Mock Analysis<span class="auto-pill">Auto-logged</span></div>
-        <div class="prem-mock-banner-sub">Time you spend analyzing a mock in the Mock Test module will show up here automatically — nothing to log yourself.</div>
-      </div>`;
-  }
+  el.style.display='';
+  el.innerHTML=`
+    <div class="prem-mock-banner-ico">${targetIco}</div>
+    <div class="prem-mock-banner-body">
+      <div class="prem-mock-banner-title">Mock Analysis</div>
+      <div class="prem-mock-banner-sub">${mockEntries.length} mock${mockEntries.length===1?'':'s'} analyzed this period · most recent: ${latest.label||'Mock Test'}</div>
+    </div>
+    <div class="prem-mock-banner-val">${mockHrs.toFixed(1)}<span>h</span></div>`;
 }
 function _hoursRowHTML(h,i){
   if(h.source==='auto'){
@@ -6426,7 +6509,7 @@ function _hoursRowHTML(h,i){
         <div class="prem-task-meta">
           <span class="subj-chip" style="background:rgba(45,212,191,.12);color:var(--tl)">
             <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="#2dd4bf"/></svg>
-            ${h.label||'Mock Test'} · logged automatically
+            ${h.label||'Mock Test'}
           </span>
           <span class="task-date">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
