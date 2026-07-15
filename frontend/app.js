@@ -543,7 +543,7 @@ async function loadUserData(){
       sb.from('streaks').select('*').eq('user_id',uid).maybeSingle()
     ]);
     S.tests=(tests.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
-    S.hours=(hours.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total}));
+    S.hours=(hours.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
     S.backlogs=(backlogs.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.todos=(todos.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.upcoming=(upcoming.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
@@ -585,7 +585,7 @@ async function loadUserData(){
         sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle()
       ]);
       S.tests=(tests2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
-      S.hours=(hours2.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total}));
+      S.hours=(hours2.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
       S.backlogs=(backlogs2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
@@ -612,7 +612,7 @@ async function save(){
     const uid = currentUser.id;
     const ops = [];
     if(S.tests.length) ops.push(sb.from('tests').upsert(S.tests.map(t=>({id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}))));
-    if(S.hours.length) ops.push(sb.from('hours').upsert(S.hours.map(h=>({id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total}))));
+    if(S.hours.length) ops.push(sb.from('hours').upsert(S.hours.map(h=>({id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}))));
     if(S.backlogs.length) ops.push(sb.from('backlogs').upsert(S.backlogs.map(b=>({id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}))));
     if(S.todos.length) ops.push(sb.from('todos').upsert(S.todos.map(t=>({id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}))));
     if(S.upcoming.length) ops.push(sb.from('upcoming').upsert(S.upcoming.map(u=>({id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}))));
@@ -1827,7 +1827,7 @@ function toggleCustomCoaching() {
   if (row) row.style.display = (val==='other_online'||val==='other_offline') ? '' : 'none';
 }
 
-let obData = { name: '', class_year: '', mode: '', coaching: '', year: '', avatarDataUrl: '' };
+let obData = { name: '', class_year: '', mode: '', coaching: '', year: '', source: '', avatarDataUrl: '' };
 
 function showOnboarding() {
   document.getElementById('landing').classList.add('hidden');
@@ -1974,6 +1974,7 @@ function obSelect(el, group) {
   if (group === 'ob-class') { obData.class_year = val; _obClearHint(1); }
   else if (group === 'ob-mode') { obData.mode = val; _obClearHint(2); }
   else if (group === 'ob-year') { obData.year = val; _obClearHint(3); }
+  else if (group === 'ob-source') { obData.source = val; _obClearHint(4); }
 }
 
 function _obClearHint(step) {
@@ -2038,11 +2039,11 @@ function obNext(step) {
   document.getElementById(`ob-step-${nextStep}`)?.classList.add('active');
   
   
-  const pcts = [0, 33.33, 66.66, 100];
+  const pcts = [0, 25, 50, 75, 100];
   const fill = document.getElementById('ob-progress-fill');
   if (fill) fill.style.width = pcts[nextStep] + '%';
   
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     const lbl = document.getElementById(`ob-lbl-${i}`);
     if (!lbl) continue;
     lbl.classList.remove('done','current');
@@ -2089,11 +2090,11 @@ function obBack(step) {
   const prevHint = document.getElementById(`ob-hint-${prevStep}`);
   if (prevHint) { prevHint.textContent = ''; prevHint.style.display = 'none'; }
   
-  const pcts = [0, 33.33, 66.66, 100];
+  const pcts = [0, 25, 50, 75, 100];
   const fill = document.getElementById('ob-progress-fill');
   if (fill) fill.style.width = pcts[prevStep] + '%';
   
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     const lbl = document.getElementById(`ob-lbl-${i}`);
     if (!lbl) continue;
     lbl.classList.remove('done','current');
@@ -2103,10 +2104,6 @@ function obBack(step) {
 }
 
 async function finishOnboarding() {
-  if (!obData.year) {
-    _obShakeStep(3, 'Please select your target year to continue');
-    return;
-  }
   const btn = document.getElementById('ob-finish-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const fields = {
@@ -2115,6 +2112,7 @@ async function finishOnboarding() {
     study_mode: obData.mode || 'self',
     coaching: obData.coaching || 'self',
     target_year: obData.year || String(getDefaultJeeYear()),
+    referral_source: obData.source || null,
     onboarding_done: true,
   };
   
@@ -3025,9 +3023,11 @@ function maybeShowReviewPrompt() {
 
 
 function maybeShowHoursReview() {
-  if (!S || !S.hours || S.hours.length < 10) return;
+  if (!S || !S.hours) return;
+  const manualCount = S.hours.filter(h => h.source !== 'auto').length;
+  if (manualCount < 10) return;
   
-  const n = S.hours.length;
+  const n = manualCount;
   if (n !== 10 && (n - 10) % 5 !== 0) return;
   setTimeout(() => _openReviewModal('hours'), 500);
 }

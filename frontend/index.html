@@ -962,6 +962,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="ob-step-label" id="ob-lbl-1" data-label="Class"><div class="ob-step-dot"></div></div>
         <div class="ob-step-label" id="ob-lbl-2" data-label="Study"><div class="ob-step-dot"></div></div>
         <div class="ob-step-label" id="ob-lbl-3" data-label="Target"><div class="ob-step-dot"></div></div>
+        <div class="ob-step-label" id="ob-lbl-4" data-label="Source"><div class="ob-step-dot"></div></div>
       </div>
     </div>
 
@@ -972,7 +973,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         
         <div class="ob-step active" id="ob-step-0">
           <div class="ob-step-header">
-            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 1 of 4</div>
+            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 1 of 5</div>
             <div class="ob-step-title">Who are <em>you?</em></div>
             <div class="ob-step-desc">Set your name and a profile photo to personalize your dashboard</div>
           </div>
@@ -1044,7 +1045,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         
         <div class="ob-step" id="ob-step-1">
           <div class="ob-step-header">
-            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 2 of 4</div>
+            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 2 of 5</div>
             <div class="ob-step-title">What's your <em>class?</em></div>
             <div class="ob-step-desc">We'll calibrate targets and timelines based on your level</div>
           </div>
@@ -1080,7 +1081,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         
         <div class="ob-step" id="ob-step-2">
           <div class="ob-step-header">
-            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 3 of 4</div>
+            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 3 of 5</div>
             <div class="ob-step-title">Where do you <em>study?</em></div>
             <div class="ob-step-desc">Select your coaching institute or study mode</div>
           </div>
@@ -1129,13 +1130,60 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         
         <div class="ob-step" id="ob-step-3">
           <div class="ob-step-header">
-            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Final Step</div>
+            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Step 4 of 5</div>
             <div class="ob-step-title">Your <em>target year?</em></div>
             <div class="ob-step-desc">We'll set the countdown and intensity accordingly</div>
           </div>
 
           <div class="ob-grid" id="ob-year-grid">
             
+          </div>
+
+          <div class="ob-actions">
+            <button class="ob-btn-back" onclick="obBack(3)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
+            <button class="ob-btn-next" onclick="obNext(3)">
+              Continue
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        
+        <div class="ob-step" id="ob-step-4">
+          <div class="ob-step-header">
+            <div class="ob-step-eyebrow"><span class="ob-step-eyebrow-line"></span>Final Step</div>
+            <div class="ob-step-title">How did you <em>hear about us?</em></div>
+            <div class="ob-step-desc">Helps us know where to focus — totally optional</div>
+          </div>
+
+          <div class="ob-grid-3">
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="reddit">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="12.5" r="1.2" fill="#fb7185" stroke="none"/><circle cx="15.5" cy="12.5" r="1.2" fill="#fb7185" stroke="none"/><path d="M8 16c1.2 1 2.6 1.5 4 1.5s2.8-.5 4-1.5"/></svg></div>
+              <div class="ob-opt-label">Reddit</div>
+            </div>
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="google">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              <div class="ob-opt-label">Google Search</div>
+            </div>
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="youtube">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10 9 15 12 10 15 10 9" fill="#f87171" stroke="none"/></svg></div>
+              <div class="ob-opt-label">YouTube</div>
+            </div>
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="instagram">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#f472b6" stroke="none"/></svg></div>
+              <div class="ob-opt-label">Instagram</div>
+            </div>
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="friend">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="ob-opt-label">Friend / Word of Mouth</div>
+            </div>
+            <div class="ob-opt" onclick="obSelect(this,'ob-source')" data-val="other">
+              <div class="ob-opt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="ob-opt-label">Somewhere Else</div>
+            </div>
           </div>
 
           
@@ -1148,7 +1196,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
 
           <div class="ob-actions">
-            <button class="ob-btn-back" onclick="obBack(3)">
+            <button class="ob-btn-back" onclick="obBack(4)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
               Back
             </button>
@@ -1764,7 +1812,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <span class="prem-hero-sub-part">Revision</span>
           <span id="hr-hero-mock" style="display:none">
             <span class="prem-hero-sub-dot"></span>
-            <span class="prem-hero-sub-part" style="color:var(--tl)">Mock Analysis</span>
+            <span class="prem-hero-sub-part">Mock Analysis</span>
           </span>
         </div>
       </div>
@@ -3497,6 +3545,35 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <input type="text" class="pmo-input" id="hwt-notes" placeholder="How did it feel? What to improve?"/>
     </div>
 
+    <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Analyzed this mock?</label>
+      <div class="pmo-pill-row" style="margin-top:6px">
+        <button type="button" class="pmo-pill pmo-pill-sm hwt-an-pill active" id="hwt-an-no" onclick="_hwtAnToggle(false)">Not yet</button>
+        <button type="button" class="pmo-pill pmo-pill-sm hwt-an-pill" id="hwt-an-yes" onclick="_hwtAnToggle(true)">Yes</button>
+      </div>
+      <div class="pmo-hrs-row" id="hwt-an-row" style="display:none;margin-top:10px">
+        <div class="pmo-hrs-row-label">Time spent</div>
+        <div class="pmo-hrs-row-controls">
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('hwt-an-h',-1)" aria-label="Decrease hours">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="hwt-an-h" placeholder="0" aria-label="Analysis hours" oninput="_lhClampH(this)"/>
+              <span class="pmo-hrs-suf">hr</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('hwt-an-h',1)" aria-label="Increase hours">+</button>
+          </div>
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('hwt-an-h','hwt-an-m',-5)" aria-label="Decrease minutes">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="hwt-an-m" placeholder="0" aria-label="Analysis minutes" oninput="_lhClampM(this)"/>
+              <span class="pmo-hrs-suf">min</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('hwt-an-h','hwt-an-m',5)" aria-label="Increase minutes">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="pmo-footer">
       <button class="pmo-btn-cancel" onclick="(async()=>{const id=+document.querySelector('#modal-howWasTest').dataset.upid;if(id)await _hwtMarkDismissed(id);closeM('howWasTest');})()">Skip for now</button>
       <button class="pmo-btn-save" onclick="saveHWT()">
@@ -4827,6 +4904,7 @@ const openM=function(id,preset){
     setTimeout(()=>{
       document.getElementById('hwt-score-bar').style.width='0%';
       document.getElementById('hwt-live-pct').textContent='—%';
+      _hwtAnToggle(false);
     },50);
   }
   
@@ -5648,6 +5726,12 @@ function saveTest(){
   else celebrate('✅','Score Logged!',`${e.total}/${e.max} — ${pct(e.total,e.max)}%`);
   nav(exam==='mains'?'mains':'advanced');
 }
+function _hwtAnToggle(analyzed){
+  document.querySelectorAll('.hwt-an-pill').forEach(p=>p.classList.remove('active'));
+  document.getElementById(analyzed?'hwt-an-yes':'hwt-an-no').classList.add('active');
+  document.getElementById('hwt-an-row').style.display=analyzed?'':'none';
+  if(!analyzed){document.getElementById('hwt-an-h').value='';document.getElementById('hwt-an-m').value='';}
+}
 function saveHWT(){
   const upid=+document.querySelector('#modal-howWasTest').dataset.upid;
   const up=S.upcoming.find(t=>t.id===upid);
@@ -5715,6 +5799,9 @@ function saveHWT(){
   S.upcoming=S.upcoming.filter(t=>t.id!==upid);
   dbDelete('upcoming',upid);
   save();closeM('howWasTest');
+  const _hwtAnalyzed=document.getElementById('hwt-an-yes').classList.contains('active');
+  const _hwtAnHrs=_hwtAnalyzed?_lhDur('hwt-an-h','hwt-an-m'):0;
+  logMockAnalysisHours(_hwtAnHrs,{mockId:e.id,date:e.date,examLabel:`${e.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${e.type==='full'?'Full':'Partial'} — ${fmt(e.date)}`});
   _hwtMarkDismissed(upid);
   pushUndo('test',e,'Score logged from scheduled test',false);
   const gm2=getGoalMains(),ga2=getGoalAdv();
@@ -5883,22 +5970,23 @@ function viewTest(id){
         <div class="pmo-hrs-row-label">Time spent</div>
         <div class="pmo-hrs-row-controls">
           <div class="pmo-hrs-stepper">
-            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',-1);_saveMockAnalysisDetail(${t.id})" aria-label="Decrease hours">−</button>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',-1)" aria-label="Decrease hours">−</button>
             <div class="pmo-hrs-inp-wrap">
-              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="td-an-h" placeholder="0" value="${_lh}" aria-label="Analysis hours" oninput="_lhClampH(this)" onchange="_saveMockAnalysisDetail(${t.id})"/>
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="td-an-h" placeholder="0" value="${_lh}" aria-label="Analysis hours" oninput="_lhClampH(this)"/>
               <span class="pmo-hrs-suf">hr</span>
             </div>
-            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',1);_saveMockAnalysisDetail(${t.id})" aria-label="Increase hours">+</button>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('td-an-h',1)" aria-label="Increase hours">+</button>
           </div>
           <div class="pmo-hrs-stepper">
-            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',-5);_saveMockAnalysisDetail(${t.id})" aria-label="Decrease minutes">−</button>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',-5)" aria-label="Decrease minutes">−</button>
             <div class="pmo-hrs-inp-wrap">
-              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="td-an-m" placeholder="0" value="${_lm}" aria-label="Analysis minutes" oninput="_lhClampM(this)" onchange="_saveMockAnalysisDetail(${t.id})"/>
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="td-an-m" placeholder="0" value="${_lm}" aria-label="Analysis minutes" oninput="_lhClampM(this)"/>
               <span class="pmo-hrs-suf">min</span>
             </div>
-            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',5);_saveMockAnalysisDetail(${t.id})" aria-label="Increase minutes">+</button>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',5)" aria-label="Increase minutes">+</button>
           </div>
         </div>
+        <button type="button" class="btn bg2" style="width:100%;margin-top:8px;font-size:12.5px;padding:.5rem" onclick="_saveMockAnalysisDetail(${t.id})">Save</button>
       </div>
     </div>`;
   openM('testDetail');
@@ -5907,8 +5995,7 @@ function _matToggleDetail(id,analyzed){
   document.querySelectorAll('.td-an-pill').forEach(p=>p.classList.remove('active'));
   document.getElementById(analyzed?'td-an-yes':'td-an-no').classList.add('active');
   document.getElementById('td-an-row').style.display=analyzed?'':'none';
-  if(!analyzed){document.getElementById('td-an-h').value='';document.getElementById('td-an-m').value='';}
-  _saveMockAnalysisDetail(id);
+  if(!analyzed){document.getElementById('td-an-h').value='';document.getElementById('td-an-m').value='';_saveMockAnalysisDetail(id);}
 }
 function _saveMockAnalysisDetail(id){
   const t=S.tests.find(x=>x.id===id);if(!t)return;
@@ -5916,7 +6003,7 @@ function _saveMockAnalysisDetail(id){
   const hrs=analyzed?_lhDur('td-an-h','td-an-m'):0;
   const examLabel=`${t.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${t.type==='full'?'Full':'Partial'} — ${fmt(t.date)}`;
   logMockAnalysisHours(hrs,{mockId:t.id,date:t.date,examLabel});
-  if(hrs>0)toast(`${hrs}h saved to Study Hours`);
+  toast(hrs>0?'Mock analysis logged':'Mock analysis removed');
 }
 function deleteUpcoming(id){const t=S.upcoming.find(x=>x.id===id);if(!t)return;S.upcoming=S.upcoming.filter(x=>x.id!==id);save();dbDelete('upcoming',id);pushUndo('upcoming',t,'Scheduled test deleted',true);navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');renderMains();renderAdv();renderOverview();}
 function deleteHours(id){const h=S.hours.find(x=>x.id===id);if(!h)return;S.hours=S.hours.filter(x=>x.id!==id);save();dbDelete('hours',id);pushUndo('hours',h,'Hours entry deleted',true);navMarkDirty('hours');renderHours();}
@@ -6145,7 +6232,9 @@ function renderOvTrend(){
 }
 function renderOvWeek(){
   const days=l7();
-  const newData={labels:days.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short'})),datasets:[{label:'Lec',data:days.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+b.lecture,0)),backgroundColor:'#60a5fa',stack:'s',borderRadius:2},{label:'Prac',data:days.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+b.practice,0)),backgroundColor:'#34d399',stack:'s',borderRadius:2},{label:'Rev',data:days.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+b.revision,0)),backgroundColor:'#a695ff',stack:'s',borderRadius:2}]};
+  const ovHasMock=S.hours.some(h=>(h.mockAnalysis||0)>0);
+  const ovCats=HOUR_CATS.filter(c=>c.manual||ovHasMock);
+  const newData={labels:days.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short'})),datasets:ovCats.map(c=>({label:c.label.slice(0,4),data:days.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
   const newOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),x:{...sO().x,stacked:true},y:{...sO().y,stacked:true}}};
   if(!uC('ovWC',newData,newOpts)){
     const ctx=document.getElementById('ovWC').getContext('2d');
@@ -6406,8 +6495,7 @@ function _renderHours(){
   const thisMD=[...new Set(S.hours.filter(h=>{const d=new Date(h.date+'T00:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).map(h=>h.date))];
   const mAvg=thisMD.length?(S.hours.filter(h=>thisMD.includes(h.date)).reduce((a,b)=>a+b.total,0)/thisMD.length).toFixed(1):0;
   const mockAll=hrs.reduce((a,b)=>a+(b.mockAnalysis||0),0);
-  const manualAll=total-mockAll;
-  const totalSub=mockAll>0?`${manualAll.toFixed(1)}h manual + ${mockAll.toFixed(1)}h mock analysis`:'in selected period';
+  const totalSub=mockAll>0?`incl. ${mockAll.toFixed(1)}h mock analysis`:'in selected period';
   document.getElementById('hr-stats').innerHTML=`
     <div class="prem-stat-card" style="border-color:rgba(124,106,247,.16)">
       <div class="prem-stat-icon-row">
@@ -7076,7 +7164,7 @@ function openAvMenu(){
     const now = new Date();
     const monthHrs = (S.hours||[])
       .filter(h=>{ const d=new Date(h.date); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); })
-      .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0),0);
+      .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0)+(+h.mockAnalysis||0),0);
     const hrsEl = document.getElementById('avStatHrs');
     if(hrsEl) hrsEl.textContent = monthHrs>0 ? (Number.isInteger(monthHrs)?monthHrs:monthHrs.toFixed(1))+'h' : '—';
     
@@ -7419,9 +7507,11 @@ async function generateInsights(){
   const totalLec=S.hours.reduce((a,b)=>a+b.lecture,0);
   const totalPrac=S.hours.reduce((a,b)=>a+b.practice,0);
   const totalRev=S.hours.reduce((a,b)=>a+b.revision,0);
-  const lecP=+(totalLec/totalH*100).toFixed(0);
-  const pracP=+(totalPrac/totalH*100).toFixed(0);
-  const revP=+(totalRev/totalH*100).toFixed(0);
+  const totalMock=S.hours.reduce((a,b)=>a+(b.mockAnalysis||0),0);
+  const manualH=(totalLec+totalPrac+totalRev)||0.001;
+  const lecP=+(totalLec/manualH*100).toFixed(0);
+  const pracP=+(totalPrac/manualH*100).toFixed(0);
+  const revP=+(totalRev/manualH*100).toFixed(0);
 
   
   const subjH=subjs.map(s=>{
@@ -7508,7 +7598,7 @@ Advanced (${adv.length} tests): ${adv.map(t=>`${t.total}/${t.max}`).join(' → '
 
 STUDY HOURS:
 Last 3d: ${hrs3}h (${days3}/3 days) | Last 7d: ${hrs7}h (${days7}/7 days) | Last 14d: ${days14}/14 days active | Last 30d: ${hrs30}h
-OVERALL SPLIT — Lecture:${lecP}% | Practice:${pracP}% | Revision:${revP}% ← compare against ideal 30/50/20
+OVERALL SPLIT — Lecture:${lecP}% | Practice:${pracP}% | Revision:${revP}% ← compare against ideal 30/50/20${totalMock>0?` (plus ${totalMock.toFixed(1)}h spent on mock analysis, tracked separately)`:''}
 Subject hours: ${subjH.map(x=>`${x.s}:${x.total}h(prac:${x.pracPct}%,rev:${x.revPct}%)`).join(' | ')}
 Hour gap between most/least studied: ${(Math.max(...subjH.map(x=>x.total))-Math.min(...subjH.map(x=>x.total))).toFixed(1)}h (>${10}h = neglect problem)
 
