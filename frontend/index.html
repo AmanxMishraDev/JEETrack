@@ -3780,7 +3780,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
       Edit
     </button>
-    <button class="btn bg2" onclick="closeM('testDetail')">Close</button>
   </div>
 </div></div>
 
@@ -5986,7 +5985,10 @@ function viewTest(id){
             <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('td-an-h','td-an-m',5)" aria-label="Increase minutes">+</button>
           </div>
         </div>
-        <button type="button" class="btn bg2" style="width:100%;margin-top:8px;font-size:12.5px;padding:.5rem" onclick="_saveMockAnalysisDetail(${t.id})">Save</button>
+        <button type="button" class="mock-an-save-btn" onclick="_saveMockAnalysisDetail(${t.id})">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save
+        </button>
       </div>
     </div>`;
   openM('testDetail');
