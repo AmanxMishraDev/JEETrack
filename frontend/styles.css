@@ -4624,6 +4624,16 @@ select.fc.adv-fc {
 .pmo-btn-save:hover { transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,106,247,.55) }
 .pmo-btn-save:active { transform:translateY(0) scale(.97) }
 
+.pmo-btn-delete {
+  padding:9px 14px;border-radius:10px;border:1px solid rgba(248,113,113,.25);
+  background:rgba(248,113,113,.08);color:var(--rd);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;gap:6px;margin-right:auto;
+  -webkit-tap-highlight-color:transparent
+}
+.pmo-btn-delete:hover { background:rgba(248,113,113,.16);border-color:rgba(248,113,113,.4) }
+.pmo-btn-delete:active { transform:scale(.96) }
+
 .mock-an-save-btn {
   width:100%;margin-top:8px;padding:9px 14px;border-radius:10px;border:none;
   background:linear-gradient(135deg,#7c6af7,#a695ff);
