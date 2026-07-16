@@ -659,6 +659,15 @@ tr.fb-expand-row{background:transparent!important;}
         <select class="fselect" id="filter-coaching" onchange="loadUsers(0)">
           <option value="">All Coaching Institutes</option>
         </select>
+        <select class="fselect" id="filter-source" onchange="loadUsers(0)">
+          <option value="">All Sources</option>
+          <option value="reddit">Reddit</option>
+          <option value="google">Google Search</option>
+          <option value="youtube">YouTube</option>
+          <option value="instagram">Instagram</option>
+          <option value="friend">Friend / Word of Mouth</option>
+          <option value="other">Somewhere Else</option>
+        </select>
         <span class="filter-clear" onclick="clearUserFilters()">Clear filters</span>
       </div>
       <div class="card" style="padding:0">
@@ -669,6 +678,7 @@ tr.fb-expand-row{background:transparent!important;}
                 <th class="sortable" data-sort="name" onclick="setUserSort('name')">Student <span class="arrow">↕</span></th>
                 <th>Class</th>
                 <th>Coaching</th>
+                <th>Source</th>
                 <th>Target Yr</th>
                 <th class="sortable sorted" data-sort="created_at" onclick="setUserSort('created_at')">Joined <span class="arrow">↓</span></th>
                 <th class="sortable" data-sort="last_active" onclick="setUserSort('last_active')">Last Active <span class="arrow">↕</span></th>
@@ -677,7 +687,7 @@ tr.fb-expand-row{background:transparent!important;}
               </tr>
             </thead>
             <tbody id="users-table">
-              <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
+              <tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -771,6 +781,10 @@ tr.fb-expand-row{background:transparent!important;}
         <h3><span class="ic">📅</span>Distribution by Target JEE Year</h3>
         <div id="year-dist"><div class="loading"><div class="spinner"></div></div></div>
       </div>
+      <div class="card">
+        <h3><span class="ic">📣</span>How Users Found Us</h3>
+        <div id="source-dist"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
     </div>
 
     
@@ -808,7 +822,7 @@ tr.fb-expand-row{background:transparent!important;}
 
         <div class="action-card">
           <h3>📥 Export Users CSV</h3>
-          <p>Download a CSV of all registered users — name, email, class, coaching, joined date, and last active.</p>
+          <p>Download a CSV of all registered users — name, email, class, coaching, source, joined date, and last active.</p>
           <button class="action-btn btn-primary" onclick="exportUsersCSV()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download CSV
@@ -1307,7 +1321,7 @@ const PAGE_META = {
   users:         { title: 'All Users',          sub: 'Complete profile & performance data per student' },
   leaderboard:   { title: 'Leaderboard',        sub: 'Top performing students, ranked' },
   consistency:   { title: 'Consistency',        sub: 'Who shows up, every single day' },
-  demographics:  { title: 'Segmentation',       sub: 'Class & coaching institute distribution' },
+  demographics:  { title: 'Segmentation',       sub: 'Class, coaching institute & referral source distribution' },
   db:            { title: 'DB Stats',           sub: 'Raw Supabase table counts' },
   actions:       { title: 'Admin Actions',      sub: 'Manual triggers & session info' },
   email:         { title: 'Email Composer',     sub: 'Send custom emails to your users' },
@@ -1629,6 +1643,7 @@ function clearUserFilters() {
   document.getElementById('user-search').value = '';
   document.getElementById('filter-class').value = '';
   document.getElementById('filter-coaching').value = '';
+  document.getElementById('filter-source').value = '';
   loadUsers(0);
 }
 
@@ -1655,16 +1670,17 @@ async function loadUsers(page = 0) {
   _userPage = page;
   _pagination.users = page;
   const tbody = document.getElementById('users-table');
-  tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
     const search = encodeURIComponent(document.getElementById('user-search')?.value || '');
     const cls = document.getElementById('filter-class')?.value || '';
     const coaching = document.getElementById('filter-coaching')?.value || '';
-    const extra = `&page=${page}&pageSize=20&search=${search}&class_year=${cls}&coaching=${coaching}&sort=${_userSort.by}&dir=${_userSort.dir}`;
+    const source = document.getElementById('filter-source')?.value || '';
+    const extra = `&page=${page}&pageSize=20&search=${search}&class_year=${cls}&coaching=${coaching}&referral_source=${source}&sort=${_userSort.by}&dir=${_userSort.dir}`;
     const d = await api('users', extra);
     const users = d.users || [];
     if (!users.length) {
-      tbody.innerHTML = `<tr><td colspan="8">${emptyState('No users match these filters')}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9">${emptyState('No users match these filters')}</td></tr>`;
       document.getElementById('page-info').textContent = '';
       document.getElementById('prev-btn').disabled = true;
       document.getElementById('next-btn').disabled = true;
@@ -1683,6 +1699,7 @@ async function loadUsers(page = 0) {
         </td>
         <td>${u.class_year ? `<span class="pill pill-blue">${esc(u.class)}</span>` : '<span style="color:var(--mu2)">—</span>'}</td>
         <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mu)">${esc(u.coaching)}</td>
+        <td style="color:var(--mu)">${u.source_id ? esc(u.source) : '<span style="color:var(--mu2)">—</span>'}</td>
         <td style="color:var(--mu)">${esc(u.target_year) || '—'}</td>
         <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.created_at)}</td>
         <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.last_active)}</td>
@@ -1701,7 +1718,7 @@ async function loadUsers(page = 0) {
     const startN = page*20+1, endN = Math.min(page*20+users.length, d.count||0);
     document.getElementById('page-info').textContent = `${startN}–${endN} of ${d.count || 0} students`;
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
   }
 }
 
@@ -1719,7 +1736,7 @@ async function viewUser(id, name) {
     _modalData = d;
     const p = d.profile || {};
     document.getElementById('modal-title').textContent = p.name || name || 'Unknown';
-    document.getElementById('modal-subtitle').textContent = `${p.email || 'No email'} · ${p.class || 'Class not set'} · ${p.coaching || 'No coaching'}`;
+    document.getElementById('modal-subtitle').textContent = `${p.email || 'No email'} · ${p.class || 'Class not set'} · ${p.coaching || 'No coaching'} · via ${p.source || 'Not Set'}`;
     document.getElementById('modal-avatar').textContent = initials(p.name || name);
     renderModalTab('summary');
   } catch(e) {
@@ -2037,17 +2054,20 @@ async function loadDemographics() {
   const classEl = document.getElementById('class-dist');
   const coachEl = document.getElementById('coaching-dist');
   const yearEl = document.getElementById('year-dist');
+  const sourceEl = document.getElementById('source-dist');
   classEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   coachEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   yearEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  sourceEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     const d = await api('demographics');
     const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#60a5fa','#a695ff','#fb923c','#8b8aa0'];
     classEl.innerHTML = renderDistribution(d.classes, colors) + `<div class="card-foot">Based on ${fmt(d.total)} total registered users</div>`;
     coachEl.innerHTML = renderDistribution(d.coachings, colors) + `<div class="card-foot">Based on ${fmt(d.total)} total registered users</div>`;
     yearEl.innerHTML = renderDistribution(d.years, colors);
+    sourceEl.innerHTML = renderDistribution(d.sources, colors) + `<div class="card-foot">Based on ${fmt(d.total)} total registered users</div>`;
   } catch(e) {
-    classEl.innerHTML = coachEl.innerHTML = yearEl.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`;
+    classEl.innerHTML = coachEl.innerHTML = yearEl.innerHTML = sourceEl.innerHTML = `<div class="no-data">Error: ${esc(e.message)}</div>`;
   }
 }
 
@@ -2189,9 +2209,9 @@ async function exportUsersCSV() {
     const d = await api('users&page=0&pageSize=9999');
     const users = d.users || [];
     if (!users.length) { showToast('No users found'); return; }
-    const header = ['Name','Email','Class','Coaching','Target Year','Joined','Last Active','Email Reports'];
+    const header = ['Name','Email','Class','Coaching','Source','Target Year','Joined','Last Active','Email Reports'];
     const rows = users.map(u => [
-      u.name, u.email, u.class, u.coaching,
+      u.name, u.email, u.class, u.coaching, u.source_id ? u.source : '—',
       u.target_year || '—',
       u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—',
       u.last_active ? new Date(u.last_active).toLocaleDateString('en-IN') : '—',

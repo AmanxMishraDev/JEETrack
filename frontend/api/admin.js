@@ -3,9 +3,64 @@
 
 
 
+import crypto from 'node:crypto';
+
+
+
+
 const ADMIN_PASSWORD       = process.env.ADMIN_PASSWORD;
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const ADMIN_TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || ADMIN_PASSWORD;
+const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; 
+
+function safeCompare(a, b) {
+  const aBuf = Buffer.from(String(a || ''));
+  const bBuf = Buffer.from(String(b || ''));
+  
+  if (aBuf.length !== bBuf.length) {
+    crypto.timingSafeEqual(aBuf, Buffer.alloc(aBuf.length));
+    return false;
+  }
+  return crypto.timingSafeEqual(aBuf, bBuf);
+}
+
+function signToken(payload) {
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = crypto.createHmac('sha256', ADMIN_TOKEN_SECRET).update(body).digest('base64url');
+  return `${body}.${sig}`;
+}
+
+function verifyToken(token) {
+  if (!token || typeof token !== 'string' || !token.includes('.')) return null;
+  const [body, sig] = token.split('.');
+  if (!body || !sig) return null;
+  const expectedSig = crypto.createHmac('sha256', ADMIN_TOKEN_SECRET).update(body).digest('base64url');
+  const sigBuf = Buffer.from(sig);
+  const expBuf = Buffer.from(expectedSig);
+  if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) return null;
+  let payload;
+  try { payload = JSON.parse(Buffer.from(body, 'base64url').toString()); } catch { return null; }
+  if (!payload || !payload.exp || Date.now() > payload.exp) return null;
+  return payload;
+}
+
+
+const _loginAttempts = {};
+function loginRateLimited(ip) {
+  const now = Date.now();
+  const rec = _loginAttempts[ip] || { count: 0, resetAt: now + 15 * 60 * 1000 };
+  if (now > rec.resetAt) { rec.count = 0; rec.resetAt = now + 15 * 60 * 1000; }
+  rec.count++;
+  _loginAttempts[ip] = rec;
+  return rec.count > 5; 
+}
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return req.socket?.remoteAddress || 'unknown';
+}
 
 
 const COACHING_LABELS = {
@@ -24,6 +79,14 @@ const CLASS_LABELS = { '11': 'Class 11', '12': 'Class 12', dropper: 'Dropper', o
 function classLabel(id) {
   if (!id) return 'Not Set';
   return CLASS_LABELS[id] || id;
+}
+const SOURCE_LABELS = {
+  reddit: 'Reddit', google: 'Google Search', youtube: 'YouTube',
+  instagram: 'Instagram', friend: 'Friend / Word of Mouth', other: 'Somewhere Else',
+};
+function sourceLabel(id) {
+  if (!id) return 'Not Set';
+  return SOURCE_LABELS[id] || id;
 }
 
 
@@ -65,6 +128,65 @@ async function sbCount(table, filter = '') {
   });
   const range = res.headers.get('content-range') || '0/0';
   return parseInt(range.split('/')[1] || '0', 10);
+}
+
+
+async function sbAuthGetUser(id) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${id}`, {
+    headers: {
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+    },
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data?.user || data || null;
+}
+
+
+async function sbRpc(fnName, body = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fnName}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`Supabase rpc ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+
+async function sbRosterQuery({ search, classFilter, coachFilter, sourceFilter, sortBy, sortDir, offset, limit }) {
+  const params = ['select=id,email,created_at,name,class_year,coaching,study_mode,referral_source,target_year,email_reports,last_active_at,onboarding_done'];
+  if (classFilter)  params.push(`class_year=eq.${encodeURIComponent(classFilter)}`);
+  if (coachFilter)  params.push(`coaching=eq.${encodeURIComponent(coachFilter)}`);
+  if (sourceFilter) params.push(`referral_source=eq.${encodeURIComponent(sourceFilter)}`);
+  if (search) {
+    
+    const term = search.replace(/[%_,()*]/g, ' ').trim();
+    if (term) params.push(`or=(name.ilike.*${encodeURIComponent(term)}*,email.ilike.*${encodeURIComponent(term)}*)`);
+  }
+  const orderCol = sortBy === 'name' ? 'name' : sortBy === 'last_active' ? 'last_active_at' : 'created_at';
+  params.push(`order=${orderCol}.${sortDir === 1 ? 'asc' : 'desc'}.nullslast`);
+
+  const url = `${SUPABASE_URL}/rest/v1/admin_user_roster?${params.join('&')}`;
+  const res = await fetch(url, {
+    headers: {
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'Range-Unit': 'items',
+      'Range': `${offset}-${offset + limit - 1}`,
+      'Prefer': 'count=exact',
+    },
+  });
+  if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
+  const rows = await res.json();
+  const range = res.headers.get('content-range') || '';
+  const total = range.includes('/') ? (parseInt(range.split('/')[1], 10) || 0) : rows.length;
+  return { rows, total };
 }
 
 
@@ -135,7 +257,7 @@ async function buildRoster({ fresh = false } = {}) {
 
   const [authUsers, prefs] = await Promise.all([
     sbAuthListAllUsers().catch(() => []),
-    sbQuery('user_preferences?select=*').catch(() => []),
+    sbQuery('user_preferences?select=user_id,username,class_year,coaching,study_mode,referral_source,target_year,email_reports,last_active_at,onboarding_done,created_at').catch(() => []),
   ]);
 
   const prefMap = {};
@@ -158,6 +280,7 @@ async function buildRoster({ fresh = false } = {}) {
       class_year: p.class_year || '',
       coaching: p.coaching || '',
       study_mode: p.study_mode || '',
+      referral_source: p.referral_source || '',
       target_year: p.target_year || '',
       email_reports: p.email_reports || 'off',
       last_active_at: p.last_active_at || null,
@@ -184,18 +307,24 @@ export default async function handler(req, res) {
 
   
   if (action === 'login') {
-    const { password } = req.body || {};
-    if (password === ADMIN_PASSWORD) {
-      return res.status(200).json({ ok: true, token: Buffer.from(ADMIN_PASSWORD).toString('base64') });
+    const ip = clientIp(req);
+    if (loginRateLimited(ip)) {
+      return res.status(429).json({ error: 'Too many attempts. Try again in a few minutes.' });
     }
-    return res.status(401).json({ error: 'Wrong password' });
+    const { password } = req.body || {};
+    if (!ADMIN_PASSWORD || !safeCompare(password, ADMIN_PASSWORD)) {
+      
+      await new Promise(r => setTimeout(r, 300));
+      return res.status(401).json({ error: 'Wrong password' });
+    }
+    const exp = Date.now() + TOKEN_TTL_MS;
+    return res.status(200).json({ ok: true, token: signToken({ exp }), expiresAt: exp });
   }
 
   
   const auth = req.headers['authorization'] || '';
   const token = auth.replace('Bearer ', '');
-  const validToken = Buffer.from(ADMIN_PASSWORD).toString('base64');
-  if (token !== validToken) {
+  if (!verifyToken(token)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -441,39 +570,20 @@ export default async function handler(req, res) {
     if (action === 'users') {
       const page        = parseInt(req.query.page || '0');
       const pageSize     = parseInt(req.query.pageSize || '20');
-      const search       = (req.query.search || '').toLowerCase().trim();
+      const search       = (req.query.search || '').trim();
       const classFilter  = req.query.class_year || '';
       const coachFilter  = req.query.coaching || '';
+      const sourceFilter = req.query.referral_source || '';
       const sortBy       = req.query.sort || 'created_at'; 
       const sortDir      = req.query.dir === 'asc' ? 1 : -1;
 
-      let roster = await buildRoster();
-
-      if (search) {
-        roster = roster.filter(u =>
-          (u.name || '').toLowerCase().includes(search) ||
-          (u.email || '').toLowerCase().includes(search)
-        );
-      }
-      if (classFilter) roster = roster.filter(u => u.class_year === classFilter);
-      if (coachFilter) roster = roster.filter(u => u.coaching === coachFilter);
-
-      const toTime = (v) => v ? new Date(v).getTime() : 0;
-      roster.sort((a, b) => {
-        if (sortBy === 'name') return sortDir * (a.name || '').localeCompare(b.name || '');
-        if (sortBy === 'last_active') return sortDir === 1
-          ? toTime(a.last_active_at) - toTime(b.last_active_at)
-          : toTime(b.last_active_at) - toTime(a.last_active_at);
-        return sortDir === 1
-          ? toTime(a.created_at) - toTime(b.created_at)
-          : toTime(b.created_at) - toTime(a.created_at);
+      const offset = page * pageSize;
+      const { rows, total } = await sbRosterQuery({
+        search, classFilter, coachFilter, sourceFilter, sortBy, sortDir,
+        offset, limit: pageSize,
       });
 
-      const total = roster.length;
-      const start = page * pageSize;
-      const pageItems = roster.slice(start, start + pageSize);
-
-      const users = pageItems.map(u => ({
+      const users = rows.map(u => ({
         id:            u.id,
         name:          u.name,
         email:         u.email,
@@ -482,6 +592,8 @@ export default async function handler(req, res) {
         target_year:   u.target_year,
         coaching:      coachingLabel(u.coaching),
         coaching_id:   u.coaching,
+        source:        sourceLabel(u.referral_source),
+        source_id:     u.referral_source,
         created_at:    u.created_at,
         last_active:   u.last_active_at,
         email_reports: u.email_reports,
@@ -492,7 +604,7 @@ export default async function handler(req, res) {
         count: total,
         page,
         pageSize,
-        next: start + pageSize < total,
+        next: offset + pageSize < total,
       });
     }
 
@@ -501,17 +613,19 @@ export default async function handler(req, res) {
     
     
     if (action === 'demographics') {
-      const roster = await buildRoster();
-      const total = roster.length;
+      const raw = await sbRpc('admin_demographics');
+      const byDim = { class: {}, coaching: {}, year: {}, source: {} };
+      let total = 0;
 
-      const classCount = {}, coachingCount = {}, yearCount = {};
-      roster.forEach(u => {
-        const cls      = classLabel(u.class_year);
-        const coaching = coachingLabel(u.coaching);
-        const year     = u.target_year || 'Not Set';
-        classCount[cls]         = (classCount[cls]         || 0) + 1;
-        coachingCount[coaching] = (coachingCount[coaching] || 0) + 1;
-        yearCount[year]         = (yearCount[year]         || 0) + 1;
+      raw.forEach(r => {
+        const dim = r.dimension;
+        if (!byDim[dim]) return;
+        const label = dim === 'class'    ? classLabel(r.label)
+                    : dim === 'coaching' ? coachingLabel(r.label)
+                    : dim === 'source'   ? sourceLabel(r.label)
+                    : (r.label || 'Not Set');
+        byDim[dim][label] = (byDim[dim][label] || 0) + Number(r.cnt);
+        if (dim === 'class') total += Number(r.cnt); 
       });
 
       const toArr = (obj) => Object.entries(obj)
@@ -520,9 +634,10 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         total,
-        classes:   toArr(classCount),
-        coachings: toArr(coachingCount),
-        years:     toArr(yearCount),
+        classes:   toArr(byDim.class),
+        coachings: toArr(byDim.coaching),
+        years:     toArr(byDim.year),
+        sources:   toArr(byDim.source),
       });
     }
 
@@ -533,7 +648,7 @@ export default async function handler(req, res) {
 
       
       const [
-        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, authUsers
+        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, authUser
       ] = await Promise.all([
         sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
@@ -543,10 +658,8 @@ export default async function handler(req, res) {
         sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
-        buildRoster().catch(() => []),
+        sbAuthGetUser(distinct_id).catch(() => null),
       ]);
-
-      const authUser = authUsers.find(u => u.id === distinct_id) || null;
 
       
       const totalTests = testsData.length;
@@ -618,6 +731,7 @@ export default async function handler(req, res) {
           email,
           class: classLabel(pref.class_year),
           coaching: coachingLabel(pref.coaching),
+          source: sourceLabel(pref.referral_source),
           study_mode: pref.study_mode || '',
           target_year: pref.target_year || '',
           created_at: authUser?.created_at || pref.created_at || null,
@@ -1024,6 +1138,6 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error('[Admin API Error]', err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Something went wrong. Check server logs.' });
   }
 }
