@@ -519,6 +519,33 @@ function getDefaultState(){
     subjBestStreaks:{physics:0,chemistry:0,maths:0},notifiedHWT:[],hwtDismissed:[]};
 }
 
+// ── Dirty-tracking sync snapshot ──
+// Tracks the last-synced payload (as JSON) per row per table, so save()
+// only needs to upsert rows that actually changed instead of the full array.
+const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, syllabus:{} };
+
+function _payloadTest(t,uid){ return {id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}; }
+function _payloadHour(h,uid){ return {id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}; }
+function _payloadBacklog(b,uid){ return {id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}; }
+function _payloadTodo(t,uid){ return {id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}; }
+function _payloadUpcoming(u,uid){ return {id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}; }
+function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,theory:c.theory,practice:c.practice}; }
+function _snapKey(row){ return JSON.stringify(row); }
+
+// Call once right after S.* has been freshly loaded from the server, so
+// existing (already-in-sync) rows aren't mistaken for "changed" on the next save().
+function _seedSyncSnapshot(){
+  if(!currentUser) return;
+  const uid = currentUser.id;
+  _syncSnapshot.tests = {}; (S.tests||[]).forEach(t=>{ _syncSnapshot.tests[t.id]=_snapKey(_payloadTest(t,uid)); });
+  _syncSnapshot.hours = {}; (S.hours||[]).forEach(h=>{ _syncSnapshot.hours[h.id]=_snapKey(_payloadHour(h,uid)); });
+  _syncSnapshot.backlogs = {}; (S.backlogs||[]).forEach(b=>{ _syncSnapshot.backlogs[b.id]=_snapKey(_payloadBacklog(b,uid)); });
+  _syncSnapshot.todos = {}; (S.todos||[]).forEach(t=>{ _syncSnapshot.todos[t.id]=_snapKey(_payloadTodo(t,uid)); });
+  _syncSnapshot.upcoming = {}; (S.upcoming||[]).forEach(u=>{ _syncSnapshot.upcoming[u.id]=_snapKey(_payloadUpcoming(u,uid)); });
+  _syncSnapshot.syllabus = {};
+  ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
+}
+
 async function loadUserData(){
   if(!sb || !currentUser){
     const saved = localStorage.getItem('jt3');
@@ -569,6 +596,7 @@ async function loadUserData(){
         S.hwtDismissed=merged;
       }catch(e){}
     }
+    _seedSyncSnapshot();
   }catch(e){
     console.error('Load error:',e);
     
@@ -591,6 +619,7 @@ async function loadUserData(){
       S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
       if(syllabus2.data&&syllabus2.data.length){ S.syllabus={physics:[],chemistry:[],maths:[]}; syllabus2.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); }); S=migrateSyllabus(S); }
       if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
+      _seedSyncSnapshot();
       console.log('Retry load succeeded');
     } catch(e2) {
       console.error('Retry load also failed, falling back to localStorage:', e2);
@@ -611,14 +640,29 @@ async function save(){
   try{
     const uid = currentUser.id;
     const ops = [];
-    if(S.tests.length) ops.push(sb.from('tests').upsert(S.tests.map(t=>({id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}))));
-    if(S.hours.length) ops.push(sb.from('hours').upsert(S.hours.map(h=>({id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}))));
-    if(S.backlogs.length) ops.push(sb.from('backlogs').upsert(S.backlogs.map(b=>({id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}))));
-    if(S.todos.length) ops.push(sb.from('todos').upsert(S.todos.map(t=>({id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}))));
-    if(S.upcoming.length) ops.push(sb.from('upcoming').upsert(S.upcoming.map(u=>({id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}))));
-    const sylRows=[]; ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>sylRows.push({id:c.id,user_id:uid,subject:s,name:c.name,section:c.section||null,theory:c.theory,practice:c.practice})); });
-    if(sylRows.length) ops.push(sb.from('syllabus').upsert(sylRows));
+
+    const changedTests = (S.tests||[]).map(t=>_payloadTest(t,uid)).filter(p=>_syncSnapshot.tests[p.id]!==_snapKey(p));
+    if(changedTests.length) ops.push(sb.from('tests').upsert(changedTests).then(({error})=>{ if(!error) changedTests.forEach(p=>_syncSnapshot.tests[p.id]=_snapKey(p)); }));
+
+    const changedHours = (S.hours||[]).map(h=>_payloadHour(h,uid)).filter(p=>_syncSnapshot.hours[p.id]!==_snapKey(p));
+    if(changedHours.length) ops.push(sb.from('hours').upsert(changedHours).then(({error})=>{ if(!error) changedHours.forEach(p=>_syncSnapshot.hours[p.id]=_snapKey(p)); }));
+
+    const changedBacklogs = (S.backlogs||[]).map(b=>_payloadBacklog(b,uid)).filter(p=>_syncSnapshot.backlogs[p.id]!==_snapKey(p));
+    if(changedBacklogs.length) ops.push(sb.from('backlogs').upsert(changedBacklogs).then(({error})=>{ if(!error) changedBacklogs.forEach(p=>_syncSnapshot.backlogs[p.id]=_snapKey(p)); }));
+
+    const changedTodos = (S.todos||[]).map(t=>_payloadTodo(t,uid)).filter(p=>_syncSnapshot.todos[p.id]!==_snapKey(p));
+    if(changedTodos.length) ops.push(sb.from('todos').upsert(changedTodos).then(({error})=>{ if(!error) changedTodos.forEach(p=>_syncSnapshot.todos[p.id]=_snapKey(p)); }));
+
+    const changedUpcoming = (S.upcoming||[]).map(u=>_payloadUpcoming(u,uid)).filter(p=>_syncSnapshot.upcoming[p.id]!==_snapKey(p));
+    if(changedUpcoming.length) ops.push(sb.from('upcoming').upsert(changedUpcoming).then(({error})=>{ if(!error) changedUpcoming.forEach(p=>_syncSnapshot.upcoming[p.id]=_snapKey(p)); }));
+
+    const sylPayloads=[]; ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>sylPayloads.push(_payloadSylChapter(c,s,uid))); });
+    const changedSyl = sylPayloads.filter(p=>_syncSnapshot.syllabus[p.id]!==_snapKey(p));
+    if(changedSyl.length) ops.push(sb.from('syllabus').upsert(changedSyl).then(({error})=>{ if(!error) changedSyl.forEach(p=>_syncSnapshot.syllabus[p.id]=_snapKey(p)); }));
+
+    // Streaks is always a single row — negligible cost, left as-is.
     ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]},{onConflict:'user_id'}));
+
     await Promise.all(ops);
   }catch(e){ console.error('Save error:',e); }
   isSaving=false; if(saveQueue){ saveQueue=false; save(); }
@@ -626,6 +670,7 @@ async function save(){
 
 async function dbDelete(table, id){
   localStorage.setItem('jt3', JSON.stringify(S));
+  if(_syncSnapshot[table]) delete _syncSnapshot[table][id];
   if(!sb || !currentUser) return;
   try{ await sb.from(table).delete().eq('id',id).eq('user_id',currentUser.id); }catch(e){}
 }
