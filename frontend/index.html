@@ -1233,7 +1233,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <button class="ni" onclick="nav('todo')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>To-Do <span class="nbadge" id="nb-todo" style="display:none">0</span></button>
     <button class="ni" onclick="nav('backlog')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></svg></span>Backlog <span class="nbadge" id="nb-backlog" style="display:none">0</span></button>
     <button class="ni" onclick="nav('syllabus')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Syllabus</button>
-    <button class="ni" onclick="nav('practice')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>Practice Log</button>
+    <button class="ni" onclick="nav('practice')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></span>Practice Log</button>
   </div>
   <div class="ns"><div class="nl">Intelligence</div>
     <button class="ni ni-ai" onclick="nav('insights');closeSidebar();syncMobNav('insights')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></span>AI Insights</button>
@@ -1454,9 +1454,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   
   <div class="g3" style="position:relative;z-index:1">
     <div class="card dash-card-premium" style="border-radius:14px">
-      <div class="glow-line"></div>
-      <div class="ch"><span class="ct">Subject Accuracy</span></div>
-      <div id="ov-sbars"></div>
+      <div class="glow-line" style="background:linear-gradient(90deg,transparent,rgba(52,211,153,.45),transparent)"></div>
+      <div class="ch">
+        <span class="ct">Practice Overview</span>
+        <span onclick="nav('practice')" style="cursor:pointer;font-size:10px;font-weight:600;color:var(--gn);display:flex;align-items:center;gap:2px">View<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div id="ov-practice-card"></div>
     </div>
     <div class="card dash-card-premium" style="border-radius:14px">
       <div class="glow-line"></div>
@@ -2110,7 +2113,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <div class="ph" style="align-items:center">
     <div>
       <div class="pt" style="display:flex;align-items:center;gap:10px">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg>
         Practice Log
       </div>
       <div class="ps">Every question counts — track it, see it add up</div>
@@ -2154,13 +2157,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   
   <div id="pl-empty" class="pl-empty-wrap" style="display:none">
     <div class="pl-empty-orb">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="url(#plEmptyGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="url(#plEmptyGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <defs><linearGradient id="plEmptyGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
-        <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+        <rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/>
       </svg>
     </div>
     <div class="pl-empty-title">No practice logged yet</div>
-    <div class="pl-empty-sub">Hit a chapter's Log button in Syllabus, or log one right here — it takes about two seconds.</div>
+    <div class="pl-empty-sub">Tap the + on any chapter's Practice button in Syllabus, or log one right here — it takes about two seconds.</div>
     <button class="prem-btn-primary" onclick="openPracticeLog()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Log Your First Practice
@@ -2975,7 +2978,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span class="mob-drawer-item-label">Syllabus</span>
     </button>
     <button class="mob-drawer-item" onclick="drawerNav('practice')">
-      <span class="mob-drawer-icon" style="background:rgba(52,211,153,.1);color:var(--gn)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
+      <span class="mob-drawer-icon" style="background:rgba(52,211,153,.1);color:var(--gn)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></span>
       <span class="mob-drawer-item-label">Practice Log</span>
     </button>
   </div>
@@ -3403,7 +3406,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </button>
     <div class="pmo-header">
       <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(52,211,153,.06));border-color:rgba(52,211,153,.3);box-shadow:0 0 28px rgba(52,211,153,.18)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg>
       </div>
       <div>
         <div class="pmo-title" id="plm-title">Log Practice</div>
@@ -3469,7 +3472,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="pmo-btn-cancel" onclick="closeM('logPractice')">Cancel</button>
       <button class="pmo-btn-save" style="background:linear-gradient(135deg,#34d399,#6ee7b7);box-shadow:0 4px 18px rgba(52,211,153,.35);color:#0a0a0f" onclick="savePracticeLog()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Log Practice
+        <span id="plm-save-btn-txt">Log Practice</span>
       </button>
     </div>
   </div>
@@ -6371,7 +6374,7 @@ function toggleChapter(id,field){
 /* ══════════════════════ Practice Log feature ══════════════════════ */
 
 const PL_CHIPS=[10,20,30,50,75,100,150,200];
-let _plmChapterId=null, _plmSubj=null, _plmSelected=null, _plmPresetMode=false;
+let _plmChapterId=null, _plmSubj=null, _plmSelected=null, _plmPresetMode=false, _plmEditId=null;
 
 function _plmFindChapter(id){
   const subjs=['physics','chemistry','maths'];
@@ -6379,13 +6382,16 @@ function _plmFindChapter(id){
   return null;
 }
 
-function openPracticeLog(chapterId){
+function openPracticeLog(chapterId,prefill){
   _plmSelected=null;
-  document.getElementById('plm-date').value=td();
+  _plmEditId=(prefill&&prefill.editId)||null;
+  document.getElementById('plm-date').value=(prefill&&prefill.date)||td();
   document.getElementById('plm-err').textContent='';
   document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
   document.getElementById('plm-custom-wrap').style.display='none';
   document.getElementById('plm-custom-inp').value='';
+
+  const titleEl=document.getElementById('plm-title'), saveBtnTxt=document.getElementById('plm-save-btn-txt');
 
   if(chapterId){
     const found=_plmFindChapter(chapterId);
@@ -6395,28 +6401,52 @@ function openPracticeLog(chapterId){
     const ctx=document.getElementById('plm-context-chip');
     ctx.style.display='flex';
     ctx.innerHTML=`<span class="plm-context-dot" style="background:${sc(found.subj)}"></span>${found.ch.name}<span class="plm-context-subj">${cap(found.subj)}</span>`;
-    document.getElementById('plm-title').textContent='Log Practice';
     document.getElementById('plm-sub').textContent=`${found.ch.name} — ${cap(found.subj)}`;
   } else {
     _plmChapterId=null; _plmPresetMode=false;
     document.getElementById('plm-picker-wrap').style.display='';
     document.getElementById('plm-context-chip').style.display='none';
-    document.getElementById('plm-title').textContent='Log Practice';
     document.getElementById('plm-sub').textContent='Track the questions you just worked through';
     document.querySelectorAll('#plm-subj-pills .pmo-subj-pill').forEach((p,i)=>p.classList.toggle('active',i===0));
     plmPopulateChapterSelect('physics');
     _plmSubj='physics';
   }
 
+  if(_plmEditId){
+    titleEl.textContent='Edit Practice Entry';
+    saveBtnTxt.textContent='Update Entry';
+  } else {
+    titleEl.textContent='Log Practice';
+    saveBtnTxt.textContent='Log Practice';
+  }
+
   _plmRenderRecent();
 
-  const lastVal=+localStorage.getItem('jt_last_practice_val')||null;
-  if(lastVal && PL_CHIPS.includes(lastVal)){
-    const btn=document.querySelector(`#plm-chip-grid .plm-chip[data-val="${lastVal}"]`);
-    if(btn) plmSelectChip(lastVal,btn);
+  if(prefill&&prefill.questions){
+    if(PL_CHIPS.includes(prefill.questions)){
+      const btn=document.querySelector(`#plm-chip-grid .plm-chip[data-val="${prefill.questions}"]`);
+      if(btn) plmSelectChip(prefill.questions,btn);
+    } else {
+      const customBtn=document.querySelector('#plm-chip-grid .plm-chip-custom');
+      plmSelectChip('custom',customBtn);
+      document.getElementById('plm-custom-inp').value=prefill.questions;
+      _plmUpdateSelectedDisplay();
+    }
+  } else {
+    const lastVal=+localStorage.getItem('jt_last_practice_val')||null;
+    if(lastVal && PL_CHIPS.includes(lastVal)){
+      const btn=document.querySelector(`#plm-chip-grid .plm-chip[data-val="${lastVal}"]`);
+      if(btn) plmSelectChip(lastVal,btn);
+    }
   }
 
   document.getElementById('modal-logPractice').classList.add('open');
+}
+
+function editPracticeLog(id){
+  const p=(S.practiceLogs||[]).find(x=>x.id===id);
+  if(!p)return;
+  openPracticeLog(p.chapterId,{questions:p.questions,date:p.date,editId:id});
 }
 
 function plmSetSubj(subj,btn){
@@ -6492,6 +6522,25 @@ function savePracticeLog(){
     document.getElementById('plm-err').textContent='Pick or enter a number of questions';
     return;
   }
+  const date=document.getElementById('plm-date').value||td();
+
+  if(_plmEditId){
+    const p=(S.practiceLogs||[]).find(x=>x.id===_plmEditId);
+    if(!p){_plmEditId=null;closeM('logPractice');return;}
+    const before={...p};
+    p.questions=questions; p.date=date;
+    save();
+    try{localStorage.setItem('jt_last_practice_val',questions);}catch(e){}
+    closeM('logPractice');
+    toast('Practice entry updated ✓','success');
+    pushUndo('practiceLog',before,'Practice entry updated',false);
+    navMarkDirty('practice');navMarkDirty('overview');navMarkDirty('syllabus');
+    renderSyl();renderOverview();
+    if(document.getElementById('page-practice')?.classList.contains('active')) renderPractice();
+    _plmEditId=null;
+    return;
+  }
+
   let chapterId=_plmChapterId, subj=_plmSubj, chapterName=null;
   if(_plmPresetMode){
     const found=_plmFindChapter(chapterId);
@@ -6502,7 +6551,6 @@ function savePracticeLog(){
     if(!found){document.getElementById('plm-err').textContent='Pick a chapter';return;}
     subj=found.subj; chapterName=found.ch.name;
   }
-  const date=document.getElementById('plm-date').value||td();
   const entry={id:Date.now(),subject:subj,chapterId,chapterName,questions,date,loggedAt:new Date().toISOString()};
   S.practiceLogs=S.practiceLogs||[];
   S.practiceLogs.push(entry);
@@ -6565,6 +6613,79 @@ function _plFilteredLogs(){
 }
 
 function plShowMoreFeed(){ F.practice.feedShown+=20; renderPractice(); }
+
+function getPracticeGoal(){ const v=+localStorage.getItem('jt_practice_daily_goal'); return v>0?v:50; }
+function savePracticeGoal(v){
+  const val=Math.max(1,Math.round(+v)||50);
+  try{localStorage.setItem('jt_practice_daily_goal',val);}catch(e){}
+  renderOvPracticeCard();
+}
+function editPracticeGoal(){
+  const wrap=document.getElementById('ov-prac-goal-wrap');
+  if(!wrap)return;
+  const cur=getPracticeGoal();
+  wrap.outerHTML=`<input type="number" id="ov-prac-goal-inp" class="ov-prac-goal-inp" value="${cur}" min="1" onkeydown="if(event.key==='Enter')this.blur()" onblur="savePracticeGoal(this.value)"/>`;
+  const inp=document.getElementById('ov-prac-goal-inp');
+  if(inp){inp.focus();inp.select();}
+}
+function renderOvPracticeCard(){
+  const el=document.getElementById('ov-practice-card');
+  if(!el)return;
+  const all=S.practiceLogs||[];
+  if(!all.length){
+    el.innerHTML=`<div style="text-align:center;padding:10px 4px 2px">
+      <div style="font-size:11.5px;color:var(--mu);margin-bottom:10px">No questions logged yet</div>
+      <button class="btn bg bsm" onclick="openPracticeLog()">Log Practice</button>
+    </div>`;
+    return;
+  }
+  const today=td();
+  const qToday=all.filter(l=>l.date===today).reduce((a,b)=>a+b.questions,0);
+  const wStart=new Date();wStart.setDate(wStart.getDate()-6);const wStartS=wStart.toISOString().split('T')[0];
+  const qWeek=all.filter(l=>l.date>=wStartS).reduce((a,b)=>a+b.questions,0);
+  const qAll=all.reduce((a,b)=>a+b.questions,0);
+  let streak=0;{let d=new Date();
+    while(true){const ds=d.toISOString().split('T')[0]; if(all.some(l=>l.date===ds)){streak++;d.setDate(d.getDate()-1);} else if(ds===today){d.setDate(d.getDate()-1);} else break;}
+  }
+  const goal=getPracticeGoal();
+  const goalPct=Math.min(100,Math.round(qToday/goal*100));
+  const sorted=[...all].sort((a,b)=>b.loggedAt.localeCompare(a.loggedAt));
+  const last=sorted[0];
+  const dayStr=last.date===today?'Today':fmt(last.date);
+  const timeStr=new Date(last.loggedAt).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:#34d399;line-height:1">${qToday}</div>
+        <div style="font-size:10.5px;color:var(--mu);margin-top:2px">questions today</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:99px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#60a5fa">${streak}d streak</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+      <span style="font-size:10px;color:var(--mu)">Daily goal</span>
+      <span id="ov-prac-goal-wrap" class="ov-prac-goal-txt" onclick="editPracticeGoal()">${qToday}/${goal}<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
+    </div>
+    <div style="height:5px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:12px">
+      <div style="height:100%;width:${goalPct}%;background:linear-gradient(90deg,#34d399,#6ee7b7);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="text-align:center;padding:7px 4px;border-radius:8px;background:var(--sf2)">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">${qWeek}</div>
+        <div style="font-size:9.5px;color:var(--mu)">this week</div>
+      </div>
+      <div style="text-align:center;padding:7px 4px;border-radius:8px;background:var(--sf2)">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">${qAll}</div>
+        <div style="font-size:9.5px;color:var(--mu)">all time</div>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:var(--mu);line-height:1.4;padding-top:8px;border-top:1px solid var(--bd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+      <span style="color:var(--mu2)">Last:</span> ${last.chapterName} — ${dayStr} • ${timeStr}
+    </div>`;
+}
 
 function renderPractice(){ensureChartJs().then(function(){_renderPractice();});}
 function _renderPractice(){
@@ -6757,9 +6878,14 @@ function _renderPlFeed(logs){
         <div class="pl-feed-line"><strong>${l.questions} questions</strong> — ${l.chapterName}</div>
         <div class="pl-feed-meta"><span style="color:${sc(l.subject)}">${cap(l.subject)}</span> · ${dayStr} • ${timeStr}</div>
       </div>
-      <button class="pl-feed-del" onclick="confirmDelete('practiceLog',${l.id},'Delete this practice entry?')" title="Delete">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-      </button>
+      <div class="pl-feed-actions">
+        <button class="pl-feed-edit" onclick="editPracticeLog(${l.id})" title="Edit entry">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        <button class="pl-feed-del" onclick="confirmDelete('practiceLog',${l.id},'Delete this practice entry?')" title="Delete">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>
     </div>`;
   }).join('');
   document.getElementById('pl-feed-more-wrap').style.display=sorted.length>shown.length?'':'none';
@@ -6855,8 +6981,7 @@ function _renderOverview(){
   drawJeeDonut();
   renderOvNotifs();
   
-  const bars=['physics','chemistry','maths'].map(s=>{const v=S.tests.map(t=>t[s]&&t.max?(t[s]/(t.max/3))*100:0).filter(v=>v>0);const avg=v.length?v.reduce((a,b)=>a+b,0)/v.length:0;return{s,avg:avg.toFixed(1)};});
-  document.getElementById('ov-sbars').innerHTML=bars.map(b=>`<div class="bbar"><div class="bbh"><span style="font-weight:500">${cap(b.s)}</span><span style="font-family:'DM Mono',monospace;color:var(--mu)">${b.avg}%</span></div><div class="bbt"><div class="bbf" style="width:${b.avg}%;background:${sc(b.s)}"></div></div></div>`).join('');
+  renderOvPracticeCard();
   
   const th=S.hours.filter(h=>h.date===td());
   const tL=th.reduce((a,b)=>a+b.lecture,0),tP=th.reduce((a,b)=>a+b.practice,0),tR=th.reduce((a,b)=>a+b.revision,0);
@@ -6867,7 +6992,7 @@ function _renderOverview(){
   const svgLec=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
   const svgPrac=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
   const svgRev=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`;
-  document.getElementById('today-study').innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">${+tTotal.toFixed(1)}h today</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chip bb" style="display:inline-flex;align-items:center;gap:4px">${svgLec} Lec ${lPct}%</span><span class="chip bg" style="display:inline-flex;align-items:center;gap:4px">${svgPrac} Prac ${pPct}%</span><span class="chip bac" style="display:inline-flex;align-items:center;gap:4px">${svgRev} Rev ${rPct}%</span></div>${tTotal>0?`<div style="height:5px;border-radius:99px;overflow:hidden;display:flex;gap:1px"><div style="width:${lPct}%;background:#60a5fa;border-radius:99px 0 0 99px"></div><div style="width:${pPct}%;background:#34d399"></div><div style="width:${rPct}%;background:#a695ff;border-radius:0 99px 99px 0"></div></div>`:'<div style="font-size:11px;color:var(--mu)">Nothing logged yet today</div>'}<div class="ov-practice-strip" onclick="nav('practice')"><span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> ${(S.practiceLogs||[]).filter(p=>p.date===td()).reduce((a,b)=>a+b.questions,0)} questions practiced today</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>`;
+  document.getElementById('today-study').innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">${+tTotal.toFixed(1)}h today</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chip bb" style="display:inline-flex;align-items:center;gap:4px">${svgLec} Lec ${lPct}%</span><span class="chip bg" style="display:inline-flex;align-items:center;gap:4px">${svgPrac} Prac ${pPct}%</span><span class="chip bac" style="display:inline-flex;align-items:center;gap:4px">${svgRev} Rev ${rPct}%</span></div>${tTotal>0?`<div style="height:5px;border-radius:99px;overflow:hidden;display:flex;gap:1px"><div style="width:${lPct}%;background:#60a5fa;border-radius:99px 0 0 99px"></div><div style="width:${pPct}%;background:#34d399"></div><div style="width:${rPct}%;background:#a695ff;border-radius:0 99px 99px 0"></div></div>`:'<div style="font-size:11px;color:var(--mu)">Nothing logged yet today</div>'}`;
 
   
   const nextT=S.upcoming.filter(t=>t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date))[0];
@@ -7776,12 +7901,14 @@ function chapterItemHTML(c,subjClass){
       <button class="ch-toggle tog-theory${c.theory?' tog-on':''}" onclick="toggleChapter(${c.id},'theory')">
         <div class="ch-toggle-dot"></div>${theoryIcon}Theory
       </button>
-      <button class="ch-toggle tog-practice${c.practice?' tog-on':''}" onclick="toggleChapter(${c.id},'practice')">
-        <div class="ch-toggle-dot"></div>${practiceIcon}Practice
-      </button>
-      <button class="ch-log-btn" onclick="event.stopPropagation();openPracticeLog(${c.id})" title="Log practice questions">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log
-      </button>
+      <div class="ch-practice-wrap">
+        <button class="ch-toggle tog-practice${c.practice?' tog-on':''}" onclick="toggleChapter(${c.id},'practice')">
+          <div class="ch-toggle-dot"></div>${practiceIcon}Practice
+        </button>
+        <button class="ch-quick-log" onclick="event.stopPropagation();openPracticeLog(${c.id})" title="Log practice questions">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
     </div>
   </div>`;
 }
@@ -7935,7 +8062,7 @@ function updateMobTopbarTitle(page, sub){
     todo: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
     backlog: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></svg>`,
     syllabus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-    practice: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`,
+    practice: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg>`,
     hours: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>`,
     insights: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>`,
     mains: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M4 7h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>`,
