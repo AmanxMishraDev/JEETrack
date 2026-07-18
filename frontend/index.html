@@ -1233,6 +1233,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <button class="ni" onclick="nav('todo')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>To-Do <span class="nbadge" id="nb-todo" style="display:none">0</span></button>
     <button class="ni" onclick="nav('backlog')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></svg></span>Backlog <span class="nbadge" id="nb-backlog" style="display:none">0</span></button>
     <button class="ni" onclick="nav('syllabus')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Syllabus</button>
+    <button class="ni" onclick="nav('practice')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>Practice Log</button>
   </div>
   <div class="ns"><div class="nl">Intelligence</div>
     <button class="ni ni-ai" onclick="nav('insights');closeSidebar();syncMobNav('insights')"><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></span>AI Insights</button>
@@ -2105,6 +2106,130 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 </div>
 
+<div class="page" id="page-practice">
+  <div class="ph" style="align-items:center">
+    <div>
+      <div class="pt" style="display:flex;align-items:center;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+        Practice Log
+      </div>
+      <div class="ps">Every question counts — track it, see it add up</div>
+    </div>
+    <button class="prem-btn-primary" onclick="openPracticeLog()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Log Practice
+    </button>
+  </div>
+
+  
+  <div class="prem-stat-grid pl-stat-grid" id="pl-stats"></div>
+
+  
+  <div class="pl-filter-bar">
+    <div class="syl-filter-bar" id="pl-period-bar">
+      <button class="syl-ftab" data-group="pl-period" onclick="fltPl('period','today',this)">Today</button>
+      <button class="syl-ftab active" data-group="pl-period" onclick="fltPl('period','week',this)">Last 7 Days</button>
+      <button class="syl-ftab" data-group="pl-period" onclick="fltPl('period','month',this)">Last 30 Days</button>
+      <button class="syl-ftab" data-group="pl-period" onclick="fltPl('period','all',this)">All Time</button>
+      <button class="syl-ftab" data-group="pl-period" onclick="fltPl('period','custom',this)">Custom</button>
+    </div>
+    <div class="pl-filter-right">
+      <div class="pl-custom-range" id="pl-custom-range" style="display:none">
+        <input type="date" class="fc" id="pl-from" onchange="fltPlCustom()"/>
+        <span style="color:var(--mu);font-size:11px">to</span>
+        <input type="date" class="fc" id="pl-to" onchange="fltPlCustom()"/>
+      </div>
+      <select class="fc" id="pl-subj-sel" onchange="fltPlSubj(this.value)">
+        <option value="all">All Subjects</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="maths">Maths</option>
+      </select>
+      <select class="fc" id="pl-chapter-sel" onchange="fltPlChapter(this.value)">
+        <option value="all">All Chapters</option>
+      </select>
+    </div>
+  </div>
+
+  
+  <div id="pl-empty" class="pl-empty-wrap" style="display:none">
+    <div class="pl-empty-orb">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="url(#plEmptyGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <defs><linearGradient id="plEmptyGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a695ff"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>
+        <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+      </svg>
+    </div>
+    <div class="pl-empty-title">No practice logged yet</div>
+    <div class="pl-empty-sub">Hit a chapter's Log button in Syllabus, or log one right here — it takes about two seconds.</div>
+    <button class="prem-btn-primary" onclick="openPracticeLog()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Log Your First Practice
+    </button>
+  </div>
+
+  <div id="pl-content">
+  
+  <div class="prem-chart-grid">
+    <div class="prem-chart-card">
+      <div class="prem-chart-glow"></div>
+      <div class="prem-chart-card-hdr">
+        <span class="prem-chart-card-title">Daily Questions (14 days)</span>
+        <span style="font-size:9.5px;color:var(--mu2)">questions per day</span>
+      </div>
+      <div class="cw" style="height:196px"><canvas id="plDC"></canvas></div>
+    </div>
+    <div class="prem-chart-card">
+      <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(166,149,255,.18),transparent)"></div>
+      <div class="prem-chart-card-hdr">
+        <span class="prem-chart-card-title">Weekly Trend</span>
+        <span style="font-size:9.5px;color:var(--mu2)">last 8 weeks</span>
+      </div>
+      <div class="cw" style="height:196px"><canvas id="plWC"></canvas></div>
+    </div>
+  </div>
+
+  <div class="prem-chart-grid">
+    <div class="prem-chart-card">
+      <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(52,211,153,.15),transparent)"></div>
+      <div class="prem-chart-card-hdr">
+        <span class="prem-chart-card-title">Subject Distribution</span>
+        <span style="font-size:9.5px;color:var(--mu2)">% of questions</span>
+      </div>
+      <div class="cw" style="height:196px"><canvas id="plSDC"></canvas></div>
+    </div>
+    <div class="prem-chart-card">
+      <div class="prem-chart-glow" style="background:linear-gradient(90deg,transparent,rgba(244,114,182,.15),transparent)"></div>
+      <div class="prem-chart-card-hdr">
+        <span class="prem-chart-card-title">Top Chapters</span>
+        <span style="font-size:9.5px;color:var(--mu2)">most practiced</span>
+      </div>
+      <div class="cw" style="height:196px"><canvas id="plCDC"></canvas></div>
+    </div>
+  </div>
+
+  
+  <div class="pl-subj-analytics" id="pl-subj-analytics"></div>
+
+  
+  <div class="pl-chapter-analytics" id="pl-chapter-analytics"></div>
+
+  
+  <div class="prem-table-card">
+    <div class="prem-table-hdr">
+      <span class="prem-table-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Activity Feed
+      </span>
+    </div>
+    <div style="padding:.6rem .9rem .9rem" id="pl-feed"></div>
+    <div id="pl-feed-more-wrap" style="padding:0 .9rem .9rem;text-align:center;display:none">
+      <button class="btn bg2 bsm" onclick="plShowMoreFeed()">Show more</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
 <div class="page" id="page-insights">
 
   
@@ -2849,6 +2974,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span class="mob-drawer-icon" style="background:rgba(96,165,250,.1);color:var(--bl)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
       <span class="mob-drawer-item-label">Syllabus</span>
     </button>
+    <button class="mob-drawer-item" onclick="drawerNav('practice')">
+      <span class="mob-drawer-icon" style="background:rgba(52,211,153,.1);color:var(--gn)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
+      <span class="mob-drawer-item-label">Practice Log</span>
+    </button>
   </div>
   <div class="mob-drawer-section-label">Account</div>
   <div class="mob-drawer-grid">
@@ -3261,6 +3390,86 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="pmo-btn-save lh-direct-save" style="background:linear-gradient(135deg,#f472b6,#f9a8d4);box-shadow:0 4px 18px rgba(244,114,182,.35);color:#0a0a0f" onclick="saveHours()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span id="lh-save-btn-txt">Log Hours</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="modal-logPractice" onclick="if(event.target===this)closeM('logPractice')">
+  <div class="pmo" onkeydown="if(event.key==='Enter'){event.preventDefault();savePracticeLog();}">
+    <div class="pmo-glow pmo-glow-green"></div>
+    <button class="pmo-close" onclick="closeM('logPractice')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(52,211,153,.06));border-color:rgba(52,211,153,.3);box-shadow:0 0 28px rgba(52,211,153,.18)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+      </div>
+      <div>
+        <div class="pmo-title" id="plm-title">Log Practice</div>
+        <div class="pmo-sub" id="plm-sub">Track the questions you just worked through</div>
+      </div>
+    </div>
+
+    
+    <div id="plm-picker-wrap" style="margin-bottom:12px">
+      <div class="pmo-subj-pills" style="margin-bottom:10px" id="plm-subj-pills">
+        <button class="pmo-subj-pill pmo-subj-phy active" onclick="plmSetSubj('physics',this)">⚛ Physics</button>
+        <button class="pmo-subj-pill pmo-subj-chem" onclick="plmSetSubj('chemistry',this)">⚗ Chemistry</button>
+        <button class="pmo-subj-pill pmo-subj-math" onclick="plmSetSubj('maths',this)">∑ Maths</button>
+      </div>
+      <div class="pmo-field">
+        <label class="pmo-label">Chapter</label>
+        <select class="pmo-input" id="plm-chapter-sel" onchange="_plmClearErr()"></select>
+      </div>
+    </div>
+
+    
+    <div id="plm-context-chip" class="plm-context-chip" style="display:none"></div>
+
+    <div class="pmo-field" style="margin-bottom:14px">
+      <label class="pmo-label">Date</label>
+      <input type="date" class="pmo-input" id="plm-date"/>
+    </div>
+
+    
+    <div class="pmo-label" style="margin-bottom:8px">Questions solved</div>
+    <div class="plm-chip-grid" id="plm-chip-grid">
+      <button class="plm-chip" data-val="10" onclick="plmSelectChip(10,this)">10</button>
+      <button class="plm-chip" data-val="20" onclick="plmSelectChip(20,this)">20</button>
+      <button class="plm-chip" data-val="30" onclick="plmSelectChip(30,this)">30</button>
+      <button class="plm-chip" data-val="50" onclick="plmSelectChip(50,this)">50</button>
+      <button class="plm-chip" data-val="75" onclick="plmSelectChip(75,this)">75</button>
+      <button class="plm-chip" data-val="100" onclick="plmSelectChip(100,this)">100</button>
+      <button class="plm-chip" data-val="150" onclick="plmSelectChip(150,this)">150</button>
+      <button class="plm-chip" data-val="200" onclick="plmSelectChip(200,this)">200</button>
+      <button class="plm-chip plm-chip-custom" data-val="custom" onclick="plmSelectChip('custom',this)">Custom</button>
+    </div>
+
+    
+    <div class="plm-custom-wrap" id="plm-custom-wrap" style="display:none">
+      <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(-5)" aria-label="Decrease">−</button>
+      <input type="number" inputmode="numeric" min="1" class="pmo-input pmo-input-xl" id="plm-custom-inp" placeholder="0" oninput="_plmClearErr()"/>
+      <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(5)" aria-label="Increase">+</button>
+    </div>
+    <span class="fi-err-msg" id="plm-err"></span>
+
+    
+    <div class="plm-recent-wrap" id="plm-recent-wrap" style="display:none">
+      <span class="plm-recent-lbl">Recently used</span>
+      <div class="plm-recent-chips" id="plm-recent-chips"></div>
+    </div>
+
+    <div class="pmo-total-pill" style="margin-top:10px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Selected: <strong id="plm-selected-display" style="color:var(--gn);margin-left:3px">—</strong>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('logPractice')">Cancel</button>
+      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#34d399,#6ee7b7);box-shadow:0 4px 18px rgba(52,211,153,.35);color:#0a0a0f" onclick="savePracticeLog()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Log Practice
       </button>
     </div>
   </div>
@@ -4185,7 +4394,7 @@ let S = JSON.parse(localStorage.getItem('jt3')||'null') || {
   subjBestStreaks:{physics:0,chemistry:0,maths:0},
   notifiedHWT:[]
 };
-const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:false,sylClass:'all'};
+const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:false,sylClass:'all',practice:{period:'week',subj:'all',chapter:'all',from:null,to:null,feedShown:20}};
 const M={ov:'pct',mn:'pct',adv:'pct',cmp:'pct'};
 let CIs={};
 let undoStack=null;
@@ -4335,6 +4544,7 @@ function doUndo(){
     if(!S.syllabus[data.subj])S.syllabus[data.subj]=[];
     S.syllabus[data.subj].push(data.ch);
   }
+  else if(type==='practiceLog'){S.practiceLogs=(S.practiceLogs||[]).filter(x=>x.id!==data.id);S.practiceLogs.push(data);}
   save();undoStack=null;document.getElementById('undobar').classList.remove('show');
   toast('Undone ↩', 'success');navMarkDirty(null);renderAll();
 }
@@ -4673,7 +4883,7 @@ function staggerItems(selector, parent){
   els.forEach((el, i) => { el.style.animationDelay = `${i * 50}ms`; });
 }
 
-const _navCache={pages:null,niItems:null,mobItems:null,dirty:{overview:true,mains:true,advanced:true,compare:true,hours:true,todo:true,backlog:true,syllabus:true,settings:true}};
+const _navCache={pages:null,niItems:null,mobItems:null,dirty:{overview:true,mains:true,advanced:true,compare:true,hours:true,todo:true,backlog:true,syllabus:true,practice:true,settings:true}};
 function _navPages(){return _navCache.pages||(_navCache.pages=[...document.querySelectorAll('.page')])}
 function _navNi(){return _navCache.niItems||(_navCache.niItems=[...document.querySelectorAll('.ni')])}
 function _mobNavItems(){return _navCache.mobItems||(_navCache.mobItems=[...document.querySelectorAll('.mob-nav-item')])}
@@ -4683,19 +4893,19 @@ function navMarkDirty(page){if(page){_navCache.dirty[page]=true;}else{Object.key
 const _routeMap = {
   '/':'overview', '/dashboard':'overview', '/mains':'mains', '/advanced':'advanced',
   '/compare':'compare', '/tests':'tests', '/hours':'hours', '/todo':'todo',
-  '/backlog':'backlog', '/syllabus':'syllabus', '/insights':'insights', '/settings':'settings',
+  '/backlog':'backlog', '/syllabus':'syllabus', '/practice':'practice', '/insights':'insights', '/settings':'settings',
   
   '/login':'__login__', '/onboarding':'__onboarding__',
 };
 const _pageToPath = {
   overview:'/dashboard', mains:'/mains', advanced:'/advanced', compare:'/compare',
   tests:'/tests', hours:'/hours', todo:'/todo', backlog:'/backlog',
-  syllabus:'/syllabus', insights:'/insights', settings:'/settings',
+  syllabus:'/syllabus', practice:'/practice', insights:'/insights', settings:'/settings',
 };
 const _pageTitles = {
   overview:'Dashboard', mains:'JEE Mains', advanced:'JEE Advanced', compare:'Compare',
   tests:'Tests', hours:'Study Hours', todo:'To-Do', backlog:'Backlog',
-  syllabus:'Syllabus', insights:'AI Insights', settings:'Settings',
+  syllabus:'Syllabus', practice:'Practice Log', insights:'AI Insights', settings:'Settings',
 };
 const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback','contact'];
 
@@ -4813,7 +5023,7 @@ function nav(page, _pushState){
       p.classList.remove('active','anim-done');
     }
   });
-  const map={overview:'dashboard',mains:'jee mains',advanced:'jee advanced',compare:'compare',hours:'study hours',todo:'to-do',backlog:'backlog',syllabus:'syllabus',insights:'ai',settings:'settings'};
+  const map={overview:'dashboard',mains:'jee mains',advanced:'jee advanced',compare:'compare',hours:'study hours',todo:'to-do',backlog:'backlog',syllabus:'syllabus',practice:'practice log',insights:'ai',settings:'settings'};
   _navNi().forEach(n=>{n.classList.toggle('active', n.textContent.toLowerCase().trim().startsWith(map[page]||''));});
 
   
@@ -4831,7 +5041,7 @@ function nav(page, _pushState){
   
   
   if(_navCache.dirty[page] !== false){
-    const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,settings:renderSettings})[page];
+    const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,practice:renderPractice,settings:renderSettings})[page];
     if(_renderFn){
       _navCache.dirty[page]=false;
       setTimeout(()=>_renderFn(), 0);
@@ -6029,6 +6239,8 @@ function execDelete(){
     _execDeleteTodo(_delId);
   } else if(_delType==='backlog'){
     _execDeleteBacklog(_delId);
+  } else if(_delType==='practiceLog'){
+    deletePracticeLog(_delId);
   }
   _delId=null;_delType=null;
 }
@@ -6155,6 +6367,404 @@ function toggleChapter(id,field){
   navMarkDirty('syllabus');navMarkDirty('overview');
   renderSyl();maybeShowSyllabusReview();
 }
+
+/* ══════════════════════ Practice Log feature ══════════════════════ */
+
+const PL_CHIPS=[10,20,30,50,75,100,150,200];
+let _plmChapterId=null, _plmSubj=null, _plmSelected=null, _plmPresetMode=false;
+
+function _plmFindChapter(id){
+  const subjs=['physics','chemistry','maths'];
+  for(const s of subjs){ const c=(S.syllabus[s]||[]).find(x=>x.id===id); if(c) return {ch:c,subj:s}; }
+  return null;
+}
+
+function openPracticeLog(chapterId){
+  _plmSelected=null;
+  document.getElementById('plm-date').value=td();
+  document.getElementById('plm-err').textContent='';
+  document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
+  document.getElementById('plm-custom-wrap').style.display='none';
+  document.getElementById('plm-custom-inp').value='';
+
+  if(chapterId){
+    const found=_plmFindChapter(chapterId);
+    if(!found){return;}
+    _plmChapterId=chapterId; _plmSubj=found.subj; _plmPresetMode=true;
+    document.getElementById('plm-picker-wrap').style.display='none';
+    const ctx=document.getElementById('plm-context-chip');
+    ctx.style.display='flex';
+    ctx.innerHTML=`<span class="plm-context-dot" style="background:${sc(found.subj)}"></span>${found.ch.name}<span class="plm-context-subj">${cap(found.subj)}</span>`;
+    document.getElementById('plm-title').textContent='Log Practice';
+    document.getElementById('plm-sub').textContent=`${found.ch.name} — ${cap(found.subj)}`;
+  } else {
+    _plmChapterId=null; _plmPresetMode=false;
+    document.getElementById('plm-picker-wrap').style.display='';
+    document.getElementById('plm-context-chip').style.display='none';
+    document.getElementById('plm-title').textContent='Log Practice';
+    document.getElementById('plm-sub').textContent='Track the questions you just worked through';
+    document.querySelectorAll('#plm-subj-pills .pmo-subj-pill').forEach((p,i)=>p.classList.toggle('active',i===0));
+    plmPopulateChapterSelect('physics');
+    _plmSubj='physics';
+  }
+
+  _plmRenderRecent();
+
+  const lastVal=+localStorage.getItem('jt_last_practice_val')||null;
+  if(lastVal && PL_CHIPS.includes(lastVal)){
+    const btn=document.querySelector(`#plm-chip-grid .plm-chip[data-val="${lastVal}"]`);
+    if(btn) plmSelectChip(lastVal,btn);
+  }
+
+  document.getElementById('modal-logPractice').classList.add('open');
+}
+
+function plmSetSubj(subj,btn){
+  document.querySelectorAll('#plm-subj-pills .pmo-subj-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  _plmSubj=subj;
+  plmPopulateChapterSelect(subj);
+}
+
+function plmPopulateChapterSelect(subj){
+  const sel=document.getElementById('plm-chapter-sel');
+  const chs=(S.syllabus[subj]||[]).filter(c=>!c.adv);
+  sel.innerHTML=chs.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+function plmSelectChip(val,btn){
+  document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  _plmClearErr();
+  if(val==='custom'){
+    document.getElementById('plm-custom-wrap').style.display='flex';
+    _plmSelected=null;
+    document.getElementById('plm-custom-inp').focus();
+    _plmUpdateSelectedDisplay();
+  } else {
+    document.getElementById('plm-custom-wrap').style.display='none';
+    _plmSelected=val;
+    _plmUpdateSelectedDisplay();
+  }
+}
+function plmStepCustom(delta){
+  const inp=document.getElementById('plm-custom-inp');
+  const v=Math.max(0,(+inp.value||0)+delta);
+  inp.value=v;
+  _plmClearErr();
+  _plmUpdateSelectedDisplay();
+}
+function _plmCurrentVal(){
+  if(document.getElementById('plm-custom-wrap').style.display==='flex'){
+    return +document.getElementById('plm-custom-inp').value||0;
+  }
+  return _plmSelected||0;
+}
+function _plmUpdateSelectedDisplay(){
+  const v=_plmCurrentVal();
+  document.getElementById('plm-selected-display').textContent=v>0?`${v} question${v===1?'':'s'}`:'—';
+}
+function _plmClearErr(){
+  document.getElementById('plm-err').textContent='';
+  _plmUpdateSelectedDisplay();
+}
+function _plmRenderRecent(){
+  const wrap=document.getElementById('plm-recent-wrap');
+  const logs=S.practiceLogs||[];
+  if(!logs.length){wrap.style.display='none';return;}
+  const recentVals=[...new Set([...logs].sort((a,b)=>b.loggedAt.localeCompare(a.loggedAt)).map(l=>l.questions))]
+    .filter(v=>!PL_CHIPS.includes(v)).slice(0,4);
+  if(!recentVals.length){wrap.style.display='none';return;}
+  wrap.style.display='flex';
+  document.getElementById('plm-recent-chips').innerHTML=recentVals.map(v=>
+    `<button class="plm-recent-chip" onclick="plmSelectRecentVal(${v},this)">${v}</button>`).join('');
+}
+function plmSelectRecentVal(v,btn){
+  document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
+  document.getElementById('plm-custom-wrap').style.display='none';
+  _plmSelected=v;
+  _plmClearErr();
+}
+
+function savePracticeLog(){
+  const questions=_plmCurrentVal();
+  if(!questions || questions<1){
+    document.getElementById('plm-err').textContent='Pick or enter a number of questions';
+    return;
+  }
+  let chapterId=_plmChapterId, subj=_plmSubj, chapterName=null;
+  if(_plmPresetMode){
+    const found=_plmFindChapter(chapterId);
+    chapterName=found?found.ch.name:'Chapter';
+  } else {
+    chapterId=+document.getElementById('plm-chapter-sel').value;
+    const found=_plmFindChapter(chapterId);
+    if(!found){document.getElementById('plm-err').textContent='Pick a chapter';return;}
+    subj=found.subj; chapterName=found.ch.name;
+  }
+  const date=document.getElementById('plm-date').value||td();
+  const entry={id:Date.now(),subject:subj,chapterId,chapterName,questions,date,loggedAt:new Date().toISOString()};
+  S.practiceLogs=S.practiceLogs||[];
+  S.practiceLogs.push(entry);
+  save();
+  try{localStorage.setItem('jt_last_practice_val',questions);}catch(e){}
+  closeM('logPractice');
+  toast(`${questions} questions logged ✓`,'success');
+  pushUndo('practiceLog',entry,'Practice logged',false);
+  navMarkDirty('practice');navMarkDirty('overview');navMarkDirty('syllabus');
+  renderSyl();renderOverview();
+  if(document.getElementById('page-practice')?.classList.contains('active')) renderPractice();
+}
+
+function deletePracticeLog(id){
+  const p=(S.practiceLogs||[]).find(x=>x.id===id);
+  if(!p)return;
+  S.practiceLogs=S.practiceLogs.filter(x=>x.id!==id);
+  save();dbDelete('practiceLogs',id);
+  pushUndo('practiceLog',p,'Practice entry deleted',true);
+  navMarkDirty('practice');navMarkDirty('overview');navMarkDirty('syllabus');
+  renderPractice();renderSyl();
+}
+
+/* ---- Practice Log page filters ---- */
+function fltPl(key,val,btn){
+  F.practice[key]=val;
+  document.querySelectorAll('#pl-period-bar .syl-ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pl-custom-range').style.display=val==='custom'?'flex':'none';
+  renderPractice();
+}
+function fltPlCustom(){
+  F.practice.from=document.getElementById('pl-from').value||null;
+  F.practice.to=document.getElementById('pl-to').value||null;
+  renderPractice();
+}
+function fltPlSubj(v){
+  F.practice.subj=v;
+  const chSel=document.getElementById('pl-chapter-sel');
+  if(v==='all'){ chSel.innerHTML='<option value="all">All Chapters</option>'; }
+  else{
+    const chs=(S.syllabus[v]||[]).filter(c=>!c.adv);
+    chSel.innerHTML='<option value="all">All Chapters</option>'+chs.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  }
+  F.practice.chapter='all';
+  renderPractice();
+}
+function fltPlChapter(v){ F.practice.chapter=v; renderPractice(); }
+
+function _plFilteredLogs(){
+  let logs=[...(S.practiceLogs||[])];
+  const f=F.practice;
+  if(f.subj!=='all') logs=logs.filter(l=>l.subject===f.subj);
+  if(f.chapter!=='all') logs=logs.filter(l=>l.chapterId===+f.chapter);
+  if(f.period==='today') logs=logs.filter(l=>l.date===td());
+  else if(f.period==='week'){const c=new Date();c.setDate(c.getDate()-6);const cs=c.toISOString().split('T')[0];logs=logs.filter(l=>l.date>=cs);}
+  else if(f.period==='month'){const c=new Date();c.setDate(c.getDate()-29);const cs=c.toISOString().split('T')[0];logs=logs.filter(l=>l.date>=cs);}
+  else if(f.period==='custom'){ if(f.from)logs=logs.filter(l=>l.date>=f.from); if(f.to)logs=logs.filter(l=>l.date<=f.to); }
+  return logs;
+}
+
+function plShowMoreFeed(){ F.practice.feedShown+=20; renderPractice(); }
+
+function renderPractice(){ensureChartJs().then(function(){_renderPractice();});}
+function _renderPractice(){
+  const all=S.practiceLogs||[];
+  const emptyEl=document.getElementById('pl-empty'), contentEl=document.getElementById('pl-content');
+  if(!all.length){emptyEl.style.display='';contentEl.style.display='none';return;}
+  emptyEl.style.display='none';contentEl.style.display='';
+
+  const today=td();
+  const qToday=all.filter(l=>l.date===today).reduce((a,b)=>a+b.questions,0);
+  const wStart=new Date();wStart.setDate(wStart.getDate()-6);const wStartS=wStart.toISOString().split('T')[0];
+  const qWeek=all.filter(l=>l.date>=wStartS).reduce((a,b)=>a+b.questions,0);
+  const now=new Date();
+  const qMonth=all.filter(l=>{const d=new Date(l.date+'T00:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((a,b)=>a+b.questions,0);
+  const qAll=all.reduce((a,b)=>a+b.questions,0);
+  const activeDays=[...new Set(all.map(l=>l.date))];
+  const dailyAvg=activeDays.length?(qAll/activeDays.length).toFixed(1):0;
+  
+  let streak=0;{let d=new Date();
+    while(true){const ds=d.toISOString().split('T')[0]; if(all.some(l=>l.date===ds)){streak++;d.setDate(d.getDate()-1);} else if(ds===today){d.setDate(d.getDate()-1);} else break;}
+  }
+  const dayTotals={}; all.forEach(l=>{dayTotals[l.date]=(dayTotals[l.date]||0)+l.questions;});
+  const bestDayEntry=Object.entries(dayTotals).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById('pl-stats').innerHTML=`
+    <div class="prem-stat-card" style="border-color:rgba(52,211,153,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(52,211,153,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+      <div class="prem-stat-lbl">Today</div>
+      <div class="prem-stat-val" style="color:#34d399">${qToday}</div>
+      <div class="prem-stat-sub">questions solved</div>
+    </div>
+    <div class="prem-stat-card" style="border-color:rgba(124,106,247,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(124,106,247,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div></div>
+      <div class="prem-stat-lbl">This Week</div>
+      <div class="prem-stat-val" style="color:#a695ff">${qWeek}</div>
+      <div class="prem-stat-sub">last 7 days</div>
+    </div>
+    <div class="prem-stat-card" style="border-color:rgba(244,114,182,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(244,114,182,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+      <div class="prem-stat-lbl">This Month</div>
+      <div class="prem-stat-val" style="color:#f472b6">${qMonth}</div>
+      <div class="prem-stat-sub">${now.toLocaleDateString('en',{month:'long'})}</div>
+    </div>
+    <div class="prem-stat-card" style="border-color:rgba(251,191,36,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(251,191,36,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div>
+      <div class="prem-stat-lbl">All Time</div>
+      <div class="prem-stat-val" style="color:#fbbf24">${qAll}</div>
+      <div class="prem-stat-sub">${activeDays.length} active days</div>
+    </div>
+    <div class="prem-stat-card" style="border-color:rgba(45,212,191,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(45,212,191,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div>
+      <div class="prem-stat-lbl">Daily Average</div>
+      <div class="prem-stat-val" style="color:#2dd4bf">${dailyAvg}</div>
+      <div class="prem-stat-sub">questions/active day</div>
+    </div>
+    <div class="prem-stat-card" style="border-color:rgba(96,165,250,.16)">
+      <div class="prem-stat-icon-row"><div class="prem-stat-ico" style="background:rgba(96,165,250,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div></div>
+      <div class="prem-stat-lbl">Current Streak</div>
+      <div class="prem-stat-val" style="color:#60a5fa">${streak}<span style="font-size:.9rem;opacity:.7">d</span></div>
+      <div class="prem-stat-sub">${bestDayEntry?`Best day: ${bestDayEntry[1]} on ${fmt(bestDayEntry[0])}`:'keep it going'}</div>
+    </div>`;
+
+  
+  const chSel=document.getElementById('pl-chapter-sel');
+  const curSubj=F.practice.subj;
+  if(curSubj==='all'){ if(chSel.children.length<=1)chSel.innerHTML='<option value="all">All Chapters</option>'; }
+
+  const logs=_plFilteredLogs();
+
+  
+  const last14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().split('T')[0];});
+  const plDCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),
+    datasets:[{label:'Questions',data:last14.map(d=>all.filter(l=>l.date===d).reduce((a,b)=>a+b.questions,0)),backgroundColor:'#34d399',borderRadius:4}]};
+  const plDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),x:{...sO().x,ticks:{...sO().x.ticks,maxRotation:45}}}};
+  if(!uC('plDC',plDCData,plDCOpts)){dc('plDC');CIs['plDC']=new Chart(document.getElementById('plDC').getContext('2d'),{type:'bar',data:plDCData,options:plDCOpts});}
+
+  
+  const weeks=[];{ for(let i=7;i>=0;i--){const end=new Date();end.setDate(end.getDate()-i*7);const start=new Date(end);start.setDate(start.getDate()-6);weeks.push({start:start.toISOString().split('T')[0],end:end.toISOString().split('T')[0],label:end.toLocaleDateString('en',{month:'short',day:'numeric'})});} }
+  const plWCData={labels:weeks.map(w=>w.label),datasets:[{label:'Questions',data:weeks.map(w=>all.filter(l=>l.date>=w.start&&l.date<=w.end).reduce((a,b)=>a+b.questions,0)),borderColor:'#a695ff',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'}]};
+  const plWCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:sO()};
+  if(!uC('plWC',plWCData,plWCOpts)){dc('plWC');CIs['plWC']=new Chart(document.getElementById('plWC').getContext('2d'),{type:'line',data:plWCData,options:plWCOpts});}
+
+  
+  const subjTotals=['physics','chemistry','maths'].map(s=>logs.filter(l=>l.subject===s).reduce((a,b)=>a+b.questions,0));
+  const subjSum=subjTotals.reduce((a,b)=>a+b,0)||0.001;
+  const subjPct=subjTotals.map(v=>Math.round(v/subjSum*100));
+  const plSDCData={labels:['Physics','Chemistry','Maths'].map((n,i)=>`${n} ${subjPct[i]}%`),datasets:[{data:subjTotals,backgroundColor:['#60a5fa','#34d399','#fbbf24'],borderWidth:0,hoverOffset:4}]};
+  const plSDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}}}};
+  if(!uC('plSDC',plSDCData,plSDCOpts)){dc('plSDC');CIs['plSDC']=new Chart(document.getElementById('plSDC').getContext('2d'),{type:'doughnut',data:plSDCData,options:plSDCOpts});}
+
+  
+  const chapterTotals={};
+  logs.forEach(l=>{chapterTotals[l.chapterId]=chapterTotals[l.chapterId]||{name:l.chapterName,subject:l.subject,total:0};chapterTotals[l.chapterId].total+=l.questions;});
+  const topChapters=Object.values(chapterTotals).sort((a,b)=>b.total-a.total).slice(0,7);
+  const plCDCData={labels:topChapters.map(c=>c.name.length>16?c.name.slice(0,15)+'…':c.name),datasets:[{label:'Questions',data:topChapters.map(c=>c.total),backgroundColor:topChapters.map(c=>sc(c.subject)),borderRadius:4}]};
+  const plCDCOpts={indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,font:{size:9}}}}};
+  if(!uC('plCDC',plCDCData,plCDCOpts)){dc('plCDC');CIs['plCDC']=new Chart(document.getElementById('plCDC').getContext('2d'),{type:'bar',data:plCDCData,options:plCDCOpts});}
+
+  _renderPlSubjAnalytics(all);
+  _renderPlChapterAnalytics(all);
+  _renderPlFeed(logs);
+}
+
+function _renderPlSubjAnalytics(all){
+  const totalAll=all.reduce((a,b)=>a+b.questions,0)||0.001;
+  const wStart=new Date();wStart.setDate(wStart.getDate()-13);const wStartS=wStart.toISOString().split('T')[0];
+  const prevStart=new Date();prevStart.setDate(prevStart.getDate()-27);const prevStartS=prevStart.toISOString().split('T')[0];
+  const prevEnd=new Date();prevEnd.setDate(prevEnd.getDate()-14);const prevEndS=prevEnd.toISOString().split('T')[0];
+  const cards=['physics','chemistry','maths'].map(s=>{
+    const logs=all.filter(l=>l.subject===s);
+    const total=logs.reduce((a,b)=>a+b.questions,0);
+    const sharePct=Math.round(total/totalAll*100);
+    const recent=logs.filter(l=>l.date>=wStartS).reduce((a,b)=>a+b.questions,0);
+    const prev=logs.filter(l=>l.date>=prevStartS&&l.date<=prevEndS).reduce((a,b)=>a+b.questions,0);
+    const trendUp=recent>=prev;
+    const chapterTotals={};
+    logs.forEach(l=>{chapterTotals[l.chapterId]=(chapterTotals[l.chapterId]||{name:l.chapterName,total:0});chapterTotals[l.chapterId].total+=l.questions;});
+    const topCh=Object.values(chapterTotals).sort((a,b)=>b.total-a.total)[0];
+    return `<div class="pl-subj-card" style="border-color:${sc(s)}30">
+      <div class="pl-subj-card-hd">
+        <span class="pl-subj-card-name" style="color:${sc(s)}">${cap(s)}</span>
+        <span class="pl-subj-trend ${trendUp?'up':'down'}">${trendUp?'▲':'▼'}</span>
+      </div>
+      <div class="pl-subj-card-total" style="color:${sc(s)}">${total}<span style="font-size:.75rem;opacity:.7">qs</span></div>
+      <div class="pl-subj-card-pct">${sharePct}% of overall practice</div>
+      <div class="pl-subj-card-bar"><div style="width:${sharePct}%;background:${sc(s)}"></div></div>
+      <div class="pl-subj-card-top">${topCh?`Most practiced: <strong>${topCh.name}</strong>`:'No chapters practiced yet'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('pl-subj-analytics').innerHTML=cards;
+}
+
+function _renderPlChapterAnalytics(all){
+  const chapterTotals={};
+  all.forEach(l=>{
+    chapterTotals[l.chapterId]=chapterTotals[l.chapterId]||{name:l.chapterName,subject:l.subject,total:0,lastDate:l.date};
+    chapterTotals[l.chapterId].total+=l.questions;
+    if(l.date>chapterTotals[l.chapterId].lastDate)chapterTotals[l.chapterId].lastDate=l.date;
+  });
+  const practicedIds=new Set(Object.keys(chapterTotals).map(Number));
+  const allChapters=[];
+  ['physics','chemistry','maths'].forEach(s=>(S.syllabus[s]||[]).filter(c=>!c.adv).forEach(c=>allChapters.push({id:c.id,name:c.name,subject:s})));
+  const neverPracticed=allChapters.filter(c=>!practicedIds.has(c.id));
+  const practicedList=Object.entries(chapterTotals).map(([id,v])=>({id:+id,...v}));
+  const mostPracticed=[...practicedList].sort((a,b)=>b.total-a.total).slice(0,5);
+  const leastPracticed=[...practicedList].sort((a,b)=>a.total-b.total).slice(0,5);
+  const recentlyPracticed=[...practicedList].sort((a,b)=>b.lastDate.localeCompare(a.lastDate)).slice(0,5);
+
+  const listHtml=(items,emptyMsg,showTotal)=>items.length?items.map(c=>
+    `<div class="pl-ch-row"><span class="pl-ch-dot" style="background:${sc(c.subject)}"></span><span class="pl-ch-name">${c.name}</span>${showTotal?`<span class="pl-ch-total">${c.total} qs</span>`:''}</div>`
+  ).join(''):`<div class="pl-ch-empty">${emptyMsg}</div>`;
+
+  document.getElementById('pl-chapter-analytics').innerHTML=`
+    <div class="pl-ch-analytics-card">
+      <div class="pl-ch-analytics-hdr"><span style="color:#34d399">●</span> Most Practiced</div>
+      ${listHtml(mostPracticed,'Nothing logged yet',true)}
+    </div>
+    <div class="pl-ch-analytics-card">
+      <div class="pl-ch-analytics-hdr"><span style="color:#fbbf24">●</span> Least Practiced</div>
+      ${listHtml(leastPracticed,'Nothing logged yet',true)}
+    </div>
+    <div class="pl-ch-analytics-card">
+      <div class="pl-ch-analytics-hdr"><span style="color:#f87171">●</span> Never Practiced</div>
+      ${neverPracticed.length?`<div class="pl-ch-chip-wrap">${neverPracticed.slice(0,12).map(c=>`<span class="pl-ch-chip" style="border-color:${sc(c.subject)}40;color:${sc(c.subject)}">${c.name}</span>`).join('')}${neverPracticed.length>12?`<span class="pl-ch-chip" style="opacity:.6">+${neverPracticed.length-12} more</span>`:''}</div>`:'<div class="pl-ch-empty">Every chapter has been touched 🎉</div>'}
+    </div>
+    <div class="pl-ch-analytics-card">
+      <div class="pl-ch-analytics-hdr"><span style="color:#60a5fa">●</span> Recently Practiced</div>
+      ${listHtml(recentlyPracticed,'Nothing logged yet',false)}
+    </div>`;
+}
+
+function _renderPlFeed(logs){
+  const sorted=[...logs].sort((a,b)=>b.loggedAt.localeCompare(a.loggedAt));
+  const shown=sorted.slice(0,F.practice.feedShown);
+  const wrap=document.getElementById('pl-feed');
+  if(!sorted.length){
+    wrap.innerHTML=`<div class="pl-ch-empty" style="padding:20px 0;text-align:center">No entries match these filters</div>`;
+    document.getElementById('pl-feed-more-wrap').style.display='none';
+    return;
+  }
+  wrap.innerHTML=shown.map(l=>{
+    const dt=new Date(l.loggedAt);
+    const timeStr=dt.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});
+    const dayStr=l.date===td()?'Today':fmt(l.date);
+    return `<div class="pl-feed-item">
+      <div class="pl-feed-check" style="background:${sc(l.subject)}20;color:${sc(l.subject)}">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="pl-feed-body">
+        <div class="pl-feed-line"><strong>${l.questions} questions</strong> — ${l.chapterName}</div>
+        <div class="pl-feed-meta"><span style="color:${sc(l.subject)}">${cap(l.subject)}</span> · ${dayStr} • ${timeStr}</div>
+      </div>
+      <button class="pl-feed-del" onclick="confirmDelete('practiceLog',${l.id},'Delete this practice entry?')" title="Delete">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+  document.getElementById('pl-feed-more-wrap').style.display=sorted.length>shown.length?'':'none';
+}
+
 function updateBLStreaks(){
   const pending=S.backlogs.filter(b=>!b.done).length;
   if(pending===0&&S.backlogs.length>0){if(S.lastBLClear!==td()){S.backlogStreak=(S.backlogStreak||0)+1;S.lastBLClear=td();if(S.backlogStreak>(S.backlogBestStreak||0))S.backlogBestStreak=S.backlogStreak;}}
@@ -6257,7 +6867,7 @@ function _renderOverview(){
   const svgLec=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
   const svgPrac=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
   const svgRev=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`;
-  document.getElementById('today-study').innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">${+tTotal.toFixed(1)}h today</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chip bb" style="display:inline-flex;align-items:center;gap:4px">${svgLec} Lec ${lPct}%</span><span class="chip bg" style="display:inline-flex;align-items:center;gap:4px">${svgPrac} Prac ${pPct}%</span><span class="chip bac" style="display:inline-flex;align-items:center;gap:4px">${svgRev} Rev ${rPct}%</span></div>${tTotal>0?`<div style="height:5px;border-radius:99px;overflow:hidden;display:flex;gap:1px"><div style="width:${lPct}%;background:#60a5fa;border-radius:99px 0 0 99px"></div><div style="width:${pPct}%;background:#34d399"></div><div style="width:${rPct}%;background:#a695ff;border-radius:0 99px 99px 0"></div></div>`:'<div style="font-size:11px;color:var(--mu)">Nothing logged yet today</div>'}`;
+  document.getElementById('today-study').innerHTML=`<div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">${+tTotal.toFixed(1)}h today</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chip bb" style="display:inline-flex;align-items:center;gap:4px">${svgLec} Lec ${lPct}%</span><span class="chip bg" style="display:inline-flex;align-items:center;gap:4px">${svgPrac} Prac ${pPct}%</span><span class="chip bac" style="display:inline-flex;align-items:center;gap:4px">${svgRev} Rev ${rPct}%</span></div>${tTotal>0?`<div style="height:5px;border-radius:99px;overflow:hidden;display:flex;gap:1px"><div style="width:${lPct}%;background:#60a5fa;border-radius:99px 0 0 99px"></div><div style="width:${pPct}%;background:#34d399"></div><div style="width:${rPct}%;background:#a695ff;border-radius:0 99px 99px 0"></div></div>`:'<div style="font-size:11px;color:var(--mu)">Nothing logged yet today</div>'}<div class="ov-practice-strip" onclick="nav('practice')"><span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> ${(S.practiceLogs||[]).filter(p=>p.date===td()).reduce((a,b)=>a+b.questions,0)} questions practiced today</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>`;
 
   
   const nextT=S.upcoming.filter(t=>t.date>=td()).sort((a,b)=>a.date.localeCompare(b.date))[0];
@@ -7150,6 +7760,7 @@ function chapterItemHTML(c,subjClass){
   const doneIcon=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--gn)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
   const starIcon=`<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
   const idx=c.id%100||c.id;
+  const qCount=(S.practiceLogs||[]).filter(p=>p.chapterId===c.id).reduce((a,b)=>a+b.questions,0);
   return`<div class="syl-chapter ${subjClass}${complete?' ch-complete':''}${c.adv?' ch-adv-only':''}">
     <div class="ch-num">${idx<=9?'0'+idx:idx}</div>
     <div class="ch-info">
@@ -7158,6 +7769,7 @@ function chapterItemHTML(c,subjClass){
         <span class="ch-class-badge ch-class-${c.class||'11'}">Class ${c.class||'11'}</span>
         ${c.adv?`<span class="ch-adv-badge">${starIcon}ADV</span>`:''}
         ${complete?`<span class="ch-done-badge">${doneIcon}Complete</span>`:''}
+        ${qCount>0?`<span class="ch-qcount-badge">${qCount} Qs practiced</span>`:''}
       </div>
     </div>
     <div class="ch-toggles">
@@ -7166,6 +7778,9 @@ function chapterItemHTML(c,subjClass){
       </button>
       <button class="ch-toggle tog-practice${c.practice?' tog-on':''}" onclick="toggleChapter(${c.id},'practice')">
         <div class="ch-toggle-dot"></div>${practiceIcon}Practice
+      </button>
+      <button class="ch-log-btn" onclick="event.stopPropagation();openPracticeLog(${c.id})" title="Log practice questions">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log
       </button>
     </div>
   </div>`;
@@ -7308,7 +7923,7 @@ function closeAvMenu(){
 const MOB_PAGE_TITLES = {
   overview:'Dashboard', mains:'JEE Mains', advanced:'JEE Advanced',
   compare:'Compare', hours:'Study Hours', todo:'To-Do',
-  backlog:'Backlog', syllabus:'Syllabus', insights:'AI Insights', settings:'Settings',
+  backlog:'Backlog', syllabus:'Syllabus', practice:'Practice Log', insights:'AI Insights', settings:'Settings',
   'tests-choice':'Tests'
 };
 function updateMobTopbarTitle(page, sub){
@@ -7320,6 +7935,7 @@ function updateMobTopbarTitle(page, sub){
     todo: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
     backlog: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></svg>`,
     syllabus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    practice: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`,
     hours: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a695ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>`,
     insights: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg>`,
     mains: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M4 7h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>`,
@@ -7377,7 +7993,7 @@ function mobNavTo(page, el){
 }
 function syncMobNav(page){
   
-  const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',settings:'todo-tab'};
+  const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',practice:'todo-tab',settings:'todo-tab'};
   _mobNavItems().forEach(b=>b.classList.remove('active'));
   const tab = navMap[page];
   if(tab && tab !== 'todo-tab'){

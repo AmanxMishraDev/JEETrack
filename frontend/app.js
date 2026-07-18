@@ -512,7 +512,7 @@ function migrateSyllabus(saved){
 }
 
 function getDefaultState(){
-  return{tests:[],hours:[],backlogs:[],todos:[],upcoming:[],
+  return{tests:[],hours:[],backlogs:[],todos:[],upcoming:[],practiceLogs:[],
     syllabus:JSON.parse(JSON.stringify(CANONICAL_SYLLABUS)),
     backlogStreak:0,backlogBestStreak:0,lastBLClear:null,
     subjStreaks:{physics:0,chemistry:0,maths:0},
@@ -522,7 +522,7 @@ function getDefaultState(){
 // ── Dirty-tracking sync snapshot ──
 // Tracks the last-synced payload (as JSON) per row per table, so save()
 // only needs to upsert rows that actually changed instead of the full array.
-const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, syllabus:{} };
+const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, syllabus:{}, practiceLogs:{} };
 
 function _payloadTest(t,uid){ return {id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}; }
 function _payloadHour(h,uid){ return {id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}; }
@@ -530,6 +530,7 @@ function _payloadBacklog(b,uid){ return {id:b.id,user_id:uid,title:b.title,subje
 function _payloadTodo(t,uid){ return {id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}; }
 function _payloadUpcoming(u,uid){ return {id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}; }
 function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,theory:c.theory,practice:c.practice}; }
+function _payloadPracticeLog(p,uid){ return {id:p.id,user_id:uid,subject:p.subject,chapter_id:p.chapterId,chapter_name:p.chapterName,questions:p.questions,date:p.date,logged_at:p.loggedAt}; }
 function _snapKey(row){ return JSON.stringify(row); }
 
 // Call once right after S.* has been freshly loaded from the server, so
@@ -544,6 +545,7 @@ function _seedSyncSnapshot(){
   _syncSnapshot.upcoming = {}; (S.upcoming||[]).forEach(u=>{ _syncSnapshot.upcoming[u.id]=_snapKey(_payloadUpcoming(u,uid)); });
   _syncSnapshot.syllabus = {};
   ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
+  _syncSnapshot.practiceLogs = {}; (S.practiceLogs||[]).forEach(p=>{ _syncSnapshot.practiceLogs[p.id]=_snapKey(_payloadPracticeLog(p,uid)); });
 }
 
 async function loadUserData(){
@@ -554,20 +556,22 @@ async function loadUserData(){
       if(p.backlogStreak>365)p.backlogStreak=0;
       if(p.backlogBestStreak>365)p.backlogBestStreak=0;
       p=migrateSyllabus(p);
+      if(!p.practiceLogs)p.practiceLogs=[];
       S=p;
     }catch(e){}
     return;
   }
   try{
     const uid = currentUser.id;
-    const [tests,hours,backlogs,todos,upcoming,syllabus,streaks] = await Promise.all([
+    const [tests,hours,backlogs,todos,upcoming,syllabus,streaks,practiceLogs] = await Promise.all([
       sb.from('tests').select('*').eq('user_id',uid),
       sb.from('hours').select('*').eq('user_id',uid),
       sb.from('backlogs').select('*').eq('user_id',uid),
       sb.from('todos').select('*').eq('user_id',uid),
       sb.from('upcoming').select('*').eq('user_id',uid),
       sb.from('syllabus').select('*').eq('user_id',uid),
-      sb.from('streaks').select('*').eq('user_id',uid).maybeSingle()
+      sb.from('streaks').select('*').eq('user_id',uid).maybeSingle(),
+      sb.from('practice_logs').select('*').eq('user_id',uid)
     ]);
     S.tests=(tests.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
     S.hours=(hours.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
@@ -579,6 +583,7 @@ async function loadUserData(){
       syllabus.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); });
       S=migrateSyllabus(S);
     }
+    S.practiceLogs=(practiceLogs.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
     if(streaks.data){
       S.backlogStreak = Math.min(streaks.data.backlog_streak||0, 365);
       S.backlogBestStreak = Math.min(streaks.data.best_streak||0, 365);
@@ -603,14 +608,15 @@ async function loadUserData(){
     try {
       await new Promise(r => setTimeout(r, 1500));
       const uid2 = currentUser.id;
-      const [tests2,hours2,backlogs2,todos2,upcoming2,syllabus2,streaks2] = await Promise.all([
+      const [tests2,hours2,backlogs2,todos2,upcoming2,syllabus2,streaks2,practiceLogs2] = await Promise.all([
         sb.from('tests').select('*').eq('user_id',uid2),
         sb.from('hours').select('*').eq('user_id',uid2),
         sb.from('backlogs').select('*').eq('user_id',uid2),
         sb.from('todos').select('*').eq('user_id',uid2),
         sb.from('upcoming').select('*').eq('user_id',uid2),
         sb.from('syllabus').select('*').eq('user_id',uid2),
-        sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle()
+        sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle(),
+        sb.from('practice_logs').select('*').eq('user_id',uid2)
       ]);
       S.tests=(tests2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
       S.hours=(hours2.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
@@ -618,13 +624,14 @@ async function loadUserData(){
       S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
       if(syllabus2.data&&syllabus2.data.length){ S.syllabus={physics:[],chemistry:[],maths:[]}; syllabus2.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); }); S=migrateSyllabus(S); }
+      S.practiceLogs=(practiceLogs2.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
       if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
       _seedSyncSnapshot();
       console.log('Retry load succeeded');
     } catch(e2) {
       console.error('Retry load also failed, falling back to localStorage:', e2);
       const saved=localStorage.getItem('jt3');
-      if(saved) try{ const p=JSON.parse(saved); if(p.backlogStreak>365)p.backlogStreak=0; S=p; }catch(e3){}
+      if(saved) try{ const p=JSON.parse(saved); if(p.backlogStreak>365)p.backlogStreak=0; if(!p.practiceLogs)p.practiceLogs=[]; S=p; }catch(e3){}
     }
   }
 }
@@ -660,6 +667,9 @@ async function save(){
     const changedSyl = sylPayloads.filter(p=>_syncSnapshot.syllabus[p.id]!==_snapKey(p));
     if(changedSyl.length) ops.push(sb.from('syllabus').upsert(changedSyl).then(({error})=>{ if(!error) changedSyl.forEach(p=>_syncSnapshot.syllabus[p.id]=_snapKey(p)); }));
 
+    const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
+    if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
+
     // Streaks is always a single row — negligible cost, left as-is.
     ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]},{onConflict:'user_id'}));
 
@@ -668,11 +678,12 @@ async function save(){
   isSaving=false; if(saveQueue){ saveQueue=false; save(); }
 }
 
+const _dbTableName = { practiceLogs:'practice_logs' };
 async function dbDelete(table, id){
   localStorage.setItem('jt3', JSON.stringify(S));
   if(_syncSnapshot[table]) delete _syncSnapshot[table][id];
   if(!sb || !currentUser) return;
-  try{ await sb.from(table).delete().eq('id',id).eq('user_id',currentUser.id); }catch(e){}
+  try{ await sb.from(_dbTableName[table]||table).delete().eq('id',id).eq('user_id',currentUser.id); }catch(e){}
 }
 
 async function exportPDF(){
@@ -3193,4 +3204,3 @@ function _aiDaysUntilReset() {
   const daysUntilSun = (7 - now.getDay()) % 7 || 7;
   return daysUntilSun;
 }
-
