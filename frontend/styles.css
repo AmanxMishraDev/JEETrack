@@ -4287,6 +4287,14 @@ select.fc.adv-fc {
   box-shadow:0 0 0 3px rgba(124,106,247,.12)
 }
 .pmo-input::placeholder { color:rgba(255,255,255,.22) }
+select.pmo-input{
+  appearance:none;-webkit-appearance:none;
+  background-color:var(--sf2);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7990' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;
+  padding-right:32px;cursor:pointer;
+}
+select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 .pmo-input-lg  { font-size:14.5px;padding:10px 13px }
 .pmo-input-xl  { font-size:28px;font-weight:700;font-family:'Syne',sans-serif;text-align:center;padding:12px;letter-spacing:-.02em }
 .pmo-input-total { font-size:17px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:-.01em }
@@ -5228,3 +5236,21 @@ select.fc.adv-fc {
   color:var(--gn);font-family:'DM Mono',monospace;
 }
 .ov-prac-goal-inp:focus{outline:none;border-color:#34d399}
+
+/* -- New feature discovery dot -- */
+.ni-new-dot{display:none;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px rgba(52,211,153,.8)}
+.ni-new-dot.show{display:block;animation:newDotPulse 2s ease-in-out infinite}
+.ni .ni-new-dot{margin-left:auto;flex-shrink:0}
+.mob-drawer-item{position:relative}
+.mob-drawer-item .ni-new-dot{position:absolute;top:9px;right:11px}
+@keyframes newDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
+
+/* -- What's New announcement modal -- */
+.wn-feature-row{
+  display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--tx);line-height:1.4;
+}
+.wn-feature-dot{
+  flex-shrink:0;width:16px;height:16px;border-radius:50%;
+  background:rgba(52,211,153,.15);color:#34d399;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}

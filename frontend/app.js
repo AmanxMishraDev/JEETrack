@@ -375,6 +375,7 @@ function showApp(name, email){
   
   if(typeof navMarkDirty === 'function') navMarkDirty(null);
   updateBadges();checkHWTNotifs();if(typeof setQuote==='function')setQuote();
+  updatePracticeNewBadge();
   
   
   
@@ -393,10 +394,13 @@ function showApp(name, email){
   const snt=document.getElementById('settings-notif-toggle');
   if(snt) snt.checked = localStorage.getItem('notif_enabled')==='1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   
-  setTimeout(() => {
+  setTimeout(async () => {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id === 'page-overview') {
-      checkWelcomeModal();
+      await checkWelcomeModal();
+      if (!document.getElementById('modal-welcome')?.classList.contains('open')) {
+        checkWhatsNew();
+      }
     }
   }, 800);
 }
@@ -910,6 +914,25 @@ async function saveUserProfile(fields) {
     }, { onConflict: 'user_id' });
     userProfile = { ...userProfile, ...fields };
   } catch(e) { toast('Could not save — check connection', 'error'); }
+}
+
+const WHATS_NEW_VERSION = 'practice-log-v1';
+function checkWhatsNew(){
+  if(localStorage.getItem('jt_whatsnew_seen')===WHATS_NEW_VERSION) return;
+  setTimeout(()=>{ document.getElementById('modal-whatsNew')?.classList.add('open'); }, 400);
+}
+function closeWhatsNew(){
+  document.getElementById('modal-whatsNew')?.classList.remove('open');
+  localStorage.setItem('jt_whatsnew_seen', WHATS_NEW_VERSION);
+}
+function whatsNewExplore(){
+  closeWhatsNew();
+  nav('practice');
+}
+function updatePracticeNewBadge(){
+  const seen = localStorage.getItem('jt_practice_visited')==='1';
+  document.getElementById('practice-new-dot')?.classList.toggle('show', !seen);
+  document.getElementById('practice-new-dot-mob')?.classList.toggle('show', !seen);
 }
 
 async function checkWelcomeModal() {
