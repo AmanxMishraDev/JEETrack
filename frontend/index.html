@@ -421,7 +421,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="slide">
           <div class="slide-eyebrow" style="color:#f472b6">AI Coaching</div>
           <div class="slide-title">A personal coach<br>that <em>never</em> sleeps</div>
-          <div class="slide-desc">Our AI analyzes your scores, study hours, syllabus gaps, and backlogs — then gives you a brutally honest weekly breakdown. No fluff. Just what you need to fix right now.</div>
+          <div class="slide-desc">Our AI analyzes your scores, study hours, syllabus gaps, and backlogs — then gives you an honest, encouraging weekly breakdown. Real numbers, real motivation, exactly what to do next.</div>
         </div>
         <div class="slide">
           <div class="slide-eyebrow" style="color:#34d399">Study Hours</div>
@@ -819,6 +819,17 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 
   
+  <section id="testimonials-section" class="ls-section ls-section-center" style="display:none">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-pink">Real Feedback</div>
+      <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
+      <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
+      <div class="ls-testi-trustrow" id="ls-testi-trustrow"></div>
+    </div>
+    <div class="ls-testi-grid" id="ls-testi-grid"></div>
+  </section>
+
+  
   <section id="features" class="ls-section ls-section-center">
     <div class="ls-reveal">
       <div class="ls-pill ls-pill-purple">Features</div>
@@ -869,16 +880,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         </div>
       </div>
     </div>
-  </section>
-
-  
-  <section id="testimonials-section" class="ls-section ls-section-center" style="display:none">
-    <div class="ls-reveal">
-      <div class="ls-pill ls-pill-pink">Real Feedback</div>
-      <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
-      <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
-    </div>
-    <div class="ls-testi-grid" id="ls-testi-grid"></div>
   </section>
 
   
@@ -2300,7 +2301,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
 
     <div class="ai-hero-title">Your Personal JEE Coach</div>
-    <div class="ai-hero-sub">Deep analysis of your scores, study hours, syllabus gaps &amp; backlogs — distilled into a brutally honest breakdown.</div>
+    <div class="ai-hero-sub">Deep analysis of your scores, study hours, syllabus gaps &amp; backlogs — distilled into an honest, motivating breakdown.</div>
 
     <div class="ai-gen-btn-wrap">
       <button class="ai-gen-btn" id="insights-btn" onclick="generateInsights()">
@@ -4494,9 +4495,9 @@ function renderOvNotifs(){
   const notifs=[];
   
   S.upcoming.filter(t=>t.date===tmrStr).forEach(t=>notifs.push({id:'tmr-'+t.id,c:'am',msg:`⏰ Test TOMORROW: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
-  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
+  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`openLogFromUpcoming(${t.id})`,cta:'Enter Marks'}));
   const visible=notifs.filter(n=>!dismissedNotifs.has(n.id));
-  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer" onclick="${n.fn}">${n.msg}<button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></div>`).join('');
+  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px" onclick="${n.fn}"><span>${n.msg}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0">${n.cta?`<span style="font-size:11px;font-weight:700;color:inherit;background:rgba(255,255,255,.14);padding:4px 10px;border-radius:99px;white-space:nowrap">${n.cta} →</span>`:''}<button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></span></div>`).join('');
 }
 
 function save(){localStorage.setItem('jt3',JSON.stringify(S));updateActivity();}
@@ -7107,7 +7108,10 @@ function _renderOverview(){
   document.getElementById('ov-upcoming-mini').innerHTML=ups.length?ups.map(t=>{
     const isT=t.date===td(),isTmr=t.date===tmrrStr;
     const dl3=Math.ceil((new Date(t.date+'T00:00:00')-new Date(td()+'T00:00:00'))/86400000);
-    return`<div style="padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px;display:flex;justify-content:space-between;align-items:center"><span>${cap(t.exam)} <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'P'}</span></span><span style="color:${isT?'var(--rd)':isTmr?'var(--am)':'var(--mu)'}; font-size:11px">${isT?'TODAY':isTmr?'Tomorrow':dl3+'d away'}</span></div>`;
+    const rightSide=isT
+      ?`<button onclick="event.stopPropagation();openLogFromUpcoming(${t.id})" style="cursor:pointer;border:none;font-size:10.5px;font-weight:700;color:#0a0a0f;background:linear-gradient(135deg,#f87171,#fb923c);padding:4px 9px;border-radius:99px;white-space:nowrap;display:flex;align-items:center;gap:3px">Enter Marks<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>`
+      :`<span style="color:${isTmr?'var(--am)':'var(--mu)'}; font-size:11px">${isTmr?'Tomorrow':dl3+'d away'}</span>`;
+    return`<div style="padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>${cap(t.exam)} <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'P'}</span></span>${rightSide}</div>`;
   }).join(''):`<div style="font-size:12px;color:var(--mu);padding:.4rem 0">No upcoming tests</div>`;
 }
 function drawJeeDonut(){
@@ -8519,9 +8523,17 @@ async function generateInsights(){
   const todoRate=S.todos.length?Math.round(todoDone/S.todos.length*100):0;
 
   const aiUserName = document.getElementById('sb-username')?.textContent?.trim() || 'there';
+  const isEarlyStage = (overallSylPct<20) || (mains.length+adv.length<2 && S.hours.length<8);
   const prompt=`You are ${aiUserName}'s personal JEE ${getTargetYear()} coach. Analyze their data and generate smart, data-driven insights. Follow the INCLUSION RULES strictly.
 
 IMPORTANT: When referring to test scores, always say "X marks" or "scored X/300" — NEVER say "X%" for a raw test score. Percentages are only for study split (lecture/practice/revision) and syllabus completion. Example: say "scored 201/300" not "67%".
+
+TONE — be an encouraging coach, not a harsh critic:
+- Be honest and specific with numbers, but frame everything around progress and next steps, never around shame or failure.
+- Never use words like "bad", "poor", "failing", "behind", "weak", or "lagging" to describe the student. Describe the DATA plainly, then pivot immediately to an encouraging, constructive next step.
+- A student who has JUST STARTED (low syllabus %, few tests logged, few study hours logged) is NOT "behind" — they are early in their journey. For someone at ~10% syllabus completion with limited data, treat this as a normal starting point: acknowledge the start they've made, keep the verdict warm and motivating, and focus insights on "here's a good next chapter/habit to build" rather than on the gap still remaining.${isEarlyStage?'\n- This student currently has limited data logged (early-stage profile). Lead the overallVerdict with encouragement about getting started and building momentum — do not open with a deficit framing like "only X% done."':''}
+- For students with a longer track record who are genuinely falling behind schedule, you can still be direct about what needs to change — but always pair the concern with one clear, doable action, and acknowledge any real strength alongside it.
+- overallScore, grades, and momentum should still reflect the data honestly — don't inflate numbers. The positivity is about tone and framing, not about hiding the truth.
 
 INCLUSION RULES — only include an insight if the condition is met:
 - PATTERN (study split): ALWAYS include. This is critical. If practice < 40% → bad. If revision < 15% → warn. If lecture > 50% → warn. If 35-50% practice and 15-25% revision → good.
@@ -8529,7 +8541,7 @@ INCLUSION RULES — only include an insight if the condition is met:
 - TREND (scores): ALWAYS include if there are any test scores. Show the trajectory clearly.
 - EFFICIENCY: Include if one subject has noticeably worse score-per-hour ratio than others (ROI difference > 2). Otherwise skip.
 - CONSISTENCY: Include if studying < 8/14 days (bad) or 0/3 recent days (breaking). If 10+/14 → just a brief positive, or skip entirely.
-- SYLLABUS: Include if overall < 70% complete, or any subject < 50%. If all > 70% → skip or brief positive.
+- SYLLABUS: Include if overall < 70% complete, or any subject < 50%. If all > 70% → skip or brief positive. If this is an early-stage profile (little data logged yet), phrase this insight as encouragement to build momentum on the next chapters — not as a criticism of how little is done.
 - BACKLOG: Include if pending > 3, or high priority > 1, or streak < 2 days. If backlog is clean → skip.
 - BEHAVIOR: Include only if there's a clear pattern like one subject getting 2x more hours than a weaker-scoring subject.
 - TASKS: Include only if completion rate < 60% or pending > 3. Otherwise skip.
@@ -8570,7 +8582,7 @@ Return ONLY valid JSON. No markdown. insights array: 3-7 items following the inc
 {
   "overallScore": <0-100>,
   "momentum": "rising|stable|declining",
-  "overallVerdict": "2 honest sentences summarizing current state with actual numbers",
+  "overallVerdict": "2 honest, encouraging sentences summarizing current state with actual numbers — motivating tone, per the TONE rules above",
   "insights": [
     {
       "icon": "emoji",

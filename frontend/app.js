@@ -3229,12 +3229,22 @@ function _testiCardHTML(t,i){
   const colors=['linear-gradient(135deg,#7c6af7,#a695ff)','linear-gradient(135deg,#34d399,#2dd4bf)','linear-gradient(135deg,#f472b6,#fb7185)','linear-gradient(135deg,#fbbf24,#f97316)','linear-gradient(135deg,#60a5fa,#3b82f6)'];
   const bg = colors[i % colors.length];
   return `<div class="ls-testi-card ls-reveal">
-    <div class="ls-testi-stars">${stars}</div>
+    <span class="ls-testi-quotemark">&rdquo;</span>
+    <div class="ls-testi-top">
+      <div class="ls-testi-stars">${stars}</div>
+      <span class="ls-testi-verified" title="Verified in-app review">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 2.1 3.3-.5 1 3.2 3.1 1.3-.9 3.3 1.9 2.8-2.4 2.3.4 3.3-3.3.4-1.6 2.9L12 21l-3.1 1.1-1.6-2.9-3.3-.4.4-3.3-2.4-2.3 1.9-2.8-.9-3.3 3.1-1.3 1-3.2 3.3.5L12 1z"/><path d="M9 12.3l1.8 1.8 4-4.2" stroke="#0a0a0f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Verified
+      </span>
+    </div>
     <div class="ls-testi-quote">"${_escTesti(t.message)}"</div>
     <div class="ls-testi-foot">
       <div class="ls-testi-avatar" style="background:${bg}">${initial}</div>
       <div>
-        <div class="ls-testi-name">${name}</div>
+        <div class="ls-testi-name-row">
+          <span class="ls-testi-name">${name}</span>
+          <span class="ls-testi-checkmark" title="Verified user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg></span>
+        </div>
         <div class="ls-testi-tag">${_testiFeatureTag(t.subject)}</div>
       </div>
     </div>
@@ -3248,6 +3258,17 @@ async function loadLandingTestimonials(){
     const { data, error } = await sb.from('public_testimonials').select('*').order('created_at',{ascending:false}).limit(9);
     if(error || !data || !data.length) return; 
     grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
+    const trustRow = document.getElementById('ls-testi-trustrow');
+    if(trustRow){
+      const avatarColors=['#7c6af7','#34d399','#f472b6','#fbbf24','#60a5fa'];
+      const avatars = data.slice(0,5).map((t,i)=>{
+        const nm=(t.display_name||'').trim()||'J';
+        return `<span style="background:${avatarColors[i%avatarColors.length]}">${_escTesti(nm.charAt(0).toUpperCase())}</span>`;
+      }).join('');
+      const avgRating = (data.reduce((a,b)=>a+(b.rating||5),0)/data.length);
+      const roundedAvg = Math.round(avgRating*10)/10;
+      trustRow.innerHTML = `<div class="ls-testi-trust-avatars">${avatars}</div><span class="ls-testi-trust-text"><b>${data.length}+</b> verified aspirants reviewed JEETrack</span><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-text"><b>${roundedAvg}</b>/5</span>`;
+    }
     section.style.display = '';
     if(typeof _initScrollReveal === 'function') setTimeout(_initScrollReveal, 50);
   }catch(e){ 
