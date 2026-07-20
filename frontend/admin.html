@@ -1118,15 +1118,30 @@ tr.fb-expand-row{background:transparent!important;}
             <input class="compose-input" id="fb-search" placeholder="Search feedbacks..." style="padding-left:1.8rem;width:220px;" oninput="filterFeedbacks(this.value)"/>
           </div>
         </div>
+
+        
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd);">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--mu);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="fb-filter-hastext" onchange="loadFeedbacks(0)" style="accent-color:var(--ac);cursor:pointer;"/>
+            Has written feedback only
+          </label>
+          <div style="width:1px;height:18px;background:var(--bd);"></div>
+          <div class="rtab-group" id="fb-rating-filter" style="display:flex;gap:.3rem;">
+            <button class="action-btn btn-primary fb-rtab active" data-rating="" onclick="setFbRatingFilter('',this)" style="font-size:.72rem;padding:.3rem .65rem;">All</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="positive" onclick="setFbRatingFilter('positive',this)" style="font-size:.72rem;padding:.3rem .65rem;">⭐⭐⭐⭐⭐ Positive</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="negative" onclick="setFbRatingFilter('negative',this)" style="font-size:.72rem;padding:.3rem .65rem;">⭐ Negative</button>
+          </div>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>User</th><th>Email</th><th>Rating</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th>
+                <th>User</th><th>Email</th><th>Rating</th><th>Subject</th><th>Message</th><th>Date</th><th>Testimonial</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="fb-table">
-              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+              <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1199,6 +1214,40 @@ tr.fb-expand-row{background:transparent!important;}
         <div class="modal-tab" data-tab="activity" onclick="switchModalTab('activity')">Activity</div>
       </div>
       <div id="modal-body-content"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="testi-modal">
+  <div class="modal" style="max-width:440px;width:100%;">
+    <div class="modal-header">
+      <div class="modal-header-info">
+        <div class="modal-avatar" id="testi-modal-avatar" style="background:linear-gradient(135deg,#34d399,#2dd4bf);">💬</div>
+        <div style="min-width:0">
+          <h3 id="testi-modal-title">Feature as Testimonial</h3>
+          <div class="modal-header-sub">Shown publicly on the landing page</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeTestiModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:.85rem .9rem;margin-bottom:1.1rem;">
+        <div id="testi-modal-stars" style="font-size:.8rem;margin-bottom:.4rem;"></div>
+        <div id="testi-modal-msg" style="font-size:.82rem;color:var(--tx);line-height:1.5;font-style:italic;"></div>
+      </div>
+
+      <label style="display:block;font-size:.74rem;color:var(--mu);margin-bottom:.35rem;">Display name (shown publicly — ask permission first)</label>
+      <input class="compose-input" id="testi-display-name" placeholder="e.g. Aman, Class 12" style="margin-bottom:1rem;"/>
+
+      <label style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--tx);cursor:pointer;user-select:none;margin-bottom:1.2rem;">
+        <input type="checkbox" id="testi-featured-toggle" style="accent-color:var(--ac);cursor:pointer;width:16px;height:16px;"/>
+        Feature this on the landing page
+      </label>
+
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;">
+        <button class="action-btn btn-ghost" onclick="closeTestiModal()">Cancel</button>
+        <button class="action-btn btn-primary" id="testi-save-btn" onclick="saveTestimonialFeature()">Save</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2250,6 +2299,10 @@ document.getElementById('user-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
+document.getElementById('testi-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeTestiModal();
+});
+
 
 
 
@@ -2751,13 +2804,17 @@ async function loadFeedbackStats() {
   }
 }
 
+let _fbRatingFilter = '';
+
 async function loadFeedbacks(page = 0) {
   _fbPage = page;
   _pagination.feedback = page;
   const tbody = document.getElementById('fb-table');
-  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
-    const d = await api(`feedback_list&limit=20&offset=${page*20}`);
+    const hasText = document.getElementById('fb-filter-hastext')?.checked ? '1' : '';
+    const params = `&limit=20&offset=${page*20}${hasText ? '&hasText=1' : ''}${_fbRatingFilter ? '&rating='+_fbRatingFilter : ''}`;
+    const d = await api(`feedback_list${params}`);
     _allFeedbacks = d.feedbacks || [];
     _filteredFeedbacks = _allFeedbacks;
     renderFeedbackTable(_filteredFeedbacks);
@@ -2765,8 +2822,16 @@ async function loadFeedbacks(page = 0) {
     document.getElementById('fb-next').disabled = _allFeedbacks.length < 20;
     document.getElementById('fb-page-info').textContent = `Page ${page+1} · ${d.total||''} total`;
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="no-data">Error loading feedbacks: ${e.message}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="no-data">Error loading feedbacks: ${e.message}</div></td></tr>`;
   }
+}
+
+function setFbRatingFilter(val, btn) {
+  _fbRatingFilter = val;
+  document.querySelectorAll('.fb-rtab').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-ghost'); });
+  btn.classList.remove('btn-ghost');
+  btn.classList.add('active','btn-primary');
+  loadFeedbacks(0);
 }
 
 function filterFeedbacks(q) {
@@ -2775,6 +2840,7 @@ function filterFeedbacks(q) {
         (f.subject||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.message||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.email||'').toLowerCase().includes(q.toLowerCase()) ||
+        (f.account_name||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.display_name||'').toLowerCase().includes(q.toLowerCase()))
     : _allFeedbacks;
   renderFeedbackTable(_filteredFeedbacks);
@@ -2783,7 +2849,7 @@ function filterFeedbacks(q) {
 function renderFeedbackTable(feedbacks) {
   const tbody = document.getElementById('fb-table');
   if (!feedbacks.length) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="no-data">No feedbacks found</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="no-data">No feedbacks found</div></td></tr>';
     return;
   }
   tbody.innerHTML = feedbacks.map((f, i) => {
@@ -2791,9 +2857,10 @@ function renderFeedbackTable(feedbacks) {
     const msg = f.message || '';
     const preview = msg.length > 40 ? msg.slice(0, 40) + '…' : (msg || '—');
     const hasMore = msg.length > 40;
+    const isFeatured = !!f.featured;
     return `
     <tr id="fb-row-${i}">
-      <td style="font-size:.75rem;font-weight:600;">${esc(f.display_name||f.email?.split('@')[0]||'Anonymous')}</td>
+      <td style="font-size:.75rem;font-weight:600;">${esc(f.account_name||f.email?.split('@')[0]||'Anonymous')}</td>
       <td style="font-size:.72rem;color:var(--mu);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.email||'—')}</td>
       <td style="font-size:.8rem;white-space:nowrap;" title="${f.rating != null ? f.rating+'/5' : 'No rating'}">${stars}</td>
       <td style="font-weight:600;font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.subject||'')}">${esc(f.subject||'—')}</td>
@@ -2801,6 +2868,12 @@ function renderFeedbackTable(feedbacks) {
         <div class="fb-msg-preview">${esc(preview)}${hasMore ? ' <span style="color:var(--ac2);font-size:.68rem;">▼</span>' : ''}</div>
       </td>
       <td style="font-size:.72rem;color:var(--mu);white-space:nowrap;">${fmtDate(f.created_at)}</td>
+      <td>
+        <button class="action-btn ${isFeatured ? 'btn-primary' : 'btn-ghost'}" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;"
+          onclick="openTestiModal(${i})" title="${isFeatured ? 'Featured on landing page' : 'Feature as testimonial'}">
+          ${isFeatured ? '★ Featured' : '☆ Feature'}
+        </button>
+      </td>
       <td>
         <button class="action-btn btn-primary" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;"
           onclick="replyToFeedback('${esc(f.user_id||'')}','${esc(f.email||'')}','${esc(f.subject||'')}')">
@@ -2812,6 +2885,60 @@ function renderFeedbackTable(feedbacks) {
 
   
   tbody._feedbacks = feedbacks;
+}
+
+let _testiIndex = null;
+
+function openTestiModal(i) {
+  const tbody = document.getElementById('fb-table');
+  const feedbacks = tbody._feedbacks || _filteredFeedbacks;
+  const f = feedbacks[i];
+  if (!f) return;
+  _testiIndex = i;
+
+  const stars = f.rating != null ? '⭐'.repeat(Math.min(5, Math.max(1, Math.round(Number(f.rating))))) : 'No rating';
+  document.getElementById('testi-modal-stars').textContent = stars;
+  document.getElementById('testi-modal-msg').textContent = f.message ? `"${f.message}"` : '(no written comment)';
+  document.getElementById('testi-display-name').value = f.display_name || '';
+  document.getElementById('testi-featured-toggle').checked = !!f.featured;
+  document.getElementById('testi-modal').style.display = 'flex';
+}
+
+function closeTestiModal() {
+  document.getElementById('testi-modal').style.display = 'none';
+  _testiIndex = null;
+}
+
+async function saveTestimonialFeature() {
+  if (_testiIndex === null) return;
+  const tbody = document.getElementById('fb-table');
+  const feedbacks = tbody._feedbacks || _filteredFeedbacks;
+  const f = feedbacks[_testiIndex];
+  if (!f) return;
+
+  const display_name = document.getElementById('testi-display-name').value.trim();
+  const featured = document.getElementById('testi-featured-toggle').checked;
+
+  if (featured && (!f.message || !f.message.trim())) {
+    showToast('Can\'t feature a review with no written comment', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('testi-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    const result = await apiPost('feedback_feature', { id: f.id, featured, display_name });
+    if (result && result.error) throw new Error(result.error);
+    f.featured = featured;
+    f.display_name = display_name;
+    renderFeedbackTable(feedbacks);
+    closeTestiModal();
+    showToast(featured ? 'Featured on landing page ✓' : 'Removed from landing page', 'success');
+  } catch (e) {
+    showToast('Failed to save: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save';
+  }
 }
 
 function toggleFeedbackExpand(i, cell) {
@@ -2839,7 +2966,7 @@ function toggleFeedbackExpand(i, cell) {
   const expandRow = document.createElement('tr');
   expandRow.id = `fb-expand-${i}`;
   expandRow.className = 'fb-expand-row';
-  expandRow.innerHTML = `<td colspan="7">
+  expandRow.innerHTML = `<td colspan="8">
     <div class="fb-expand-box">
       <div class="fb-expand-label">Full Message</div>
       ${esc(f.message || '(no message)')}

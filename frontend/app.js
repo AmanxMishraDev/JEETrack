@@ -334,6 +334,7 @@ function showAuthScreen(fromSignOut){
   
   setTimeout(initSlideshow, 100);
   setTimeout(initHeroDemo, 200);
+  loadLandingTestimonials();
 }
 
 function showApp(name, email){
@@ -3185,6 +3186,46 @@ async function submitReview() {
   document.getElementById('modal-reviewPrompt').classList.remove('open');
   _reviewContext = null;
   setTimeout(() => toast(`Thanks for the ${rating}★ review! 🙏`, 'success'), 300);
+}
+
+
+/* -- Landing page: pull real, curated testimonials from the feedback system -- */
+function _escTesti(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _testiFeatureTag(subject){
+  const cleaned = (subject||'').replace(/review/i,'').trim();
+  return _escTesti(cleaned || 'JEETrack');
+}
+function _testiCardHTML(t,i){
+  const rating = Math.max(1, Math.min(5, t.rating||5));
+  const stars = '★'.repeat(rating) + '☆'.repeat(5-rating);
+  const name = _escTesti((t.display_name||'').trim() || 'Verified JEETrack User');
+  const initial = name.charAt(0).toUpperCase() || 'J';
+  const colors=['linear-gradient(135deg,#7c6af7,#a695ff)','linear-gradient(135deg,#34d399,#2dd4bf)','linear-gradient(135deg,#f472b6,#fb7185)','linear-gradient(135deg,#fbbf24,#f97316)','linear-gradient(135deg,#60a5fa,#3b82f6)'];
+  const bg = colors[i % colors.length];
+  return `<div class="ls-testi-card ls-reveal">
+    <div class="ls-testi-stars">${stars}</div>
+    <div class="ls-testi-quote">"${_escTesti(t.message)}"</div>
+    <div class="ls-testi-foot">
+      <div class="ls-testi-avatar" style="background:${bg}">${initial}</div>
+      <div>
+        <div class="ls-testi-name">${name}</div>
+        <div class="ls-testi-tag">${_testiFeatureTag(t.subject)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+async function loadLandingTestimonials(){
+  const section = document.getElementById('testimonials-section');
+  const grid = document.getElementById('ls-testi-grid');
+  if(!section || !grid || !sb) return;
+  try{
+    const { data, error } = await sb.from('public_testimonials').select('*').order('created_at',{ascending:false}).limit(9);
+    if(error || !data || !data.length) return; 
+    grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
+    section.style.display = '';
+    if(typeof _initScrollReveal === 'function') setTimeout(_initScrollReveal, 50);
+  }catch(e){ 
+  }
 }
 
 

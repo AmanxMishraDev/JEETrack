@@ -998,28 +998,62 @@ export default async function handler(req, res) {
     if (action === 'feedback_list') {
       const limit  = parseInt(req.query.limit || '50');
       const offset = parseInt(req.query.offset || '0');
+      const hasText = req.query.hasText === '1' || req.query.hasText === 'true';
+      const ratingFilter = req.query.rating || ''; 
 
       
       
-      const feedbacks = await sbQuery(
-        `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
+      const all = await sbQuery(
+        `feedback?select=id,user_id,subject,message,rating,featured,display_name,created_at&order=created_at.desc&limit=1000`
       ).catch(() => []);
 
-      
-      const total = await sbCount('feedback').catch(() => 0);
+      let filtered = all;
+      if (hasText) {
+        filtered = filtered.filter(f => {
+          const m = (f.message || '').trim().toLowerCase();
+          return m && m !== '(no comment)';
+        });
+      }
+      if (ratingFilter === 'positive') {
+        filtered = filtered.filter(f => Number(f.rating) >= 5);
+      } else if (ratingFilter === 'negative') {
+        filtered = filtered.filter(f => Number(f.rating) <= 1);
+      }
+
+      const total = filtered.length;
+      const page = filtered.slice(offset, offset + limit);
 
       
       const roster = await buildRoster().catch(() => []);
       const rosterMap = {};
       roster.forEach(u => { rosterMap[u.id] = u; });
 
-      const enriched = feedbacks.map(f => ({
+      const enriched = page.map(f => ({
         ...f,
-        display_name: rosterMap[f.user_id]?.name || f.email?.split('@')[0] || 'Anonymous',
+        account_name: rosterMap[f.user_id]?.name || f.email?.split('@')[0] || 'Anonymous',
         email: f.email || rosterMap[f.user_id]?.email || '',
       }));
 
       return res.status(200).json({ feedbacks: enriched, total });
+    }
+
+    
+    if (action === 'feedback_feature') {
+      if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+      const { id, featured, display_name } = req.body || {};
+      if (!id) return res.status(400).json({ error: 'Missing feedback id' });
+
+      const payload = {};
+      if (featured !== undefined) payload.featured = !!featured;
+      if (display_name !== undefined) payload.display_name = (display_name || '').toString().trim() || null;
+      if (!Object.keys(payload).length) return res.status(400).json({ error: 'Nothing to update' });
+
+      try {
+        const updated = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}`, 'PATCH', payload);
+        return res.status(200).json({ ok: true, feedback: updated?.[0] || null });
+      } catch (e) {
+        return res.status(500).json({ error: 'Failed to update feedback: ' + e.message });
+      }
     }
 
     

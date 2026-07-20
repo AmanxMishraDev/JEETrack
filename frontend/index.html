@@ -7,15 +7,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>JEETrack | AI-Powered JEE Preparation Tracker</title>
-<meta name="description" content="Free JEE preparation tracker for JEE Mains & Advanced. Track mock test scores, study hours, syllabus, and backlogs — get AI-powered weekly insights."/>
-<meta name="keywords" content="JEE tracker, JEE preparation app, JEE mock test tracker, JEE Mains tracker, JEE Advanced tracker, JEE syllabus tracker, JEE study planner, JEE score tracker, JEE AI insights, JEE 2025, JEE 2026"/>
+<meta name="description" content="Free JEE preparation tracker for JEE Mains & Advanced. Track mock test scores, study hours, practice questions, syllabus, and backlogs — get AI-powered weekly insights."/>
+<meta name="keywords" content="JEE tracker, JEE preparation app, JEE mock test tracker, JEE Mains tracker, JEE Advanced tracker, JEE syllabus tracker, JEE practice tracker, JEE study planner, JEE score tracker, JEE AI insights, JEE 2025, JEE 2026"/>
 <meta name="author" content="JEETrack"/>
 <link rel="canonical" href="https://www.jeetrack.in"/>
 
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://www.jeetrack.in"/>
 <meta property="og:title" content="JEETrack — JEE Preparation Tracker | Mock Tests, Syllabus & AI Insights"/>
-<meta property="og:description" content="Free JEE Mains & Advanced tracker. Log mock scores, study hours, and syllabus progress — get AI-powered weekly insights built for serious aspirants."/>
+<meta property="og:description" content="Free JEE Mains & Advanced tracker. Log mock scores, study hours, practice questions, and syllabus progress — get AI-powered weekly insights built for serious aspirants."/>
 <meta property="og:image" content="https://www.jeetrack.in/icon-512.png?v=2"/>
 <meta property="og:site_name" content="JEETrack"/>
 <meta property="og:locale" content="en_IN"/>
@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:url" content="https://www.jeetrack.in"/>
 <meta name="twitter:title" content="JEETrack — JEE Preparation Tracker"/>
-<meta name="twitter:description" content="Free JEE Mains & Advanced tracker. Log mock scores, study hours, and syllabus progress — get AI-powered weekly insights built for serious aspirants."/>
+<meta name="twitter:description" content="Free JEE Mains & Advanced tracker. Log mock scores, study hours, practice questions, and syllabus progress — get AI-powered weekly insights built for serious aspirants."/>
 <meta name="twitter:image" content="https://www.jeetrack.in/icon-512.png?v=2"/>
 
 <meta name="robots" id="meta-robots" content="index, follow"/>
@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "JEETrack",
   "url": "https://www.jeetrack.in",
-  "description": "JEETrack is a free JEE preparation tracker for mock test scores, study hours, syllabus management, and AI-powered weekly insights.",
+  "description": "JEETrack is a free JEE preparation tracker for mock test scores, study hours, practice questions, syllabus management, and AI-powered weekly insights.",
   "applicationCategory": "EducationApplication",
   "operatingSystem": "All",
   "offers": {
@@ -47,6 +47,7 @@
     "JEE Mains & Advanced mock test tracking",
     "Subject-wise score analytics",
     "Study hours heatmap",
+    "Chapter-wise practice question logging",
     "Full syllabus tracker",
     "Backlog management",
     "AI weekly insights"
@@ -437,6 +438,11 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="slide-title">Clear the backlog.<br>Keep the <em>streak</em>.</div>
           <div class="slide-desc">Every skipped chapter, unsolved DPP, and missed revision lives here. Clear them daily, build your streak. JEETrack makes sure nothing falls through the cracks.</div>
         </div>
+        <div class="slide">
+          <div class="slide-eyebrow" style="color:#2dd4bf">Practice Log</div>
+          <div class="slide-title">Every question<br>you solve, <em>counted</em></div>
+          <div class="slide-desc">Log practice in one tap, right from your syllabus. See daily streaks, chapter-wise breakdowns, and exactly where you need more reps.</div>
+        </div>
       </div>
 
       <div class="slide-controls">
@@ -446,13 +452,14 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="slide-dot" onclick="goSlide(2)"></div>
           <div class="slide-dot" onclick="goSlide(3)"></div>
           <div class="slide-dot" onclick="goSlide(4)"></div>
+          <div class="slide-dot" onclick="goSlide(5)"></div>
         </div>
         <div class="slide-progress-bar"><div class="slide-progress-fill" id="slide-fill"></div></div>
       </div>
 
       <div class="land-stats" style="margin-top:2.5rem">
         <div class="land-stat">
-          <div class="land-stat-num">5</div>
+          <div class="land-stat-num">6</div>
           <div class="land-stat-label">Core Modules</div>
         </div>
         <div class="land-stat">
@@ -489,6 +496,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>JEE Mains + Advanced</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Score Trend Charts</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Zero Backlog System</div>
+          <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></span>Practice Question Log</div>
           
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Mock Test Analytics</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14z"/></svg></span>AI Weekly Insights</div>
@@ -498,6 +506,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>JEE Mains + Advanced</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Score Trend Charts</div>
           <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Zero Backlog System</div>
+          <div class="trust-badge"><span class="trust-badge-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></span>Practice Question Log</div>
         </div>
       </div>
     </div>
@@ -814,7 +823,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <div class="ls-reveal">
       <div class="ls-pill ls-pill-purple">Features</div>
       <h2 class="ls-h2">Everything you need to<br><em>crack JEE</em></h2>
-      <p class="ls-sub">Five powerful modules built for serious aspirants. No fluff, just what works.</p>
+      <p class="ls-sub">Six powerful modules built for serious aspirants. No fluff, just what works.</p>
     </div>
     <div class="ls-features-grid">
       <div class="ls-card ls-card-purple ls-reveal ls-reveal-delay-1">
@@ -842,17 +851,34 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="ls-card-title">Zero Backlog System</div>
         <div class="ls-card-desc">Log skipped chapters and unsolved DPPs. Clear them daily, build your streak, and make sure nothing slips.</div>
       </div>
+      <div class="ls-card ls-card-teal ls-reveal ls-reveal-delay-1">
+        <div class="ls-icon ls-icon-teal"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></div>
+        <div class="ls-card-title">Practice Log</div>
+        <div class="ls-card-desc">Log every question you solve, chapter by chapter, in one tap. Daily streaks, subject trends, and a full activity timeline.</div>
+      </div>
       <div class="ls-card ls-card-free ls-reveal ls-reveal-delay-4">
         <div class="ls-free-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
-        <div class="ls-free-label">Always Free</div>
-        <div class="ls-card-desc">Every feature, forever free. No plans, no paywalls, no catch.</div>
-        <div class="ls-free-dots">
-          <span></span><span></span><span></span>
+        <div class="ls-free-text">
+          <div class="ls-free-label">Always Free</div>
+          <div class="ls-card-desc">Every feature, forever free. No plans, no paywalls, no catch.</div>
+          <div class="ls-free-dots">
+            <span></span><span></span><span></span>
+          </div>
         </div>
       </div>
     </div>
+  </section>
+
+  
+  <section id="testimonials-section" class="ls-section ls-section-center" style="display:none">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-pink">Real Feedback</div>
+      <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
+      <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
+    </div>
+    <div class="ls-testi-grid" id="ls-testi-grid"></div>
   </section>
 
   
@@ -898,7 +924,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         </div>
         <div class="ls-step-body">
           <div class="ls-step-title">Track, improve, repeat</div>
-          <div class="ls-step-desc">Log study hours, clear backlogs, complete your syllabus, get AI insights every week. Watch your scores climb.</div>
+          <div class="ls-step-desc">Log study hours, log your practice, clear backlogs, complete your syllabus, get AI insights every week. Watch your scores climb.</div>
         </div>
       </div>
     </div>
@@ -920,7 +946,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <section class="ls-cta-section">
     <div class="ls-cta-band ls-reveal">
       <div class="ls-cta-band-title">Ready to get serious about JEE?</div>
-      <div class="ls-cta-band-sub">Join aspirants already tracking their prep on JEETrack.</div>
+      <div class="ls-cta-band-sub">Every mock test, every study hour, every question — one dashboard, zero cost.</div>
       <button class="ls-cta-btn" onclick="document.getElementById('landing').scrollTo({top:0,behavior:'smooth'});landingOpenAuth('signup')">
         Start Tracking for Free →
       </button>
@@ -2925,6 +2951,9 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 <button class="mob-fab mob-fab-backlog" id="mob-fab-backlog" onclick="openM('addBacklog')" aria-label="Add backlog task" style="display:none">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
+<button class="mob-fab mob-fab-practice" id="mob-fab-practice" onclick="openPracticeLog()" aria-label="Log practice" style="display:none">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
 
 </main>
 
@@ -3447,14 +3476,23 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="plm-chip" data-val="100" onclick="plmSelectChip(100,this)">100</button>
       <button class="plm-chip" data-val="150" onclick="plmSelectChip(150,this)">150</button>
       <button class="plm-chip" data-val="200" onclick="plmSelectChip(200,this)">200</button>
-      <button class="plm-chip plm-chip-custom" data-val="custom" onclick="plmSelectChip('custom',this)">Custom</button>
     </div>
+    <button type="button" class="plm-custom-trigger" id="plm-custom-trigger" onclick="plmOpenCustom()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Custom amount
+    </button>
 
     
-    <div class="plm-custom-wrap" id="plm-custom-wrap" style="display:none">
-      <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(-5)" aria-label="Decrease">−</button>
-      <input type="number" inputmode="numeric" min="1" class="pmo-input pmo-input-xl" id="plm-custom-inp" placeholder="0" oninput="_plmClearErr()"/>
-      <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(5)" aria-label="Increase">+</button>
+    <div class="plm-custom-active" id="plm-custom-wrap" style="display:none">
+      <button type="button" class="plm-custom-back" onclick="plmCloseCustom()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to quick picks
+      </button>
+      <div class="plm-custom-input-row">
+        <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(-5)" aria-label="Decrease">−</button>
+        <input type="number" inputmode="numeric" min="1" class="pmo-input pmo-input-xl" id="plm-custom-inp" placeholder="0" oninput="_plmClearErr()"/>
+        <button type="button" class="pmo-hrs-stepbtn" onclick="plmStepCustom(5)" aria-label="Increase">+</button>
+      </div>
     </div>
     <span class="fi-err-msg" id="plm-err"></span>
 
@@ -5042,7 +5080,7 @@ function nav(page, _pushState){
     document.title = 'JEETrack — Tests';
     updateMobTopbarTitle('tests-choice');
     
-    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{
+    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog','mob-fab-practice'].forEach(id=>{
       const el = document.getElementById(id);
       if(el) el.style.display = 'none';
     });
@@ -5068,9 +5106,9 @@ function nav(page, _pushState){
 
   
   const isMob = window.innerWidth <= 768;
-  const fabMap = {hours:'mob-fab-hours', todo:'mob-fab-todo', backlog:'mob-fab-backlog'};
+  const fabMap = {hours:'mob-fab-hours', todo:'mob-fab-todo', backlog:'mob-fab-backlog', practice:'mob-fab-practice'};
   const activeFabId = fabMap[page] || null;
-  ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{
+  ['mob-fab-hours','mob-fab-todo','mob-fab-backlog','mob-fab-practice'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = (isMob && activeFabId === id) ? 'flex' : 'none';
   });
@@ -6425,8 +6463,8 @@ function openPracticeLog(chapterId,prefill){
   document.getElementById('plm-date').value=(prefill&&prefill.date)||td();
   document.getElementById('plm-err').textContent='';
   document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
-  document.getElementById('plm-custom-wrap').style.display='none';
   document.getElementById('plm-custom-inp').value='';
+  plmCloseCustom(true);
 
   const titleEl=document.getElementById('plm-title'), saveBtnTxt=document.getElementById('plm-save-btn-txt');
 
@@ -6464,8 +6502,7 @@ function openPracticeLog(chapterId,prefill){
       const btn=document.querySelector(`#plm-chip-grid .plm-chip[data-val="${prefill.questions}"]`);
       if(btn) plmSelectChip(prefill.questions,btn);
     } else {
-      const customBtn=document.querySelector('#plm-chip-grid .plm-chip-custom');
-      plmSelectChip('custom',customBtn);
+      plmOpenCustom();
       document.getElementById('plm-custom-inp').value=prefill.questions;
       _plmUpdateSelectedDisplay();
     }
@@ -6502,18 +6539,30 @@ function plmPopulateChapterSelect(subj){
 function plmSelectChip(val,btn){
   document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  _plmSelected=val;
   _plmClearErr();
-  if(val==='custom'){
-    document.getElementById('plm-custom-wrap').style.display='flex';
-    _plmSelected=null;
-    document.getElementById('plm-custom-inp').focus();
-    _plmUpdateSelectedDisplay();
-  } else {
-    document.getElementById('plm-custom-wrap').style.display='none';
-    _plmSelected=val;
-    _plmUpdateSelectedDisplay();
-  }
 }
+
+function plmOpenCustom(){
+  document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.plm-recent-chip').forEach(b=>b.classList.remove('active'));
+  document.getElementById('plm-chip-grid').style.display='none';
+  document.getElementById('plm-custom-trigger').style.display='none';
+  document.getElementById('plm-custom-wrap').style.display='block';
+  _plmSelected=null;
+  _plmClearErr();
+  const inp=document.getElementById('plm-custom-inp');
+  setTimeout(()=>{ inp.focus(); },50);
+}
+
+function plmCloseCustom(silent){
+  document.getElementById('plm-chip-grid').style.display='';
+  document.getElementById('plm-custom-trigger').style.display='';
+  document.getElementById('plm-custom-wrap').style.display='none';
+  document.getElementById('plm-custom-inp').value='';
+  if(!silent) _plmClearErr();
+}
+
 function plmStepCustom(delta){
   const inp=document.getElementById('plm-custom-inp');
   const v=Math.max(0,(+inp.value||0)+delta);
@@ -6522,7 +6571,7 @@ function plmStepCustom(delta){
   _plmUpdateSelectedDisplay();
 }
 function _plmCurrentVal(){
-  if(document.getElementById('plm-custom-wrap').style.display==='flex'){
+  if(document.getElementById('plm-custom-wrap').style.display==='block'){
     return +document.getElementById('plm-custom-inp').value||0;
   }
   return _plmSelected||0;
@@ -6548,7 +6597,9 @@ function _plmRenderRecent(){
 }
 function plmSelectRecentVal(v,btn){
   document.querySelectorAll('#plm-chip-grid .plm-chip').forEach(b=>b.classList.remove('active'));
-  document.getElementById('plm-custom-wrap').style.display='none';
+  document.querySelectorAll('.plm-recent-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  plmCloseCustom(true);
   _plmSelected=v;
   _plmClearErr();
 }
@@ -8295,7 +8346,7 @@ nav=function(page, _pushState){
     document.getElementById('page-insights').classList.add('active');
     document.querySelectorAll('.ni').forEach(n=>{if(n.textContent.toLowerCase().includes('ai insight'))n.classList.add('active');});
     
-    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+    ['mob-fab-hours','mob-fab-todo','mob-fab-backlog','mob-fab-practice'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
     
     const content=document.getElementById('insights-content');
     const empty=document.getElementById('insights-empty');
