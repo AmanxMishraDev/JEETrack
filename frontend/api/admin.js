@@ -1000,12 +1000,24 @@ export default async function handler(req, res) {
       const offset = parseInt(req.query.offset || '0');
       const hasText = req.query.hasText === '1' || req.query.hasText === 'true';
       const ratingFilter = req.query.rating || ''; 
+      const featuredOnly = req.query.featuredOnly === '1' || req.query.featuredOnly === 'true';
 
       
       
-      const all = await sbQuery(
-        `feedback?select=id,user_id,subject,message,rating,featured,display_name,created_at&order=created_at.desc&limit=1000`
-      ).catch(() => []);
+      let all;
+      let testimonialColumnsMissing = false;
+      try {
+        all = await sbQuery(
+          `feedback?select=id,user_id,subject,message,rating,featured,display_name,created_at&order=created_at.desc&limit=1000`
+        );
+      } catch (e) {
+        
+        testimonialColumnsMissing = true;
+        all = await sbQuery(
+          `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=1000`
+        ).catch(() => []);
+        all = all.map(f => ({ ...f, featured: false, display_name: null }));
+      }
 
       let filtered = all;
       if (hasText) {
@@ -1018,6 +1030,9 @@ export default async function handler(req, res) {
         filtered = filtered.filter(f => Number(f.rating) >= 5);
       } else if (ratingFilter === 'negative') {
         filtered = filtered.filter(f => Number(f.rating) <= 1);
+      }
+      if (featuredOnly) {
+        filtered = filtered.filter(f => !!f.featured);
       }
 
       const total = filtered.length;
@@ -1034,7 +1049,10 @@ export default async function handler(req, res) {
         email: f.email || rosterMap[f.user_id]?.email || '',
       }));
 
-      return res.status(200).json({ feedbacks: enriched, total });
+      return res.status(200).json({
+        feedbacks: enriched, total,
+        ...(testimonialColumnsMissing ? { warning: 'featured/display_name columns not found on feedback table — run testimonials_supabase_schema.sql' } : {}),
+      });
     }
 
     
@@ -1052,7 +1070,10 @@ export default async function handler(req, res) {
         const updated = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}`, 'PATCH', payload);
         return res.status(200).json({ ok: true, feedback: updated?.[0] || null });
       } catch (e) {
-        return res.status(500).json({ error: 'Failed to update feedback: ' + e.message });
+        const hint = /column/i.test(e.message)
+          ? ' — run testimonials_supabase_schema.sql to add the featured/display_name columns first'
+          : '';
+        return res.status(500).json({ error: 'Failed to update feedback: ' + e.message + hint });
       }
     }
 

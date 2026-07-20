@@ -1123,7 +1123,11 @@ tr.fb-expand-row{background:transparent!important;}
         <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd);">
           <label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--mu);cursor:pointer;user-select:none;">
             <input type="checkbox" id="fb-filter-hastext" onchange="loadFeedbacks(0)" style="accent-color:var(--ac);cursor:pointer;"/>
-            Has written feedback only
+            With comments only
+          </label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--mu);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="fb-filter-featured" onchange="loadFeedbacks(0)" style="accent-color:var(--ac);cursor:pointer;"/>
+            Featured only
           </label>
           <div style="width:1px;height:18px;background:var(--bd);"></div>
           <div class="rtab-group" id="fb-rating-filter" style="display:flex;gap:.3rem;">
@@ -1131,7 +1135,12 @@ tr.fb-expand-row{background:transparent!important;}
             <button class="action-btn btn-ghost fb-rtab" data-rating="positive" onclick="setFbRatingFilter('positive',this)" style="font-size:.72rem;padding:.3rem .65rem;">⭐⭐⭐⭐⭐ Positive</button>
             <button class="action-btn btn-ghost fb-rtab" data-rating="negative" onclick="setFbRatingFilter('negative',this)" style="font-size:.72rem;padding:.3rem .65rem;">⭐ Negative</button>
           </div>
+          <div style="margin-left:auto;">
+            <button class="action-btn btn-primary" style="font-size:.72rem;padding:.3rem .7rem;" onclick="viewAllFeatured()">★ View All Featured</button>
+          </div>
         </div>
+
+        <div id="fb-warning-banner" style="display:none;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;border-radius:8px;padding:.6rem .8rem;font-size:.74rem;margin-bottom:.9rem;"></div>
 
         <div class="table-wrap">
           <table>
