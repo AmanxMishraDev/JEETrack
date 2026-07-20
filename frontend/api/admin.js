@@ -999,7 +999,7 @@ export default async function handler(req, res) {
       const limit  = parseInt(req.query.limit || '50');
       const offset = parseInt(req.query.offset || '0');
       const hasText = req.query.hasText === '1' || req.query.hasText === 'true';
-      const ratingFilter = req.query.rating || ''; 
+      const ratingFilter = parseInt(req.query.rating || '', 10); 
       const featuredOnly = req.query.featuredOnly === '1' || req.query.featuredOnly === 'true';
 
       
@@ -1026,10 +1026,8 @@ export default async function handler(req, res) {
           return m && m !== '(no comment)';
         });
       }
-      if (ratingFilter === 'positive') {
-        filtered = filtered.filter(f => Number(f.rating) >= 5);
-      } else if (ratingFilter === 'negative') {
-        filtered = filtered.filter(f => Number(f.rating) <= 1);
+      if (ratingFilter >= 1 && ratingFilter <= 5) {
+        filtered = filtered.filter(f => Math.round(Number(f.rating)) === ratingFilter);
       }
       if (featuredOnly) {
         filtered = filtered.filter(f => !!f.featured);
@@ -1056,15 +1054,25 @@ export default async function handler(req, res) {
     }
 
     
+    
     if (action === 'feedback_feature') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-      const { id, featured, display_name } = req.body || {};
+      const { id, featured } = req.body || {};
       if (!id) return res.status(400).json({ error: 'Missing feedback id' });
 
-      const payload = {};
-      if (featured !== undefined) payload.featured = !!featured;
-      if (display_name !== undefined) payload.display_name = (display_name || '').toString().trim() || null;
-      if (!Object.keys(payload).length) return res.status(400).json({ error: 'Nothing to update' });
+      const payload = { featured: !!featured };
+
+      if (featured) {
+        try {
+          const rows = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}&select=user_id`);
+          const userId = rows?.[0]?.user_id;
+          if (userId) {
+            const roster = await buildRoster().catch(() => []);
+            const user = roster.find(u => u.id === userId);
+            payload.display_name = user?.name || (user?.email ? user.email.split('@')[0] : null) || 'JEETrack User';
+          }
+        } catch (e) { }
+      }
 
       try {
         const updated = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}`, 'PATCH', payload);

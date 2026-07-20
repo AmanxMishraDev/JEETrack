@@ -551,6 +551,7 @@ function _seedSyncSnapshot(){
   _syncSnapshot.syllabus = {};
   ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
   _syncSnapshot.practiceLogs = {}; (S.practiceLogs||[]).forEach(p=>{ _syncSnapshot.practiceLogs[p.id]=_snapKey(_payloadPracticeLog(p,uid)); });
+  _syncSnapshot._streaks = _snapKey({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]});
 }
 
 async function loadUserData(){
@@ -641,11 +642,35 @@ async function loadUserData(){
   }
 }
 
-async function save(){
-  
+// ── Debounced network sync ──
+// save() is called extremely often (every practice-log tap, every checkbox,
+// every field edit). Writing to localStorage is cheap and stays instant, but
+// hitting Supabase on every single call multiplies IO fast — especially now
+// that Practice Log encourages many quick logs per session. So the network
+// part is debounced: rapid-fire save() calls within the window collapse into
+// ONE upsert round instead of one per action.
+let _saveDebounceTimer = null;
+const SAVE_DEBOUNCE_MS = 1200;
+
+function save(){
   if(S.backlogStreak > 365) S.backlogStreak = 0;
   if(S.backlogBestStreak > 365) S.backlogBestStreak = 0;
-  localStorage.setItem('jt3', JSON.stringify(S));
+  localStorage.setItem('jt3', JSON.stringify(S));   // instant, always — no data loss risk
+  if(!sb || !currentUser) return;
+  clearTimeout(_saveDebounceTimer);
+  _saveDebounceTimer = setTimeout(_syncToServer, SAVE_DEBOUNCE_MS);
+}
+
+// Flush immediately if the user is about to leave/hide the tab, so a
+// debounced save in-flight doesn't get lost.
+function flushSave(){
+  if(_saveDebounceTimer){ clearTimeout(_saveDebounceTimer); _saveDebounceTimer=null; }
+  return _syncToServer();
+}
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushSave(); });
+window.addEventListener('beforeunload', flushSave);
+
+async function _syncToServer(){
   if(!sb || !currentUser) return;
   if(isSaving){ saveQueue=true; return; }
   isSaving = true;
@@ -675,12 +700,17 @@ async function save(){
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
     if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
 
-    // Streaks is always a single row — negligible cost, left as-is.
-    ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]},{onConflict:'user_id'}));
+    // Streaks — now also diff-checked, since with Practice Log firing saves
+    // far more often, an unconditional call here adds up fast.
+    const streaksPayload = {user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]};
+    const streaksKey = _snapKey(streaksPayload);
+    if(_syncSnapshot._streaks !== streaksKey){
+      ops.push(sb.from('streaks').upsert(streaksPayload,{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._streaks = streaksKey; }));
+    }
 
     await Promise.all(ops);
   }catch(e){ console.error('Save error:',e); }
-  isSaving=false; if(saveQueue){ saveQueue=false; save(); }
+  isSaving=false; if(saveQueue){ saveQueue=false; _syncToServer(); }
 }
 
 const _dbTableName = { practiceLogs:'practice_logs' };
@@ -939,13 +969,9 @@ function updatePracticeNewBadge(){
 async function checkWelcomeModal() {
   
   const notifOn = localStorage.getItem('notif_enabled') === '1' && Notification.permission === 'granted';
-  let emailOn = false;
-  if (sb && currentUser) {
-    try {
-      const { data } = await sb.from('user_preferences').select('email_reports').eq('user_id', currentUser.id).single();
-      emailOn = data?.email_reports === 'monthly';
-    } catch(e) {}
-  }
+  // email_reports is already loaded into `userProfile` by loadUserProfile() during
+  // login/init — no need to hit user_preferences again here.
+  const emailOn = userProfile?.email_reports === 'monthly';
   
   if (notifOn && emailOn) return;
 

@@ -6122,6 +6122,8 @@ function saveTest(){
   }
   maybeShowReviewPrompt();
   pushUndo('test',e,'Test score added',false);
+  navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');navMarkDirty('compare');
+  renderMains();renderAdv();renderOverview();
   const gm=getGoalMains(),ga=getGoalAdv();
   if(e.exam==='mains'&&e.total>=gm) setTimeout(()=>celebrate('🏆',`LEGENDARY! ${gm}+ in Mains!`,`You scored ${e.total}/${e.max} — you're on fire!`,true),300);
   else if(e.exam==='advanced'&&e.total>=ga) setTimeout(()=>celebrate('🌟',`OUTSTANDING! ${ga}+ in Advanced!`,`You scored ${e.total}/${e.max} — incredible work!`,true),300);
@@ -7018,7 +7020,7 @@ function importData(input){
       
       if(S.backlogStreak>365)S.backlogStreak=0;
       if(S.backlogBestStreak>365)S.backlogBestStreak=0;
-      await save();
+      await save(); await flushSave();
       toast('Data imported ✓', 'success');
       navMarkDirty(null);
       renderOverview();updateBadges();
