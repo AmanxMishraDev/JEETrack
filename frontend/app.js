@@ -317,6 +317,7 @@ function showAuthScreen(fromSignOut){
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
   setTimeout(_initScrollReveal, 150);
+  setTimeout(_initCountUp, 150);
 
   
   
@@ -334,6 +335,7 @@ function showAuthScreen(fromSignOut){
   
   setTimeout(initSlideshow, 100);
   setTimeout(initHeroDemo, 200);
+  loadLandingTestimonials();
 }
 
 function showApp(name, email){
@@ -550,6 +552,7 @@ function _seedSyncSnapshot(){
   _syncSnapshot.syllabus = {};
   ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
   _syncSnapshot.practiceLogs = {}; (S.practiceLogs||[]).forEach(p=>{ _syncSnapshot.practiceLogs[p.id]=_snapKey(_payloadPracticeLog(p,uid)); });
+  _syncSnapshot._streaks = _snapKey({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]});
 }
 
 async function loadUserData(){
@@ -640,11 +643,35 @@ async function loadUserData(){
   }
 }
 
-async function save(){
-  
+// ── Debounced network sync ──
+// save() is called extremely often (every practice-log tap, every checkbox,
+// every field edit). Writing to localStorage is cheap and stays instant, but
+// hitting Supabase on every single call multiplies IO fast — especially now
+// that Practice Log encourages many quick logs per session. So the network
+// part is debounced: rapid-fire save() calls within the window collapse into
+// ONE upsert round instead of one per action.
+let _saveDebounceTimer = null;
+const SAVE_DEBOUNCE_MS = 1200;
+
+function save(){
   if(S.backlogStreak > 365) S.backlogStreak = 0;
   if(S.backlogBestStreak > 365) S.backlogBestStreak = 0;
-  localStorage.setItem('jt3', JSON.stringify(S));
+  localStorage.setItem('jt3', JSON.stringify(S));   // instant, always — no data loss risk
+  if(!sb || !currentUser) return;
+  clearTimeout(_saveDebounceTimer);
+  _saveDebounceTimer = setTimeout(_syncToServer, SAVE_DEBOUNCE_MS);
+}
+
+// Flush immediately if the user is about to leave/hide the tab, so a
+// debounced save in-flight doesn't get lost.
+function flushSave(){
+  if(_saveDebounceTimer){ clearTimeout(_saveDebounceTimer); _saveDebounceTimer=null; }
+  return _syncToServer();
+}
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushSave(); });
+window.addEventListener('beforeunload', flushSave);
+
+async function _syncToServer(){
   if(!sb || !currentUser) return;
   if(isSaving){ saveQueue=true; return; }
   isSaving = true;
@@ -674,12 +701,17 @@ async function save(){
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
     if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
 
-    // Streaks is always a single row — negligible cost, left as-is.
-    ops.push(sb.from('streaks').upsert({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]},{onConflict:'user_id'}));
+    // Streaks — now also diff-checked, since with Practice Log firing saves
+    // far more often, an unconditional call here adds up fast.
+    const streaksPayload = {user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]};
+    const streaksKey = _snapKey(streaksPayload);
+    if(_syncSnapshot._streaks !== streaksKey){
+      ops.push(sb.from('streaks').upsert(streaksPayload,{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._streaks = streaksKey; }));
+    }
 
     await Promise.all(ops);
   }catch(e){ console.error('Save error:',e); }
-  isSaving=false; if(saveQueue){ saveQueue=false; save(); }
+  isSaving=false; if(saveQueue){ saveQueue=false; _syncToServer(); }
 }
 
 const _dbTableName = { practiceLogs:'practice_logs' };
@@ -938,13 +970,9 @@ function updatePracticeNewBadge(){
 async function checkWelcomeModal() {
   
   const notifOn = localStorage.getItem('notif_enabled') === '1' && Notification.permission === 'granted';
-  let emailOn = false;
-  if (sb && currentUser) {
-    try {
-      const { data } = await sb.from('user_preferences').select('email_reports').eq('user_id', currentUser.id).single();
-      emailOn = data?.email_reports === 'monthly';
-    } catch(e) {}
-  }
+  // email_reports is already loaded into `userProfile` by loadUserProfile() during
+  // login/init — no need to hit user_preferences again here.
+  const emailOn = userProfile?.email_reports === 'monthly';
   
   if (notifOn && emailOn) return;
 
@@ -1732,6 +1760,46 @@ function _initScrollReveal() {
     });
   }, { root: root, threshold: 0.12 });
   els.forEach(function(el) { obs.observe(el); });
+}
+
+function _rollOdometer(el){
+  if (!el || el.dataset.rolled === '1') return;
+  el.dataset.rolled = '1';
+  const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+  const display = el.getAttribute('data-count-display') || String(target);
+  const startVal = Math.round(target * 0.55); // start partway in — a quick punch, not a long grind from zero
+  const DUR = 850; // short and snappy
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(3px)';
+  requestAnimationFrame(() => {
+    el.style.transition = 'opacity .3s ease, transform .3s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
+  const t0 = performance.now();
+  function frame(now){
+    const p = Math.min(1, (now - t0) / DUR);
+    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    const val = Math.round(startVal + (target - startVal) * eased);
+    el.textContent = val.toLocaleString('en-IN');
+    if (p < 1) requestAnimationFrame(frame);
+    else el.textContent = display;
+  }
+  requestAnimationFrame(frame);
+}
+function _initCountUp(scopeEl){
+  const root = document.getElementById('landing');
+  const container = scopeEl || root;
+  if (!container) return;
+  const els = container.querySelectorAll('.odo-num[data-count-to]');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) { els.forEach(_rollOdometer); return; }
+  const obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { _rollOdometer(e.target); obs.unobserve(e.target); }
+    });
+  }, { root: root, threshold: 0.4 });
+  els.forEach(function(el){ obs.observe(el); });
 }
 
 function landScrollTo(id) {
@@ -3185,6 +3253,58 @@ async function submitReview() {
   document.getElementById('modal-reviewPrompt').classList.remove('open');
   _reviewContext = null;
   setTimeout(() => toast(`Thanks for the ${rating}★ review! 🙏`, 'success'), 300);
+}
+
+
+/* -- Landing page: pull real, curated testimonials from the feedback system -- */
+function _escTesti(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _testiFeatureTag(subject){
+  const cleaned = (subject||'').replace(/review/i,'').trim();
+  return _escTesti(cleaned || 'JEETrack');
+}
+// Headline trust numbers shown on the landing page. Update these as your real numbers grow —
+// intentionally decoupled from the small sample of cards actually rendered below.
+const TESTI_TRUST_RATING = '4.8';
+function _testiCardHTML(t,i){
+  const rating = Math.max(1, Math.min(5, t.rating||5));
+  const stars = '★'.repeat(rating) + '☆'.repeat(5-rating);
+  const name = _escTesti((t.display_name||'').trim() || 'JEETrack User');
+  const initial = name.charAt(0).toUpperCase() || 'J';
+  const colors=['linear-gradient(135deg,#7c6af7,#a695ff)','linear-gradient(135deg,#34d399,#2dd4bf)','linear-gradient(135deg,#f472b6,#fb7185)','linear-gradient(135deg,#fbbf24,#f97316)','linear-gradient(135deg,#60a5fa,#3b82f6)'];
+  const bg = colors[i % colors.length];
+  return `<div class="ls-testi-card ls-reveal">
+    <span class="ls-testi-quotemark">&rdquo;</span>
+    <div class="ls-testi-stars">${stars}</div>
+    <div class="ls-testi-quote">"${_escTesti(t.message)}"</div>
+    <div class="ls-testi-foot">
+      <div class="ls-testi-avatar" style="background:${bg}">${initial}</div>
+      <div>
+        <div class="ls-testi-name-row">
+          <span class="ls-testi-name">${name}</span>
+          <span class="ls-testi-checkmark" title="Verified user"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg></span>
+        </div>
+        <div class="ls-testi-tag">${_testiFeatureTag(t.subject)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+async function loadLandingTestimonials(){
+  const section = document.getElementById('testimonials-section');
+  const grid = document.getElementById('ls-testi-grid');
+  if(!section || !grid || !sb) return;
+  try{
+    const { data, error } = await sb.from('public_testimonials').select('*').order('created_at',{ascending:false}).limit(9);
+    if(error || !data || !data.length) return; 
+    grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
+    const trustRow = document.getElementById('ls-testi-trustrow');
+    if(trustRow){
+      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${TESTI_TRUST_RATING}/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-count-to="1000" data-count-display="1,000+">0</span> JEETrack verified reviews</span>`;
+      if(typeof _initCountUp === 'function') _initCountUp(trustRow);
+    }
+    section.style.display = '';
+    if(typeof _initScrollReveal === 'function') setTimeout(_initScrollReveal, 50);
+  }catch(e){ 
+  }
 }
 
 

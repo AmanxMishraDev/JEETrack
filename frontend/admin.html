@@ -1118,15 +1118,38 @@ tr.fb-expand-row{background:transparent!important;}
             <input class="compose-input" id="fb-search" placeholder="Search feedbacks..." style="padding-left:1.8rem;width:220px;" oninput="filterFeedbacks(this.value)"/>
           </div>
         </div>
+
+        
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd);">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--mu);cursor:pointer;user-select:none;">
+            <input type="checkbox" id="fb-filter-hastext" onchange="loadFeedbacks(0)" style="accent-color:var(--ac);cursor:pointer;"/>
+            With comments only
+          </label>
+          <div style="width:1px;height:18px;background:var(--bd);"></div>
+          <div class="rtab-group" id="fb-rating-filter" style="display:flex;gap:.3rem;flex-wrap:wrap;">
+            <button class="action-btn btn-primary fb-rtab active" data-rating="" onclick="setFbRatingFilter('',this)" style="font-size:.72rem;padding:.3rem .65rem;">All</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="5" onclick="setFbRatingFilter('5',this)" style="font-size:.72rem;padding:.3rem .55rem;">★5</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="4" onclick="setFbRatingFilter('4',this)" style="font-size:.72rem;padding:.3rem .55rem;">★4</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="3" onclick="setFbRatingFilter('3',this)" style="font-size:.72rem;padding:.3rem .55rem;">★3</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="2" onclick="setFbRatingFilter('2',this)" style="font-size:.72rem;padding:.3rem .55rem;">★2</button>
+            <button class="action-btn btn-ghost fb-rtab" data-rating="1" onclick="setFbRatingFilter('1',this)" style="font-size:.72rem;padding:.3rem .55rem;">★1</button>
+          </div>
+          <div style="margin-left:auto;">
+            <button class="action-btn btn-primary" id="fb-view-featured-btn" style="font-size:.72rem;padding:.3rem .7rem;" onclick="viewAllFeatured(this)">★ View All Featured</button>
+          </div>
+        </div>
+
+        <div id="fb-warning-banner" style="display:none;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;border-radius:8px;padding:.6rem .8rem;font-size:.74rem;margin-bottom:.9rem;"></div>
+
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>User</th><th>Email</th><th>Rating</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th>
+                <th>User</th><th>Email</th><th>Rating</th><th>Subject</th><th>Message</th><th>Date</th><th>Testimonial</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="fb-table">
-              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+              <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1201,6 +1224,7 @@ tr.fb-expand-row{background:transparent!important;}
       <div id="modal-body-content"><div class="loading"><div class="spinner"></div></div></div>
     </div>
   </div>
+</div>
 </div>
 
 
@@ -2751,22 +2775,51 @@ async function loadFeedbackStats() {
   }
 }
 
+let _fbRatingFilter = '';
+let _fbFeaturedOnly = false;
+
 async function loadFeedbacks(page = 0) {
   _fbPage = page;
   _pagination.feedback = page;
   const tbody = document.getElementById('fb-table');
-  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
   try {
-    const d = await api(`feedback_list&limit=20&offset=${page*20}`);
+    const hasText = document.getElementById('fb-filter-hastext')?.checked ? '1' : '';
+    const params = `&limit=20&offset=${page*20}${hasText ? '&hasText=1' : ''}${_fbRatingFilter ? '&rating='+_fbRatingFilter : ''}${_fbFeaturedOnly ? '&featuredOnly=1' : ''}`;
+    const d = await api(`feedback_list${params}`);
     _allFeedbacks = d.feedbacks || [];
     _filteredFeedbacks = _allFeedbacks;
     renderFeedbackTable(_filteredFeedbacks);
     document.getElementById('fb-prev').disabled = page === 0;
     document.getElementById('fb-next').disabled = _allFeedbacks.length < 20;
     document.getElementById('fb-page-info').textContent = `Page ${page+1} · ${d.total||''} total`;
+
+    const banner = document.getElementById('fb-warning-banner');
+    if (d.warning) {
+      banner.textContent = '⚠️ ' + d.warning;
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="no-data">Error loading feedbacks: ${e.message}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8"><div class="no-data">Error loading feedbacks: ${e.message}</div></td></tr>`;
   }
+}
+
+function setFbRatingFilter(val, btn) {
+  _fbRatingFilter = val;
+  document.querySelectorAll('.fb-rtab').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-ghost'); });
+  btn.classList.remove('btn-ghost');
+  btn.classList.add('active','btn-primary');
+  loadFeedbacks(0);
+}
+
+function viewAllFeatured(btn) {
+  _fbFeaturedOnly = !_fbFeaturedOnly;
+  btn.classList.toggle('btn-primary', _fbFeaturedOnly);
+  btn.classList.toggle('btn-ghost', !_fbFeaturedOnly);
+  btn.textContent = _fbFeaturedOnly ? '✕ Showing Featured Only' : '★ View All Featured';
+  loadFeedbacks(0);
 }
 
 function filterFeedbacks(q) {
@@ -2775,7 +2828,7 @@ function filterFeedbacks(q) {
         (f.subject||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.message||'').toLowerCase().includes(q.toLowerCase()) ||
         (f.email||'').toLowerCase().includes(q.toLowerCase()) ||
-        (f.display_name||'').toLowerCase().includes(q.toLowerCase()))
+        (f.account_name||'').toLowerCase().includes(q.toLowerCase()))
     : _allFeedbacks;
   renderFeedbackTable(_filteredFeedbacks);
 }
@@ -2783,7 +2836,7 @@ function filterFeedbacks(q) {
 function renderFeedbackTable(feedbacks) {
   const tbody = document.getElementById('fb-table');
   if (!feedbacks.length) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="no-data">No feedbacks found</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="no-data">No feedbacks found</div></td></tr>';
     return;
   }
   tbody.innerHTML = feedbacks.map((f, i) => {
@@ -2791,9 +2844,11 @@ function renderFeedbackTable(feedbacks) {
     const msg = f.message || '';
     const preview = msg.length > 40 ? msg.slice(0, 40) + '…' : (msg || '—');
     const hasMore = msg.length > 40;
+    const isFeatured = !!f.featured;
+    const canFeature = !!(f.message && f.message.trim());
     return `
     <tr id="fb-row-${i}">
-      <td style="font-size:.75rem;font-weight:600;">${esc(f.display_name||f.email?.split('@')[0]||'Anonymous')}</td>
+      <td style="font-size:.75rem;font-weight:600;">${esc(f.account_name||f.email?.split('@')[0]||'Anonymous')}</td>
       <td style="font-size:.72rem;color:var(--mu);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.email||'—')}</td>
       <td style="font-size:.8rem;white-space:nowrap;" title="${f.rating != null ? f.rating+'/5' : 'No rating'}">${stars}</td>
       <td style="font-weight:600;font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.subject||'')}">${esc(f.subject||'—')}</td>
@@ -2801,6 +2856,12 @@ function renderFeedbackTable(feedbacks) {
         <div class="fb-msg-preview">${esc(preview)}${hasMore ? ' <span style="color:var(--ac2);font-size:.68rem;">▼</span>' : ''}</div>
       </td>
       <td style="font-size:.72rem;color:var(--mu);white-space:nowrap;">${fmtDate(f.created_at)}</td>
+      <td>
+        <button class="action-btn ${isFeatured ? 'btn-primary' : 'btn-ghost'}" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;${canFeature ? '' : 'opacity:.4;cursor:not-allowed;'}"
+          onclick="${canFeature ? `toggleFeatured(${i})` : ''}" title="${!canFeature ? 'No written comment to feature' : (isFeatured ? 'Remove from landing page' : 'Feature as testimonial')}">
+          ${isFeatured ? '★ Featured' : '☆ Feature'}
+        </button>
+      </td>
       <td>
         <button class="action-btn btn-primary" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;"
           onclick="replyToFeedback('${esc(f.user_id||'')}','${esc(f.email||'')}','${esc(f.subject||'')}')">
@@ -2812,6 +2873,31 @@ function renderFeedbackTable(feedbacks) {
 
   
   tbody._feedbacks = feedbacks;
+}
+
+async function toggleFeatured(i) {
+  const tbody = document.getElementById('fb-table');
+  const feedbacks = tbody._feedbacks || _filteredFeedbacks;
+  const f = feedbacks[i];
+  if (!f) return;
+
+  const nextState = !f.featured;
+  const name = f.account_name || f.email?.split('@')[0] || 'this user';
+  const confirmMsg = nextState
+    ? `Feature ${name}'s review on the landing page?\n\n"${f.message}"\n\nTheir account name will be shown publicly.`
+    : `Remove ${name}'s review from the landing page?`;
+  if (!confirm(confirmMsg)) return;
+
+  try {
+    const result = await apiPost('feedback_feature', { id: f.id, featured: nextState });
+    if (result && result.error) throw new Error(result.error);
+    f.featured = nextState;
+    if (result?.feedback?.display_name) f.display_name = result.feedback.display_name;
+    renderFeedbackTable(feedbacks);
+    showToast(nextState ? 'Featured on landing page ✓' : 'Removed from landing page');
+  } catch (e) {
+    showToast('Failed to save: ' + e.message);
+  }
 }
 
 function toggleFeedbackExpand(i, cell) {
@@ -2839,7 +2925,7 @@ function toggleFeedbackExpand(i, cell) {
   const expandRow = document.createElement('tr');
   expandRow.id = `fb-expand-${i}`;
   expandRow.className = 'fb-expand-row';
-  expandRow.innerHTML = `<td colspan="7">
+  expandRow.innerHTML = `<td colspan="8">
     <div class="fb-expand-box">
       <div class="fb-expand-label">Full Message</div>
       ${esc(f.message || '(no message)')}

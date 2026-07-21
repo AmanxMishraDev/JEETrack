@@ -998,28 +998,91 @@ export default async function handler(req, res) {
     if (action === 'feedback_list') {
       const limit  = parseInt(req.query.limit || '50');
       const offset = parseInt(req.query.offset || '0');
+      const hasText = req.query.hasText === '1' || req.query.hasText === 'true';
+      const ratingFilter = parseInt(req.query.rating || '', 10); 
+      const featuredOnly = req.query.featuredOnly === '1' || req.query.featuredOnly === 'true';
 
       
       
-      const feedbacks = await sbQuery(
-        `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=${limit}&offset=${offset}`
-      ).catch(() => []);
+      let all;
+      let testimonialColumnsMissing = false;
+      try {
+        all = await sbQuery(
+          `feedback?select=id,user_id,subject,message,rating,featured,display_name,created_at&order=created_at.desc&limit=1000`
+        );
+      } catch (e) {
+        
+        testimonialColumnsMissing = true;
+        all = await sbQuery(
+          `feedback?select=id,user_id,subject,message,rating,created_at&order=created_at.desc&limit=1000`
+        ).catch(() => []);
+        all = all.map(f => ({ ...f, featured: false, display_name: null }));
+      }
 
-      
-      const total = await sbCount('feedback').catch(() => 0);
+      let filtered = all;
+      if (hasText) {
+        filtered = filtered.filter(f => {
+          const m = (f.message || '').trim().toLowerCase();
+          return m && m !== '(no comment)';
+        });
+      }
+      if (ratingFilter >= 1 && ratingFilter <= 5) {
+        filtered = filtered.filter(f => Math.round(Number(f.rating)) === ratingFilter);
+      }
+      if (featuredOnly) {
+        filtered = filtered.filter(f => !!f.featured);
+      }
+
+      const total = filtered.length;
+      const page = filtered.slice(offset, offset + limit);
 
       
       const roster = await buildRoster().catch(() => []);
       const rosterMap = {};
       roster.forEach(u => { rosterMap[u.id] = u; });
 
-      const enriched = feedbacks.map(f => ({
+      const enriched = page.map(f => ({
         ...f,
-        display_name: rosterMap[f.user_id]?.name || f.email?.split('@')[0] || 'Anonymous',
+        account_name: rosterMap[f.user_id]?.name || f.email?.split('@')[0] || 'Anonymous',
         email: f.email || rosterMap[f.user_id]?.email || '',
       }));
 
-      return res.status(200).json({ feedbacks: enriched, total });
+      return res.status(200).json({
+        feedbacks: enriched, total,
+        ...(testimonialColumnsMissing ? { warning: 'featured/display_name columns not found on feedback table — run testimonials_supabase_schema.sql' } : {}),
+      });
+    }
+
+    
+    
+    if (action === 'feedback_feature') {
+      if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+      const { id, featured } = req.body || {};
+      if (!id) return res.status(400).json({ error: 'Missing feedback id' });
+
+      const payload = { featured: !!featured };
+
+      if (featured) {
+        try {
+          const rows = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}&select=user_id`);
+          const userId = rows?.[0]?.user_id;
+          if (userId) {
+            const roster = await buildRoster().catch(() => []);
+            const user = roster.find(u => u.id === userId);
+            payload.display_name = user?.name || (user?.email ? user.email.split('@')[0] : null) || 'JEETrack User';
+          }
+        } catch (e) { }
+      }
+
+      try {
+        const updated = await sbQuery(`feedback?id=eq.${encodeURIComponent(id)}`, 'PATCH', payload);
+        return res.status(200).json({ ok: true, feedback: updated?.[0] || null });
+      } catch (e) {
+        const hint = /column/i.test(e.message)
+          ? ' — run testimonials_supabase_schema.sql to add the featured/display_name columns first'
+          : '';
+        return res.status(500).json({ error: 'Failed to update feedback: ' + e.message + hint });
+      }
     }
 
     
