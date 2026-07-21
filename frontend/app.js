@@ -1767,12 +1767,20 @@ function _rollOdometer(el){
   el.dataset.rolled = '1';
   const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
   const display = el.getAttribute('data-count-display') || String(target);
-  const DUR = 2200; // slow, deliberate
+  const startVal = Math.round(target * 0.55); // start partway in — a quick punch, not a long grind from zero
+  const DUR = 850; // short and snappy
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(3px)';
+  requestAnimationFrame(() => {
+    el.style.transition = 'opacity .3s ease, transform .3s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
   const t0 = performance.now();
   function frame(now){
     const p = Math.min(1, (now - t0) / DUR);
-    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic — decelerates smoothly across the FULL duration
-    const val = Math.round(target * eased);
+    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    const val = Math.round(startVal + (target - startVal) * eased);
     el.textContent = val.toLocaleString('en-IN');
     if (p < 1) requestAnimationFrame(frame);
     else el.textContent = display;
