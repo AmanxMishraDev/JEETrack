@@ -1765,30 +1765,17 @@ function _initScrollReveal() {
 function _rollOdometer(el){
   if (!el || el.dataset.rolled === '1') return;
   el.dataset.rolled = '1';
-  const finalStr = el.getAttribute('data-odo-final') || '';
-  const chars = finalStr.split('');
-  const digitPositions = [];
-  chars.forEach((c, i) => { if (/[0-9]/.test(c)) digitPositions.push(i); });
-  const n = Math.max(1, digitPositions.length - 1);
-  const DUR = 2000; // slow, deliberate premium reveal
-  const LOCK_START = DUR * 0.32;
-  const LOCK_SPAN = DUR * 0.62;
-  el.classList.add('odo-scrambling');
+  const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+  const display = el.getAttribute('data-count-display') || String(target);
+  const DUR = 2200; // slow, deliberate
   const t0 = performance.now();
   function frame(now){
-    const elapsed = now - t0;
-    let out = '';
-    let done = true;
-    chars.forEach((c, i) => {
-      if (!/[0-9]/.test(c)) { out += c; return; }
-      const posIdx = digitPositions.indexOf(i);
-      const lockAt = LOCK_START + (LOCK_SPAN * (posIdx / n));
-      if (elapsed >= lockAt) { out += c; }
-      else { out += Math.floor(Math.random() * 10); done = false; }
-    });
-    el.textContent = out;
-    if (!done || elapsed < DUR) requestAnimationFrame(frame);
-    else { el.textContent = finalStr; el.classList.remove('odo-scrambling'); }
+    const p = Math.min(1, (now - t0) / DUR);
+    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic — decelerates smoothly across the FULL duration
+    const val = Math.round(target * eased);
+    el.textContent = val.toLocaleString('en-IN');
+    if (p < 1) requestAnimationFrame(frame);
+    else el.textContent = display;
   }
   requestAnimationFrame(frame);
 }
@@ -1796,7 +1783,7 @@ function _initCountUp(scopeEl){
   const root = document.getElementById('landing');
   const container = scopeEl || root;
   if (!container) return;
-  const els = container.querySelectorAll('.odo-num[data-odo-final]');
+  const els = container.querySelectorAll('.odo-num[data-count-to]');
   if (!els.length) return;
   if (!('IntersectionObserver' in window)) { els.forEach(_rollOdometer); return; }
   const obs = new IntersectionObserver(function(entries){
@@ -3269,7 +3256,6 @@ function _testiFeatureTag(subject){
 }
 // Headline trust numbers shown on the landing page. Update these as your real numbers grow —
 // intentionally decoupled from the small sample of cards actually rendered below.
-const TESTI_TRUST_COUNT = '1,000+';
 const TESTI_TRUST_RATING = '4.8';
 function _testiCardHTML(t,i){
   const rating = Math.max(1, Math.min(5, t.rating||5));
@@ -3304,7 +3290,7 @@ async function loadLandingTestimonials(){
     grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
     const trustRow = document.getElementById('ls-testi-trustrow');
     if(trustRow){
-      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${TESTI_TRUST_RATING}<span class="ls-testi-trust-ratingmax">/5</span></span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-odo-final="${TESTI_TRUST_COUNT}">0</span> JEETrack verified reviews</span>`;
+      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${TESTI_TRUST_RATING}/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-count-to="1000" data-count-display="1,000+">0</span> JEETrack verified reviews</span>`;
       if(typeof _initCountUp === 'function') _initCountUp(trustRow);
     }
     section.style.display = '';
