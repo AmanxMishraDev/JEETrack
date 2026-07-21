@@ -1762,37 +1762,35 @@ function _initScrollReveal() {
   els.forEach(function(el) { obs.observe(el); });
 }
 
-function _buildOdometerHTML(finalStr){
-  const CYCLES = 3; // full extra spins before landing, for that slot-machine roll feel
-  return String(finalStr).split('').map((ch, i) => {
-    if (/[0-9]/.test(ch)) {
-      const target = parseInt(ch, 10);
-      let spans = '';
-      for (let c = 0; c < CYCLES; c++) { for (let d = 0; d < 10; d++) spans += `<span>${d}</span>`; }
-      for (let d = 0; d < 10; d++) spans += `<span>${d}</span>`;
-      return `<span class="odo-digit"><span class="odo-strip" data-target="${target}" data-idx="${i}">${spans}</span></span>`;
-    }
-    return `<span class="odo-static">${ch}</span>`;
-  }).join('');
-}
 function _rollOdometer(el){
   if (!el || el.dataset.rolled === '1') return;
   el.dataset.rolled = '1';
   const finalStr = el.getAttribute('data-odo-final') || '';
-  el.innerHTML = _buildOdometerHTML(finalStr);
-  const strips = el.querySelectorAll('.odo-strip');
-  void el.offsetHeight; // force reflow so the transition below actually animates
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      strips.forEach((strip) => {
-        const idx = parseInt(strip.getAttribute('data-idx'), 10) || 0;
-        const target = parseInt(strip.getAttribute('data-target'), 10) || 0;
-        const landingIndex = 3 * 10 + target; // 3 full cycles, then land on target
-        strip.style.transitionDelay = (idx * 100) + 'ms';
-        strip.style.transform = `translateY(-${landingIndex}em)`;
-      });
+  const chars = finalStr.split('');
+  const digitPositions = [];
+  chars.forEach((c, i) => { if (/[0-9]/.test(c)) digitPositions.push(i); });
+  const n = Math.max(1, digitPositions.length - 1);
+  const DUR = 2000; // slow, deliberate premium reveal
+  const LOCK_START = DUR * 0.32;
+  const LOCK_SPAN = DUR * 0.62;
+  el.classList.add('odo-scrambling');
+  const t0 = performance.now();
+  function frame(now){
+    const elapsed = now - t0;
+    let out = '';
+    let done = true;
+    chars.forEach((c, i) => {
+      if (!/[0-9]/.test(c)) { out += c; return; }
+      const posIdx = digitPositions.indexOf(i);
+      const lockAt = LOCK_START + (LOCK_SPAN * (posIdx / n));
+      if (elapsed >= lockAt) { out += c; }
+      else { out += Math.floor(Math.random() * 10); done = false; }
     });
-  });
+    el.textContent = out;
+    if (!done || elapsed < DUR) requestAnimationFrame(frame);
+    else { el.textContent = finalStr; el.classList.remove('odo-scrambling'); }
+  }
+  requestAnimationFrame(frame);
 }
 function _initCountUp(scopeEl){
   const root = document.getElementById('landing');

@@ -1681,23 +1681,14 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .hus-num{ display:flex; }
 .odo-num{
   display:inline-flex; align-items:baseline;
-  font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:#fff; line-height:1.32;
+  font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:#fff;
   font-variant-numeric:tabular-nums;
+  transition:color .4s ease, text-shadow .4s ease;
 }
-.odo-digit{
-  display:inline-block; overflow:hidden;
-  height:1.32em; min-width:.68em; vertical-align:baseline; position:relative;
+.odo-num.odo-scrambling{
+  color:#b8adff;
+  text-shadow:0 0 14px rgba(124,106,247,.55);
 }
-.odo-strip{
-  display:flex; flex-direction:column;
-  transition:transform 1.3s cubic-bezier(.16,.9,.13,1.06);
-  will-change:transform;
-}
-.odo-strip span{
-  height:1.32em; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-}
-.odo-static{ display:inline-block; }
 .hus-lbl{ font-size:9.5px; color:rgba(255,255,255,.32); font-weight:500; letter-spacing:.03em; white-space:nowrap; margin-top:2px; }
 .hus-div{ width:1px; height:26px; background:rgba(255,255,255,.09); }
 @media(max-width:640px){
@@ -5348,8 +5339,8 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 .ls-testi-trust-text .odo-num{font-size:1em;color:#fff;font-weight:700;vertical-align:baseline}
 .ls-testi-trust-stars{color:#fbbf24;font-size:19px;letter-spacing:2px;display:inline-flex;gap:1px;filter:drop-shadow(0 0 8px rgba(251,191,36,.25))}
 .ls-testi-trust-rating{display:flex;align-items:center;gap:7px}
-.ls-testi-trust-ratingnum{font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:15px;display:inline-flex;align-items:baseline;gap:1px}
-.ls-testi-trust-ratingmax{font-family:'Syne',sans-serif;font-weight:600;color:rgba(255,255,255,.45);font-size:12px}
+.ls-testi-trust-ratingnum{font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:14px;display:inline-flex;align-items:baseline;gap:1px}
+.ls-testi-trust-ratingmax{font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:14px}
 
 .ls-testi-grid {
   display: grid;
