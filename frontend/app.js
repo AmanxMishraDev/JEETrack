@@ -1762,33 +1762,48 @@ function _initScrollReveal() {
   els.forEach(function(el) { obs.observe(el); });
 }
 
-function _animateCountEl(el){
-  if(!el || el.dataset.counted === '1') return;
-  el.dataset.counted = '1';
-  const target = parseFloat(el.getAttribute('data-count-target')) || 0;
-  const suffix = el.getAttribute('data-count-suffix') || '';
-  const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const dur = 1500;
-  const t0 = performance.now();
-  function tick(now){
-    const p = Math.min(1, (now - t0) / dur);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = fmt(target * eased) + suffix;
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = fmt(target) + suffix;
-  }
-  requestAnimationFrame(tick);
+function _buildOdometerHTML(finalStr){
+  const CYCLES = 3; // full extra spins before landing, for that slot-machine roll feel
+  return String(finalStr).split('').map((ch, i) => {
+    if (/[0-9]/.test(ch)) {
+      const target = parseInt(ch, 10);
+      let spans = '';
+      for (let c = 0; c < CYCLES; c++) { for (let d = 0; d < 10; d++) spans += `<span>${d}</span>`; }
+      for (let d = 0; d < 10; d++) spans += `<span>${d}</span>`;
+      return `<span class="odo-digit"><span class="odo-strip" data-target="${target}" data-idx="${i}">${spans}</span></span>`;
+    }
+    return `<span class="odo-static">${ch}</span>`;
+  }).join('');
+}
+function _rollOdometer(el){
+  if (!el || el.dataset.rolled === '1') return;
+  el.dataset.rolled = '1';
+  const finalStr = el.getAttribute('data-odo-final') || '';
+  el.innerHTML = _buildOdometerHTML(finalStr);
+  const strips = el.querySelectorAll('.odo-strip');
+  void el.offsetHeight; // force reflow so the transition below actually animates
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      strips.forEach((strip) => {
+        const idx = parseInt(strip.getAttribute('data-idx'), 10) || 0;
+        const target = parseInt(strip.getAttribute('data-target'), 10) || 0;
+        const landingIndex = 3 * 10 + target; // 3 full cycles, then land on target
+        strip.style.transitionDelay = (idx * 100) + 'ms';
+        strip.style.transform = `translateY(-${landingIndex}em)`;
+      });
+    });
+  });
 }
 function _initCountUp(scopeEl){
   const root = document.getElementById('landing');
   const container = scopeEl || root;
   if (!container) return;
-  const els = container.querySelectorAll('[data-count-target]');
+  const els = container.querySelectorAll('.odo-num[data-odo-final]');
   if (!els.length) return;
-  if (!('IntersectionObserver' in window)) { els.forEach(_animateCountEl); return; }
+  if (!('IntersectionObserver' in window)) { els.forEach(_rollOdometer); return; }
   const obs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
-      if (e.isIntersecting) { _animateCountEl(e.target); obs.unobserve(e.target); }
+      if (e.isIntersecting) { _rollOdometer(e.target); obs.unobserve(e.target); }
     });
   }, { root: root, threshold: 0.4 });
   els.forEach(function(el){ obs.observe(el); });
@@ -3256,7 +3271,7 @@ function _testiFeatureTag(subject){
 }
 // Headline trust numbers shown on the landing page. Update these as your real numbers grow —
 // intentionally decoupled from the small sample of cards actually rendered below.
-const TESTI_TRUST_COUNT = 1000;
+const TESTI_TRUST_COUNT = '1,000+';
 const TESTI_TRUST_RATING = '4.8';
 function _testiCardHTML(t,i){
   const rating = Math.max(1, Math.min(5, t.rating||5));
@@ -3291,7 +3306,7 @@ async function loadLandingTestimonials(){
     grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
     const trustRow = document.getElementById('ls-testi-trustrow');
     if(trustRow){
-      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-text"><b>${TESTI_TRUST_RATING}</b>/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text"><b><span class="hus-count" data-count-target="${TESTI_TRUST_COUNT}" data-count-suffix="+">0</span></b> aspirants using JEETrack</span>`;
+      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${TESTI_TRUST_RATING}<span class="ls-testi-trust-ratingmax">/5</span></span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-odo-final="${TESTI_TRUST_COUNT}">0</span> JEETrack verified reviews</span>`;
       if(typeof _initCountUp === 'function') _initCountUp(trustRow);
     }
     section.style.display = '';
