@@ -824,7 +824,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="ls-pill ls-pill-pink">Real Feedback</div>
       <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
       <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
-      <div class="ls-testi-trustrow" id="ls-testi-trustrow"></div>
+      <div class="ls-testi-trustbar"><div class="ls-testi-trustrow" id="ls-testi-trustrow"></div></div>
     </div>
     <div class="ls-testi-grid" id="ls-testi-grid"></div>
   </section>
@@ -4495,9 +4495,9 @@ function renderOvNotifs(){
   const notifs=[];
   
   S.upcoming.filter(t=>t.date===tmrStr).forEach(t=>notifs.push({id:'tmr-'+t.id,c:'am',msg:`⏰ Test TOMORROW: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`nav('${t.exam==='mains'?'mains':'advanced'}');setTimeout(()=>{ const btn=document.querySelector('[data-group="${t.exam==='mains'?'mn-view':'adv-view'}"][onclick*="upcoming"]'); if(btn){btn.click();} },200);`}));
-  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`openLogFromUpcoming(${t.id})`,cta:'Enter Marks'}));
+  S.upcoming.filter(t=>t.date===td()).forEach(t=>notifs.push({id:'tdy-'+t.id,c:'rd',msg:`🔴 Test TODAY: ${cap(t.exam)} ${t.session||''} ${t.venue?'@ '+t.venue:''}`,fn:`openLogFromUpcoming(${t.id})`,cta:'+ Add Score'}));
   const visible=notifs.filter(n=>!dismissedNotifs.has(n.id));
-  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px" onclick="${n.fn}"><span>${n.msg}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0">${n.cta?`<span style="font-size:11px;font-weight:700;color:inherit;background:rgba(255,255,255,.14);padding:4px 10px;border-radius:99px;white-space:nowrap">${n.cta} →</span>`:''}<button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></span></div>`).join('');
+  document.getElementById('ov-notifs').innerHTML=visible.map(n=>`<div id="notif-${n.id}" class="nb ${n.c}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px" onclick="${n.fn}"><span>${n.msg}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0">${n.cta?`<span style="font-size:11px;font-weight:700;color:inherit;background:rgba(255,255,255,.14);padding:4px 10px;border-radius:99px;white-space:nowrap">${n.cta}</span>`:''}<button class="nb-x" onclick="event.stopPropagation();dismissNotif('${n.id}')" title="Dismiss">✕</button></span></div>`).join('');
 }
 
 function save(){localStorage.setItem('jt3',JSON.stringify(S));updateActivity();}
@@ -7109,7 +7109,7 @@ function _renderOverview(){
     const isT=t.date===td(),isTmr=t.date===tmrrStr;
     const dl3=Math.ceil((new Date(t.date+'T00:00:00')-new Date(td()+'T00:00:00'))/86400000);
     const rightSide=isT
-      ?`<button onclick="event.stopPropagation();openLogFromUpcoming(${t.id})" style="cursor:pointer;border:none;font-size:10.5px;font-weight:700;color:#0a0a0f;background:linear-gradient(135deg,#f87171,#fb923c);padding:4px 9px;border-radius:99px;white-space:nowrap;display:flex;align-items:center;gap:3px">Enter Marks<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>`
+      ?`<button onclick="event.stopPropagation();openLogFromUpcoming(${t.id})" title="Add your score" style="cursor:pointer;border:none;font-size:10.5px;font-weight:700;color:#0a0a0f;background:linear-gradient(135deg,#f87171,#fb923c);padding:4px 10px;border-radius:99px;white-space:nowrap;display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Score</button>`
       :`<span style="color:${isTmr?'var(--am)':'var(--mu)'}; font-size:11px">${isTmr?'Tomorrow':dl3+'d away'}</span>`;
     return`<div style="padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>${cap(t.exam)} <span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'P'}</span></span>${rightSide}</div>`;
   }).join(''):`<div style="font-size:12px;color:var(--mu);padding:.4rem 0">No upcoming tests</div>`;
