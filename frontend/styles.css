@@ -1682,17 +1682,21 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .odo-num{
   display:inline-flex; align-items:baseline;
   font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:#fff; line-height:1.32;
+  font-variant-numeric:tabular-nums;
 }
 .odo-digit{
   display:inline-block; overflow:hidden;
-  height:1.32em; width:.62em; vertical-align:baseline; position:relative;
+  height:1.32em; min-width:.68em; vertical-align:baseline; position:relative;
 }
 .odo-strip{
   display:flex; flex-direction:column;
   transition:transform 1.3s cubic-bezier(.16,.9,.13,1.06);
   will-change:transform;
 }
-.odo-strip span{ height:1.32em; line-height:1.32em; text-align:center; }
+.odo-strip span{
+  height:1.32em; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
 .odo-static{ display:inline-block; }
 .hus-lbl{ font-size:9.5px; color:rgba(255,255,255,.32); font-weight:500; letter-spacing:.03em; white-space:nowrap; margin-top:2px; }
 .hus-div{ width:1px; height:26px; background:rgba(255,255,255,.09); }
