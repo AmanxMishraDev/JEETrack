@@ -317,6 +317,7 @@ function showAuthScreen(fromSignOut){
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
   setTimeout(_initScrollReveal, 150);
+  setTimeout(_initCountUp, 150);
 
   
   
@@ -1759,6 +1760,38 @@ function _initScrollReveal() {
     });
   }, { root: root, threshold: 0.12 });
   els.forEach(function(el) { obs.observe(el); });
+}
+
+function _animateCountEl(el){
+  if(!el || el.dataset.counted === '1') return;
+  el.dataset.counted = '1';
+  const target = parseFloat(el.getAttribute('data-count-target')) || 0;
+  const suffix = el.getAttribute('data-count-suffix') || '';
+  const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const dur = 1500;
+  const t0 = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(target * eased) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(target) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+function _initCountUp(scopeEl){
+  const root = document.getElementById('landing');
+  const container = scopeEl || root;
+  if (!container) return;
+  const els = container.querySelectorAll('[data-count-target]');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window)) { els.forEach(_animateCountEl); return; }
+  const obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { _animateCountEl(e.target); obs.unobserve(e.target); }
+    });
+  }, { root: root, threshold: 0.4 });
+  els.forEach(function(el){ obs.observe(el); });
 }
 
 function landScrollTo(id) {
@@ -3221,30 +3254,27 @@ function _testiFeatureTag(subject){
   const cleaned = (subject||'').replace(/review/i,'').trim();
   return _escTesti(cleaned || 'JEETrack');
 }
-// Headline trust count shown on the landing page (e.g. "1,000+"). Update this as your real
-// verified-review count grows — it's intentionally decoupled from the small sample rendered below.
-const TESTI_TRUST_COUNT = '1,000+';
+// Headline trust numbers shown on the landing page. Update these as your real numbers grow —
+// intentionally decoupled from the small sample of cards actually rendered below.
+const TESTI_TRUST_COUNT = 1000;
+const TESTI_TRUST_RATING = '4.8';
 function _testiCardHTML(t,i){
   const rating = Math.max(1, Math.min(5, t.rating||5));
   const stars = '★'.repeat(rating) + '☆'.repeat(5-rating);
-  const name = _escTesti((t.display_name||'').trim() || 'Verified JEETrack User');
+  const name = _escTesti((t.display_name||'').trim() || 'JEETrack User');
   const initial = name.charAt(0).toUpperCase() || 'J';
   const colors=['linear-gradient(135deg,#7c6af7,#a695ff)','linear-gradient(135deg,#34d399,#2dd4bf)','linear-gradient(135deg,#f472b6,#fb7185)','linear-gradient(135deg,#fbbf24,#f97316)','linear-gradient(135deg,#60a5fa,#3b82f6)'];
   const bg = colors[i % colors.length];
   return `<div class="ls-testi-card ls-reveal">
     <span class="ls-testi-quotemark">&rdquo;</span>
     <div class="ls-testi-stars">${stars}</div>
-    <span class="ls-testi-verified" title="Verified in-app review">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 2.1 3.3-.5 1 3.2 3.1 1.3-.9 3.3 1.9 2.8-2.4 2.3.4 3.3-3.3.4-1.6 2.9L12 21l-3.1 1.1-1.6-2.9-3.3-.4.4-3.3-2.4-2.3 1.9-2.8-.9-3.3 3.1-1.3 1-3.2 3.3.5L12 1z"/><path d="M9 12.3l1.8 1.8 4-4.2" stroke="#0a0a0f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Verified JEETrack User
-    </span>
     <div class="ls-testi-quote">"${_escTesti(t.message)}"</div>
     <div class="ls-testi-foot">
       <div class="ls-testi-avatar" style="background:${bg}">${initial}</div>
       <div>
         <div class="ls-testi-name-row">
           <span class="ls-testi-name">${name}</span>
-          <span class="ls-testi-checkmark" title="Verified user"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg></span>
+          <span class="ls-testi-checkmark" title="Verified user"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg></span>
         </div>
         <div class="ls-testi-tag">${_testiFeatureTag(t.subject)}</div>
       </div>
@@ -3261,14 +3291,8 @@ async function loadLandingTestimonials(){
     grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
     const trustRow = document.getElementById('ls-testi-trustrow');
     if(trustRow){
-      const avatarColors=['#7c6af7','#34d399','#f472b6','#fbbf24','#60a5fa'];
-      const avatars = data.slice(0,5).map((t,i)=>{
-        const nm=(t.display_name||'').trim()||'J';
-        return `<span style="background:${avatarColors[i%avatarColors.length]}">${_escTesti(nm.charAt(0).toUpperCase())}</span>`;
-      }).join('');
-      const avgRating = (data.reduce((a,b)=>a+(b.rating||5),0)/data.length);
-      const roundedAvg = Math.round(avgRating*10)/10;
-      trustRow.innerHTML = `<div class="ls-testi-trust-avatars">${avatars}</div><span class="ls-testi-trust-text"><b>${TESTI_TRUST_COUNT}</b> verified aspirants trust JEETrack</span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-text"><b>${roundedAvg}</b>/5</span></span>`;
+      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-text"><b>${TESTI_TRUST_RATING}</b>/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text"><b><span class="hus-count" data-count-target="${TESTI_TRUST_COUNT}" data-count-suffix="+">0</span></b> aspirants using JEETrack</span>`;
+      if(typeof _initCountUp === 'function') _initCountUp(trustRow);
     }
     section.style.display = '';
     if(typeof _initScrollReveal === 'function') setTimeout(_initScrollReveal, 50);

@@ -1665,6 +1665,28 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .land-trusted-count{font-size:11px;color:rgba(255,255,255,.32);margin-left:8px;font-weight:500}
 
 .trust-badges-wrap{margin-top:2rem;position:relative;z-index:1;overflow:hidden;width:100%;animation:fadeSlideUp .9s .4s ease both}
+
+.hero-usage-stats{
+  display:flex; align-items:center; flex-wrap:wrap; gap:1.4rem;
+  margin-top:1.6rem; padding:1rem 1.3rem;
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+  border-radius:16px; position:relative; z-index:1;
+  animation:fadeSlideUp .9s .35s ease both;
+}
+.hus-item{ display:flex; align-items:center; gap:9px; }
+.hus-icon{
+  width:28px; height:28px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.hus-num{
+  font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:#fff; line-height:1.1;
+}
+.hus-lbl{ font-size:9.5px; color:rgba(255,255,255,.32); font-weight:500; letter-spacing:.03em; white-space:nowrap; margin-top:2px; }
+.hus-div{ width:1px; height:26px; background:rgba(255,255,255,.09); }
+@media(max-width:640px){
+  .hero-usage-stats{ gap:1rem 1.2rem; padding:.85rem 1rem; }
+  .hus-div{ display:none; }
+}
 .trust-badges-track{display:flex;gap:8px;width:max-content;animation:trustSwipe 24s linear infinite}
 .trust-badges-track:hover{animation-play-state:paused}
 @keyframes trustSwipe{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
@@ -5304,14 +5326,6 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   border-radius:99px; backdrop-filter:blur(6px);
 }
 .ls-testi-trustrow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; }
-.ls-testi-trust-avatars{display:flex;align-items:center}
-.ls-testi-trust-avatars span{
-  width:28px;height:28px;border-radius:50%;border:2px solid #0a0a0f;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#0a0a0f;
-  margin-left:-9px;
-}
-.ls-testi-trust-avatars span:first-child{margin-left:0}
 .ls-testi-trust-div{width:1px;height:20px;background:rgba(255,255,255,.12)}
 .ls-testi-trust-text{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500;white-space:nowrap}
 .ls-testi-trust-text b{color:#fff;font-weight:800;font-family:'Syne',sans-serif}
@@ -5363,17 +5377,9 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 }
 .ls-testi-stars {
   color: #fbbf24; font-size: 19px; letter-spacing: 3px;
-  margin-bottom: .9rem;
+  margin-bottom: 1.1rem;
   filter: drop-shadow(0 0 10px rgba(251,191,36,.25));
 }
-.ls-testi-verified{
-  display:inline-flex; align-items:center; gap:5px; flex-shrink:0; width:fit-content;
-  background:rgba(52,211,153,.1); color:#34d399; border:1px solid rgba(52,211,153,.28);
-  font-size:10.5px; font-weight:700; letter-spacing:.02em;
-  padding:4px 10px 4px 7px; border-radius:99px;
-  margin-bottom: 1.3rem;
-}
-.ls-testi-verified svg{ flex-shrink:0; }
 .ls-testi-quote {
   color: rgba(255,255,255,.87); font-size: 15px; line-height: 1.7;
   margin-bottom: 1.6rem; flex: 1; font-weight: 450;
