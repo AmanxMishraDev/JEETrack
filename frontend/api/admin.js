@@ -961,6 +961,65 @@ export default async function handler(req, res) {
     }
 
     
+    
+    if (action === 'get_site_config') {
+      const DEFAULTS = {
+        mock_tests_count: 3000,
+        study_hours_count: 15000,
+        backlogs_count: 4000,
+        reviews_count: 1000,
+        avg_rating: 4.8,
+        app_version: 'v2.0',
+      };
+      try {
+        const rows = await sbQuery('app_config?id=eq.1&select=*');
+        const row = (rows && rows[0]) || {};
+        return res.status(200).json({ ...DEFAULTS, ...row });
+      } catch (e) {
+        
+        return res.status(200).json(DEFAULTS);
+      }
+    }
+
+    
+    if (action === 'save_site_config') {
+      const body = req.body || {};
+      const allowedInts = ['mock_tests_count', 'study_hours_count', 'backlogs_count', 'reviews_count'];
+      const payload = {};
+
+      allowedInts.forEach((k) => {
+        if (body[k] === undefined || body[k] === null || body[k] === '') return;
+        const n = parseInt(body[k], 10);
+        if (!isNaN(n) && n >= 0) payload[k] = n;
+      });
+      if (body.avg_rating !== undefined && body.avg_rating !== null && body.avg_rating !== '') {
+        const r = parseFloat(body.avg_rating);
+        if (!isNaN(r)) payload.avg_rating = Math.max(0, Math.min(5, Math.round(r * 10) / 10));
+      }
+      if (body.app_version !== undefined && body.app_version !== null && body.app_version !== '') {
+        payload.app_version = String(body.app_version).trim().slice(0, 20);
+      }
+
+      if (!Object.keys(payload).length) {
+        return res.status(400).json({ error: 'No valid fields to update' });
+      }
+      payload.updated_at = new Date().toISOString();
+
+      try {
+        
+        const updated = await sbQuery('app_config?id=eq.1', 'PATCH', payload);
+        if (updated && updated.length) {
+          return res.status(200).json({ ok: true, config: updated[0] });
+        }
+        
+        const inserted = await sbQuery('app_config', 'POST', { id: 1, ...payload });
+        return res.status(200).json({ ok: true, config: inserted[0] });
+      } catch (e) {
+        return res.status(500).json({ error: 'Failed to save config: ' + e.message });
+      }
+    }
+
+    
     if (action === 'db_stats') {
       const data = await cached('db_stats', 60000, async () => {
         const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([

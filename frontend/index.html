@@ -489,23 +489,23 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="hus-item">
           <span class="hus-icon" style="color:#f472b6;background:rgba(244,114,182,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" data-count-to="3000" data-count-display="3K+">0</span></div>
-            <div class="hus-lbl">Mock Tests Logged</div>
+            <div class="hus-num"><span class="odo-num" id="hus-mock-tests" data-count-to="3000" data-count-display="3K+">0</span></div>
+            <div class="hus-lbl">Mock Tests Analyzed</div>
           </div>
         </div>
         <div class="hus-div"></div>
         <div class="hus-item">
           <span class="hus-icon" style="color:#34d399;background:rgba(52,211,153,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" data-count-to="15000" data-count-display="15K+">0</span></div>
-            <div class="hus-lbl">Study Hours Tracked</div>
+            <div class="hus-num"><span class="odo-num" id="hus-study-hours" data-count-to="15000" data-count-display="15K+">0</span></div>
+            <div class="hus-lbl">Hours Grinded</div>
           </div>
         </div>
         <div class="hus-div"></div>
         <div class="hus-item">
           <span class="hus-icon" style="color:#fbbf24;background:rgba(251,191,36,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" data-count-to="4000" data-count-display="4K+">0</span></div>
+            <div class="hus-num"><span class="odo-num" id="hus-backlogs" data-count-to="4000" data-count-display="4K+">0</span></div>
             <div class="hus-lbl">Backlogs Cleared</div>
           </div>
         </div>
@@ -845,17 +845,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 
   
-  <section id="testimonials-section" class="ls-section ls-section-center" style="display:none">
-    <div class="ls-reveal">
-      <div class="ls-pill ls-pill-pink">Real Feedback</div>
-      <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
-      <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
-      <div class="ls-testi-trustbar"><div class="ls-testi-trustrow" id="ls-testi-trustrow"></div></div>
-    </div>
-    <div class="ls-testi-grid" id="ls-testi-grid"></div>
-  </section>
-
-  
   <section id="features" class="ls-section ls-section-center">
     <div class="ls-reveal">
       <div class="ls-pill ls-pill-purple">Features</div>
@@ -905,6 +894,19 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  
+  <section id="testimonials-section" class="ls-section ls-section-center" style="display:none">
+    <div class="ls-reveal">
+      <div class="ls-pill ls-pill-pink">Real Feedback</div>
+      <h2 class="ls-h2">What aspirants are<br><em>actually saying</em></h2>
+      <p class="ls-sub">Pulled straight from in-app reviews by real JEETrack users — nothing staged.</p>
+      <div class="ls-testi-trustbar"><div class="ls-testi-trustrow" id="ls-testi-trustrow"></div></div>
+    </div>
+    <div class="ls-testi-wrap">
+      <div class="ls-testi-track" id="ls-testi-track"></div>
     </div>
   </section>
 
@@ -2805,8 +2807,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="settings-section">
           <div class="settings-section-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>About</div>
           <div class="settings-row">
-            <div class="settings-row-l"><div class="settings-row-title">JEETrack</div><div class="settings-row-sub">Current version</div></div>
-            <span style="font-size:11px;color:var(--mu)">v2.1.2</span>
+            <div class="settings-row-l"><div class="settings-row-title">JEETrack</div><div class="settings-row-sub">Your JEE preparation companion</div></div>
+            <span style="font-size:11px;color:var(--mu)" id="settings-app-version">v2.0</span>
           </div>
           <div class="settings-row">
             <div class="settings-row-l"><div class="settings-row-title">Crafted by</div></div>
@@ -7061,14 +7063,27 @@ function importData(input){
 
 let mnView='scores';
 let advView='scores';
+let mnScoresPage=0;
+let advScoresPage=0;
+const TEST_PAGE_SIZE=10;
+function mnScoresNav(dir){
+  mnScoresPage=Math.max(0,mnScoresPage+dir);
+  renderMnUnified();
+}
+function advScoresNav(dir){
+  advScoresPage=Math.max(0,advScoresPage+dir);
+  renderAdvUnified();
+}
 function setMnView(v,el){
   mnView=v;
+  mnScoresPage=0;
   document.querySelectorAll('[data-group="mn-view"]').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
   renderMnUnified();
 }
 function setAdvView(v,el){
   advView=v;
+  advScoresPage=0;
   document.querySelectorAll('[data-group="adv-view"]').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
   renderAdvUnified();
@@ -7320,7 +7335,22 @@ function renderMnUnified(){
       </div>`;
     }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'mains')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>`;
+    const allSorted=tests.slice().reverse();
+    const totalPages=Math.max(1,Math.ceil(allSorted.length/TEST_PAGE_SIZE));
+    if(mnScoresPage>totalPages-1)mnScoresPage=totalPages-1;
+    if(mnScoresPage<0)mnScoresPage=0;
+    const start=mnScoresPage*TEST_PAGE_SIZE;
+    const pageTests=allSorted.slice(start,start+TEST_PAGE_SIZE);
+    const prevDis=mnScoresPage<=0, nextDis=mnScoresPage>=totalPages-1;
+    const pagerHTML=allSorted.length>TEST_PAGE_SIZE?`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:0 2px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;color:var(--mu)">Showing ${start+1}–${Math.min(start+TEST_PAGE_SIZE,allSorted.length)} of ${allSorted.length}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn bg2 bsm" onclick="mnScoresNav(-1)" ${prevDis?'disabled':''} style="padding:4px 8px${prevDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span style="font-size:11px;color:var(--tx);min-width:50px;text-align:center">Page ${mnScoresPage+1} / ${totalPages}</span>
+          <button class="btn bg2 bsm" onclick="mnScoresNav(1)" ${nextDis?'disabled':''} style="padding:4px 8px${nextDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+      </div>`:'';
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'mains')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
   }
 }
 
@@ -7419,7 +7449,22 @@ function renderAdvUnified(){
       </div>`;
     }).join(''):`<div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> No upcoming tests scheduled.</div>`;
   } else {
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${tests.length?tests.slice().reverse().map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'advanced')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>`;
+    const allSorted=tests.slice().reverse();
+    const totalPages=Math.max(1,Math.ceil(allSorted.length/TEST_PAGE_SIZE));
+    if(advScoresPage>totalPages-1)advScoresPage=totalPages-1;
+    if(advScoresPage<0)advScoresPage=0;
+    const start=advScoresPage*TEST_PAGE_SIZE;
+    const pageTests=allSorted.slice(start,start+TEST_PAGE_SIZE);
+    const prevDis=advScoresPage<=0, nextDis=advScoresPage>=totalPages-1;
+    const pagerHTML=allSorted.length>TEST_PAGE_SIZE?`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:0 2px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;color:var(--mu)">Showing ${start+1}–${Math.min(start+TEST_PAGE_SIZE,allSorted.length)} of ${allSorted.length}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn bg2 bsm" onclick="advScoresNav(-1)" ${prevDis?'disabled':''} style="padding:4px 8px${prevDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span style="font-size:11px;color:var(--tx);min-width:50px;text-align:center">Page ${advScoresPage+1} / ${totalPages}</span>
+          <button class="btn bg2 bsm" onclick="advScoresNav(1)" ${nextDis?'disabled':''} style="padding:4px 8px${nextDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+      </div>`:'';
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'advanced')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
   }
 }
 

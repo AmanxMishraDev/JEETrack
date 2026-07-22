@@ -317,7 +317,10 @@ function showAuthScreen(fromSignOut){
   document.getElementById('main-app').style.display='none';
   setTimeout(_initLandFabScroll, 100);
   setTimeout(_initScrollReveal, 150);
-  setTimeout(_initCountUp, 150);
+  Promise.race([
+    loadPublicSiteConfig().catch(() => null),
+    new Promise((resolve) => setTimeout(resolve, 1200)) // don't block the animation forever on a slow/failed fetch
+  ]).then(() => setTimeout(_initCountUp, 50));
 
   
   
@@ -343,6 +346,7 @@ function showApp(name, email){
   hideSplash();
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='flex';
+  loadPublicSiteConfig().catch(()=>{});
   if(S.backlogStreak>365)S.backlogStreak=0;
   if(S.backlogBestStreak>365)S.backlogBestStreak=0;
   const displayName=userProfile.username||name||email?.split('@')[0]||'Aspirant';
@@ -1745,6 +1749,56 @@ function goSlide(n, fromAuto) {
 }
 
 function _activateSlide(n) { goSlide(n, false); }
+
+// -- Admin-editable public stats (landing page counters + app version) --
+// Falls back silently to whatever is already hardcoded in the HTML if the
+// app_config table/row doesn't exist yet or the fetch fails for any reason.
+let _siteConfigCache = null;
+let _siteConfigPromise = null;
+function _fmtStatK(n){
+  n = Math.max(0, Math.round(Number(n) || 0));
+  if (n >= 1000) {
+    const k = n / 1000;
+    const kStr = Number.isInteger(k) ? String(k) : (Math.round(k * 10) / 10).toString();
+    return kStr + 'K+';
+  }
+  return n.toLocaleString('en-IN') + '+';
+}
+function _fmtStatPlain(n){
+  n = Math.max(0, Math.round(Number(n) || 0));
+  return n.toLocaleString('en-IN') + '+';
+}
+function loadPublicSiteConfig(){
+  if (_siteConfigPromise) return _siteConfigPromise;
+  _siteConfigPromise = (async () => {
+    if (!sb) return null;
+    try {
+      const { data, error } = await sb.from('app_config').select('*').eq('id', 1).maybeSingle();
+      if (error || !data) return null;
+      _siteConfigCache = data;
+
+      const applyHero = (elId, key, fmt) => {
+        const el = document.getElementById(elId);
+        const val = data[key];
+        if (!el || val === null || val === undefined) return;
+        el.setAttribute('data-count-to', String(Math.max(0, Math.round(val))));
+        el.setAttribute('data-count-display', fmt(val));
+      };
+      applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);
+      applyHero('hus-study-hours', 'study_hours_count', _fmtStatK);
+      applyHero('hus-backlogs', 'backlogs_count', _fmtStatK);
+
+      if (data.app_version) {
+        const vEl = document.getElementById('settings-app-version');
+        if (vEl) vEl.textContent = data.app_version;
+      }
+      return data;
+    } catch (e) {
+      return null;
+    }
+  })();
+  return _siteConfigPromise;
+}
 
 function _initScrollReveal() {
   const root = document.getElementById('landing');
@@ -3258,10 +3312,6 @@ async function submitReview() {
 
 /* -- Landing page: pull real, curated testimonials from the feedback system -- */
 function _escTesti(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function _testiFeatureTag(subject){
-  const cleaned = (subject||'').replace(/review/i,'').trim();
-  return _escTesti(cleaned || 'JEETrack');
-}
 // Headline trust numbers shown on the landing page. Update these as your real numbers grow —
 // intentionally decoupled from the small sample of cards actually rendered below.
 const TESTI_TRUST_RATING = '4.8';
@@ -3272,7 +3322,7 @@ function _testiCardHTML(t,i){
   const initial = name.charAt(0).toUpperCase() || 'J';
   const colors=['linear-gradient(135deg,#7c6af7,#a695ff)','linear-gradient(135deg,#34d399,#2dd4bf)','linear-gradient(135deg,#f472b6,#fb7185)','linear-gradient(135deg,#fbbf24,#f97316)','linear-gradient(135deg,#60a5fa,#3b82f6)'];
   const bg = colors[i % colors.length];
-  return `<div class="ls-testi-card ls-reveal">
+  return `<div class="ls-testi-card">
     <span class="ls-testi-quotemark">&rdquo;</span>
     <div class="ls-testi-stars">${stars}</div>
     <div class="ls-testi-quote">"${_escTesti(t.message)}"</div>
@@ -3281,28 +3331,46 @@ function _testiCardHTML(t,i){
       <div>
         <div class="ls-testi-name-row">
           <span class="ls-testi-name">${name}</span>
-          <span class="ls-testi-checkmark" title="Verified user"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg></span>
         </div>
-        <div class="ls-testi-tag">${_testiFeatureTag(t.subject)}</div>
+        <div class="ls-testi-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 9.5"/></svg>Verified JEETrack User</div>
       </div>
     </div>
   </div>`;
 }
 async function loadLandingTestimonials(){
   const section = document.getElementById('testimonials-section');
-  const grid = document.getElementById('ls-testi-grid');
-  if(!section || !grid || !sb) return;
+  const track = document.getElementById('ls-testi-track');
+  if(!section || !track || !sb) return;
   try{
-    const { data, error } = await sb.from('public_testimonials').select('*').order('created_at',{ascending:false}).limit(9);
-    if(error || !data || !data.length) return; 
-    grid.innerHTML = data.map((t,i)=>_testiCardHTML(t,i)).join('');
+    const { data, error } = await sb.from('public_testimonials').select('*').order('created_at',{ascending:false}).limit(24);
+    if(error || !data || !data.length) return;
+
+    
+    const MIN_CARDS = 10;
+    let cards = data.map((t,i)=>_testiCardHTML(t,i));
+    let i = 0;
+    while(cards.length < MIN_CARDS){ cards.push(_testiCardHTML(data[i % data.length], cards.length)); i++; }
+
+    
+    track.innerHTML = cards.concat(cards).join('');
+
+    
+    requestAnimationFrame(() => {
+      const halfWidth = track.scrollWidth / 2;
+      const PX_PER_SEC = 38; // comfortable reading pace
+      const dur = Math.max(24, Math.round(halfWidth / PX_PER_SEC));
+      track.style.animationDuration = dur + 's';
+    });
+
     const trustRow = document.getElementById('ls-testi-trustrow');
     if(trustRow){
-      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${TESTI_TRUST_RATING}/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-count-to="1000" data-count-display="1,000+">0</span> JEETrack verified reviews</span>`;
+      const cfg = _siteConfigCache || await loadPublicSiteConfig().catch(()=>null) || {};
+      const reviewsCount = (cfg.reviews_count !== null && cfg.reviews_count !== undefined) ? cfg.reviews_count : 1000;
+      const avgRating = (cfg.avg_rating !== null && cfg.avg_rating !== undefined) ? cfg.avg_rating : TESTI_TRUST_RATING;
+      trustRow.innerHTML = `<span class="ls-testi-trust-rating"><span class="ls-testi-trust-stars">★★★★★</span><span class="ls-testi-trust-ratingnum">${avgRating}/5</span></span><span class="ls-testi-trust-div"></span><span class="ls-testi-trust-text">Based on <span class="odo-num" data-count-to="${Math.round(reviewsCount)}" data-count-display="${_fmtStatPlain(reviewsCount)}">0</span> JEETrack verified reviews</span>`;
       if(typeof _initCountUp === 'function') _initCountUp(trustRow);
     }
     section.style.display = '';
-    if(typeof _initScrollReveal === 'function') setTimeout(_initScrollReveal, 50);
   }catch(e){ 
   }
 }

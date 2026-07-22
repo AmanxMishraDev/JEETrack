@@ -841,6 +841,49 @@ tr.fb-expand-row{background:transparent!important;}
         </div>
 
       </div>
+
+      <div class="section-title" style="margin-top:.4rem">Landing Page &amp; App Settings<span class="line"></span></div>
+      <div class="action-card" style="max-width:860px">
+        <h3>🌐 Public Stats &amp; App Version</h3>
+        <p>These power the animated stat counters on the landing page (hero strip + testimonials trust bar) and the app version shown in Settings → About. Changes apply live to new page loads — no redeploy needed.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1rem;margin-bottom:1.1rem">
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Mock Tests Logged</span>
+            <input class="compose-input" type="number" min="0" step="1" id="cfg-mock-tests" placeholder="3000">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Study Hours Tracked</span>
+            <input class="compose-input" type="number" min="0" step="1" id="cfg-study-hours" placeholder="15000">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Backlogs Cleared</span>
+            <input class="compose-input" type="number" min="0" step="1" id="cfg-backlogs" placeholder="4000">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Verified Reviews Count</span>
+            <input class="compose-input" type="number" min="0" step="1" id="cfg-reviews" placeholder="1000">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Average Rating (out of 5)</span>
+            <input class="compose-input" type="number" min="0" max="5" step="0.1" id="cfg-rating" placeholder="4.8">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">App Version</span>
+            <input class="compose-input" type="text" id="cfg-version" placeholder="v2.0">
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap">
+          <button class="action-btn btn-primary" onclick="saveSiteConfig()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Changes
+          </button>
+          <button class="action-btn btn-ghost btn-sm" onclick="loadSiteConfig()">↻ Reload Current Values</button>
+          <span id="cfg-last-saved" style="font-size:.72rem;color:var(--mu)"></span>
+        </div>
+        <div class="action-result" id="result-config"></div>
+      </div>
     </div>
 
     
@@ -2223,6 +2266,58 @@ async function loadActionsPage() {
     const lc = document.getElementById('action-last-checked');
     if (lc) lc.textContent = new Date().toLocaleTimeString('en-IN');
   } catch(e) {}
+  loadSiteConfig();
+}
+
+async function loadSiteConfig() {
+  const resultEl = document.getElementById('result-config');
+  if (resultEl) resultEl.style.display = 'none';
+  try {
+    const d = await api('get_site_config');
+    document.getElementById('cfg-mock-tests').value   = d.mock_tests_count  ?? '';
+    document.getElementById('cfg-study-hours').value  = d.study_hours_count ?? '';
+    document.getElementById('cfg-backlogs').value     = d.backlogs_count    ?? '';
+    document.getElementById('cfg-reviews').value      = d.reviews_count     ?? '';
+    document.getElementById('cfg-rating').value       = d.avg_rating        ?? '';
+    document.getElementById('cfg-version').value      = d.app_version       ?? '';
+    const saved = document.getElementById('cfg-last-saved');
+    if (saved) saved.textContent = d.updated_at ? `Last updated ${new Date(d.updated_at).toLocaleString('en-IN')}` : '';
+  } catch(e) {
+    if (resultEl) {
+      resultEl.className = 'action-result result-err';
+      resultEl.textContent = '✗ Could not load current values: ' + e.message;
+      resultEl.style.display = 'block';
+    }
+  }
+}
+
+async function saveSiteConfig() {
+  const resultEl = document.getElementById('result-config');
+  resultEl.style.display = 'none';
+  const body = {
+    mock_tests_count:  document.getElementById('cfg-mock-tests').value,
+    study_hours_count: document.getElementById('cfg-study-hours').value,
+    backlogs_count:    document.getElementById('cfg-backlogs').value,
+    reviews_count:     document.getElementById('cfg-reviews').value,
+    avg_rating:        document.getElementById('cfg-rating').value,
+    app_version:       document.getElementById('cfg-version').value,
+  };
+  showToast('Saving…');
+  try {
+    const d = await apiPost('save_site_config', body);
+    if (d.error) throw new Error(d.error);
+    resultEl.className = 'action-result result-ok';
+    resultEl.textContent = '✓ Saved. Landing page and app Settings will show the new values on next load.';
+    resultEl.style.display = 'block';
+    const saved = document.getElementById('cfg-last-saved');
+    if (saved && d.config?.updated_at) saved.textContent = `Last updated ${new Date(d.config.updated_at).toLocaleString('en-IN')}`;
+    showToast('Saved ✓');
+  } catch(e) {
+    resultEl.className = 'action-result result-err';
+    resultEl.textContent = '✗ Error: ' + e.message;
+    resultEl.style.display = 'block';
+    showToast('Error: ' + e.message);
+  }
 }
 
 async function exportUsersCSV() {

@@ -5336,18 +5336,34 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 .ls-testi-trust-rating{display:flex;align-items:center;gap:7px}
 .ls-testi-trust-ratingnum{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:14px;font-variant-numeric:tabular-nums}
 
-.ls-testi-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+.ls-testi-wrap{
+  position: relative;
+  overflow: hidden;
+  width: 100%;
   margin-top: 3.2rem;
 }
-@media(max-width: 900px) { .ls-testi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media(max-width: 560px) { .ls-testi-grid { grid-template-columns: 1fr; } }
+.ls-testi-track{
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: testiSwipe 60s linear infinite;
+}
+.ls-testi-track:hover{ animation-play-state: paused; }
+@keyframes testiSwipe{ 0%{ transform: translateX(0); } 100%{ transform: translateX(-50%); } }
+.ls-testi-wrap::before, .ls-testi-wrap::after{
+  content:''; position:absolute; top:0; bottom:0; width:90px; z-index:2; pointer-events:none;
+}
+.ls-testi-wrap::before{ left:0; background:linear-gradient(90deg,#020208,transparent); }
+.ls-testi-wrap::after{ right:0; background:linear-gradient(-90deg,#020208,transparent); }
+@media(max-width:640px){
+  .ls-testi-wrap::before, .ls-testi-wrap::after{ width:40px; }
+}
 
 .ls-testi-card {
   position: relative;
   overflow: hidden;
+  flex: 0 0 auto;
+  width: 340px;
   background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
   border: 1px solid rgba(255,255,255,.09);
   border-radius: 22px;
@@ -5357,6 +5373,7 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 50px -30px rgba(0,0,0,.6);
   transition: border-color .35s, transform .35s cubic-bezier(.34,1,.64,1), box-shadow .35s, background .35s;
 }
+@media(max-width:640px){ .ls-testi-card{ width: 280px; } }
 .ls-testi-card::before{
   content:''; position:absolute; top:0; left:0; right:0; height:3px;
   background:var(--testi-accent, linear-gradient(90deg,#7c6af7,#f472b6));
@@ -5398,4 +5415,4 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 .ls-testi-name-row{ display:flex; align-items:center; gap:5px; }
 .ls-testi-name { font-size: 13.5px; font-weight: 700; color: #fff; }
 .ls-testi-checkmark{ color:#34d399; flex-shrink:0; display:flex; }
-.ls-testi-tag { font-size: 11px; color: rgba(255,255,255,.42); margin-top: 2px; font-weight: 500; }
+.ls-testi-tag { font-size: 11px; color: #34d399; margin-top: 3px; font-weight: 600; display:flex; align-items:center; gap:4px; }
