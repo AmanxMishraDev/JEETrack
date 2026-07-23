@@ -2146,7 +2146,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       </div>
     </div>
     
-    <label class="syl-adv-toggle" title="Include JEE Advanced chapters">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn bp bsm" onclick="openM('addChapter',F.syl)" style="display:inline-flex;align-items:center;gap:5px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Chapter
+      </button>
+      <label class="syl-adv-toggle" title="Include JEE Advanced chapters">
       <input type="checkbox" id="syl-adv-chk" onchange="toggleAdvInclude(this.checked)">
       <span class="syl-adv-track">
         <span class="syl-adv-thumb"></span>
@@ -2156,6 +2161,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         Include ADV
       </span>
     </label>
+    </div>
   </div>
 
   
@@ -3786,6 +3792,15 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span class="fi-err-msg" id="ch-name-err"></span>
     </div>
 
+    <div class="pmo-field" style="margin-bottom:12px">
+      <label class="pmo-label">Class</label>
+      <div class="pmo-pill-row">
+        <button type="button" class="pmo-pill pmo-class-pill active" onclick="document.getElementById('ch-class-i').value='11';document.querySelectorAll('#modal-addChapter .pmo-class-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Class 11</button>
+        <button type="button" class="pmo-pill pmo-class-pill" onclick="document.getElementById('ch-class-i').value='12';document.querySelectorAll('#modal-addChapter .pmo-class-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">Class 12</button>
+      </div>
+      <select class="fi" id="ch-class-i" style="display:none"><option value="11">11</option><option value="12">12</option></select>
+    </div>
+
     <div class="pmo-footer">
       <button class="pmo-btn-cancel" onclick="closeM('addChapter')">Cancel</button>
       <button class="pmo-btn-save" onclick="saveChapter()">
@@ -4475,13 +4490,34 @@ const CANONICAL_SYLLABUS = {
   ]
 };
 
+// Canonical chapters use small hand-assigned ids (100s/200s/300s ranges).
+// User-added custom chapters use Date.now() as their id, which is always
+// far larger — this lets us tell the two apart without a separate flag.
+const CUSTOM_CHAPTER_ID_THRESHOLD = 100000;
+function isCustomChapter(c){ return !!c && c.id > CUSTOM_CHAPTER_ID_THRESHOLD; }
+
 (function(){
   try{
     const raw = localStorage.getItem('jt3');
     if(raw){
       const p = JSON.parse(raw);
       if(p && p.syllabus){
-        p.syllabus = JSON.parse(JSON.stringify(CANONICAL_SYLLABUS));
+        const merged = {};
+        ['physics','chemistry','maths'].forEach(subj=>{
+          const canon = CANONICAL_SYLLABUS[subj] || [];
+          const existing = Array.isArray(p.syllabus[subj]) ? p.syllabus[subj] : [];
+          const existingById = {};
+          existing.forEach(ch => { existingById[ch.id] = ch; });
+          
+          const mergedList = canon.map(c => {
+            const prior = existingById[c.id];
+            return prior ? { ...c, theory: !!prior.theory, practice: !!prior.practice } : { ...c };
+          });
+          
+          existing.forEach(ch => { if(isCustomChapter(ch)) mergedList.push(ch); });
+          merged[subj] = mergedList;
+        });
+        p.syllabus = merged;
         localStorage.setItem('jt3', JSON.stringify(p));
       }
     }
@@ -5184,6 +5220,19 @@ const openM=function(id,preset){
     }
   }
   if(id==='scheduleTest'){document.getElementById('sch-date').value='';clearFieldErr('sch-date','sch-date-err');['sch-sess','sch-venue','sch-notes'].forEach(i=>document.getElementById(i).value='');if(preset){document.getElementById('sch-exam').value=preset;document.querySelectorAll('#modal-scheduleTest .pmo-pill').forEach(p=>p.classList.remove('active'));document.querySelector('#modal-scheduleTest .pmo-pill[onclick*="'+preset+'"]')?.classList.add('active');}}
+  if(id==='addChapter'){
+    document.getElementById('ch-name').value='';
+    clearFieldErr('ch-name','ch-name-err');
+    const initSubj=(preset&&typeof preset==='string')?preset:(F.syl||'physics');
+    document.getElementById('ch-subj-i').value=initSubj;
+    document.querySelectorAll('#modal-addChapter .pmo-subj-pill').forEach(p=>p.classList.remove('active'));
+    document.querySelector(`#modal-addChapter .pmo-subj-pill[onclick*="'${initSubj}'"]`)?.classList.add('active');
+    document.getElementById('ch-class-i').value='11';
+    document.querySelectorAll('#modal-addChapter .pmo-class-pill').forEach((p,i)=>p.classList.toggle('active',i===0));
+    document.getElementById('ch-section-i').value='physical';
+    document.querySelectorAll('#modal-addChapter .pmo-pill-row .pmo-pill:not(.pmo-class-pill)').forEach((p,i)=>p.classList.toggle('active',i===0));
+    toggleChemSection_modal();
+  }
   if(id==='logHours'){
     _lhEditId = (preset && preset.editId) ? preset.editId : null;
     const timerTab=document.getElementById('lh-tab-timer');
@@ -6317,13 +6366,14 @@ function saveChapter(){
   clearFieldErr('ch-name','ch-name-err');
   const subj=document.getElementById('ch-subj-i').value;
   const section=subj==='chemistry'?(document.getElementById('ch-section-i').value||'physical'):undefined;
-  const ch={id:Date.now(),name,theory:false,practice:false};
+  const cls=document.getElementById('ch-class-i')?.value||'11';
+  const ch={id:Date.now(),name,theory:false,practice:false,unit:'Custom Chapters',class:cls};
   if(section)ch.section=section;
   if(!S.syllabus[subj])S.syllabus[subj]=[];
   S.syllabus[subj].push(ch);
   save();closeM('addChapter');
   pushUndo('chapter',{subj,ch},'Chapter added',false);
-  toast('Chapter added ✓', 'success');F.syl=subj;navMarkDirty('syllabus');renderSyl();
+  toast('Chapter added ✓', 'success');F.syl=subj;F.sylClass='all';navMarkDirty('syllabus');renderSyl();
 }
 let _delId=null,_delType=null;
 function confirmDelete(type,id,msg){
@@ -8051,13 +8101,15 @@ function chapterItemHTML(c,subjClass){
   const starIcon=`<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
   const idx=c.id%100||c.id;
   const qCount=(S.practiceLogs||[]).filter(p=>p.chapterId===c.id).reduce((a,b)=>a+b.questions,0);
+  const isCustom=isCustomChapter(c);
   return`<div class="syl-chapter ${subjClass}${complete?' ch-complete':''}${c.adv?' ch-adv-only':''}">
-    <div class="ch-num">${idx<=9?'0'+idx:idx}</div>
+    <div class="ch-num">${isCustom?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>':(idx<=9?'0'+idx:idx)}</div>
     <div class="ch-info">
       <div class="ch-name">${c.name}</div>
       <div class="ch-meta">
         <span class="ch-class-badge ch-class-${c.class||'11'}">Class ${c.class||'11'}</span>
         ${c.adv?`<span class="ch-adv-badge">${starIcon}ADV</span>`:''}
+        ${isCustom?`<span class="ch-adv-badge" style="background:rgba(244,114,182,.12);color:#f472b6;border-color:rgba(244,114,182,.25)">Custom</span>`:''}
         ${complete?`<span class="ch-done-badge">${doneIcon}Complete</span>`:''}
         ${qCount>0?`<span class="ch-qcount-badge">${qCount} Qs practiced</span>`:''}
       </div>
@@ -8073,6 +8125,9 @@ function chapterItemHTML(c,subjClass){
         <button class="ch-quick-log" onclick="event.stopPropagation();openPracticeLog(${c.id})" title="Log practice questions">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
+        ${isCustom?`<button class="ch-quick-log" onclick="event.stopPropagation();deleteChapter(${c.id})" title="Remove this custom chapter" style="color:var(--rd)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>`:''}
       </div>
     </div>
   </div>`;
@@ -8081,13 +8136,15 @@ function chapterItemHTML(c,subjClass){
 function renderSylList(){
   const s=F.syl||'physics';
   const includeAdv=!!F.sylIncludeAdv;
-  const units=SUBJ_UNITS[s]||[];
-  const unitColors=UNIT_COLORS[s]||{};
+  const knownUnits=SUBJ_UNITS[s]||[];
+  const CUSTOM_UNIT='Custom Chapters';
+  const units=[...knownUnits,CUSTOM_UNIT];
+  const unitColors={...(UNIT_COLORS[s]||{}),[CUSTOM_UNIT]:'#f472b6'};
   const subjChClass=s==='physics'?'phy-ch':s==='chemistry'?'che-ch':'mat-ch';
 
   let allChs=S.syllabus[s]||[];
   
-  allChs.forEach(c=>{if(!c.class)c.class=(c.id<300?c.id<=216:c.id<=314)?'11':'12';});
+  allChs.forEach(c=>{if(!c.class)c.class=isCustomChapter(c)?'11':(c.id<300?c.id<=216:c.id<=314)?'11':'12';});
   
   const advFiltered=includeAdv?allChs:allChs.filter(c=>!c.adv);
   
@@ -8095,7 +8152,9 @@ function renderSylList(){
 
   let html='';
   units.forEach(unit=>{
-    const chs=visibleChs.filter(c=>c.unit===unit);
+    const chs=unit===CUSTOM_UNIT
+      ? visibleChs.filter(c=>!knownUnits.includes(c.unit))
+      : visibleChs.filter(c=>c.unit===unit);
     if(!chs.length)return;
     const done=chs.filter(c=>c.theory&&c.practice).length;
     const pct=chs.length?Math.round(done/chs.length*100):0;

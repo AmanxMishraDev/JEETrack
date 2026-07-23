@@ -504,6 +504,9 @@ async function updateActivity(){
   }catch(e){}
 }
 
+// CUSTOM_CHAPTER_ID_THRESHOLD and isCustomChapter() are declared globally in
+// index.html's inline script, which loads before this file — reused here as-is.
+
 function migrateSyllabus(saved){
   const subjs=['physics','chemistry','maths'];
   subjs.forEach(s=>{
@@ -516,7 +519,9 @@ function migrateSyllabus(saved){
       const key=c.name.toLowerCase().trim();
       if(oldByName[key]){ c.theory=oldByName[key].theory; c.practice=oldByName[key].practice; }
     });
-    saved.syllabus[s]=canonical;
+    
+    const customChs=old.filter(c=>isCustomChapter(c));
+    saved.syllabus[s]=canonical.concat(customChs);
   });
   return saved;
 }
@@ -539,7 +544,7 @@ function _payloadHour(h,uid){ return {id:h.id,user_id:uid,date:h.date,subject:h.
 function _payloadBacklog(b,uid){ return {id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}; }
 function _payloadTodo(t,uid){ return {id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}; }
 function _payloadUpcoming(u,uid){ return {id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}; }
-function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,theory:c.theory,practice:c.practice}; }
+function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,class:c.class||null,theory:c.theory,practice:c.practice}; }
 function _payloadPracticeLog(p,uid){ return {id:p.id,user_id:uid,subject:p.subject,chapter_id:p.chapterId,chapter_name:p.chapterName,questions:p.questions,date:p.date,logged_at:p.loggedAt}; }
 function _snapKey(row){ return JSON.stringify(row); }
 
