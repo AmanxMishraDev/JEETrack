@@ -65,11 +65,11 @@ function attachPatches() {
 
   
   const _patchNav = function() {
-    if (typeof mobNavTo !== 'function') { setTimeout(_patchNav, 300); return; }
-    const _orig = mobNavTo;
-    window.mobNavTo = function(page, el) {
+    if (typeof nav !== 'function') { setTimeout(_patchNav, 300); return; }
+    const _orig = nav;
+    window.nav = function(page, _pushState) {
       _jtTrack('page_viewed', { page: page });
-      return _orig.call(this, page, el);
+      return _orig.call(this, page, _pushState);
     };
     console.log('[JEETrack Analytics] Nav tracking active ✓');
   };
@@ -148,12 +148,28 @@ function attachPatches() {
   
   const _patchSave = function() {
     if (typeof save !== 'function') { setTimeout(_patchSave, 400); return; }
-    let _prev = { tests:0, hours:0, backlogs:0, todos:0, sylPh:0, sylCh:0, sylMa:0 };
+    // Seed from the REAL current counts (not all-zero) so the first save()
+    // call of a session doesn't mistake pre-existing rows for "newly added".
+    const _seed = (typeof S !== 'undefined' && S) ? {
+      tests:    S.tests?.length || 0,
+      hours:    S.hours?.length || 0,
+      backlogs: (S.backlogs || []).filter(b => !b.done).length,
+      todos:    (S.todos || []).filter(t => !t.done).length,
+      sylPh:    (S.syllabus?.physics || []).filter(c => c.theory === true || c.practice === true).length,
+      sylCh:    (S.syllabus?.chemistry || []).filter(c => c.theory === true || c.practice === true).length,
+      sylMa:    (S.syllabus?.maths || []).filter(c => c.theory === true || c.practice === true).length,
+    } : { tests:0, hours:0, backlogs:0, todos:0, sylPh:0, sylCh:0, sylMa:0 };
+    let _prev = _seed;
     const _orig = save;
     window.save = async function() {
       try {
-        const S = window.S;
-        if (S) {
+        // NOTE: `S` is declared with `let S = ...` in index.html, so it never
+        // attaches to `window.S` (only `var` top-level declarations do). It IS
+        // still reachable here as a bare identifier, because every classic
+        // <script> tag on the page shares one global lexical scope — so we use
+        // the ambient `S` directly below instead of aliasing `window.S` (which
+        // was always undefined and silently skipped this entire block before).
+        if (typeof S !== 'undefined' && S) {
           const cur = {
             tests:    S.tests?.length || 0,
             hours:    S.hours?.length || 0,
