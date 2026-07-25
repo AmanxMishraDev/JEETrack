@@ -102,8 +102,12 @@ function attachPatches() {
       try {
         const errEl = document.getElementById('auth-err');
         const isErr = errEl && errEl.style.display !== 'none' && errEl.textContent;
-        if (!isErr) {
-          _jtTrack(tab === 'signup' ? 'user_signed_up' : 'user_logged_in', { method: 'email' });
+        // NOTE: `user_signed_up` is fired from finishOnboarding() instead (see
+        // below), not here — because EVERY new user (Google or email) goes
+        // through onboarding, but doAuth only ever runs for the email flow.
+        // Firing it here too undercounted Google sign-ups almost entirely.
+        if (!isErr && tab !== 'signup') {
+          _jtTrack('user_logged_in', { method: 'email' });
         }
       } catch(e) {}
       return result;
@@ -139,11 +143,25 @@ function attachPatches() {
     if (typeof finishOnboarding !== 'function') { setTimeout(_patchOnboard, 300); return; }
     const _orig = finishOnboarding;
     window.finishOnboarding = async function() {
+      // Auth-method-agnostic "new signup" signal: every brand-new user (via
+      // Google OR email) goes through onboarding exactly once, so this is a
+      // more reliable place to fire user_signed_up than the email-only auth
+      // patch above. Guarded by a localStorage flag so it only ever fires
+      // once per user even if finishOnboarding somehow runs twice.
+      try {
+        const uid = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.id : null;
+        const key = uid ? 'jt_signup_tracked_' + uid : null;
+        if (!key || localStorage.getItem(key) !== '1') {
+          _jtTrack('user_signed_up');
+          if (key) localStorage.setItem(key, '1');
+        }
+      } catch(e) {}
       _jtTrack('onboarding_completed');
       return _orig.call(this);
     };
   };
   _patchOnboard();
+
 
   
   const _patchSave = function() {
@@ -220,6 +238,41 @@ function attachPatches() {
     console.log('[JEETrack Analytics] Save tracking active ✓');
   };
   _patchSave();
+
+  
+  const _patchSaveChapter = function() {
+    if (typeof saveChapter !== 'function') { setTimeout(_patchSaveChapter, 400); return; }
+    const _orig = saveChapter;
+    window.saveChapter = function() {
+      try {
+        const name = document.getElementById('ch-name')?.value?.trim();
+        const subj = document.getElementById('ch-subj-i')?.value;
+        if (name) _jtTrack('custom_chapter_added', { subject: subj || '' });
+      } catch(e) {}
+      return _orig.apply(this, arguments);
+    };
+    console.log('[JEETrack Analytics] Custom chapter tracking active ✓');
+  };
+  _patchSaveChapter();
+
+  
+  const _patchPracticeLog = function() {
+    if (typeof savePracticeLog !== 'function') { setTimeout(_patchPracticeLog, 400); return; }
+    const _orig = savePracticeLog;
+    window.savePracticeLog = function() {
+      const before = (typeof S !== 'undefined' && S && S.practiceLogs) ? S.practiceLogs.length : -1;
+      const result = _orig.apply(this, arguments);
+      try {
+        if (before >= 0 && S.practiceLogs && S.practiceLogs.length > before) {
+          const l = S.practiceLogs[S.practiceLogs.length - 1] || {};
+          _jtTrack('practice_logged', { subject: l.subject || '', questions: l.questions || 0 });
+        }
+      } catch(e) {}
+      return result;
+    };
+    console.log('[JEETrack Analytics] Practice log tracking active ✓');
+  };
+  _patchPracticeLog();
 
   
   const _watchAI = function() {
