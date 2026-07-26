@@ -376,72 +376,11 @@ export default async function handler(req, res) {
     }
 
     
-    if (action === 'features') {
-      const cutoff = dateFrom(days);
+    // NOTE: the 'features' and 'dau' actions were removed — feature adoption
+    // and DAU/WAU/MAU are now tracked in PostHog (via app_opened and the
+    // per-feature events), which costs zero Supabase queries. The admin UI
+    // now links out to the PostHog dashboard instead of calling these.
 
-      const totalAll = await sbCount('user_preferences').catch(() => 1);
-
-      
-      const [testUsers, hoursUsers, backlogUsers, todoUsers, syllabusUsers, feedbackUsers, aiUsers] = await Promise.all([
-        sbQuery(`tests?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`hours?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`backlogs?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`todos?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`syllabus?select=user_id&updated_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`feedback?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0&last_active_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-      ]);
-
-      const uniq = (arr) => new Set(arr.map(r => r.user_id)).size;
-
-      const features = [
-        { feature: 'Mock Tests',  users: uniq(testUsers),     total: totalAll },
-        { feature: 'Study Hours', users: uniq(hoursUsers),    total: totalAll },
-        { feature: 'Backlog',     users: uniq(backlogUsers),  total: totalAll },
-        { feature: 'To-Do',       users: uniq(todoUsers),     total: totalAll },
-        { feature: 'Syllabus',    users: uniq(syllabusUsers), total: totalAll },
-        { feature: 'AI Insights', users: uniq(aiUsers),       total: totalAll },
-        { feature: 'Feedback',    users: uniq(feedbackUsers), total: totalAll },
-      ].map(f => ({
-        ...f,
-        pct: totalAll > 0 ? Math.round((f.users / totalAll) * 100) : 0,
-      })).sort((a, b) => b.pct - a.pct);
-
-      
-      const dauFeatures = [
-        { feature: 'Mock Tests',  dauPct: Math.round(uniq(testUsers)     / totalAll * 100), dau: uniq(testUsers)     },
-        { feature: 'Study Hours', dauPct: Math.round(uniq(hoursUsers)    / totalAll * 100), dau: uniq(hoursUsers)    },
-        { feature: 'AI Insights', dauPct: Math.round(uniq(aiUsers)       / totalAll * 100), dau: uniq(aiUsers)       },
-        { feature: 'Syllabus',    dauPct: Math.round(uniq(syllabusUsers) / totalAll * 100), dau: uniq(syllabusUsers) },
-      ];
-
-      return res.status(200).json({ features, dauFeatures, totalUsers: totalAll });
-    }
-
-    
-    if (action === 'dau') {
-      
-      const prefs = await sbQuery('user_preferences?select=last_active_at').catch(() => []);
-      const byDay = {};
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
-      prefs.forEach(p => {
-        if (!p.last_active_at) return;
-        const d = new Date(p.last_active_at);
-        if (d < cutoff) return;
-        const key = d.toISOString().split('T')[0];
-        byDay[key] = (byDay[key] || 0) + 1;
-      });
-      const labels = [], values = [];
-      for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        labels.push(key);
-        values.push(byDay[key] || 0);
-      }
-      return res.status(200).json({ labels, values, source: 'supabase' });
-    }
-
-    
     
     if (action === 'new_users') {
       const authUsers = await sbAuthListAllUsers().catch(() => []);
@@ -528,41 +467,12 @@ export default async function handler(req, res) {
     
     
     
-    if (action === 'funnel') {
-      const [
-        totalUsers,
-        usersWithTests, usersWithHours, usersWithBacklogs,
-        usersWithSyllabus, usersWithAI,
-      ] = await Promise.all([
-        
-        sbCount('user_preferences').catch(() => 0),
-        
-        sbQuery('tests?select=user_id').catch(() => []),
-        
-        sbQuery('hours?select=user_id').catch(() => []),
-        
-        sbQuery('backlogs?select=user_id').catch(() => []),
-        
-        sbQuery('syllabus?select=user_id').catch(() => []),
-        
-        sbQuery('user_preferences?select=user_id&ai_insights_count=gt.0').catch(() => []),
-      ]);
+    // NOTE: the 'funnel' action (signup -> engagement funnel) was removed —
+    // it's now a proper Funnel insight in PostHog (correctly counting both
+    // Google and email sign-ups, which this Supabase version couldn't do).
+    // This also removes 5 full-table user_id fetches that ran uncached on
+    // every page load.
 
-      const distinctTestUsers     = new Set(usersWithTests.map(r => r.user_id)).size;
-      const distinctHoursUsers    = new Set(usersWithHours.map(r => r.user_id)).size;
-      const distinctBacklogUsers  = new Set(usersWithBacklogs.map(r => r.user_id)).size;
-      const distinctSyllabusUsers = new Set(usersWithSyllabus.map(r => r.user_id)).size;
-      const distinctAIUsers       = new Set(usersWithAI.map(r => r.user_id)).size;
-
-      return res.status(200).json([
-        { event: 'user_signed_up',        label: 'Signed Up',            count: totalUsers },
-        { event: 'mock_test_logged',      label: 'Logged Mock Test',      count: distinctTestUsers },
-        { event: 'study_hours_logged',    label: 'Logged Study Hours',    count: distinctHoursUsers },
-        { event: 'backlog_used',          label: 'Used Backlog',          count: distinctBacklogUsers },
-        { event: 'syllabus_used',         label: 'Used Syllabus Tracker', count: distinctSyllabusUsers },
-        { event: 'ai_insights_generated', label: 'Used AI Insights',      count: distinctAIUsers },
-      ]);
-    }
 
     
     
@@ -970,6 +880,7 @@ export default async function handler(req, res) {
         reviews_count: 1000,
         avg_rating: 4.8,
         app_version: 'v2.0',
+        monthly_infra_cost: 0,
       };
       try {
         const rows = await sbQuery('app_config?id=eq.1&select=*');
@@ -998,6 +909,10 @@ export default async function handler(req, res) {
       }
       if (body.app_version !== undefined && body.app_version !== null && body.app_version !== '') {
         payload.app_version = String(body.app_version).trim().slice(0, 20);
+      }
+      if (body.monthly_infra_cost !== undefined && body.monthly_infra_cost !== null && body.monthly_infra_cost !== '') {
+        const c = parseFloat(body.monthly_infra_cost);
+        if (!isNaN(c) && c >= 0) payload.monthly_infra_cost = Math.round(c * 100) / 100;
       }
 
       if (!Object.keys(payload).length) {

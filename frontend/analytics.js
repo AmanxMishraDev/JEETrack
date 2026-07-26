@@ -20,6 +20,7 @@ async function initAnalytics() {
       api_host: 'https://us.i.posthog.com',  
       capture_pageview: false,
       capture_pageleave: true,
+      capture_exceptions: true,
       autocapture: false,
       persistence: 'localStorage',
       session_recording: {

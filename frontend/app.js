@@ -550,6 +550,10 @@ function _snapKey(row){ return JSON.stringify(row); }
 
 // Call once right after S.* has been freshly loaded from the server, so
 // existing (already-in-sync) rows aren't mistaken for "changed" on the next save().
+// NOTE: the once-per-day Supabase activity ping that used to live here has
+// been removed — PostHog's `app_opened` event now powers DAU/WAU/MAU on the
+// admin dashboard instead, with zero Supabase IO cost.
+
 function _seedSyncSnapshot(){
   if(!currentUser) return;
   const uid = currentUser.id;
