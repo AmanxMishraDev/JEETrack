@@ -20,6 +20,6 @@ BEGIN
   ) THEN
     CREATE POLICY "Users can insert feedback"
       ON feedback FOR INSERT
-      WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+      WITH CHECK ((select auth.uid()) = user_id OR user_id IS NULL);
   END IF;
 END $$;

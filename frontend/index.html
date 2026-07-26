@@ -92,6 +92,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <script>
 function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 window._chartJsUrl='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
@@ -997,6 +998,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <a href="/privacy">Privacy</a>
       <span class="ls-footer-sep">·</span>
       <a href="/terms">Terms</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="#" onclick="openBuyCoffee();return false;">☕ Support Us</a>
     </div>
     <div class="ls-footer-copy">© 2026 JEETrack · Built for JEE aspirants across India</div>
   </footer>
@@ -2404,6 +2407,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         <span class="snl">Contact</span>
       </button>
+      <button class="settings-nav-item" data-tip="Support Us" onclick="openBuyCoffee()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <span class="snl">Support Us ☕</span>
+      </button>
     </div>
 
     
@@ -3237,6 +3244,48 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <button class="pmo-btn-save" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);box-shadow:0 4px 18px rgba(59,130,246,.35)" onclick="saveSchedule()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Schedule
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="modal-buyCoffee" onclick="if(event.target===this)closeM('buyCoffee')">
+  <div class="pmo">
+    <div class="pmo-glow pmo-glow-amber"></div>
+    <button class="pmo-close" onclick="closeM('buyCoffee')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="pmo-header">
+      <div class="pmo-icon-wrap" style="background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(244,114,182,.08));border-color:rgba(251,191,36,.3);box-shadow:0 0 28px rgba(251,191,36,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#gcoffee1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="gcoffee1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fbbf24"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pmo-title">Support JEETrack</div>
+        <div class="pmo-sub">Enjoying the app? Buy me a coffee ☕ — it directly helps keep JEETrack running</div>
+      </div>
+    </div>
+
+    <div class="pmo-pill-row" id="coffee-preset-row" style="margin-bottom:14px">
+      <button type="button" class="pmo-pill coffee-amt-pill" data-amt="49" onclick="selectCoffeeAmount(49,this)">₹49</button>
+      <button type="button" class="pmo-pill coffee-amt-pill active" data-amt="99" onclick="selectCoffeeAmount(99,this)">₹99</button>
+      <button type="button" class="pmo-pill coffee-amt-pill" data-amt="199" onclick="selectCoffeeAmount(199,this)">₹199</button>
+    </div>
+
+    <div class="pmo-field">
+      <label class="pmo-label">Or enter a custom amount (₹)</label>
+      <input type="number" min="1" step="1" class="pmo-input" id="coffee-custom-amt" placeholder="e.g. 150"
+        oninput="onCoffeeCustomInput(this)"/>
+      <span class="fi-err-msg" id="coffee-amt-err"></span>
+    </div>
+
+    <div class="pmo-footer">
+      <button class="pmo-btn-cancel" onclick="closeM('buyCoffee')">Maybe later</button>
+      <button class="pmo-btn-save" id="coffee-pay-btn" style="background:linear-gradient(135deg,#fbbf24,#f472b6);box-shadow:0 4px 18px rgba(251,191,36,.35)" onclick="payCoffee()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg>
+        <span id="coffee-pay-btn-txt">Pay ₹99</span>
       </button>
     </div>
   </div>
