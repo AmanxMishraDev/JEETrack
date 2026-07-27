@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Support JEETrack — Buy Me a Chai</title>
+<meta name="description" content="JEETrack is free and always will be. If it's helped your JEE prep, you can chip in for a chai — it goes straight to keeping the servers running and the features coming."/>
+<meta property="og:title" content="Support JEETrack"/>
+<meta property="og:description" content="Free forever, run by one JEE aspirant. If JEETrack helped you, buy me a chai."/>
+<meta property="og:url" content="https://www.jeetrack.in/support"/>
+<meta property="og:site_name" content="JEETrack"/>
+<meta property="og:image" content="https://www.jeetrack.in/icon-512.png"/>
+<link rel="canonical" href="https://www.jeetrack.in/support"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--sf:#111118;--sf2:#18181f;--sf3:#1e1e28;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.12);
+  --tx:#f0eff5;--mu:#7a7990;--mu2:#4a4960;
+  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--bl:#60a5fa;
+}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.8);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav-links a.active{color:var(--am)}
+.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.85}
+
+/* HERO */
+.hero{position:relative;padding:5rem 2.5rem 3.5rem;overflow:hidden;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:2.5rem;align-items:center}
+.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px)}
+.hero-orb-1{width:520px;height:520px;background:rgba(251,191,36,.10);top:-220px;left:-120px}
+.hero-orb-2{width:380px;height:380px;background:rgba(244,114,182,.09);top:20px;right:-100px}
+.hero-pill{display:inline-flex;align-items:center;gap:.45rem;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.28);color:var(--am);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.3rem .85rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--am);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.6vw,3.2rem);font-weight:800;line-height:1.12;letter-spacing:-.03em;margin-bottom:1.1rem;position:relative;z-index:1}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#fbbf24,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--mu);font-size:1rem;line-height:1.75;max-width:460px;position:relative;z-index:1}
+
+/* CHAI GLASS ILLUSTRATION */
+.chai-stage{position:relative;height:280px;display:flex;align-items:center;justify-content:center}
+.chai-glow{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.22),transparent 70%);filter:blur(10px);animation:chaiGlow 3.5s ease-in-out infinite}
+@keyframes chaiGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.steam-wisp{position:absolute;bottom:168px;width:6px;border-radius:6px;background:linear-gradient(to top,rgba(240,239,245,.35),transparent);transform-origin:bottom center;animation:steamRise 3.4s ease-in-out infinite}
+.steam-wisp.s1{left:calc(50% - 22px);height:70px;animation-delay:0s}
+.steam-wisp.s2{left:calc(50% - 2px);height:88px;animation-delay:.6s}
+.steam-wisp.s3{left:calc(50% + 18px);height:64px;animation-delay:1.2s}
+@keyframes steamRise{
+  0%{opacity:0;transform:translateY(0) scaleX(1) rotate(0deg)}
+  20%{opacity:.55}
+  100%{opacity:0;transform:translateY(-64px) scaleX(1.7) rotate(6deg)}
+}
+
+/* AMOUNT SECTION */
+.page-wrap{max-width:900px;margin:0 auto;padding:0 2.5rem 5rem;position:relative;z-index:1}
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu2);margin-bottom:.6rem}
+.section-eyebrow-line{width:22px;height:1px;background:var(--bd2)}
+.section-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-bottom:2rem}
+
+.amount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.amount-card{position:relative;background:var(--sf);border:1.5px solid var(--bd);border-radius:18px;padding:1.5rem 1.25rem;cursor:pointer;transition:all .18s;text-align:left}
+.amount-card:hover{border-color:rgba(251,191,36,.35);transform:translateY(-2px)}
+.amount-card.active{border-color:var(--am);background:linear-gradient(135deg,rgba(251,191,36,.09),rgba(244,114,182,.04));box-shadow:0 6px 24px rgba(251,191,36,.15)}
+.amount-card .amt{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:.35rem}
+.amount-card .amt-desc{color:var(--mu);font-size:.78rem;line-height:1.5}
+.amount-card .check{position:absolute;top:.9rem;right:.9rem;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.amount-card.active .check{background:var(--am);border-color:var(--am)}
+.amount-card.active .check svg{opacity:1;transform:scale(1)}
+.amount-card .check svg{opacity:0;transform:scale(.5);transition:all .15s;color:#0a0a0f}
+
+.custom-row{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;padding:.9rem 1.1rem;margin-bottom:2rem;transition:border-color .18s}
+.custom-row.active{border-color:var(--am)}
+.custom-row label{font-size:.82rem;color:var(--mu);white-space:nowrap}
+.custom-row .rupee{font-family:'Syne',sans-serif;font-weight:700;color:var(--tx)}
+.custom-row input{flex:1;background:none;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;min-width:0}
+.custom-row input::placeholder{color:var(--mu2)}
+
+.pay-cta-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.pay-btn{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,#fbbf24,#f472b6);color:#1a1206;font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;padding:.95rem 1.8rem;border:none;border-radius:12px;cursor:pointer;box-shadow:0 8px 28px rgba(251,191,36,.28);transition:transform .15s,box-shadow .15s}
+.pay-btn:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(251,191,36,.38)}
+.pay-btn:disabled{opacity:.6;cursor:default;transform:none}
+.pay-err{color:#f87171;font-size:.82rem}
+.secure-note{display:flex;align-items:center;gap:.4rem;color:var(--mu2);font-size:.75rem}
+
+/* Personal note */
+.note-card{margin-top:3rem;background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:2rem;display:flex;gap:1.25rem;align-items:flex-start}
+.note-av{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fbbf24,#f472b6);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#1a1206;flex-shrink:0}
+.note-body p{color:var(--mu);font-size:.88rem;line-height:1.75}
+.note-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--tx);margin-bottom:.15rem}
+.note-role{font-size:.74rem;color:var(--am);font-weight:600;margin-bottom:.7rem}
+
+/* FOOTER */
+.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem;position:relative;z-index:1}
+.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
+.foot a:hover{color:var(--tx)}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+
+/* ───────── CELEBRATION SCREEN ───────── */
+.celebrate{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden}
+.celebrate.show{display:flex}
+.celebrate-glow{position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.16),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:celGlowPulse 2.6s ease-in-out infinite}
+@keyframes celGlowPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+
+.confetti-piece{position:absolute;top:-5%;border-radius:2px;opacity:0;animation:confettiFall linear forwards}
+@keyframes confettiFall{
+  0%{opacity:0;transform:translateY(0) rotate(0deg)}
+  8%{opacity:1}
+  100%{opacity:0;transform:translateY(105vh) rotate(540deg)}
+}
+
+.celebrate-content{position:relative;z-index:2;text-align:center;max-width:440px;padding:2rem}
+.cel-glass-wrap{position:relative;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.cel-check{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gn),#10b981);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(52,211,153,.12),0 12px 40px rgba(52,211,153,.35);animation:celPop .55s cubic-bezier(.25,1.3,.4,1) both}
+@keyframes celPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.cel-check svg{stroke-dasharray:30;stroke-dashoffset:30;animation:celCheckDraw .4s ease .45s forwards}
+@keyframes celCheckDraw{to{stroke-dashoffset:0}}
+
+.celebrate h2{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem;opacity:0;animation:celFadeUp .5s ease .35s forwards}
+.celebrate .cel-sub{color:var(--mu);font-size:.92rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:celFadeUp .5s ease .5s forwards}
+.celebrate .cel-amt{font-family:'Syne',sans-serif;color:var(--am);font-weight:800}
+.celebrate .cel-note{color:var(--mu2);font-size:.8rem;margin-bottom:2rem;opacity:0;animation:celFadeUp .5s ease .62s forwards}
+@keyframes celFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;padding:.85rem 1.6rem;border-radius:12px;opacity:0;animation:celFadeUp .5s ease .75s forwards}
+
+/* Loading state on pay button */
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(26,18,6,.35);border-top-color:#1a1206;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:800px){
+  .nav{padding:0 1.25rem}
+  .nav-links{display:none}
+  .hero{grid-template-columns:1fr;padding:3rem 1.25rem 2rem;text-align:center}
+  .hero-sub{margin:0 auto}
+  .page-wrap{padding:0 1.25rem 4rem}
+  .amount-grid{grid-template-columns:1fr}
+  .note-card{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/support" class="active">Support Us</a>
+  </div>
+  <a class="nav-cta" href="/">Get Started Free →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div>
+    <div class="hero-pill"><span class="hero-pill-dot"></span>Support JEETrack</div>
+    <h1>JEETrack runs on <em>chai</em>, late nights, and people like you</h1>
+    <p class="hero-sub">It's free and it always will be — no paywalls on your prep. But servers, AI insights, and 2 AM debugging sessions all cost something. If JEETrack has helped your prep, a chai goes a long way.</p>
+  </div>
+  <div class="chai-stage">
+    <div class="chai-glow"></div>
+    <div class="steam-wisp s1"></div>
+    <div class="steam-wisp s2"></div>
+    <div class="steam-wisp s3"></div>
+    <svg width="150" height="170" viewBox="0 0 150 170" fill="none">
+      <defs>
+        <linearGradient id="chaiLiquid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fbbf24"/>
+          <stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="glassStroke" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#a695ff"/>
+          <stop offset="1" stop-color="#f472b6"/>
+        </linearGradient>
+      </defs>
+      <!-- glass body -->
+      <path d="M38 55 L45 155 Q47 162 55 162 L95 162 Q103 162 105 155 L112 55 Z" fill="rgba(255,255,255,.03)" stroke="url(#glassStroke)" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- chai liquid -->
+      <path d="M43 92 L47.5 155 Q49 160 55 160 L95 160 Q101 160 102.5 155 L107 92 Z" fill="url(#chaiLiquid)" opacity=".92"/>
+      <ellipse cx="75" cy="92" rx="32" ry="6" fill="#fcd34d" opacity=".9"/>
+      <!-- glass rim -->
+      <ellipse cx="75" cy="55" rx="37" ry="7" fill="none" stroke="url(#glassStroke)" stroke-width="2.5"/>
+      <!-- saucer -->
+      <ellipse cx="75" cy="163" rx="46" ry="6" fill="none" stroke="rgba(240,239,245,.18)" stroke-width="2"/>
+    </svg>
+  </div>
+</section>
+
+<div class="page-wrap">
+
+  <div class="section-eyebrow"><span class="section-eyebrow-line"></span>Pick an amount</div>
+  <div class="section-title">Every bit keeps the lights on</div>
+
+  <div class="amount-grid" id="amount-grid">
+    <button type="button" class="amount-card" data-amt="49" onclick="selectAmount(49,this)">
+      <div class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="amt">₹49</div>
+      <div class="amt-desc">One cutting chai — the smallest thank you, and still means a lot</div>
+    </button>
+    <button type="button" class="amount-card active" data-amt="99" onclick="selectAmount(99,this)">
+      <div class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="amt">₹99</div>
+      <div class="amt-desc">Chai + biscuit round — covers a day of server costs</div>
+    </button>
+    <button type="button" class="amount-card" data-amt="199" onclick="selectAmount(199,this)">
+      <div class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="amt">₹199</div>
+      <div class="amt-desc">Fuels a full late-night build sprint on the next feature</div>
+    </button>
+  </div>
+
+  <div class="custom-row" id="custom-row">
+    <label for="custom-amt">Or a custom amount</label>
+    <span class="rupee">₹</span>
+    <input type="number" id="custom-amt" min="1" step="1" placeholder="e.g. 150" oninput="onCustomInput(this)"/>
+  </div>
+
+  <div class="pay-cta-row">
+    <button class="pay-btn" id="pay-btn" onclick="payChai()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      <span id="pay-btn-txt">Pay ₹99</span>
+    </button>
+    <span class="secure-note">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secured by Razorpay
+    </span>
+  </div>
+  <div class="pay-err" id="pay-err"></div>
+
+  <div class="note-card">
+    <div class="note-av">A</div>
+    <div class="note-body">
+      <div class="note-name">Aman Mishra</div>
+      <div class="note-role">Founder & Developer, JEETrack</div>
+      <p>I built JEETrack alone, as a JEE aspirant who was tired of scattered spreadsheets. It's free because I don't think tracking your prep should cost anything. But if it's genuinely helped you and you'd like to chip in for a chai — thank you, truly. It funds the servers and the late nights that keep this thing alive.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  © 2026 JEETrack · Built for JEE Aspirants across India
+</footer>
+
+<!-- ───────── CELEBRATION OVERLAY (shown after a verified payment) ───────── -->
+<div class="celebrate" id="celebrate">
+  <div class="celebrate-glow"></div>
+  <div id="confetti-layer"></div>
+  <div class="celebrate-content">
+    <div class="cel-glass-wrap">
+      <div class="cel-check">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#06251b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+    <h2>Chai's on the way ☕</h2>
+    <p class="cel-sub">Thank you for the <span class="cel-amt" id="cel-amount">₹99</span> — it genuinely helps keep JEETrack free for every aspirant.</p>
+    <p class="cel-note">A receipt has been sent to your email.</p>
+    <a href="/" class="cel-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      Back to JEETrack
+    </a>
+  </div>
+</div>
+
+<script>
+let SUPABASE_URL = null, SUPABASE_ANON_KEY = null, sb = null;
+let selectedAmount = 99;
+
+async function initSb(){
+  try{
+    const res = await fetch('/api/config');
+    if(res.ok){
+      const cfg = await res.json();
+      SUPABASE_URL = cfg.url; SUPABASE_ANON_KEY = cfg.key;
+      if(window.supabase){ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+    }
+  }catch(e){ console.warn('Could not load config', e); }
+}
+initSb();
+
+function selectAmount(amt, el){
+  selectedAmount = amt;
+  document.querySelectorAll('.amount-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('custom-row').classList.remove('active');
+  document.getElementById('custom-amt').value = '';
+  document.getElementById('pay-err').textContent = '';
+  updatePayLabel();
+}
+
+function onCustomInput(input){
+  const v = parseInt(input.value, 10);
+  document.querySelectorAll('.amount-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('pay-err').textContent = '';
+  document.getElementById('custom-row').classList.toggle('active', document.activeElement === input);
+  selectedAmount = (v && v > 0) ? v : 0;
+  updatePayLabel();
+}
+
+function updatePayLabel(){
+  document.getElementById('pay-btn-txt').textContent = selectedAmount > 0 ? `Pay ₹${selectedAmount}` : 'Pay';
+}
+
+async function payChai(){
+  const errEl = document.getElementById('pay-err');
+  errEl.textContent = '';
+
+  if(!selectedAmount || selectedAmount < 1){
+    errEl.textContent = 'Pick an amount or enter a custom one first.';
+    return;
+  }
+  if(selectedAmount > 100000){
+    errEl.textContent = 'That amount looks too large — try something smaller.';
+    return;
+  }
+  if(!sb){
+    errEl.textContent = 'Still connecting — try again in a second.';
+    return;
+  }
+  if(typeof Razorpay === 'undefined'){
+    errEl.textContent = 'Payment gateway still loading — try again in a moment.';
+    return;
+  }
+
+  const btn = document.getElementById('pay-btn');
+  const btnTxt = document.getElementById('pay-btn-txt');
+  const prevLabel = btnTxt.textContent;
+  btn.disabled = true;
+  btnTxt.innerHTML = '<span class="spin"></span>';
+
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const currentUser = userData?.user || null;
+
+    const { data, error } = await sb.functions.invoke('create-razorpay-order', {
+      body: { amount: selectedAmount }
+    });
+    if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
+
+    const rzp = new Razorpay({
+      key: data.key_id,
+      amount: data.amount,
+      currency: data.currency || 'INR',
+      name: 'JEETrack',
+      description: 'Buy me a chai ☕',
+      order_id: data.order_id,
+      prefill: { email: currentUser?.email || '' },
+      theme: { color: '#fbbf24' },
+      handler: async function(response){
+        try{
+          const { data: verifyData } = await sb.functions.invoke('verify-razorpay-payment', {
+            body: {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: selectedAmount,
+              user_id: currentUser?.id || null
+            }
+          });
+          if(!verifyData || !verifyData.verified){
+            errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
+            btn.disabled = false; btnTxt.textContent = prevLabel;
+            return;
+          }
+          showCelebration(selectedAmount);
+        }catch(e){
+          errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
+          btn.disabled = false; btnTxt.textContent = prevLabel;
+        }
+      },
+      modal: {
+        ondismiss: function(){ btn.disabled = false; btnTxt.textContent = prevLabel; }
+      }
+    });
+    rzp.on('payment.failed', function(){
+      errEl.textContent = 'Payment failed — please try again.';
+      btn.disabled = false; btnTxt.textContent = prevLabel;
+    });
+    rzp.open();
+    btn.disabled = false; btnTxt.textContent = prevLabel;
+  }catch(e){
+    console.error('Chai payment error:', e);
+    errEl.textContent = 'Could not start payment — please try again.';
+    btn.disabled = false; btnTxt.textContent = prevLabel;
+  }
+}
+
+function showCelebration(amount){
+  document.getElementById('cel-amount').textContent = `₹${amount}`;
+  const overlay = document.getElementById('celebrate');
+  overlay.classList.add('show');
+  spawnConfetti();
+  document.body.style.overflow = 'hidden';
+}
+
+function spawnConfetti(){
+  const layer = document.getElementById('confetti-layer');
+  layer.innerHTML = '';
+  const colors = ['#fbbf24','#f472b6','#a695ff','#34d399','#60a5fa'];
+  const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 70;
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 5 + Math.random()*6;
+    piece.style.width = size+'px';
+    piece.style.height = (size*0.4 + Math.random()*8)+'px';
+    piece.style.left = Math.random()*100+'%';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration = (2.4 + Math.random()*1.8)+'s';
+    piece.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(piece);
+  }
+}
+</script>
+
+</body>
+</html>
