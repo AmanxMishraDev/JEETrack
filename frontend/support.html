@@ -298,7 +298,14 @@ async function initSb(){
     }
   }catch(e){ console.warn('Could not load config', e); }
 }
-initSb();
+// Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
+// but before DOMContentLoaded — so we wait for that event before touching
+// window.supabase, otherwise it may still be undefined.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSb);
+} else {
+  initSb();
+}
 
 function selectAmount(amt, el){
   selectedAmount = amt;
