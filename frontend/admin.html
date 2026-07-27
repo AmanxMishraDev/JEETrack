@@ -454,15 +454,6 @@ tr.fb-expand-row{background:transparent!important;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       All Users
     </div>
-    <div class="nav-item" onclick="showPage('leaderboard',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1 4 4 0 0 0 4 4M17 6h3a1 1 0 0 1 1 1 4 4 0 0 1-4 4"/></svg>
-      Leaderboard
-    </div>
-    <div class="nav-item" onclick="showPage('consistency',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 1 1-12 0c0-1.5.7-3 1.5-4.2"/></svg>
-      Consistency
-      <span class="nav-tag">New</span>
-    </div>
     <div class="nav-item" onclick="showPage('demographics',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-4.35-4.35"/><circle cx="10" cy="10" r="7"/><path d="M10 7v6M7 10h6" stroke-opacity="0"/></svg>
       Segmentation
@@ -528,7 +519,8 @@ tr.fb-expand-row{background:transparent!important;}
       <div class="grid-2">
         <div class="card">
           <h3><span class="ic">📊</span>Feature Usage by Section</h3>
-          <div class="bar-chart" id="pages-chart"><div class="loading"><div class="spinner"></div></div></div>
+          <p style="font-size:.76rem;color:var(--mu);margin-bottom:.8rem;">Now tracked accurately in PostHog — zero extra Supabase load.</p>
+          <a href="https://us.posthog.com/project/478522/dashboard/1904543" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">Open in PostHog →</a>
         </div>
         <div class="card">
           <h3><span class="ic">📚</span>Subject Tracking (Chapters)</h3>
@@ -543,7 +535,7 @@ tr.fb-expand-row{background:transparent!important;}
         <div class="card">
           <h3><span class="ic">☀️</span>DAU / WAU / MAU</h3>
           <p style="font-size:.76rem;color:var(--mu);margin-bottom:.8rem;">Now tracked accurately in PostHog — zero extra Supabase load.</p>
-          <a href="https://us.posthog.com/project/478522/dashboard/1896441" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">Open in PostHog →</a>
+          <a href="https://us.posthog.com/project/478522/dashboard/1904535" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">Open in PostHog →</a>
         </div>
       </div>
     </div>
@@ -558,7 +550,7 @@ tr.fb-expand-row{background:transparent!important;}
           with proper event analytics in PostHog instead of being derived from raw Supabase row-counts — it's more accurate
           (per-feature adoption %, weekly trends) and adds zero extra load to the database.
         </p>
-        <a href="https://us.posthog.com/project/478522/dashboard/1896441" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
+        <a href="https://us.posthog.com/project/478522/dashboard/1904543" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
           📊 Open Feature Usage Comparison in PostHog
         </a>
       </div>
@@ -573,7 +565,7 @@ tr.fb-expand-row{background:transparent!important;}
           Signup → onboarding → first core action is now a proper Funnel insight in PostHog, correctly counting both
           Google and email sign-ups — the old Supabase version only ever counted email sign-ups, so it was undercounting significantly.
         </p>
-        <a href="https://us.posthog.com/project/478522/dashboard/1896441" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
+        <a href="https://us.posthog.com/project/478522/dashboard/1904543" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
           🎯 Open Activation Funnel in PostHog
         </a>
       </div>
@@ -600,7 +592,7 @@ tr.fb-expand-row{background:transparent!important;}
           user per day. That's been removed — PostHog's <code>app_opened</code> event now powers accurate DAU/WAU/MAU
           (and it correctly counts both Google and email sign-ins), with zero Supabase load.
         </p>
-        <a href="https://us.posthog.com/project/478522/dashboard/1896441" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
+        <a href="https://us.posthog.com/project/478522/dashboard/1904535" target="_blank" rel="noopener" class="action-btn btn-primary" style="text-decoration:none;display:inline-flex;">
           ☀️ Open DAU / WAU / MAU in PostHog
         </a>
       </div>
@@ -714,71 +706,6 @@ tr.fb-expand-row{background:transparent!important;}
           <button class="action-btn btn-ghost btn-sm" onclick="loadUsers(Math.max(0,_userPage-1))" id="prev-btn" disabled>← Prev</button>
           <span class="page-info" id="page-info"></span>
           <button class="action-btn btn-ghost btn-sm" onclick="loadUsers(_userPage+1)" id="next-btn">Next →</button>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="page" id="page-leaderboard">
-      <div class="section-title">Test Leaderboard<span class="line"></span></div>
-      <div class="filter-bar">
-        <select class="fselect" id="leaderboard-metric" onchange="loadLeaderboard()" style="min-width:220px">
-          <option value="avgScore">Sort by Average Marks</option>
-          <option value="avgScorePct">Sort by Average %</option>
-          <option value="bestScore">Sort by Best Score</option>
-          <option value="totalTests">Sort by Tests Attempted</option>
-          <option value="totalHours">Sort by Study Hours</option>
-          <option value="consistency">Sort by Active Days (30d)</option>
-        </select>
-      </div>
-      <div id="podium-wrap"></div>
-      <div class="card" style="padding:0">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th><th>Student</th><th>Class</th><th>Tests</th>
-                <th>Avg Marks</th><th>Avg %</th><th>Best Score</th><th>Study Hrs</th><th>Active Days</th>
-              </tr>
-            </thead>
-            <tbody id="leaderboard-table">
-              <tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="page" id="page-consistency">
-      <div class="section-title">Consistency Analytics<span class="line"></span></div>
-      <div class="kpi-row" id="consistency-kpis">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
-      <div class="grid-main-side">
-        <div class="card">
-          <h3><span class="ic">📈</span>Daily Active Students</h3>
-          <div class="line-wrap" style="height:170px" id="consistency-dau"><div class="loading"><div class="spinner"></div></div></div>
-        </div>
-        <div class="card">
-          <h3><span class="ic">🔥</span>Longest Streaks</h3>
-          <div id="streak-list"><div class="loading"><div class="spinner"></div></div></div>
-        </div>
-      </div>
-      <div class="section-title" style="margin-top:.3rem">Full Consistency Ranking<span class="line"></span></div>
-      <div class="card" style="padding:0">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th><th>Student</th><th>Current Streak</th><th>Longest Streak</th>
-                <th>Active Days (30d)</th><th>Total Active Days</th><th>Last Active</th>
-              </tr>
-            </thead>
-            <tbody id="consistency-table">
-              <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -1437,8 +1364,6 @@ const PAGE_META = {
   dau:           { title: 'DAU Trend',          sub: 'Daily active users over time' },
   new_users:     { title: 'New User Signups',   sub: 'Day-wise signup tracking, peak day & daily average' },
   users:         { title: 'All Users',          sub: 'Complete profile & performance data per student' },
-  leaderboard:   { title: 'Leaderboard',        sub: 'Top performing students, ranked' },
-  consistency:   { title: 'Consistency',        sub: 'Who shows up, every single day' },
   demographics:  { title: 'Segmentation',       sub: 'Class, coaching institute & referral source distribution' },
   db:            { title: 'DB Stats',           sub: 'Raw Supabase table counts' },
   actions:       { title: 'Admin Actions',      sub: 'Manual triggers & session info' },
@@ -1456,7 +1381,7 @@ function showPage(page, el) {
   document.getElementById('page-title').textContent = meta.title;
   document.getElementById('page-sub').textContent = meta.sub;
   document.getElementById('range-btns').style.display =
-    ['overview','funnel','consistency','new_users'].includes(page) ? 'flex' : 'none';
+    ['overview','funnel','new_users'].includes(page) ? 'flex' : 'none';
   toggleSidebar(false);
   loadCurrentPage();
 }
@@ -1469,8 +1394,6 @@ function loadCurrentPage() {
     dau:           loadDAU,
     new_users:     loadNewUsers,
     users:         () => loadUsers(0),
-    leaderboard:   loadLeaderboard,
-    consistency:   loadConsistency,
     demographics:  loadDemographics,
     db:            loadDBStats,
     actions:       loadActionsPage,
@@ -1492,7 +1415,6 @@ function loadAll() { loadCurrentPage(); }
 
 async function loadOverview() {
   loadStats();
-  loadPagesChart();
   loadSubjectChart();
   loadExamChart();
 }
@@ -1523,25 +1445,8 @@ async function loadStats() {
   }
 }
 
-async function loadPagesChart() {
-  const el = document.getElementById('pages-chart');
-  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const data = await api('pages');
-    const max = Math.max(...data.map(d => d.count), 1);
-    const colors = ['#7c6af7','#34d399','#fbbf24','#f472b6','#2dd4bf','#f87171','#a695ff','#fb923c','#60a5fa','#8b8aa0'];
-    const pageLabels = { overview:'Dashboard', mains:'Mains Tests', advanced:'Adv Tests',
-      hours:'Study Hours', insights:'AI Insights', backlog:'Backlog',
-      todo:'To-Do', syllabus:'Syllabus', compare:'Compare', settings:'Settings' };
-    el.innerHTML = data.filter(d => d.count > 0).map((d, i) => `
-      <div class="bar-row">
-        <div class="bar-label">${pageLabels[d.page] || d.page}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${colors[i%colors.length]}"></div></div>
-        <div class="bar-count">${fmt(d.count)}</div>
-      </div>
-    `).join('') || emptyState('No data yet');
-  } catch(e) { el.innerHTML = `<div class="no-data">${esc(e.message)}</div>`; }
-}
+// NOTE: loadPagesChart() removed — that data is now the PostHog
+// "Feature Usage Comparison" insight (Activation & Engagement dashboard).
 
 async function loadSubjectChart() {
   const el = document.getElementById('subject-chart');
@@ -1927,161 +1832,6 @@ function closeModal() {
 }
 
 
-async function loadLeaderboard() {
-  const podiumEl = document.getElementById('podium-wrap');
-  const tbody = document.getElementById('leaderboard-table');
-  podiumEl.innerHTML = '';
-  tbody.innerHTML = '<tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>';
-  try {
-    const metric = document.getElementById('leaderboard-metric').value;
-    const d = await api('leaderboard', `&metric=${metric}`);
-    const list = d.leaderboard || [];
-    if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="9">${emptyState('No test data logged yet — leaderboard will populate once students log tests')}</td></tr>`;
-      return;
-    }
-
-    const top3 = list.slice(0, 3);
-    if (top3.length) {
-      const medalClass = ['gold','silver','bronze'];
-      const medalIcon = ['🥇','🥈','🥉'];
-      podiumEl.innerHTML = `<div class="podium">${top3.map((u, i) => `
-        <div class="podium-card ${medalClass[i]}">
-          <div class="podium-rank">${medalIcon[i]}</div>
-          <div class="podium-avatar">${initials(u.name)}</div>
-          <div class="podium-name">${esc(u.name)}</div>
-          <div class="podium-meta">${esc(u.class)} · ${esc(u.coaching)}</div>
-          <div class="podium-score">${metricValue(u, metric)}</div>
-          <div class="podium-score-label">${metricLabel(metric)}</div>
-        </div>
-      `).join('')}</div>`;
-    }
-
-    tbody.innerHTML = list.map(u => `
-      <tr class="row-click user-row" data-uid="${esc(u.user_id)}" data-uname="${esc(u.name)}">
-        <td>${rankBadge(u.rank)}</td>
-        <td>
-          <div class="user-cell">
-            <div class="avatar">${initials(u.name)}</div>
-            <div style="min-width:0">
-              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">${esc(u.name)}</div>
-              <div style="font-size:.7rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px">${esc(u.email)}</div>
-            </div>
-          </div>
-        </td>
-        <td><span class="pill pill-blue">${esc(u.class)}</span></td>
-        <td>${fmt(u.totalTests)}</td>
-        <td><strong>${fmt(u.avgScore)}</strong></td>
-        <td>${u.avgScorePct}%</td>
-        <td>${fmt(u.bestScore)}</td>
-        <td>${fmt(u.totalHours)}h</td>
-        <td>${fmt(u.activeDays)}/30</td>
-      </tr>
-    `).join('');
-  } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
-  }
-}
-
-function metricValue(u, metric) {
-  if (metric === 'avgScorePct') return u.avgScorePct + '%';
-  if (metric === 'bestScore') return fmt(u.bestScore);
-  if (metric === 'totalTests') return fmt(u.totalTests);
-  if (metric === 'totalHours') return fmt(u.totalHours) + 'h';
-  if (metric === 'consistency') return fmt(u.activeDays);
-  return fmt(u.avgScore);
-}
-function metricLabel(metric) {
-  return { avgScore:'Avg Marks', avgScorePct:'Avg %', bestScore:'Best Score',
-    totalTests:'Tests Attempted', totalHours:'Study Hours', consistency:'Active Days' }[metric] || 'Score';
-}
-
-function rankBadge(rank) {
-  const cls = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
-  return `<span class="rank-badge ${cls}">${rank}</span>`;
-}
-
-
-async function loadConsistency() {
-  const kpiEl = document.getElementById('consistency-kpis');
-  const dauEl = document.getElementById('consistency-dau');
-  const streakEl = document.getElementById('streak-list');
-  const tbody = document.getElementById('consistency-table');
-  kpiEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  dauEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  streakEl.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
-  try {
-    const d = await api('consistency', `&window=${_days}`);
-    const users = d.users || [];
-    const top = d.mostConsistent;
-
-    kpiEl.innerHTML = `
-      <div class="kpi-card">
-        <div class="kpi-label">🏅 Most Consistent Student</div>
-        <div class="kpi-name">${top ? esc(top.name) : '—'}</div>
-        <div class="kpi-sub">${top ? `${top.currentStreak}-day current streak` : 'No data yet'}</div>
-      </div>
-      <div class="kpi-card alt">
-        <div class="kpi-label">🔥 Longest Streak Ever</div>
-        <div class="kpi-name">${users.length ? Math.max(...users.map(u=>u.longestStreak)) + ' days' : '—'}</div>
-        <div class="kpi-sub">${users.length ? esc([...users].sort((a,b)=>b.longestStreak-a.longestStreak)[0].name) : ''}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">📅 Active Today/Yesterday</div>
-        <div class="kpi-name">${users.filter(u=>u.currentStreak>0).length}</div>
-        <div class="kpi-sub">out of ${users.length} tracked students</div>
-      </div>
-      <div class="kpi-card alt">
-        <div class="kpi-label">📊 Avg Active Days (${_days}d)</div>
-        <div class="kpi-name">${users.length ? Math.round(users.reduce((s,u)=>s+u.activeDaysInWindow,0)/users.length) : 0}</div>
-        <div class="kpi-sub">days per student, last ${_days} days</div>
-      </div>
-    `;
-
-    dauEl.innerHTML = renderLineChart((d.dau||[]).map(x=>x.count), (d.dau||[]).map(x=>x.date), 170);
-
-    const topStreaks = [...users].sort((a,b)=>b.longestStreak-a.longestStreak).slice(0,8);
-    streakEl.innerHTML = topStreaks.length ? topStreaks.map((u,i) => `
-      <div class="streak-row">
-        <div class="streak-fire">${i===0?'🔥':'🔸'}</div>
-        <div class="avatar" style="width:26px;height:26px;font-size:.62rem">${initials(u.name)}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}</div>
-          <div style="font-size:.68rem;color:var(--mu)">${esc(u.class)}</div>
-        </div>
-        <div class="streak-days">${u.longestStreak}d</div>
-      </div>
-    `).join('') : emptyState('No streak data yet');
-
-    if (!users.length) {
-      tbody.innerHTML = `<tr><td colspan="7">${emptyState('No activity logged yet — consistency data appears once students log tests or study hours')}</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = users.map(u => `
-      <tr class="row-click user-row" data-uid="${esc(u.user_id)}" data-uname="${esc(u.name)}">
-        <td>${rankBadge(u.rank)}</td>
-        <td>
-          <div class="user-cell">
-            <div class="avatar">${initials(u.name)}</div>
-            <div style="min-width:0">
-              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${esc(u.name)}</div>
-              <div style="font-size:.7rem;color:var(--mu)">${esc(u.class)} · ${esc(u.coaching)}</div>
-            </div>
-          </div>
-        </td>
-        <td>${u.currentStreak > 0 ? `<span class="pill pill-yellow">🔥 ${u.currentStreak}d</span>` : '<span style="color:var(--mu2)">—</span>'}</td>
-        <td>${fmt(u.longestStreak)}d</td>
-        <td>${fmt(u.activeDaysInWindow)}/${u.windowDays}</td>
-        <td>${fmt(u.totalActiveDays)}</td>
-        <td style="color:var(--mu);white-space:nowrap">${fmtDate(u.lastActiveDate)}</td>
-      </tr>
-    `).join('');
-  } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="no-data">Error: ${esc(e.message)}</div></td></tr>`;
-  }
-}
 
 
 async function loadDemographics() {

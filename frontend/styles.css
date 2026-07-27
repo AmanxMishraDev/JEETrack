@@ -4737,6 +4737,7 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   margin: 0 auto;
   padding: 6rem 2rem;
   position: relative;
+  min-width: 0;
 }
 .ls-section-center { text-align: center; }
 
@@ -5327,8 +5328,9 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   margin:1.4rem auto 0; padding:.7rem 1.4rem;
   background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09);
   border-radius:99px; backdrop-filter:blur(6px);
+  max-width:100%; box-sizing:border-box;
 }
-.ls-testi-trustrow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; }
+.ls-testi-trustrow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; min-width:0; }
 .ls-testi-trust-div{width:1px;height:22px;background:rgba(255,255,255,.12)}
 .ls-testi-trust-text{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500;white-space:nowrap}
 .ls-testi-trust-text .odo-num{font-size:1em;color:#fff;font-weight:700;vertical-align:baseline}
@@ -5336,10 +5338,18 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 .ls-testi-trust-rating{display:flex;align-items:center;gap:7px}
 .ls-testi-trust-ratingnum{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:14px;font-variant-numeric:tabular-nums}
 
+@media(max-width:480px){
+  .ls-testi-trustbar{ border-radius:20px; padding:.75rem 1rem; }
+  .ls-testi-trustrow{ flex-direction:column; gap:6px; }
+  .ls-testi-trust-div{ display:none; }
+  .ls-testi-trust-text{ white-space:normal; text-align:center; font-size:12px; }
+}
+
 .ls-testi-wrap{
   position: relative;
   overflow: hidden;
   width: 100%;
+  max-width: 100%;
   margin-top: 3.2rem;
 }
 .ls-testi-track{

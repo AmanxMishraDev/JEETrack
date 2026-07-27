@@ -383,7 +383,7 @@ export default async function handler(req, res) {
 
     
     if (action === 'new_users') {
-      const authUsers = await sbAuthListAllUsers().catch(() => []);
+      const authUsers = await cached('all_auth_users', 300000, () => sbAuthListAllUsers().catch(() => []));
       const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
 
       
@@ -413,28 +413,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ labels, values, total, avg, peak, peakDay });
     }
     
-    if (action === 'pages') {
-      const cutoff = dateFrom(days);
-      const [tests, hours, backlogs, todos, syllabus, feedback, ai] = await Promise.all([
-        sbQuery(`tests?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`hours?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`backlogs?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`todos?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`syllabus?select=user_id&updated_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`feedback?select=user_id&created_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-        sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0&last_active_at=gte.${cutoff}T00:00:00Z`).catch(() => []),
-      ]);
-      const uniq = arr => new Set(arr.map(r => r.user_id)).size;
-      return res.status(200).json([
-        { page: 'Mock Tests',  count: uniq(tests)    },
-        { page: 'Study Hours', count: uniq(hours)    },
-        { page: 'Backlog',     count: uniq(backlogs) },
-        { page: 'To-Do',       count: uniq(todos)    },
-        { page: 'Syllabus',    count: uniq(syllabus) },
-        { page: 'AI Insights', count: uniq(ai)       },
-        { page: 'Feedback',    count: uniq(feedback) },
-      ].sort((a, b) => b.count - a.count));
-    }
+    // NOTE: the 'pages' action was removed — it was the same "which
+    // feature is used most" concept as the old 'features' action (which was
+    // already replaced by PostHog), just re-appearing under a different name
+    // on the Overview page. Also unfiltered/uncached before this cleanup.
+
 
     
     
@@ -690,173 +673,11 @@ export default async function handler(req, res) {
     
     
     
-    if (action === 'leaderboard') {
-      const metric = req.query.metric || 'avgScore'; 
-
-      const roster = await buildRoster();
-      if (!roster.length) return res.status(200).json({ leaderboard: [], topper: null });
-
-      const [allTests, allHours] = await Promise.all([
-        sbQuery('tests?select=user_id,total,max,physics,chemistry,maths,exam,date').catch(() => []),
-        sbQuery('hours?select=user_id,total,subject,date').catch(() => []),
-      ]);
-
-      
-      const userTestMap = {};
-      allTests.forEach(t => {
-        if (!userTestMap[t.user_id]) userTestMap[t.user_id] = [];
-        userTestMap[t.user_id].push(t);
-      });
-
-      
-      const userHoursMap = {};
-      allHours.forEach(h => {
-        if (!userHoursMap[h.user_id]) userHoursMap[h.user_id] = [];
-        userHoursMap[h.user_id].push(h);
-      });
-
-      const last30 = new Date(); last30.setDate(last30.getDate() - 30);
-
-      
-      const entries = roster.map(u => {
-        const uid   = u.id;
-        const tests = userTestMap[uid] || [];
-        const hours = userHoursMap[uid] || [];
-        const totalHrsTime = hours.reduce((s, h) => s + (h.total || 0), 0);
-        const avgScore  = tests.length ? Math.round(tests.reduce((s, t) => s + (t.total || 0), 0) / tests.length) : 0;
-        const bestScore = tests.length ? Math.max(...tests.map(t => t.total || 0)) : 0;
-        const avgScorePct = tests.length
-          ? Math.round(tests.reduce((s, t) => s + (t.max ? (t.total||0)/t.max*100 : 0), 0) / tests.length)
-          : 0;
-
-        
-        const activeDays = new Set(hours.filter(h => h.date && new Date(h.date) > last30).map(h => h.date)).size;
-
-        return {
-          user_id:     uid,
-          name:        u.name || 'Anonymous',
-          email:       u.email || '',
-          class:       classLabel(u.class_year),
-          coaching:    coachingLabel(u.coaching),
-          totalTests:  tests.length,
-          avgScore,
-          avgScorePct,
-          bestScore,
-          totalHours:  Math.round(totalHrsTime * 10) / 10,
-          activeDays,   
-          last_active: u.last_active_at,
-        };
-      }).filter(e => e.totalTests > 0 || e.totalHours > 0); 
-
-      
-      const sortKey = {
-        avgScore:    (a, b) => b.avgScore    - a.avgScore,
-        avgScorePct: (a, b) => b.avgScorePct - a.avgScorePct,
-        bestScore:   (a, b) => b.bestScore   - a.bestScore,
-        totalTests:  (a, b) => b.totalTests  - a.totalTests,
-        totalHours:  (a, b) => b.totalHours  - a.totalHours,
-        consistency: (a, b) => b.activeDays  - a.activeDays,
-      }[metric] || ((a, b) => b.avgScore - a.avgScore);
-
-      entries.sort(sortKey);
-      entries.forEach((e, i) => { e.rank = i + 1; });
-
-      return res.status(200).json({
-        leaderboard: entries.slice(0, 100),
-        topper: entries[0] || null,
-      });
-    }
-
-    
-    
-    
-    
-    if (action === 'consistency') {
-      const windowDays = parseInt(req.query.window || '30');
-      const roster = await buildRoster();
-      if (!roster.length) return res.status(200).json({ users: [], dau: [], mostConsistent: null });
-
-      const cutoffDate = dateFrom(windowDays);
-
-      const [allTests, allHours] = await Promise.all([
-        sbQuery(`tests?select=user_id,date&date=gte.${dateFrom(180)}`).catch(() => []),
-        sbQuery(`hours?select=user_id,date&date=gte.${dateFrom(180)}`).catch(() => []),
-      ]);
-
-      
-      const userDates = {};
-      [...allTests, ...allHours].forEach(r => {
-        if (!r.date) return;
-        if (!userDates[r.user_id]) userDates[r.user_id] = new Set();
-        userDates[r.user_id].add(r.date);
-      });
-
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      const users = roster.map(u => {
-        const dates = userDates[u.id] || new Set();
-        const datesArr = [...dates].sort();
-        const activeInWindow = datesArr.filter(d => d >= cutoffDate).length;
-
-        
-        let longest = 0, cur = 0, prev = null;
-        datesArr.forEach(ds => {
-          const d = new Date(ds);
-          if (prev) {
-            const diff = Math.round((d - prev) / 86400000);
-            cur = diff === 1 ? cur + 1 : 1;
-          } else cur = 1;
-          longest = Math.max(longest, cur);
-          prev = d;
-        });
-
-        
-        let current = 0;
-        if (datesArr.length) {
-          const cursor = new Date(todayStr);
-          const offset = dates.has(todayStr) ? 0 : 1;
-          cursor.setDate(cursor.getDate() - offset);
-          while (dates.has(cursor.toISOString().split('T')[0])) {
-            current++;
-            cursor.setDate(cursor.getDate() - 1);
-          }
-        }
-
-        return {
-          user_id: u.id,
-          name: u.name || 'Anonymous',
-          email: u.email || '',
-          class: classLabel(u.class_year),
-          coaching: coachingLabel(u.coaching),
-          activeDaysInWindow: activeInWindow,
-          windowDays,
-          longestStreak: longest,
-          currentStreak: current,
-          totalActiveDays: datesArr.length,
-          lastActiveDate: datesArr[datesArr.length - 1] || null,
-        };
-      }).filter(u => u.totalActiveDays > 0);
-
-      users.sort((a, b) => b.currentStreak - a.currentStreak || b.activeDaysInWindow - a.activeDaysInWindow);
-      users.forEach((u, i) => { u.rank = i + 1; });
-
-      
-      const dauMap = {};
-      Object.entries(userDates).forEach(([uid, dates]) => {
-        dates.forEach(d => {
-          if (d < cutoffDate) return;
-          dauMap[d] = (dauMap[d] || 0) + 1;
-        });
-      });
-      const dauLabels = Object.keys(dauMap).sort();
-      const dau = dauLabels.map(d => ({ date: d, count: dauMap[d] }));
-
-      return res.status(200).json({
-        users: users.slice(0, 100),
-        mostConsistent: users[0] || null,
-        dau,
-      });
-    }
+    // NOTE: 'leaderboard' and 'consistency' actions were removed — both did
+    // full unfiltered/near-unfiltered scans of the tests and hours tables on
+    // every load, which was the single biggest Disk IO consumer in this
+    // dashboard. Removed entirely rather than just cached, since the free
+    // tier's IO budget is the active constraint right now.
 
     
     if (action === 'trigger_monthly') {
