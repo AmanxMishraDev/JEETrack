@@ -3,9 +3,15 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 // Verifies a Razorpay payment signature server-side (never trust the client's
 // word that a payment succeeded) and logs it to the `donations` table using
 // the service-role key. Requires RAZORPAY_KEY_SECRET to be set as a secret.
+//
+// Note: the razorpay-webhook function is the source-of-truth confirmation
+// (fires even if the user's browser closes right after paying). This
+// function gives the user instant feedback in the UI; both write to the
+// same `donations` row via an upsert on razorpay_payment_id, so calling
+// this twice (e.g. an accidental retry) never creates a duplicate.
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://www.jeetrack.in",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -53,19 +59,19 @@ Deno.serve(async (req: Request) => {
 
     const verified = expectedSignature === razorpay_signature;
 
-    // Log the donation attempt (service role bypasses RLS; this table has no
-    // client-facing policies by design).
+    // Upsert (never insert) so a retried/duplicate call updates the same row
+    // instead of creating a second one — razorpay_payment_id has a unique index.
     try {
       const supabaseUrl = Deno.env.get("SUPABASE_URL");
       const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
       if (supabaseUrl && serviceKey) {
-        await fetch(`${supabaseUrl}/rest/v1/donations`, {
+        await fetch(`${supabaseUrl}/rest/v1/donations?on_conflict=razorpay_payment_id`, {
           method: "POST",
           headers: {
             "apikey": serviceKey,
             "Authorization": `Bearer ${serviceKey}`,
             "Content-Type": "application/json",
-            "Prefer": "return=minimal",
+            "Prefer": "resolution=merge-duplicates,return=minimal",
           },
           body: JSON.stringify({
             user_id: user_id || null,

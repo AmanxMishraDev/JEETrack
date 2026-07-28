@@ -7,7 +7,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 //   RAZORPAY_KEY_SECRET
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://www.jeetrack.in",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
