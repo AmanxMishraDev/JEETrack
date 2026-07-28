@@ -6,12 +6,25 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 //   RAZORPAY_KEY_ID
 //   RAZORPAY_KEY_SECRET
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://www.jeetrack.in",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://www.jeetrack.in",
+  "https://jeetrack.in",
+  "https://development.jeetrack.in",
+];
+
+function corsHeadersFor(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
+}
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = corsHeadersFor(req);
+
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

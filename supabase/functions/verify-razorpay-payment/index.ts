@@ -10,16 +10,29 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 // same `donations` row via an upsert on razorpay_payment_id, so calling
 // this twice (e.g. an accidental retry) never creates a duplicate.
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://www.jeetrack.in",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://www.jeetrack.in",
+  "https://jeetrack.in",
+  "https://development.jeetrack.in",
+];
+
+function corsHeadersFor(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
+}
 
 function toHex(buf: ArrayBuffer): string {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 Deno.serve(async (req: Request) => {
+  const corsHeaders = corsHeadersFor(req);
+
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -59,8 +72,6 @@ Deno.serve(async (req: Request) => {
 
     const verified = expectedSignature === razorpay_signature;
 
-    // Upsert (never insert) so a retried/duplicate call updates the same row
-    // instead of creating a second one — razorpay_payment_id has a unique index.
     try {
       const supabaseUrl = Deno.env.get("SUPABASE_URL");
       const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
