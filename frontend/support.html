@@ -459,7 +459,7 @@ async function payChai(){
       image: 'https://www.jeetrack.in/icon-192.png',
       order_id: data.order_id,
       prefill: { email: currentUser?.email || '' },
-      theme: { color: '#fbbf24' },
+      theme: { color: '#7c6af7' },
       handler: async function(response){
         try{
           const { data: verifyData } = await sb.functions.invoke('verify-razorpay-payment', {
