@@ -638,14 +638,14 @@ function getDefaultState(){
 // ── Dirty-tracking sync snapshot ──
 // Tracks the last-synced payload (as JSON) per row per table, so save()
 // only needs to upsert rows that actually changed instead of the full array.
-const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, syllabus:{}, practiceLogs:{} };
+const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, practiceLogs:{} };
 
 function _payloadTest(t,uid){ return {id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}; }
 function _payloadHour(h,uid){ return {id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}; }
 function _payloadBacklog(b,uid){ return {id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}; }
 function _payloadTodo(t,uid){ return {id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}; }
 function _payloadUpcoming(u,uid){ return {id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}; }
-function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,class:c.class||null,theory:c.theory,practice:c.practice}; }
+function _payloadSyllabusState(){ return {physics:S.syllabus.physics||[],chemistry:S.syllabus.chemistry||[],maths:S.syllabus.maths||[]}; }
 function _payloadPracticeLog(p,uid){ return {id:p.id,user_id:uid,subject:p.subject,chapter_id:p.chapterId,chapter_name:p.chapterName,questions:p.questions,date:p.date,logged_at:p.loggedAt}; }
 function _snapKey(row){ return JSON.stringify(row); }
 
@@ -663,8 +663,7 @@ function _seedSyncSnapshot(){
   _syncSnapshot.backlogs = {}; (S.backlogs||[]).forEach(b=>{ _syncSnapshot.backlogs[b.id]=_snapKey(_payloadBacklog(b,uid)); });
   _syncSnapshot.todos = {}; (S.todos||[]).forEach(t=>{ _syncSnapshot.todos[t.id]=_snapKey(_payloadTodo(t,uid)); });
   _syncSnapshot.upcoming = {}; (S.upcoming||[]).forEach(u=>{ _syncSnapshot.upcoming[u.id]=_snapKey(_payloadUpcoming(u,uid)); });
-  _syncSnapshot.syllabus = {};
-  ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
+  _syncSnapshot._syllabus = _snapKey(_payloadSyllabusState());
   _syncSnapshot.practiceLogs = {}; (S.practiceLogs||[]).forEach(p=>{ _syncSnapshot.practiceLogs[p.id]=_snapKey(_payloadPracticeLog(p,uid)); });
   _syncSnapshot._streaks = _snapKey({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]});
 }
@@ -690,7 +689,7 @@ async function loadUserData(){
       sb.from('backlogs').select('*').eq('user_id',uid),
       sb.from('todos').select('*').eq('user_id',uid),
       sb.from('upcoming').select('*').eq('user_id',uid),
-      sb.from('syllabus').select('*').eq('user_id',uid),
+      sb.from('user_preferences').select('syllabus_state').eq('user_id',uid).maybeSingle(),
       sb.from('streaks').select('*').eq('user_id',uid).maybeSingle(),
       sb.from('practice_logs').select('*').eq('user_id',uid)
     ]);
@@ -699,9 +698,13 @@ async function loadUserData(){
     S.backlogs=(backlogs.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.todos=(todos.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.upcoming=(upcoming.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-    if(syllabus.data && syllabus.data.length){
-      S.syllabus={physics:[],chemistry:[],maths:[]};
-      syllabus.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); });
+    const syllabusState = syllabus.data && syllabus.data.syllabus_state;
+    if(syllabusState){
+      S.syllabus={
+        physics:syllabusState.physics||[],
+        chemistry:syllabusState.chemistry||[],
+        maths:syllabusState.maths||[]
+      };
       S=migrateSyllabus(S);
     }
     S.practiceLogs=(practiceLogs.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
@@ -735,7 +738,7 @@ async function loadUserData(){
         sb.from('backlogs').select('*').eq('user_id',uid2),
         sb.from('todos').select('*').eq('user_id',uid2),
         sb.from('upcoming').select('*').eq('user_id',uid2),
-        sb.from('syllabus').select('*').eq('user_id',uid2),
+        sb.from('user_preferences').select('syllabus_state').eq('user_id',uid2).maybeSingle(),
         sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle(),
         sb.from('practice_logs').select('*').eq('user_id',uid2)
       ]);
@@ -744,7 +747,8 @@ async function loadUserData(){
       S.backlogs=(backlogs2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-      if(syllabus2.data&&syllabus2.data.length){ S.syllabus={physics:[],chemistry:[],maths:[]}; syllabus2.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); }); S=migrateSyllabus(S); }
+      const syllabusState2 = syllabus2.data && syllabus2.data.syllabus_state;
+      if(syllabusState2){ S.syllabus={physics:syllabusState2.physics||[],chemistry:syllabusState2.chemistry||[],maths:syllabusState2.maths||[]}; S=migrateSyllabus(S); }
       S.practiceLogs=(practiceLogs2.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
       if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
       _seedSyncSnapshot();
@@ -808,9 +812,11 @@ async function _syncToServer(){
     const changedUpcoming = (S.upcoming||[]).map(u=>_payloadUpcoming(u,uid)).filter(p=>_syncSnapshot.upcoming[p.id]!==_snapKey(p));
     if(changedUpcoming.length) ops.push(sb.from('upcoming').upsert(changedUpcoming).then(({error})=>{ if(!error) changedUpcoming.forEach(p=>_syncSnapshot.upcoming[p.id]=_snapKey(p)); }));
 
-    const sylPayloads=[]; ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>sylPayloads.push(_payloadSylChapter(c,s,uid))); });
-    const changedSyl = sylPayloads.filter(p=>_syncSnapshot.syllabus[p.id]!==_snapKey(p));
-    if(changedSyl.length) ops.push(sb.from('syllabus').upsert(changedSyl).then(({error})=>{ if(!error) changedSyl.forEach(p=>_syncSnapshot.syllabus[p.id]=_snapKey(p)); }));
+    const syllabusStatePayload = _payloadSyllabusState();
+    const syllabusStateKey = _snapKey(syllabusStatePayload);
+    if(_syncSnapshot._syllabus !== syllabusStateKey){
+      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload,updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
+    }
 
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
     if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
@@ -2816,7 +2822,7 @@ async function doReset(){
   if(sb && currentUser){
     const uid = currentUser.id;
     toast('Deleting data…', 'saving');
-    try{ await Promise.all([sb.from('tests').delete().eq('user_id',uid),sb.from('hours').delete().eq('user_id',uid),sb.from('backlogs').delete().eq('user_id',uid),sb.from('todos').delete().eq('user_id',uid),sb.from('upcoming').delete().eq('user_id',uid),sb.from('syllabus').delete().eq('user_id',uid),sb.from('streaks').delete().eq('user_id',uid)]); }catch(e){}
+    try{ await Promise.all([sb.from('tests').delete().eq('user_id',uid),sb.from('hours').delete().eq('user_id',uid),sb.from('backlogs').delete().eq('user_id',uid),sb.from('todos').delete().eq('user_id',uid),sb.from('upcoming').delete().eq('user_id',uid),sb.from('user_preferences').update({syllabus_state:null}).eq('user_id',uid),sb.from('streaks').delete().eq('user_id',uid)]); }catch(e){}
   }
   localStorage.removeItem('jt3');
   S = getDefaultState();
