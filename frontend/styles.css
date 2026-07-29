@@ -5345,12 +5345,17 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   .ls-testi-trust-text{ white-space:normal; text-align:center; font-size:12px; }
 }
 
+#testimonials-section{
+  overflow-x: hidden;
+  max-width: 100%;
+}
 .ls-testi-wrap{
   position: relative;
   overflow: hidden;
   width: 100%;
   max-width: 100%;
   margin-top: 3.2rem;
+  contain: layout;
 }
 .ls-testi-track{
   display: flex;
