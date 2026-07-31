@@ -5348,6 +5348,7 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 #testimonials-section{
   overflow-x: hidden;
   max-width: 100%;
+  flex-shrink: 0;
 }
 .ls-testi-wrap{
   position: relative;

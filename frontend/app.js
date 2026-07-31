@@ -1903,6 +1903,7 @@ function loadPublicSiteConfig(){
       applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);
       applyHero('hus-study-hours', 'study_hours_count', _fmtStatK);
       applyHero('hus-backlogs', 'backlogs_count', _fmtStatK);
+      applyHero('hus-questions-practiced', 'questions_practiced_count', _fmtStatK);
 
       if (data.app_version) {
         const vEl = document.getElementById('settings-app-version');

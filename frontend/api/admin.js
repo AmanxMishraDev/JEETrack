@@ -131,6 +131,12 @@ async function sbCount(table, filter = '') {
 }
 
 
+async function sbSum(table, column, filter = '') {
+  const rows = await sbQuery(`${table}?select=${column}${filter ? '&' + filter : ''}`);
+  return rows.reduce((s, r) => s + (r[column] || 0), 0);
+}
+
+
 async function sbAuthGetUser(id) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${id}`, {
     headers: {
@@ -343,7 +349,7 @@ export default async function handler(req, res) {
 
         const [
           totalUsers, totalTests, totalHours, totalBacklogs,
-          totalTodos, totalFeedbacks,
+          totalTodos, totalFeedbacks, totalQuestionsPracticed,
           aiInsightsUsers,
         ] = await Promise.all([
           sbCount('user_preferences').catch(() => 0),
@@ -352,6 +358,7 @@ export default async function handler(req, res) {
           sbCount('backlogs').catch(() => 0),
           sbCount('todos').catch(() => 0),
           sbCount('feedback').catch(() => 0),
+          sbSum('practice_logs', 'questions').catch(() => 0),
           
           sbQuery(`user_preferences?select=user_id&ai_insights_count=gt.0`).catch(() => []),
         ]);
@@ -367,6 +374,7 @@ export default async function handler(req, res) {
           backlogs:         totalBacklogs,
           todos:            totalTodos,
           feedbacks:        totalFeedbacks,
+          questionsPracticed: totalQuestionsPracticed,
           aiInsights:       aiInsightsCount,
           pageViews:        activePrefs.length,
         };
@@ -541,17 +549,17 @@ export default async function handler(req, res) {
 
       
       const [
-        testsData, hoursData, syllabusData, backlogs, todos, feedbacks, streaks, prefs, authUser
+        testsData, hoursData, backlogs, todos, feedbacks, streaks, prefs, authUser, practiceLogsData
       ] = await Promise.all([
         sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
-        sbQuery(`syllabus?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbCount('backlogs', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbCount('todos', `user_id=eq.${distinct_id}`).catch(() => 0),
         sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
         sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
         sbAuthGetUser(distinct_id).catch(() => null),
+        sbQuery(`practice_logs?select=subject,questions&user_id=eq.${distinct_id}`).catch(() => []),
       ]);
 
       
@@ -575,21 +583,12 @@ export default async function handler(req, res) {
       const mathHours = hoursData.filter(h => h.subject === 'maths').reduce((s, h) => s + (h.total || 0), 0);
 
       
-      const subjects = ['physics', 'chemistry', 'maths'];
-      const syllabusBySubject = subjects.map(s => {
-        const rows = syllabusData.filter(r => r.subject === s);
-        const done = rows.filter(r => r.theory && r.practice).length;
-        return {
-          subject: s,
-          total: rows.length,
-          done,
-          pct: rows.length ? Math.round((done / rows.length) * 100) : 0,
-        };
-      });
-      const syllabusTotalRows = syllabusData.length;
-      const syllabusDoneRows  = syllabusData.filter(r => r.theory && r.practice).length;
-      const syllabusOverallPct = syllabusTotalRows ? Math.round((syllabusDoneRows / syllabusTotalRows) * 100) : 0;
+      const totalQuestionsPracticed = practiceLogsData.reduce((s, p) => s + (p.questions || 0), 0);
+      const physQuestions = practiceLogsData.filter(p => p.subject === 'physics').reduce((s, p) => s + (p.questions || 0), 0);
+      const chemQuestions = practiceLogsData.filter(p => p.subject === 'chemistry').reduce((s, p) => s + (p.questions || 0), 0);
+      const mathQuestions = practiceLogsData.filter(p => p.subject === 'maths').reduce((s, p) => s + (p.questions || 0), 0);
 
+      
       
       const last30 = new Date(); last30.setDate(last30.getDate() - 30);
       const activityDates = new Set([
@@ -651,11 +650,11 @@ export default async function handler(req, res) {
           chemistry: Math.round(chemHours * 10) / 10,
           maths: Math.round(mathHours * 10) / 10,
         },
-        syllabus: {
-          bySubject: syllabusBySubject,
-          totalRows: syllabusTotalRows,
-          doneRows: syllabusDoneRows,
-          overallPct: syllabusOverallPct,
+        practiceLog: {
+          totalQuestions: totalQuestionsPracticed,
+          physics: physQuestions,
+          chemistry: chemQuestions,
+          maths: mathQuestions,
         },
         backlogs, todos,
         aiInsights: pref?.ai_insights_count || 0,
@@ -698,6 +697,7 @@ export default async function handler(req, res) {
         mock_tests_count: 3000,
         study_hours_count: 15000,
         backlogs_count: 4000,
+        questions_practiced_count: 50000,
         reviews_count: 1000,
         avg_rating: 4.8,
         app_version: 'v2.0',
@@ -716,7 +716,7 @@ export default async function handler(req, res) {
     
     if (action === 'save_site_config') {
       const body = req.body || {};
-      const allowedInts = ['mock_tests_count', 'study_hours_count', 'backlogs_count', 'reviews_count'];
+      const allowedInts = ['mock_tests_count', 'study_hours_count', 'backlogs_count', 'questions_practiced_count', 'reviews_count'];
       const payload = {};
 
       allowedInts.forEach((k) => {
@@ -758,12 +758,11 @@ export default async function handler(req, res) {
     
     if (action === 'db_stats') {
       const data = await cached('db_stats', 60000, async () => {
-        const [tests, hours, backlogs, todos, syllabus, feedbackCount, prefs] = await Promise.all([
+        const [tests, hours, backlogs, todos, feedbackCount, prefs] = await Promise.all([
           sbCount('tests').catch(() => 0),
           sbCount('hours').catch(() => 0),
           sbCount('backlogs').catch(() => 0),
           sbCount('todos').catch(() => 0),
-          sbCount('syllabus').catch(() => 0),
           sbCount('feedback').catch(() => 0),
           sbQuery('user_preferences?select=user_id,email_reports,last_active_at').catch(() => []),
         ]);
@@ -777,7 +776,6 @@ export default async function handler(req, res) {
           totalHours:     hours,
           totalBacklogs:  backlogs,
           totalTodos:     todos,
-          totalSyllabus:  syllabus,
           totalFeedbacks: feedbackCount,
           emailReportsOn: emailOn,
           activeUsers7d:  active7d,
@@ -894,7 +892,6 @@ export default async function handler(req, res) {
         'AI Insights':      ['ai','insight','weekly','analysis','score'],
         'Mock Tests':       ['mock','test','mains','advanced','score','marks'],
         'Study Hours':      ['hours','study','time','heatmap'],
-        'Syllabus':         ['syllabus','chapter','topic','subject'],
         'Backlog':          ['backlog','pending','clear'],
         'General Praise':   ['love','great','amazing','awesome','good','nice','excellent','best'],
         'UI / Design':      ['ui','design','dark','theme','color','font','look'],

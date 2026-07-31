@@ -546,7 +546,7 @@ tr.fb-expand-row{background:transparent!important;}
       <div class="card">
         <h3><span class="ic">📊</span>Now tracked in PostHog</h3>
         <p style="font-size:.8rem;color:var(--mu);margin-bottom:1.2rem;line-height:1.6;">
-          Feature-level usage (mock tests, study hours, practice log, syllabus, backlog, todos, AI Insights) is now tracked
+          Feature-level usage (mock tests, study hours, practice log, backlog, todos, AI Insights) is now tracked
           with proper event analytics in PostHog instead of being derived from raw Supabase row-counts — it's more accurate
           (per-feature adoption %, weekly trends) and adds zero extra load to the database.
         </p>
@@ -837,6 +837,10 @@ tr.fb-expand-row{background:transparent!important;}
           <div class="compose-field" style="margin-bottom:0">
             <span class="compose-label">Backlogs Cleared</span>
             <input class="compose-input" type="number" min="0" step="1" id="cfg-backlogs" placeholder="4000">
+          </div>
+          <div class="compose-field" style="margin-bottom:0">
+            <span class="compose-label">Questions Practiced</span>
+            <input class="compose-input" type="number" min="0" step="1" id="cfg-questions-practiced" placeholder="50000">
           </div>
           <div class="compose-field" style="margin-bottom:0">
             <span class="compose-label">Verified Reviews Count</span>
@@ -1239,7 +1243,6 @@ tr.fb-expand-row{background:transparent!important;}
       <div class="modal-tabs">
         <div class="modal-tab active" data-tab="summary" onclick="switchModalTab('summary')">Summary</div>
         <div class="modal-tab" data-tab="tests" onclick="switchModalTab('tests')">Tests</div>
-        <div class="modal-tab" data-tab="syllabus" onclick="switchModalTab('syllabus')">Syllabus</div>
         <div class="modal-tab" data-tab="activity" onclick="switchModalTab('activity')">Activity</div>
       </div>
       <div id="modal-body-content"><div class="loading"><div class="spinner"></div></div></div>
@@ -1428,6 +1431,7 @@ async function loadStats() {
       { label:'Total Users',       value: fmt(d.totalUsers),          sub:'All time',           icon:'👥', bg:'rgba(124,106,247,.16)' },
       { label:'Mock Tests',        value: fmt(d.mockTests),           sub:'All time',           icon:'📝', bg:'rgba(96,165,250,.14)'  },
       { label:'Study Hours',       value: fmt(d.studyHours),          sub:'All time',           icon:'⏱️', bg:'rgba(251,191,36,.13)'  },
+      { label:'Questions Practiced', value: fmt(d.questionsPracticed), sub:'All time',          icon:'🧠', bg:'rgba(52,211,153,.13)'  },
       { label:'AI Insights Users', value: fmt(d.aiInsights),          sub:'Ever used',          icon:'🤖', bg:'rgba(244,114,182,.14)' },
       { label:'Backlogs Added',    value: fmt(d.backlogs),            sub:'All time',           icon:'🔴', bg:'rgba(248,113,113,.13)' },
       { label:'Todos Added',       value: fmt(d.todos),               sub:'All time',           icon:'✅', bg:'rgba(52,211,153,.14)'  },
@@ -1694,24 +1698,23 @@ function renderModalTab(tab) {
   const d = _modalData;
   if (tab === 'summary') el.innerHTML = renderSummaryTab(d);
   else if (tab === 'tests') el.innerHTML = renderTestsTab(d);
-  else if (tab === 'syllabus') el.innerHTML = renderSyllabusTab(d);
   else if (tab === 'activity') el.innerHTML = renderActivityTab(d);
 }
 
 function renderSummaryTab(d) {
-  const t = d.tests || {}, h = d.hours || {}, c = d.consistency || {}, syl = d.syllabus || {};
+  const t = d.tests || {}, h = d.hours || {}, c = d.consistency || {}, pl = d.practiceLog || {};
   return `
     <div class="mini-stat-grid">
       <div class="mini-stat"><div class="mini-stat-label">Tests Attempted</div><div class="mini-stat-value">${fmt(t.total)}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">Avg Score</div><div class="mini-stat-value">${fmt(t.avgScore)}${t.avgScorePct?` <span style="font-size:.65rem;color:var(--mu)">(${t.avgScorePct}%)</span>`:''}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">Best Score</div><div class="mini-stat-value">${fmt(t.bestScore)}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">Study Hours</div><div class="mini-stat-value">${fmt(h.totalTime)}h</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Syllabus Done</div><div class="mini-stat-value">${syl.overallPct||0}%</div></div>
+      <div class="mini-stat"><div class="mini-stat-label">Questions Practiced</div><div class="mini-stat-value">${fmt(pl.totalQuestions)}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">AI Insights Used</div><div class="mini-stat-value">${fmt(d.aiInsights)}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">Active Days (30d)</div><div class="mini-stat-value">${fmt(c.activeDaysLast30)}</div></div>
       <div class="mini-stat"><div class="mini-stat-label">Longest Streak</div><div class="mini-stat-value">🔥 ${fmt(c.longestStreak)}d</div></div>
     </div>
-    <div class="grid-2" style="margin-bottom:0">
+    <div class="grid-3" style="margin-bottom:0">
       <div class="card" style="padding:1rem 1.1rem">
         <h3 style="margin-bottom:.7rem;font-size:.78rem">Subject-wise Avg Score</h3>
         ${subjectMiniBar('Physics', t.avgPhysics, Math.max(t.avgPhysics,t.avgChem,t.avgMaths,1), '#60a5fa')}
@@ -1723,6 +1726,12 @@ function renderSummaryTab(d) {
         ${subjectMiniBar('Physics', h.physics, Math.max(h.physics,h.chemistry,h.maths,1), '#60a5fa', 'h')}
         ${subjectMiniBar('Chemistry', h.chemistry, Math.max(h.physics,h.chemistry,h.maths,1), '#34d399', 'h')}
         ${subjectMiniBar('Maths', h.maths, Math.max(h.physics,h.chemistry,h.maths,1), '#fbbf24', 'h')}
+      </div>
+      <div class="card" style="padding:1rem 1.1rem">
+        <h3 style="margin-bottom:.7rem;font-size:.78rem">Questions Practiced by Subject</h3>
+        ${subjectMiniBar('Physics', pl.physics, Math.max(pl.physics,pl.chemistry,pl.maths,1), '#60a5fa')}
+        ${subjectMiniBar('Chemistry', pl.chemistry, Math.max(pl.physics,pl.chemistry,pl.maths,1), '#34d399')}
+        ${subjectMiniBar('Maths', pl.maths, Math.max(pl.physics,pl.chemistry,pl.maths,1), '#fbbf24')}
       </div>
     </div>
     <div class="card-foot" style="border-top:none;padding-top:.9rem;display:flex;flex-wrap:wrap;gap:1.2rem">
@@ -1773,28 +1782,6 @@ function renderTestsTab(d) {
         </tbody>
       </table>
     </div>
-  `;
-}
-
-function renderSyllabusTab(d) {
-  const syl = d.syllabus || {};
-  const by = syl.bySubject || [];
-  return `
-    <div class="mini-stat-grid">
-      <div class="mini-stat"><div class="mini-stat-label">Overall Completion</div><div class="mini-stat-value">${syl.overallPct||0}%</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Chapters Synced</div><div class="mini-stat-value">${fmt(syl.totalRows)}</div></div>
-      <div class="mini-stat"><div class="mini-stat-label">Chapters Completed</div><div class="mini-stat-value">${fmt(syl.doneRows)}</div></div>
-    </div>
-    <h3 style="font-size:.78rem;margin-bottom:.7rem">Completion by Subject</h3>
-    ${by.map(s => `
-      <div style="margin-bottom:.9rem">
-        <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;font-size:.78rem">
-          <span>${SUBJECT_ICONS[s.subject]||''} ${s.subject[0].toUpperCase()+s.subject.slice(1)}</span>
-          <span style="color:var(--mu)">${s.done}/${s.total} chapters · ${s.pct}%</span>
-        </div>
-        <div class="dist-track" style="height:9px"><div class="dist-fill" style="width:${s.pct}%;background:${SUBJECT_COLORS[s.subject]}"></div></div>
-      </div>
-    `).join('') || emptyState('No syllabus data synced yet')}
   `;
 }
 
@@ -1878,7 +1865,6 @@ async function loadDBStats() {
       { label:'Total Hours Rows',    value: fmt(d.totalHours),     icon:'⏱️', sub:'In DB', bg:'rgba(251,191,36,.13)' },
       { label:'Total Backlogs',      value: fmt(d.totalBacklogs),  icon:'🔴', sub:'In DB', bg:'rgba(248,113,113,.13)' },
       { label:'Total Todos',         value: fmt(d.totalTodos),     icon:'✅', sub:'In DB', bg:'rgba(52,211,153,.14)' },
-      { label:'Syllabus Rows',       value: fmt(d.totalSyllabus),  icon:'📚', sub:'In DB', bg:'rgba(96,165,250,.14)' },
       { label:'Email Reports ON',    value: fmt(d.emailReportsOn), icon:'📧', sub:'Users subscribed', bg:'rgba(244,114,182,.14)' },
       { label:'Active (7d)',         value: fmt(d.activeUsers7d),  icon:'🟢', sub:'Last 7 days', bg:'rgba(52,211,153,.14)' },
       { label:'Total in Prefs',      value: fmt(d.totalPrefs),     icon:'👥', sub:'Users with prefs', bg:'rgba(124,106,247,.16)' },
@@ -2015,6 +2001,7 @@ async function loadSiteConfig() {
     document.getElementById('cfg-mock-tests').value   = d.mock_tests_count  ?? '';
     document.getElementById('cfg-study-hours').value  = d.study_hours_count ?? '';
     document.getElementById('cfg-backlogs').value     = d.backlogs_count    ?? '';
+    document.getElementById('cfg-questions-practiced').value = d.questions_practiced_count ?? '';
     document.getElementById('cfg-reviews').value      = d.reviews_count     ?? '';
     document.getElementById('cfg-rating').value       = d.avg_rating        ?? '';
     document.getElementById('cfg-version').value      = d.app_version       ?? '';
@@ -2036,6 +2023,7 @@ async function saveSiteConfig() {
     mock_tests_count:  document.getElementById('cfg-mock-tests').value,
     study_hours_count: document.getElementById('cfg-study-hours').value,
     backlogs_count:    document.getElementById('cfg-backlogs').value,
+    questions_practiced_count: document.getElementById('cfg-questions-practiced').value,
     reviews_count:     document.getElementById('cfg-reviews').value,
     avg_rating:        document.getElementById('cfg-rating').value,
     app_version:       document.getElementById('cfg-version').value,
