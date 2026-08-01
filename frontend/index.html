@@ -7290,6 +7290,7 @@ function renderOvTrend(){
   const f=document.getElementById('ov-tf').value,m=M.ov;
   let tests=[...S.tests].sort((a,b)=>a.date.localeCompare(b.date));
   if(f!=='all')tests=tests.filter(t=>t.exam===f);
+  tests=tests.slice(-5); // last 5 by default, keeps the dashboard trend chart light
   const newData={labels:tests.map(t=>fmt(t.date)),datasets:[{label:m==='pct'?'Score%':'Score',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#7c6af7',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#7c6af7'}]};
   const newOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('ovTC',newData,newOpts)){
@@ -7365,12 +7366,15 @@ function _renderMains(){
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,var(--am),#fde68a);width:${Math.min(100,+avg)}%"></div></div>
     </div>`;
   
-  const mnTCData={labels:tests.map(t=>fmt(t.date)),datasets:sf==='all'?[
-    {label:'Total',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#a695ff',backgroundColor:'rgba(166,149,255,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'},
-    {label:'Physics',data:tests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Chemistry',data:tests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Maths',data:tests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
-  ]:[{label:cap(sf),data:tests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
+  // Chart shows only the last 5 tests by default — stats above (best/avg/latest)
+  // still reflect the FULL history, only the trend-line rendering is capped.
+  const chartTests = tests.slice(-5);
+  const mnTCData={labels:chartTests.map(t=>fmt(t.date)),datasets:sf==='all'?[
+    {label:'Total',data:chartTests.map(t=>scoreVal(t,m,null)),borderColor:'#a695ff',backgroundColor:'rgba(166,149,255,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'},
+    {label:'Physics',data:chartTests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Chemistry',data:chartTests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Maths',data:chartTests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
+  ]:[{label:cap(sf),data:chartTests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
   const mnTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('mnTC',mnTCData,mnTCOpts)){const c1=document.getElementById('mnTC').getContext('2d');CIs['mnTC']=new Chart(c1,{type:'line',data:mnTCData,options:mnTCOpts});}
   
@@ -7489,12 +7493,13 @@ function _renderAdv(){
       <div class="prem-stat-sub">across ${tests.length} test${tests.length!==1?'s':''}</div>
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,var(--am),#fde68a);width:${Math.min(100,+avg)}%"></div></div>
     </div>`;
-  const advTCData={labels:tests.map(t=>fmt(t.date)),datasets:sf==='all'?[
-    {label:'Total',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#f472b6'},
-    {label:'Physics',data:tests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Chemistry',data:tests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Maths',data:tests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
-  ]:[{label:cap(sf),data:tests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
+  const chartTests = tests.slice(-5);
+  const advTCData={labels:chartTests.map(t=>fmt(t.date)),datasets:sf==='all'?[
+    {label:'Total',data:chartTests.map(t=>scoreVal(t,m,null)),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#f472b6'},
+    {label:'Physics',data:chartTests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Chemistry',data:chartTests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Maths',data:chartTests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
+  ]:[{label:cap(sf),data:chartTests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
   const advTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('advTC',advTCData,advTCOpts)){const c1=document.getElementById('advTC').getContext('2d');CIs['advTC']=new Chart(c1,{type:'line',data:advTCData,options:advTCOpts});}
   const p1=tests.filter(t=>t.paper==='p1'),p2=tests.filter(t=>t.paper==='p2');
@@ -9012,7 +9017,7 @@ function renderInsights(d){
 }
 </script>
 <script src="/analytics.js?v=20290729"></script>
-<script src="app.js?v=20260730"></script>
+<script src="app.js?v=20260731"></script>
 
 <div id="lh-sticky" style="display:none" class="lhs-widget">
   <div class="lhs-inner">

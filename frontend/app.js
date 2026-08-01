@@ -388,6 +388,7 @@ async function signOut(){
   currentUser = null;
   S = getDefaultState();
   localStorage.removeItem('jt3');
+  localStorage.removeItem('jt3_known_updated_at');
   showAuthScreen(true);
 }
 
@@ -681,6 +682,34 @@ async function loadUserData(){
     }catch(e){}
     return;
   }
+
+  // Version-check short-circuit: before doing the full 8-table fetch, do ONE
+  // tiny single-row check of user_preferences.updated_at (bumped on every
+  // successful sync, from ANY device). If it matches what we already have
+  // cached locally, NOTHING has changed anywhere since our last full sync —
+  // safe to use the local copy as-is. If it differs (or this is the first
+  // load), fall through to the full fetch. Unlike a blind time-based cache,
+  // this is always accurate — no staleness window, no multi-device risk.
+  try{
+    const uidCheck = currentUser.id;
+    const {data:verRow} = await sb.from('user_preferences').select('updated_at').eq('user_id',uidCheck).maybeSingle();
+    const serverUpdatedAt = verRow?.updated_at || null;
+    const localKnown = localStorage.getItem('jt3_known_updated_at');
+    if(serverUpdatedAt && localKnown && serverUpdatedAt === localKnown){
+      const saved = localStorage.getItem('jt3');
+      if(saved){
+        let p = JSON.parse(saved);
+        if(p.backlogStreak>365) p.backlogStreak=0;
+        if(p.backlogBestStreak>365) p.backlogBestStreak=0;
+        p=migrateSyllabus(p);
+        if(!p.practiceLogs) p.practiceLogs=[];
+        S=p;
+        _seedSyncSnapshot();
+        return; // nothing changed anywhere — skip the full fetch entirely
+      }
+    }
+  }catch(e){}
+
   try{
     const uid = currentUser.id;
     const [tests,hours,backlogs,todos,upcoming,syllabus,streaks,practiceLogs] = await Promise.all([
@@ -689,7 +718,7 @@ async function loadUserData(){
       sb.from('backlogs').select('*').eq('user_id',uid),
       sb.from('todos').select('*').eq('user_id',uid),
       sb.from('upcoming').select('*').eq('user_id',uid),
-      sb.from('user_preferences').select('syllabus_state').eq('user_id',uid).maybeSingle(),
+      sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid).maybeSingle(),
       sb.from('streaks').select('*').eq('user_id',uid).maybeSingle(),
       sb.from('practice_logs').select('*').eq('user_id',uid)
     ]);
@@ -726,6 +755,7 @@ async function loadUserData(){
       }catch(e){}
     }
     _seedSyncSnapshot();
+    try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
   }catch(e){
     console.error('Load error:',e);
     
@@ -738,7 +768,7 @@ async function loadUserData(){
         sb.from('backlogs').select('*').eq('user_id',uid2),
         sb.from('todos').select('*').eq('user_id',uid2),
         sb.from('upcoming').select('*').eq('user_id',uid2),
-        sb.from('user_preferences').select('syllabus_state').eq('user_id',uid2).maybeSingle(),
+        sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid2).maybeSingle(),
         sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle(),
         sb.from('practice_logs').select('*').eq('user_id',uid2)
       ]);
@@ -752,6 +782,7 @@ async function loadUserData(){
       S.practiceLogs=(practiceLogs2.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
       if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
       _seedSyncSnapshot();
+      try{ localStorage.setItem('jt3_known_updated_at', (syllabus2.data && syllabus2.data.updated_at) || ''); }catch(e){}
       console.log('Retry load succeeded');
     } catch(e2) {
       console.error('Retry load also failed, falling back to localStorage:', e2);
@@ -796,6 +827,10 @@ async function _syncToServer(){
   try{
     const uid = currentUser.id;
     const ops = [];
+    // One shared timestamp for this whole sync round — reused below so the
+    // value we bump user_preferences.updated_at to is exactly what we also
+    // remember locally, keeping this device's own version-check accurate.
+    const syncTimestamp = new Date().toISOString();
 
     const changedTests = (S.tests||[]).map(t=>_payloadTest(t,uid)).filter(p=>_syncSnapshot.tests[p.id]!==_snapKey(p));
     if(changedTests.length) ops.push(sb.from('tests').upsert(changedTests).then(({error})=>{ if(!error) changedTests.forEach(p=>_syncSnapshot.tests[p.id]=_snapKey(p)); }));
@@ -814,8 +849,9 @@ async function _syncToServer(){
 
     const syllabusStatePayload = _payloadSyllabusState();
     const syllabusStateKey = _snapKey(syllabusStatePayload);
-    if(_syncSnapshot._syllabus !== syllabusStateKey){
-      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload,updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
+    const syllabusChanged = _syncSnapshot._syllabus !== syllabusStateKey;
+    if(syllabusChanged){
+      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload,updated_at:syncTimestamp},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
     }
 
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
@@ -830,6 +866,21 @@ async function _syncToServer(){
     }
 
     await Promise.all(ops);
+
+    // Bump the shared freshness marker whenever ANYTHING changed this round —
+    // this is what lets loadUserData()'s version-check (on any device) detect
+    // "something changed" without a blind time-based guess. If syllabus was
+    // the thing that changed, it already bumped updated_at above with this
+    // same timestamp; otherwise do one small standalone upsert here. Safe —
+    // PostgREST's upsert-on-conflict only touches the columns provided.
+    if(ops.length){
+      try{
+        if(!syllabusChanged){
+          await sb.from('user_preferences').upsert({user_id:uid, updated_at:syncTimestamp},{onConflict:'user_id'});
+        }
+        localStorage.setItem('jt3_known_updated_at', syncTimestamp);
+      }catch(e){}
+    }
   }catch(e){ console.error('Save error:',e); }
   isSaving=false; if(saveQueue){ saveQueue=false; _syncToServer(); }
 }
@@ -2826,6 +2877,7 @@ async function doReset(){
     try{ await Promise.all([sb.from('tests').delete().eq('user_id',uid),sb.from('hours').delete().eq('user_id',uid),sb.from('backlogs').delete().eq('user_id',uid),sb.from('todos').delete().eq('user_id',uid),sb.from('upcoming').delete().eq('user_id',uid),sb.from('user_preferences').update({syllabus_state:null}).eq('user_id',uid),sb.from('streaks').delete().eq('user_id',uid)]); }catch(e){}
   }
   localStorage.removeItem('jt3');
+  localStorage.removeItem('jt3_known_updated_at');
   S = getDefaultState();
   toast('All data reset — reloading…', 'error');
   setTimeout(() => location.reload(), 800);
