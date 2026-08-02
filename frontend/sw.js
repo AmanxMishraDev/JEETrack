@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v5';
+const CACHE_VERSION = 'jeetrack-v6';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -13,6 +13,13 @@ const NEVER_CACHE = [
   '/api/',
   '/api/config',
 ];
+
+// Supabase's REST API responses are dynamic, per-user data (tests, hours,
+// syllabus, etc.) — caching them in the SW's Cache Storage serves no real
+// purpose (only read back on a network failure, which is rare) and just lets
+// personal data accumulate indefinitely in browser storage. Route these
+// straight through to the network, no caching, same as NEVER_CACHE above.
+const SUPABASE_HOST_PATTERN = /\.supabase\.co$/;
 
 
 
@@ -54,6 +61,12 @@ self.addEventListener('fetch', e => {
 
   
   if (NEVER_CACHE.some(p => url.pathname.startsWith(p))) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  
+  if (SUPABASE_HOST_PATTERN.test(url.hostname)) {
     e.respondWith(fetch(e.request));
     return;
   }
