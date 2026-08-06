@@ -84,6 +84,15 @@ async function initSupabase(){
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
+    },
+    global: {
+      // Regular fetch() calls get killed by the browser the instant a tab is
+      // backgrounded/closed on mobile, which is exactly when flushSave() most
+      // needs to land (see visibilitychange/beforeunload below). keepalive
+      // tells the browser to let this request finish even after the page
+      // that started it goes away — same mechanism sendBeacon uses, but
+      // works with our existing PATCH/POST upsert calls.
+      fetch: (url, options={}) => fetch(url, { ...options, keepalive: true })
     }
   });
 
@@ -819,6 +828,7 @@ function flushSave(){
 }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushSave(); });
 window.addEventListener('beforeunload', flushSave);
+window.addEventListener('pagehide', flushSave);
 
 async function _syncToServer(){
   if(!sb || !currentUser) return;
@@ -3166,6 +3176,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
+  if (typeof _lhRestoreTimer === 'function') _lhRestoreTimer();
 
   
   setTimeout(() => {
