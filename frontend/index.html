@@ -4097,6 +4097,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           Enable Notifications
         </button>
       </div>
+      <label class="wm-never-again">
+        <input type="checkbox" id="wm-notif-never">
+        <span>Don't ask me again</span>
+      </label>
       <div class="wm-secure-badge">
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Revocable anytime from browser settings
@@ -4150,12 +4154,16 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
       <div class="wm-divider"></div>
       <div class="wm-actions">
-        <button class="wm-btn-skip" onclick="closeWelcomeModal()">Skip</button>
+        <button class="wm-btn-skip" onclick="wmSkipStep2()">Skip</button>
         <button id="wm-email-btn" class="wm-btn-enable blue-theme" onclick="welcomeEnableEmail()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Enable Monthly Reports
         </button>
       </div>
+      <label class="wm-never-again">
+        <input type="checkbox" id="wm-email-never">
+        <span>Don't ask me again</span>
+      </label>
       <div class="wm-secure-badge">
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Unsubscribe anytime · no spam ever

@@ -1154,21 +1154,23 @@ async function checkWelcomeModal() {
   // email_reports is already loaded into `userProfile` by loadUserProfile() during
   // login/init — no need to hit user_preferences again here.
   const emailOn = userProfile?.email_reports === 'monthly';
-  
-  if (notifOn && emailOn) return;
+  const notifDismissed = localStorage.getItem('wm_notif_never') === '1';
+  const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+
+  if ((notifOn || notifDismissed) && (emailOn || emailDismissed)) return;
 
   
   localStorage.removeItem('jt_show_perm_after_onboarding');
 
   
-  _openWelcomeModal(notifOn, emailOn);
+  _openWelcomeModal(notifOn, emailOn, notifDismissed, emailDismissed);
 }
 
-function _openWelcomeModal(notifOn, emailOn) {
+function _openWelcomeModal(notifOn, emailOn, notifDismissed, emailDismissed) {
   const mo = document.getElementById('modal-welcome');
   if (!mo) return;
   
-  const startStep = notifOn ? 2 : 1;
+  const startStep = (notifOn || notifDismissed) ? 2 : 1;
   _wmGoStep(startStep);
   mo.classList.add('open');
 }
@@ -1181,8 +1183,21 @@ function _wmGoStep(n) {
 }
 
 function wmSkip(fromStep) {
-  if (fromStep === 1) _wmGoStep(2);
+  if (fromStep === 1) {
+    const chk = document.getElementById('wm-notif-never');
+    if (chk && chk.checked) localStorage.setItem('wm_notif_never', '1');
+    const emailOn = userProfile?.email_reports === 'monthly';
+    const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+    if (emailOn || emailDismissed) closeWelcomeModal();
+    else _wmGoStep(2);
+  }
   else closeWelcomeModal();
+}
+
+function wmSkipStep2() {
+  const chk = document.getElementById('wm-email-never');
+  if (chk && chk.checked) localStorage.setItem('wm_email_never', '1');
+  closeWelcomeModal();
 }
 
 async function welcomeEnableNotif() {
@@ -1218,7 +1233,12 @@ async function welcomeEnableNotif() {
     const snt = document.getElementById('settings-notif-toggle');
     if (snt) snt.checked = true;
     toast('Notifications enabled 🔔', 'success');
-    setTimeout(() => _wmGoStep(2), 500);
+    setTimeout(() => {
+      const emailOn = userProfile?.email_reports === 'monthly';
+      const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+      if (emailOn || emailDismissed) closeWelcomeModal();
+      else _wmGoStep(2);
+    }, 500);
   } else {
     
     if (btn) { btn.disabled = false; btn.textContent = 'Blocked — skip'; }

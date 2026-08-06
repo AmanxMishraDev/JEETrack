@@ -5513,3 +5513,13 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 @media (max-width:480px){
   .wb-md{ width:92vw; padding:1.7rem 1.3rem 1.4rem; }
 }
+
+/* ===== Welcome modal — "don't ask again" opt-out ===== */
+.wm-never-again{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  font-size:11px; color:var(--mu); margin-top:10px; cursor:pointer; user-select:none;
+}
+.wm-never-again input[type="checkbox"]{
+  width:14px; height:14px; accent-color:var(--ac); cursor:pointer; flex-shrink:0;
+}
+.wm-never-again:hover{ color:var(--tx); }
