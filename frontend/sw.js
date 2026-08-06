@@ -59,6 +59,14 @@ self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
+  // Only ever intercept/cache plain http(s) requests. Browser extensions
+  // (password managers, Grammarly, etc.) sometimes route their own requests
+  // through chrome-extension:// / moz-extension:// schemes that happen to
+  // pass through this handler — Cache.put() throws on those, which was
+  // showing up as an uncaught rejection in the console. Let the browser
+  // handle anything that isn't http(s) natively.
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
   
   if (NEVER_CACHE.some(p => url.pathname.startsWith(p))) {
     e.respondWith(fetch(e.request));
@@ -91,7 +99,14 @@ self.addEventListener('fetch', e => {
           }
           return res;
         })
-        .catch(() => caches.match(e.request))
+        .catch(async () => {
+          // If the network fails AND we have nothing cached for this
+          // request, caches.match() resolves to undefined — and
+          // respondWith(undefined) throws "Failed to convert value to
+          // 'Response'". Always resolve to a real Response.
+          const cached = await caches.match(e.request);
+          return cached || new Response('Offline and no cached version available', { status: 503, statusText: 'Service Unavailable' });
+        })
     );
     return;
   }
@@ -106,7 +121,10 @@ self.addEventListener('fetch', e => {
         }
         return res;
       })
-      .catch(() => caches.match(e.request))
+      .catch(async () => {
+        const cached = await caches.match(e.request);
+        return cached || new Response('Offline and no cached version available', { status: 503, statusText: 'Service Unavailable' });
+      })
   );
 });
 

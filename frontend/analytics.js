@@ -4,6 +4,15 @@
 
 
 
+
+
+// These "✓ tracking active" confirmations are only useful while you're
+// actively developing/testing analytics wiring — on the real production
+// domain they're just console noise for every visitor. Auto-silences on
+// jeetrack.in, stays on everywhere else (localhost, vercel preview URLs).
+const _JT_DEBUG = !/^(www\.)?jeetrack\.in$/.test(location.hostname);
+function _jtLog(...args){ if(_JT_DEBUG) console.log(...args); }
+
 (function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js";(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;void 0!==a?u=e[a]=[]:a="posthog";u.people=u.people||[];u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e};u.people.toString=function(){return u.toString(1)+".people (stub)"};o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" ");for(var c=0;c<o.length;c++)g(u,o[c]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]));
 
 
@@ -31,7 +40,7 @@ async function initAnalytics() {
         }
       },
       loaded: function() {
-        console.log('[JEETrack Analytics] Ready ✓');
+        _jtLog('[JEETrack Analytics] Ready ✓');
         attachPatches();
       }
     });
@@ -72,7 +81,7 @@ function attachPatches() {
       _jtTrack('page_viewed', { page: page });
       return _orig.call(this, page, _pushState);
     };
-    console.log('[JEETrack Analytics] Nav tracking active ✓');
+    _jtLog('[JEETrack Analytics] Nav tracking active ✓');
   };
   _patchNav();
 
@@ -236,7 +245,7 @@ function attachPatches() {
       } catch(e) {}
       return _orig.call(this);
     };
-    console.log('[JEETrack Analytics] Save tracking active ✓');
+    _jtLog('[JEETrack Analytics] Save tracking active ✓');
   };
   _patchSave();
 
@@ -252,7 +261,7 @@ function attachPatches() {
       } catch(e) {}
       return _orig.apply(this, arguments);
     };
-    console.log('[JEETrack Analytics] Custom chapter tracking active ✓');
+    _jtLog('[JEETrack Analytics] Custom chapter tracking active ✓');
   };
   _patchSaveChapter();
 
@@ -271,7 +280,7 @@ function attachPatches() {
       } catch(e) {}
       return result;
     };
-    console.log('[JEETrack Analytics] Practice log tracking active ✓');
+    _jtLog('[JEETrack Analytics] Practice log tracking active ✓');
   };
   _patchPracticeLog();
 
@@ -286,7 +295,7 @@ function attachPatches() {
         has_syllabus_data: Object.values(window.S?.syllabus || {}).some(a => a.length > 0),
       });
     });
-    console.log('[JEETrack Analytics] AI button tracking active ✓');
+    _jtLog('[JEETrack Analytics] AI button tracking active ✓');
   };
   _watchAI();
 
