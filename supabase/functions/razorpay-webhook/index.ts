@@ -1,3 +1,5 @@
+// 📁 FILE LOCATION: supabase/functions/razorpay-webhook/index.ts
+
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 // Razorpay Webhook — the source-of-truth confirmation for a payment,
@@ -7,6 +9,10 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 //   Events: payment.captured, payment.failed
 // Requires secret: RAZORPAY_WEBHOOK_SECRET (the secret you set when adding
 // the webhook in the dashboard — different from RAZORPAY_KEY_SECRET).
+//
+// display_name/show_publicly are read from payment.notes (set at order
+// creation in create-razorpay-order) so this upsert never clobbers the
+// supporter's Hall-of-Support preferences with nulls.
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://www.jeetrack.in",
@@ -56,6 +62,12 @@ Deno.serve(async (req: Request) => {
       if (payment) {
         const supabaseUrl = Deno.env.get("SUPABASE_URL");
         const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        const notes = payment.notes || {};
+        const displayName = typeof notes.display_name === "string" && notes.display_name.length > 0
+          ? notes.display_name.slice(0, 60)
+          : null;
+        const showPublicly = notes.show_publicly !== "false";
+
         if (supabaseUrl && serviceKey) {
           // Upsert on razorpay_payment_id so this never creates a duplicate row
           // alongside the one verify-razorpay-payment may have already written.
@@ -73,6 +85,8 @@ Deno.serve(async (req: Request) => {
               razorpay_order_id: payment.order_id || null,
               razorpay_payment_id: payment.id,
               status: eventType === "payment.captured" ? "paid" : "failed",
+              display_name: displayName,
+              show_publicly: showPublicly,
             }),
           });
         }

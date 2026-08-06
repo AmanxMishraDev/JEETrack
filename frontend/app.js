@@ -84,9 +84,78 @@ async function initSupabase(){
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
+    },
+    global: {
+      // Regular fetch() calls get killed by the browser the instant a tab is
+      // backgrounded/closed on mobile, which is exactly when flushSave() most
+      // needs to land (see visibilitychange/beforeunload below). keepalive
+      // tells the browser to let this request finish even after the page
+      // that started it goes away — same mechanism sendBeacon uses, but
+      // works with our existing PATCH/POST upsert calls.
+      fetch: (url, options={}) => fetch(url, { ...options, keepalive: true })
     }
   });
+
   
+  sb.auth.onAuthStateChange((event, session) => {
+    if(event === 'PASSWORD_RECOVERY'){
+      
+      return;
+    } else if(event === 'SIGNED_OUT'){
+      _appInitialized = false;
+      currentUser = null;
+      S = getDefaultState();
+      showAuthScreen(true);
+      setTimeout(initSlideshow, 100);
+    } else if(event === 'SIGNED_IN' && session?.user){
+      if(_appInitialized) return; 
+      _appInitialized = true;
+      currentUser = session.user;
+      loadUserData().then(async () => {
+        const profileStatus = await loadUserProfile();
+        const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
+        if(needsOnboarding){
+          hideSplash();
+          document.getElementById('landing').classList.add('hidden');
+          showOnboarding();
+        } else {
+          const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+          showApp(name, session.user.email);
+        }
+        registerPushNotifications();
+      });
+    }
+  });
+
+  
+  const _recoveryParams = new URLSearchParams(window.location.search);
+  const _recoveryTokenHash = _recoveryParams.get('token_hash');
+  const _isRecoveryLink = _recoveryParams.get('type') === 'recovery' && !!_recoveryTokenHash;
+
+  if(_isRecoveryLink){
+    
+    history.replaceState(null, '', window.location.pathname);
+    _authResolved = true;
+    clearTimeout(_splashSafetyTimer);
+    try {
+      const { error: _recErr } = await sb.auth.verifyOtp({ token_hash: _recoveryTokenHash, type: 'recovery' });
+      hideSplash();
+      document.getElementById('landing')?.classList.remove('hidden');
+      showAuthScreen();
+      if(_recErr){
+        toast(_recErr.message || 'This reset link has expired. Please request a new one.', 'error');
+      } else {
+        openM('newPassword');
+      }
+    } catch(e){
+      hideSplash();
+      document.getElementById('landing')?.classList.remove('hidden');
+      showAuthScreen();
+      toast('This reset link is invalid or expired. Please request a new one.', 'error');
+    }
+    return; 
+  }
+
   sb.auth.getSession().then(({ data: { session } }) => {
     _authResolved = true;
     clearTimeout(_splashSafetyTimer);
@@ -113,33 +182,6 @@ async function initSupabase(){
     } else {
       showAuthScreen();
       setTimeout(initSlideshow, 100);
-    }
-  });
-  
-  sb.auth.onAuthStateChange((event, session) => {
-    if(event === 'SIGNED_OUT'){
-      _appInitialized = false;
-      currentUser = null;
-      S = getDefaultState();
-      showAuthScreen(true);
-      setTimeout(initSlideshow, 100);
-    } else if(event === 'SIGNED_IN' && session?.user){
-      if(_appInitialized) return; 
-      _appInitialized = true;
-      currentUser = session.user;
-      loadUserData().then(async () => {
-        const profileStatus = await loadUserProfile();
-        const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
-        if(needsOnboarding){
-          hideSplash();
-          document.getElementById('landing').classList.add('hidden');
-          showOnboarding();
-        } else {
-          const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-          showApp(name, session.user.email);
-        }
-        registerPushNotifications();
-      });
     }
   });
 }
@@ -205,6 +247,74 @@ async function doForgotPass(){
   }catch(e){showAuthErrPro('login', e.message||'Failed to send reset email.');}
   if(btn){btn.textContent=originalText||'Forgot password?';btn.disabled=false;}
 }
+async function doUpdatePassword(){
+  const errEl = document.getElementById('auth-err-newpass');
+  const infoEl = document.getElementById('auth-info-newpass');
+  if(errEl) errEl.style.display='none';
+  if(infoEl) infoEl.style.display='none';
+
+  if(!sb){ if(errEl){errEl.textContent='Supabase not configured yet.'; errEl.style.display='block';} return; }
+
+  const pass1 = document.getElementById('auth-pass-newpass').value;
+  const pass2 = document.getElementById('auth-pass-newpass2').value;
+
+  if(!pass1 || !pass2){
+    if(errEl){errEl.textContent='Please fill in both password fields.'; errEl.style.display='block';}
+    return;
+  }
+  if(pass1.length < 6){
+    if(errEl){errEl.textContent='Password must be at least 6 characters.'; errEl.style.display='block';}
+    return;
+  }
+  if(pass1 !== pass2){
+    if(errEl){errEl.textContent='Passwords do not match.'; errEl.style.display='block';}
+    return;
+  }
+
+  const btn = document.getElementById('auth-btn-newpass');
+  if(btn){ btn.disabled = true; btn.classList.add('loading'); }
+
+  try{
+    const { error } = await sb.auth.updateUser({ password: pass1 });
+    if(error) throw error;
+
+    if(infoEl){ infoEl.textContent = 'Password updated! Signing you in…'; infoEl.style.display='block'; }
+
+    history.replaceState(null, '', window.location.pathname);
+
+    setTimeout(async () => {
+      closeM('newPassword');
+      document.getElementById('auth-pass-newpass').value = '';
+      document.getElementById('auth-pass-newpass2').value = '';
+
+      const { data: { session } } = await sb.auth.getSession();
+      if(session?.user && !_appInitialized){
+        _appInitialized = true;
+        currentUser = session.user;
+        loadUserData().then(async () => {
+          const profileStatus = await loadUserProfile();
+          const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
+          if(needsOnboarding){
+            document.getElementById('landing')?.classList.add('hidden');
+            showOnboarding();
+          } else {
+            const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+            showApp(name, session.user.email);
+            registerPushNotifications();
+          }
+        });
+      }
+    }, 1200);
+  }catch(e){
+    let msg = e.message || 'Could not update password. Try the reset link again.';
+    if(msg.toLowerCase().includes('password') && (msg.toLowerCase().includes('character') || msg.toLowerCase().includes('least') || msg.toLowerCase().includes('uppercase') || msg.toLowerCase().includes('lowercase') || msg.toLowerCase().includes('symbol') || msg.toLowerCase().includes('number') || msg.toLowerCase().includes('digit'))) {
+      msg = 'Password must be 6+ chars with a number & symbol.';
+    }
+    if(errEl){ errEl.textContent = msg; errEl.style.display='block'; }
+  }
+  if(btn){ btn.disabled = false; btn.classList.remove('loading'); }
+}
+
 function hideAuthMsgPro(mode){
   const e=document.getElementById('auth-err-'+mode), i=document.getElementById('auth-info-'+mode);
   if(e) e.style.display='none';
@@ -287,6 +397,7 @@ async function signOut(){
   currentUser = null;
   S = getDefaultState();
   localStorage.removeItem('jt3');
+  localStorage.removeItem('jt3_known_updated_at');
   showAuthScreen(true);
 }
 
@@ -376,6 +487,7 @@ function showApp(name, email){
   if(document.getElementById('settings-email-display'))document.getElementById('settings-email-display').textContent=email||'';
   if(document.getElementById('settings-email-ro'))document.getElementById('settings-email-ro').textContent=email||'';
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
+  loadSupporterBadge();
   setDashGreeting(displayName.split(' ')[0]);
   
   
@@ -537,14 +649,14 @@ function getDefaultState(){
 // ── Dirty-tracking sync snapshot ──
 // Tracks the last-synced payload (as JSON) per row per table, so save()
 // only needs to upsert rows that actually changed instead of the full array.
-const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, syllabus:{}, practiceLogs:{} };
+const _syncSnapshot = { tests:{}, hours:{}, backlogs:{}, todos:{}, upcoming:{}, practiceLogs:{} };
 
 function _payloadTest(t,uid){ return {id:t.id,user_id:uid,exam:t.exam,session:t.session,paper:t.paper,type:t.type,date:t.date,total:t.total,max:t.max,physics:t.physics,chemistry:t.chemistry,maths:t.maths,notes:t.notes||''}; }
 function _payloadHour(h,uid){ return {id:h.id,user_id:uid,date:h.date,subject:h.subject,lecture:h.lecture,practice:h.practice,revision:h.revision,total:h.total,mock_analysis:h.mockAnalysis||0,source:h.source||'manual',label:h.label||null,mock_id:h.mockId||null}; }
 function _payloadBacklog(b,uid){ return {id:b.id,user_id:uid,title:b.title,subject:b.subject,priority:b.priority,due:b.due,details:b.details||'',done:b.done,added_date:b.addedDate,done_date:b.doneDate}; }
 function _payloadTodo(t,uid){ return {id:t.id,user_id:uid,title:t.title,subject:t.subject,priority:t.priority,due:t.due,details:t.details||'',done:t.done,added_date:t.addedDate,done_date:t.doneDate}; }
 function _payloadUpcoming(u,uid){ return {id:u.id,user_id:uid,exam:u.exam,session:u.session,type:u.type,date:u.date,venue:u.venue||'',notes:u.notes||''}; }
-function _payloadSylChapter(c,subj,uid){ return {id:c.id,user_id:uid,subject:subj,name:c.name,section:c.section||null,class:c.class||null,theory:c.theory,practice:c.practice}; }
+function _payloadSyllabusState(){ return {physics:S.syllabus.physics||[],chemistry:S.syllabus.chemistry||[],maths:S.syllabus.maths||[]}; }
 function _payloadPracticeLog(p,uid){ return {id:p.id,user_id:uid,subject:p.subject,chapter_id:p.chapterId,chapter_name:p.chapterName,questions:p.questions,date:p.date,logged_at:p.loggedAt}; }
 function _snapKey(row){ return JSON.stringify(row); }
 
@@ -562,8 +674,7 @@ function _seedSyncSnapshot(){
   _syncSnapshot.backlogs = {}; (S.backlogs||[]).forEach(b=>{ _syncSnapshot.backlogs[b.id]=_snapKey(_payloadBacklog(b,uid)); });
   _syncSnapshot.todos = {}; (S.todos||[]).forEach(t=>{ _syncSnapshot.todos[t.id]=_snapKey(_payloadTodo(t,uid)); });
   _syncSnapshot.upcoming = {}; (S.upcoming||[]).forEach(u=>{ _syncSnapshot.upcoming[u.id]=_snapKey(_payloadUpcoming(u,uid)); });
-  _syncSnapshot.syllabus = {};
-  ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>{ _syncSnapshot.syllabus[c.id]=_snapKey(_payloadSylChapter(c,s,uid)); }); });
+  _syncSnapshot._syllabus = _snapKey(_payloadSyllabusState());
   _syncSnapshot.practiceLogs = {}; (S.practiceLogs||[]).forEach(p=>{ _syncSnapshot.practiceLogs[p.id]=_snapKey(_payloadPracticeLog(p,uid)); });
   _syncSnapshot._streaks = _snapKey({user_id:uid,backlog_streak:S.backlogStreak,best_streak:S.backlogBestStreak,last_clear:S.lastBLClear,subj_streaks:S.subjStreaks,subj_best_streaks:S.subjBestStreaks,hwt_dismissed:S.hwtDismissed||[]});
 }
@@ -581,6 +692,34 @@ async function loadUserData(){
     }catch(e){}
     return;
   }
+
+  // Version-check short-circuit: before doing the full 8-table fetch, do ONE
+  // tiny single-row check of user_preferences.updated_at (bumped on every
+  // successful sync, from ANY device). If it matches what we already have
+  // cached locally, NOTHING has changed anywhere since our last full sync —
+  // safe to use the local copy as-is. If it differs (or this is the first
+  // load), fall through to the full fetch. Unlike a blind time-based cache,
+  // this is always accurate — no staleness window, no multi-device risk.
+  try{
+    const uidCheck = currentUser.id;
+    const {data:verRow} = await sb.from('user_preferences').select('updated_at').eq('user_id',uidCheck).maybeSingle();
+    const serverUpdatedAt = verRow?.updated_at || null;
+    const localKnown = localStorage.getItem('jt3_known_updated_at');
+    if(serverUpdatedAt && localKnown && serverUpdatedAt === localKnown){
+      const saved = localStorage.getItem('jt3');
+      if(saved){
+        let p = JSON.parse(saved);
+        if(p.backlogStreak>365) p.backlogStreak=0;
+        if(p.backlogBestStreak>365) p.backlogBestStreak=0;
+        p=migrateSyllabus(p);
+        if(!p.practiceLogs) p.practiceLogs=[];
+        S=p;
+        _seedSyncSnapshot();
+        return; // nothing changed anywhere — skip the full fetch entirely
+      }
+    }
+  }catch(e){}
+
   try{
     const uid = currentUser.id;
     const [tests,hours,backlogs,todos,upcoming,syllabus,streaks,practiceLogs] = await Promise.all([
@@ -589,7 +728,7 @@ async function loadUserData(){
       sb.from('backlogs').select('*').eq('user_id',uid),
       sb.from('todos').select('*').eq('user_id',uid),
       sb.from('upcoming').select('*').eq('user_id',uid),
-      sb.from('syllabus').select('*').eq('user_id',uid),
+      sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid).maybeSingle(),
       sb.from('streaks').select('*').eq('user_id',uid).maybeSingle(),
       sb.from('practice_logs').select('*').eq('user_id',uid)
     ]);
@@ -598,9 +737,13 @@ async function loadUserData(){
     S.backlogs=(backlogs.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.todos=(todos.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.upcoming=(upcoming.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-    if(syllabus.data && syllabus.data.length){
-      S.syllabus={physics:[],chemistry:[],maths:[]};
-      syllabus.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); });
+    const syllabusState = syllabus.data && syllabus.data.syllabus_state;
+    if(syllabusState){
+      S.syllabus={
+        physics:syllabusState.physics||[],
+        chemistry:syllabusState.chemistry||[],
+        maths:syllabusState.maths||[]
+      };
       S=migrateSyllabus(S);
     }
     S.practiceLogs=(practiceLogs.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
@@ -622,6 +765,7 @@ async function loadUserData(){
       }catch(e){}
     }
     _seedSyncSnapshot();
+    try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
   }catch(e){
     console.error('Load error:',e);
     
@@ -634,7 +778,7 @@ async function loadUserData(){
         sb.from('backlogs').select('*').eq('user_id',uid2),
         sb.from('todos').select('*').eq('user_id',uid2),
         sb.from('upcoming').select('*').eq('user_id',uid2),
-        sb.from('syllabus').select('*').eq('user_id',uid2),
+        sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid2).maybeSingle(),
         sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle(),
         sb.from('practice_logs').select('*').eq('user_id',uid2)
       ]);
@@ -643,10 +787,12 @@ async function loadUserData(){
       S.backlogs=(backlogs2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
       S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-      if(syllabus2.data&&syllabus2.data.length){ S.syllabus={physics:[],chemistry:[],maths:[]}; syllabus2.data.forEach(r=>{ const ch={id:r.id,name:r.name,theory:r.theory,practice:r.practice}; if(r.section)ch.section=r.section; if(r.class)ch.class=r.class; if(S.syllabus[r.subject])S.syllabus[r.subject].push(ch); }); S=migrateSyllabus(S); }
+      const syllabusState2 = syllabus2.data && syllabus2.data.syllabus_state;
+      if(syllabusState2){ S.syllabus={physics:syllabusState2.physics||[],chemistry:syllabusState2.chemistry||[],maths:syllabusState2.maths||[]}; S=migrateSyllabus(S); }
       S.practiceLogs=(practiceLogs2.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
       if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
       _seedSyncSnapshot();
+      try{ localStorage.setItem('jt3_known_updated_at', (syllabus2.data && syllabus2.data.updated_at) || ''); }catch(e){}
       console.log('Retry load succeeded');
     } catch(e2) {
       console.error('Retry load also failed, falling back to localStorage:', e2);
@@ -654,6 +800,35 @@ async function loadUserData(){
       if(saved) try{ const p=JSON.parse(saved); if(p.backlogStreak>365)p.backlogStreak=0; if(!p.practiceLogs)p.practiceLogs=[]; S=p; }catch(e3){}
     }
   }
+}
+
+// ── Supporter Badge (Settings/Profile) ──
+// Reads the current user's badge via the get_my_badge() SECURITY DEFINER
+// function (same underlying data as the Support page's Hall of Support).
+// Read-only, does not touch save()/sync logic below.
+const BADGE_EMOJI_BY_LABEL = {
+  'Elite Supporter': '💎',
+  'Gold Supporter': '🏆',
+  'Silver Supporter': '💜',
+  'Bronze Supporter': '💛',
+  'Supporter': '❤️'
+};
+
+function loadSupporterBadge(){
+  if(!sb || !currentUser) return;
+  sb.rpc('get_my_badge', { p_user_id: currentUser.id }).maybeSingle()
+    .then(({ data }) => {
+      const wrap = document.getElementById('settings-supporter-badge');
+      if(!wrap) return;
+      if(data && data.badge_tier){
+        document.getElementById('settings-supporter-badge-emoji').textContent = BADGE_EMOJI_BY_LABEL[data.badge_tier] || '❤️';
+        document.getElementById('settings-supporter-badge-label').textContent = data.badge_tier;
+        wrap.style.display = 'flex';
+      } else {
+        wrap.style.display = 'none';
+      }
+    })
+    .catch(() => {});
 }
 
 // ── Debounced network sync ──
@@ -683,6 +858,7 @@ function flushSave(){
 }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushSave(); });
 window.addEventListener('beforeunload', flushSave);
+window.addEventListener('pagehide', flushSave);
 
 async function _syncToServer(){
   if(!sb || !currentUser) return;
@@ -691,6 +867,10 @@ async function _syncToServer(){
   try{
     const uid = currentUser.id;
     const ops = [];
+    // One shared timestamp for this whole sync round — reused below so the
+    // value we bump user_preferences.updated_at to is exactly what we also
+    // remember locally, keeping this device's own version-check accurate.
+    const syncTimestamp = new Date().toISOString();
 
     const changedTests = (S.tests||[]).map(t=>_payloadTest(t,uid)).filter(p=>_syncSnapshot.tests[p.id]!==_snapKey(p));
     if(changedTests.length) ops.push(sb.from('tests').upsert(changedTests).then(({error})=>{ if(!error) changedTests.forEach(p=>_syncSnapshot.tests[p.id]=_snapKey(p)); }));
@@ -707,9 +887,12 @@ async function _syncToServer(){
     const changedUpcoming = (S.upcoming||[]).map(u=>_payloadUpcoming(u,uid)).filter(p=>_syncSnapshot.upcoming[p.id]!==_snapKey(p));
     if(changedUpcoming.length) ops.push(sb.from('upcoming').upsert(changedUpcoming).then(({error})=>{ if(!error) changedUpcoming.forEach(p=>_syncSnapshot.upcoming[p.id]=_snapKey(p)); }));
 
-    const sylPayloads=[]; ['physics','chemistry','maths'].forEach(s=>{ (S.syllabus[s]||[]).forEach(c=>sylPayloads.push(_payloadSylChapter(c,s,uid))); });
-    const changedSyl = sylPayloads.filter(p=>_syncSnapshot.syllabus[p.id]!==_snapKey(p));
-    if(changedSyl.length) ops.push(sb.from('syllabus').upsert(changedSyl).then(({error})=>{ if(!error) changedSyl.forEach(p=>_syncSnapshot.syllabus[p.id]=_snapKey(p)); }));
+    const syllabusStatePayload = _payloadSyllabusState();
+    const syllabusStateKey = _snapKey(syllabusStatePayload);
+    const syllabusChanged = _syncSnapshot._syllabus !== syllabusStateKey;
+    if(syllabusChanged){
+      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload,updated_at:syncTimestamp},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
+    }
 
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
     if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
@@ -723,6 +906,21 @@ async function _syncToServer(){
     }
 
     await Promise.all(ops);
+
+    // Bump the shared freshness marker whenever ANYTHING changed this round —
+    // this is what lets loadUserData()'s version-check (on any device) detect
+    // "something changed" without a blind time-based guess. If syllabus was
+    // the thing that changed, it already bumped updated_at above with this
+    // same timestamp; otherwise do one small standalone upsert here. Safe —
+    // PostgREST's upsert-on-conflict only touches the columns provided.
+    if(ops.length){
+      try{
+        if(!syllabusChanged){
+          await sb.from('user_preferences').upsert({user_id:uid, updated_at:syncTimestamp},{onConflict:'user_id'});
+        }
+        localStorage.setItem('jt3_known_updated_at', syncTimestamp);
+      }catch(e){}
+    }
   }catch(e){ console.error('Save error:',e); }
   isSaving=false; if(saveQueue){ saveQueue=false; _syncToServer(); }
 }
@@ -986,21 +1184,23 @@ async function checkWelcomeModal() {
   // email_reports is already loaded into `userProfile` by loadUserProfile() during
   // login/init — no need to hit user_preferences again here.
   const emailOn = userProfile?.email_reports === 'monthly';
-  
-  if (notifOn && emailOn) return;
+  const notifDismissed = localStorage.getItem('wm_notif_never') === '1';
+  const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+
+  if ((notifOn || notifDismissed) && (emailOn || emailDismissed)) return;
 
   
   localStorage.removeItem('jt_show_perm_after_onboarding');
 
   
-  _openWelcomeModal(notifOn, emailOn);
+  _openWelcomeModal(notifOn, emailOn, notifDismissed, emailDismissed);
 }
 
-function _openWelcomeModal(notifOn, emailOn) {
+function _openWelcomeModal(notifOn, emailOn, notifDismissed, emailDismissed) {
   const mo = document.getElementById('modal-welcome');
   if (!mo) return;
   
-  const startStep = notifOn ? 2 : 1;
+  const startStep = (notifOn || notifDismissed) ? 2 : 1;
   _wmGoStep(startStep);
   mo.classList.add('open');
 }
@@ -1013,8 +1213,21 @@ function _wmGoStep(n) {
 }
 
 function wmSkip(fromStep) {
-  if (fromStep === 1) _wmGoStep(2);
+  if (fromStep === 1) {
+    const chk = document.getElementById('wm-notif-never');
+    if (chk && chk.checked) localStorage.setItem('wm_notif_never', '1');
+    const emailOn = userProfile?.email_reports === 'monthly';
+    const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+    if (emailOn || emailDismissed) closeWelcomeModal();
+    else _wmGoStep(2);
+  }
   else closeWelcomeModal();
+}
+
+function wmSkipStep2() {
+  const chk = document.getElementById('wm-email-never');
+  if (chk && chk.checked) localStorage.setItem('wm_email_never', '1');
+  closeWelcomeModal();
 }
 
 async function welcomeEnableNotif() {
@@ -1050,7 +1263,12 @@ async function welcomeEnableNotif() {
     const snt = document.getElementById('settings-notif-toggle');
     if (snt) snt.checked = true;
     toast('Notifications enabled 🔔', 'success');
-    setTimeout(() => _wmGoStep(2), 500);
+    setTimeout(() => {
+      const emailOn = userProfile?.email_reports === 'monthly';
+      const emailDismissed = localStorage.getItem('wm_email_never') === '1';
+      if (emailOn || emailDismissed) closeWelcomeModal();
+      else _wmGoStep(2);
+    }, 500);
   } else {
     
     if (btn) { btn.disabled = false; btn.textContent = 'Blocked — skip'; }
@@ -1796,6 +2014,7 @@ function loadPublicSiteConfig(){
       applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);
       applyHero('hus-study-hours', 'study_hours_count', _fmtStatK);
       applyHero('hus-backlogs', 'backlogs_count', _fmtStatK);
+      applyHero('hus-questions-practiced', 'questions_practiced_count', _fmtStatK);
 
       if (data.app_version) {
         const vEl = document.getElementById('settings-app-version');
@@ -2715,9 +2934,10 @@ async function doReset(){
   if(sb && currentUser){
     const uid = currentUser.id;
     toast('Deleting data…', 'saving');
-    try{ await Promise.all([sb.from('tests').delete().eq('user_id',uid),sb.from('hours').delete().eq('user_id',uid),sb.from('backlogs').delete().eq('user_id',uid),sb.from('todos').delete().eq('user_id',uid),sb.from('upcoming').delete().eq('user_id',uid),sb.from('syllabus').delete().eq('user_id',uid),sb.from('streaks').delete().eq('user_id',uid)]); }catch(e){}
+    try{ await Promise.all([sb.from('tests').delete().eq('user_id',uid),sb.from('hours').delete().eq('user_id',uid),sb.from('backlogs').delete().eq('user_id',uid),sb.from('todos').delete().eq('user_id',uid),sb.from('upcoming').delete().eq('user_id',uid),sb.from('user_preferences').update({syllabus_state:null}).eq('user_id',uid),sb.from('streaks').delete().eq('user_id',uid)]); }catch(e){}
   }
   localStorage.removeItem('jt3');
+  localStorage.removeItem('jt3_known_updated_at');
   S = getDefaultState();
   toast('All data reset — reloading…', 'error');
   setTimeout(() => location.reload(), 800);
@@ -3006,6 +3226,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   initSupabase(); 
   setTimeout(initSettingsDirtyTracking, 600);
+  if (typeof _lhRestoreTimer === 'function') _lhRestoreTimer();
 
   
   setTimeout(() => {

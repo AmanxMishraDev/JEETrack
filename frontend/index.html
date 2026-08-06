@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="theme-color" content="#0a0a0f"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>JEETrack | AI-Powered JEE Preparation Tracker</title>
 <meta name="description" content="Free JEE preparation tracker for JEE Mains & Advanced. Track mock test scores, study hours, practice questions, syllabus, and backlogs — get AI-powered weekly insights."/>
@@ -86,7 +87,6 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2"/>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2"/>
 <link rel="apple-touch-icon" href="icon-192.png?v=2"/>
-<link rel="preload" as="image" href="icon-512.png?v=2"/>
 <link rel="manifest" href="manifest.json?v=2"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -509,6 +509,14 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div class="hus-lbl">Backlogs Cleared</div>
           </div>
         </div>
+        <div class="hus-div"></div>
+        <div class="hus-item">
+          <span class="hus-icon" style="color:#a29bfe;background:rgba(162,155,254,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <div>
+            <div class="hus-num"><span class="odo-num" id="hus-questions-practiced" data-count-to="50000" data-count-display="50K+">0</span></div>
+            <div class="hus-lbl">Questions Practiced</div>
+          </div>
+        </div>
       </div>
 
       <div class="trust-badges-wrap">
@@ -881,18 +889,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="ls-icon ls-icon-teal"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></div>
         <div class="ls-card-title">Practice Log</div>
         <div class="ls-card-desc">Log every question you solve, chapter by chapter, in one tap. Daily streaks, subject trends, and a full activity timeline.</div>
-      </div>
-      <div class="ls-card ls-card-free ls-reveal ls-reveal-delay-4">
-        <div class="ls-free-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a29bfe" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </div>
-        <div class="ls-free-text">
-          <div class="ls-free-label">Always Free</div>
-          <div class="ls-card-desc">Every feature, forever free. No plans, no paywalls, no catch.</div>
-          <div class="ls-free-dots">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1270,6 +1266,41 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 </div>
 
 <div id="auth-screen" class="hidden" style="display:none!important"></div>
+
+<div class="mo" id="modal-newPassword"><div class="md">
+  <div class="mt2">🔑 Set a new password</div>
+  <p style="font-size:13px;color:var(--mu);margin-bottom:16px;line-height:1.6">You followed a password reset link. Choose a new password for your JEETrack account below.</p>
+
+  <div class="auth-err" id="auth-err-newpass"></div>
+  <div class="auth-info" id="auth-info-newpass"></div>
+
+  <div class="auth-field-pro">
+    <label>New password</label>
+    <div class="auth-input-wrap">
+      <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input type="password" class="fi-pro" id="auth-pass-newpass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doUpdatePassword()"/>
+      <button type="button" onclick="togglePassVisPro('newpass')" class="auth-eye-btn" id="pass-eye-btn-newpass">
+        <svg class="auth-eye-icon" id="eye-icon-newpass" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="auth-field-pro">
+    <label>Confirm new password</label>
+    <div class="auth-input-wrap">
+      <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input type="password" class="fi-pro" id="auth-pass-newpass2" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doUpdatePassword()"/>
+      <button type="button" onclick="togglePassVisPro('newpass2')" class="auth-eye-btn" id="pass-eye-btn-newpass2">
+        <svg class="auth-eye-icon" id="eye-icon-newpass2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <button class="auth-submit-pro" id="auth-btn-newpass" onclick="doUpdatePassword()" style="margin-top:6px">
+    <span class="auth-btn-label">Update Password</span>
+    <svg class="auth-btn-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+  </button>
+</div></div>
 
 <div class="app" id="main-app" style="display:none">
 
@@ -2439,6 +2470,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <div style="flex:1;min-width:0">
               <div style="font-weight:700;font-size:16px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="settings-name-display">—</div>
               <div style="font-size:12.5px;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block" id="settings-email-display">—</div>
+              <div id="settings-supporter-badge" style="display:none;margin-top:8px;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(124,106,247,.14),rgba(244,114,182,.09));border:1px solid rgba(244,114,182,.28);border-radius:99px;padding:5px 12px;width:fit-content;font-size:12px;font-weight:700">
+                <span id="settings-supporter-badge-emoji">❤️</span>
+                <span id="settings-supporter-badge-label" style="color:var(--tx)">Supporter</span>
+              </div>
               <div style="font-size:11.5px;color:var(--mu2);margin-top:6px;display:flex;align-items:center;gap:5px">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 Click avatar or drag image to upload
@@ -4072,6 +4107,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           Enable Notifications
         </button>
       </div>
+      <label class="wm-never-again">
+        <input type="checkbox" id="wm-notif-never">
+        <span>Don't ask me again</span>
+      </label>
       <div class="wm-secure-badge">
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Revocable anytime from browser settings
@@ -4125,12 +4164,16 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
       <div class="wm-divider"></div>
       <div class="wm-actions">
-        <button class="wm-btn-skip" onclick="closeWelcomeModal()">Skip</button>
+        <button class="wm-btn-skip" onclick="wmSkipStep2()">Skip</button>
         <button id="wm-email-btn" class="wm-btn-enable blue-theme" onclick="welcomeEnableEmail()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Enable Monthly Reports
         </button>
       </div>
+      <label class="wm-never-again">
+        <input type="checkbox" id="wm-email-never">
+        <span>Don't ask me again</span>
+      </label>
       <div class="wm-secure-badge">
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Unsubscribe anytime · no spam ever
@@ -5347,7 +5390,7 @@ const openM=function(id,preset){
     },50);
   }
   
-  if(id!=='resetConfirm'){
+  if(id!=='resetConfirm' && id!=='newPassword'){
     el.onclick=function(e){if(e.target===el)closeM(id);};
   }
 }
@@ -5361,6 +5404,127 @@ function toggleExam(){
 
 
 let _lhTimer = { running:false, mode:'stopwatch', elapsed:0, goal:0, interval:null, snapshot:0, startTs:null, subject:'physics', session:'lecture' };
+let _lhAwayCtx = null;
+const LH_TIMER_KEY='jt_lhTimerState';
+function _lhPersistTimer(){
+  try{
+    localStorage.setItem(LH_TIMER_KEY, JSON.stringify({
+      mode:_lhTimer.mode, goal:_lhTimer.goal, snapshot:_lhTimer.snapshot,
+      startTs:_lhTimer.startTs, running:_lhTimer.running,
+      subject:_lhTimer.subject, session:_lhTimer.session,
+      lastSeen: Date.now()
+    }));
+  }catch(e){}
+}
+// Capture the moment the app actually goes to the background (not just any
+// state change) so on return we can tell "quick app switch" apart from
+// "closed for a while" — that's what decides whether we show the Welcome
+// Back confirmation or just silently keep ticking.
+function _lhHandleBackground(){ if(_lhTimer.running) _lhPersistTimer(); }
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') _lhHandleBackground(); });
+window.addEventListener('pagehide', _lhHandleBackground);
+function _lhClearPersistedTimer(){
+  try{ localStorage.removeItem(LH_TIMER_KEY); }catch(e){}
+}
+function _lhRestoreTimer(){
+  let raw;
+  try{ raw=localStorage.getItem(LH_TIMER_KEY); }catch(e){ return; }
+  if(!raw) return;
+  let saved;
+  try{ saved=JSON.parse(raw); }catch(e){ return; }
+  if(!saved) return;
+  _lhTimer.mode=saved.mode||'stopwatch';
+  _lhTimer.goal=saved.goal||0;
+  _lhTimer.subject=saved.subject||'physics';
+  _lhTimer.session=saved.session||'lecture';
+  _lhTimer.snapshot=saved.snapshot||0;
+  if(saved.running && saved.startTs){
+    _lhTimer.startTs=saved.startTs;
+    const delta=Math.floor((Date.now()-saved.startTs)/1000);
+    if(_lhTimer.mode==='stopwatch'){
+      _lhTimer.running=true;
+      _lhTimer.elapsed=_lhTimer.snapshot+delta;
+      clearInterval(_lhTimer.interval);
+      _lhTimer.interval=setInterval(_lhTick,500);
+    } else {
+      const remaining=Math.max(0,_lhTimer.goal-(_lhTimer.snapshot+delta));
+      if(remaining===0){
+        _lhTimer.running=false;
+        _lhTimer.elapsed=_lhTimer.goal;
+        _lhTimer.snapshot=_lhTimer.goal;
+        _lhClearPersistedTimer();
+        toast('Countdown finished while you were away — save it to log the session ✓','success');
+      } else {
+        _lhTimer.running=true;
+        _lhTimer.elapsed=remaining;
+        clearInterval(_lhTimer.interval);
+        _lhTimer.interval=setInterval(_lhTick,500);
+      }
+    }
+  } else {
+    _lhTimer.running=false;
+    _lhTimer.elapsed=_lhTimer.snapshot;
+  }
+  if(typeof _lhRenderAll==='function') _lhRenderAll();
+  if(typeof _lhStickyUpdate==='function') _lhStickyUpdate();
+  if(typeof _lhUpdateLiveDot==='function') _lhUpdateLiveDot();
+  const pi=document.getElementById('lh-play-icon'); if(pi) pi.style.display=_lhTimer.running?'none':'';
+  const pau=document.getElementById('lh-pause-icon'); if(pau) pau.style.display=_lhTimer.running?'':'none';
+  const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent=_lhTimer.running?'Pause':(_lhTimer.elapsed>0?'Resume':'Start');
+
+  // Timer kept ticking correctly either way (computed above) — but if the
+  // gap since we last saw the app was substantial, don't just assume they
+  // were studying the whole time. Ask.
+  const AWAY_THRESHOLD_MS = 3*60*1000;
+  if(saved.running && saved.lastSeen){
+    const awayMs = Math.max(0, Date.now()-saved.lastSeen);
+    if(awayMs > AWAY_THRESHOLD_MS){
+      _lhAwayCtx = { lastSeen:saved.lastSeen, startTs:saved.startTs, snapshot:saved.snapshot, mode:saved.mode, goal:saved.goal };
+      setTimeout(()=>_lhShowWelcomeBackModal(awayMs), 400);
+    }
+  }
+}
+
+function _lhFormatHM(ms){
+  const totalMin = Math.max(1, Math.round(ms/60000));
+  const h = Math.floor(totalMin/60), m = totalMin%60;
+  return h>0 ? `${h}h ${m}m` : `${m}m`;
+}
+const LH_SESSION_LABELS = {lecture:'Lecture',practice:'Practice',revision:'Revision',mockAnalysis:'Mock Analysis'};
+function _lhShowWelcomeBackModal(awayMs){
+  const el=document.getElementById('modal-welcomeBack');
+  if(!el) return;
+  const vEl=document.getElementById('wb-elapsed-val'); if(vEl) vEl.textContent=_lhFormatHM(awayMs);
+  const sEl=document.getElementById('wb-elapsed-sub');
+  if(sEl){
+    const subjLabel=(_lhTimer.subject||'').charAt(0).toUpperCase()+(_lhTimer.subject||'').slice(1);
+    sEl.textContent=`${subjLabel} · ${LH_SESSION_LABELS[_lhTimer.session]||_lhTimer.session}`;
+  }
+  el.classList.add('open');
+}
+function _lhWelcomeBackKeep(){
+  closeM('welcomeBack');
+  _lhAwayCtx=null;
+  toast('Timer kept — still running','success');
+}
+function _lhWelcomeBackEndSave(){
+  closeM('welcomeBack');
+  if(_lhAwayCtx){
+    const deltaAtClose=Math.floor((_lhAwayCtx.lastSeen-_lhAwayCtx.startTs)/1000);
+    _lhTimer.elapsed = _lhAwayCtx.mode==='stopwatch'
+      ? _lhAwayCtx.snapshot+deltaAtClose
+      : Math.max(0, _lhAwayCtx.goal-(_lhAwayCtx.snapshot+deltaAtClose));
+  }
+  _lhAwayCtx=null;
+  if(_lhTimer.running) lhTimerStop(false);
+  lhSaveTimerSession();
+}
+function _lhWelcomeBackDiscard(){
+  closeM('welcomeBack');
+  _lhAwayCtx=null;
+  lhTimerReset();
+  toast('Session discarded','info');
+}
 let _atEditId = null;
 let _lhEditId = null;
 let _emhEditId = null;
@@ -5628,6 +5792,7 @@ function lhTimerStart() {
   _lhUpdateLiveDot();
   _lhStickyUpdate();
   _lhRenderAll();
+  _lhPersistTimer();
   
   
   closeM('logHours');
@@ -5652,6 +5817,7 @@ function lhTimerStop(finished) {
   _lhUpdateLiveDot();
   _lhStickyUpdate();
   _lhRenderAll();
+  _lhPersistTimer();
 }
 
 function _lhUpdateSaveBar() {
@@ -5686,6 +5852,7 @@ function lhTimerReset() {
   _lhUpdateSaveBar();
   _lhUpdateLiveDot();
   const sw=document.getElementById('lh-sticky'); if(sw) sw.style.display='none';
+  _lhClearPersistedTimer();
 }
 
 function lhTimerToggleMode() {
@@ -5708,6 +5875,7 @@ function lhTimerToggleMode() {
   const bt=document.getElementById('lh-timer-btn-txt'); if(bt) bt.textContent='Start';
   _lhUpdateRingVisual();
   _lhUpdateSaveBar();
+  _lhClearPersistedTimer();
 }
 
 
@@ -7265,6 +7433,7 @@ function renderOvTrend(){
   const f=document.getElementById('ov-tf').value,m=M.ov;
   let tests=[...S.tests].sort((a,b)=>a.date.localeCompare(b.date));
   if(f!=='all')tests=tests.filter(t=>t.exam===f);
+  tests=tests.slice(-5); // last 5 by default, keeps the dashboard trend chart light
   const newData={labels:tests.map(t=>fmt(t.date)),datasets:[{label:m==='pct'?'Score%':'Score',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#7c6af7',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#7c6af7'}]};
   const newOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('ovTC',newData,newOpts)){
@@ -7340,12 +7509,15 @@ function _renderMains(){
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,var(--am),#fde68a);width:${Math.min(100,+avg)}%"></div></div>
     </div>`;
   
-  const mnTCData={labels:tests.map(t=>fmt(t.date)),datasets:sf==='all'?[
-    {label:'Total',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#a695ff',backgroundColor:'rgba(166,149,255,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'},
-    {label:'Physics',data:tests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Chemistry',data:tests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Maths',data:tests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
-  ]:[{label:cap(sf),data:tests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
+  // Chart shows only the last 5 tests by default — stats above (best/avg/latest)
+  // still reflect the FULL history, only the trend-line rendering is capped.
+  const chartTests = tests.slice(-5);
+  const mnTCData={labels:chartTests.map(t=>fmt(t.date)),datasets:sf==='all'?[
+    {label:'Total',data:chartTests.map(t=>scoreVal(t,m,null)),borderColor:'#a695ff',backgroundColor:'rgba(166,149,255,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'},
+    {label:'Physics',data:chartTests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Chemistry',data:chartTests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Maths',data:chartTests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
+  ]:[{label:cap(sf),data:chartTests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
   const mnTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('mnTC',mnTCData,mnTCOpts)){const c1=document.getElementById('mnTC').getContext('2d');CIs['mnTC']=new Chart(c1,{type:'line',data:mnTCData,options:mnTCOpts});}
   
@@ -7464,12 +7636,13 @@ function _renderAdv(){
       <div class="prem-stat-sub">across ${tests.length} test${tests.length!==1?'s':''}</div>
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,var(--am),#fde68a);width:${Math.min(100,+avg)}%"></div></div>
     </div>`;
-  const advTCData={labels:tests.map(t=>fmt(t.date)),datasets:sf==='all'?[
-    {label:'Total',data:tests.map(t=>scoreVal(t,m,null)),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#f472b6'},
-    {label:'Physics',data:tests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Chemistry',data:tests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
-    {label:'Maths',data:tests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
-  ]:[{label:cap(sf),data:tests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
+  const chartTests = tests.slice(-5);
+  const advTCData={labels:chartTests.map(t=>fmt(t.date)),datasets:sf==='all'?[
+    {label:'Total',data:chartTests.map(t=>scoreVal(t,m,null)),borderColor:'#f472b6',backgroundColor:'rgba(244,114,182,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#f472b6'},
+    {label:'Physics',data:chartTests.map(t=>scoreVal(t,m,'physics')),borderColor:'#60a5fa',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Chemistry',data:chartTests.map(t=>scoreVal(t,m,'chemistry')),borderColor:'#34d399',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]},
+    {label:'Maths',data:chartTests.map(t=>scoreVal(t,m,'maths')),borderColor:'#fbbf24',borderWidth:1.5,tension:.4,pointRadius:0,borderDash:[3,3]}
+  ]:[{label:cap(sf),data:chartTests.map(t=>scoreVal(t,m,sf)),borderColor:sc(sf),backgroundColor:sc(sf)+'20',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:sc(sf)}]};
   const advTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('advTC',advTCData,advTCOpts)){const c1=document.getElementById('advTC').getContext('2d');CIs['advTC']=new Chart(c1,{type:'line',data:advTCData,options:advTCOpts});}
   const p1=tests.filter(t=>t.paper==='p1'),p2=tests.filter(t=>t.paper==='p2');
@@ -7554,6 +7727,8 @@ function renderHours(){ensureChartJs().then(function(){_renderHours();});}
 function _renderHours(){
   F.hours.subj=document.getElementById('hr-subj').value;
   const hrs=getHrs();
+  const _dateIndex={};
+  S.hours.forEach(h=>{(_dateIndex[h.date]=_dateIndex[h.date]||[]).push(h);});
   const hasMockEver=S.hours.some(h=>(h.mockAnalysis||0)>0);
   const heroMock=document.getElementById('hr-hero-mock');
   if(heroMock)heroMock.style.display=hasMockEver?'':'none';
@@ -7561,12 +7736,12 @@ function _renderHours(){
   const days=[...new Set(hrs.map(h=>h.date))].length;
   const avg=days?(total/days).toFixed(1):0;
   const allD=[...new Set(S.hours.map(h=>h.date))];
-  const dT=allD.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+b.total,0));
+  const dT=allD.map(d=>(_dateIndex[d]||[]).reduce((a,b)=>a+b.total,0));
   const maxDay=dT.length?Math.max(...dT).toFixed(1):0;
   const maxDayDate=dT.length?allD[dT.indexOf(Math.max(...dT))]:'—';
   const now=new Date();
   const thisMD=[...new Set(S.hours.filter(h=>{const d=new Date(h.date+'T00:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).map(h=>h.date))];
-  const mAvg=thisMD.length?(S.hours.filter(h=>thisMD.includes(h.date)).reduce((a,b)=>a+b.total,0)/thisMD.length).toFixed(1):0;
+  const mAvg=thisMD.length?(thisMD.reduce((s,d)=>s+(_dateIndex[d]||[]).reduce((a,b)=>a+b.total,0),0)/thisMD.length).toFixed(1):0;
   const mockAll=hrs.reduce((a,b)=>a+(b.mockAnalysis||0),0);
   const totalSub=mockAll>0?`incl. ${mockAll.toFixed(1)}h mock analysis`:'in selected period';
   document.getElementById('hr-stats').innerHTML=`
@@ -7604,14 +7779,14 @@ function _renderHours(){
       <div class="prem-stat-lbl">Active Days</div>
       <div class="prem-stat-val" style="color:#fbbf24">${days}</div>
       <div class="prem-stat-sub">days logged</div>
-      <div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:8px">${Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);const dk=d.toISOString().split('T')[0];const active=S.hours.some(h=>h.date===dk);return`<div title="${dk}" style="width:8px;height:8px;border-radius:2px;background:${active?'#a695ff':'rgba(255,255,255,.06)'}"></div>`;}).join('')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:8px">${Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);const dk=d.toISOString().split('T')[0];const active=!!_dateIndex[dk];return`<div title="${dk}" style="width:8px;height:8px;border-radius:2px;background:${active?'#a695ff':'rgba(255,255,255,.06)'}"></div>`;}).join('')}</div>
       <div class="prem-stat-bar"><div class="prem-stat-bar-fill" style="background:linear-gradient(90deg,#fbbf24,#fde68a);width:${Math.min(100,days/30*100)}%"></div></div>
     </div>`;
   const last14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().split('T')[0];});
   const sf=F.hours.subj;const hF=h=>sf==='all'||h.subject===sf;
   const activeCats=HOUR_CATS.filter(c=>c.manual||hasMockEver);
-  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:activeCats.map(c=>({label:c.label,data:last14.map(d=>S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
-  const hrBCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}},tooltip:{callbacks:{title:ctx=>{const idx=ctx[0].dataIndex;const d=last14[idx];const tot=S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.total,0);return `${new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})} — ${tot.toFixed(1)}h total`;},label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}h`}}},scales:{...sO(),x:{...sO().x,stacked:true,ticks:{...sO().x.ticks,maxRotation:45}},y:{...sO().y,stacked:true,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
+  const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:activeCats.map(c=>({label:c.label,data:last14.map(d=>(_dateIndex[d]||[]).filter(hF).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
+  const hrBCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}},tooltip:{callbacks:{title:ctx=>{const idx=ctx[0].dataIndex;const d=last14[idx];const tot=(_dateIndex[d]||[]).filter(hF).reduce((a,b)=>a+b.total,0);return `${new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})} — ${tot.toFixed(1)}h total`;},label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}h`}}},scales:{...sO(),x:{...sO().x,stacked:true,ticks:{...sO().x.ticks,maxRotation:45}},y:{...sO().y,stacked:true,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrBC',hrBCData,hrBCOpts)){dc('hrBC');CIs['hrBC']=new Chart(document.getElementById('hrBC').getContext('2d'),{type:'bar',data:hrBCData,options:hrBCOpts});}
   const catTotals=activeCats.map(c=>hrs.reduce((a,b)=>a+(b[c.key]||0),0));
   const catSum=catTotals.reduce((a,b)=>a+b,0)||0.001;
@@ -7628,7 +7803,7 @@ function _renderHours(){
   if(!uC('hrSC',hrSCData,hrSCOpts)){dc('hrSC');CIs['hrSC']=new Chart(document.getElementById('hrSC').getContext('2d'),{type:'bar',data:hrSCData,options:hrSCOpts});}
   
   const months={};
-  S.hours.forEach(h=>{if(!hF(h))return;const k=h.date.substring(0,7);if(!months[k]){months[k]={total:0,days:new Set(),max:0};}months[k].total+=h.total;months[k].days.add(h.date);const dayTot=S.hours.filter(x=>x.date===h.date&&hF(x)).reduce((a,b)=>a+b.total,0);months[k].max=Math.max(months[k].max,dayTot);});
+  S.hours.forEach(h=>{if(!hF(h))return;const k=h.date.substring(0,7);if(!months[k]){months[k]={total:0,days:new Set(),max:0};}months[k].total+=h.total;months[k].days.add(h.date);const dayTot=(_dateIndex[h.date]||[]).filter(hF).reduce((a,b)=>a+b.total,0);months[k].max=Math.max(months[k].max,dayTot);});
   const mKeys=Object.keys(months).sort().slice(-6);
   const hrMCData={labels:mKeys.map(k=>{const[y,m2]=k.split('-');return new Date(y,m2-1).toLocaleDateString('en',{month:'short',year:'2-digit'});}),datasets:[{label:'Avg hrs/day',data:mKeys.map(k=>parseFloat((months[k].total/months[k].days.size).toFixed(1))),borderColor:'#a695ff',backgroundColor:'rgba(124,106,247,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#a695ff'}]};
   const hrMCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>parseFloat(ctx.parsed.y.toFixed(1))+'h'}}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>parseFloat(v.toFixed(1))+'h'}}}};
@@ -7637,12 +7812,12 @@ function _renderHours(){
   const hm=document.getElementById('hr-hm');hm.innerHTML='';
   const colors5=['#141a14','#1a3d2b','#1f6b41','#22a05a','#34d399'];
   Array.from({length:91},(_,i)=>{const d=new Date();d.setDate(d.getDate()-90+i);return d.toISOString().split('T')[0];}).forEach(d=>{
-    const tot=S.hours.filter(h=>h.date===d&&hF(h)).reduce((a,b)=>a+b.total,0);
+    const tot=(_dateIndex[d]||[]).filter(hF).reduce((a,b)=>a+b.total,0);
     const lvl=tot===0?0:tot<2?1:tot<4?2:tot<6?3:4;
     const cell=document.createElement('div');cell.className='hmc';cell.style.background=colors5[lvl];cell.title=`${fmt(d)}: ${tot.toFixed(1)}h`;hm.appendChild(cell);
   });
 
-  _renderHoursList(hrs);
+  _renderHoursList(S.hours);
   _renderMockBanner(hrs);
 }
 function _renderMockBanner(hrs){
@@ -7728,9 +7903,20 @@ function _hoursEmptyHTML(){
 function _renderHoursList(hrs){
   const list=document.getElementById('hr-list');
   if(!list)return;
-  const sorted=[...hrs].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
   const PREVIEW_LIMIT=5;
   const MODAL_LIMIT=30;
+  // hrs is now always S.hours (full history) so "Recent" never misses old
+  // entries — but that means this sort would otherwise re-run over your
+  // *entire* logging history on every render, forever growing. We only ever
+  // display the top MODAL_LIMIT anyway, so pre-filter to a recent window
+  // first (generous enough that any reasonably active user has way more
+  // than MODAL_LIMIT entries in it) and sort just that — falls back to a
+  // full sort only in the rare case someone's had a long gap with no logs.
+  const RECENT_WINDOW_DAYS=120;
+  const cutoff=(()=>{const d=new Date();d.setDate(d.getDate()-RECENT_WINDOW_DAYS);return d.toISOString().split('T')[0];})();
+  let candidates=hrs.filter(h=>h.date>=cutoff);
+  if(candidates.length<MODAL_LIMIT && hrs.length>candidates.length) candidates=hrs;
+  const sorted=candidates.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
 
   if(!sorted.length){
     list.innerHTML=_hoursEmptyHTML();
@@ -8301,12 +8487,13 @@ function updateMobTopbarTitle(page, sub){
     settings: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
     'tests-choice': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M4 7h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/></svg>`,
   };
+  let icon = '';
   if(page==='overview'){
     el.innerHTML = 'JEE<span>Track</span>';
     el.style.cssText = '';
   } else {
     const title = MOB_PAGE_TITLES[page] || page;
-    const icon = PAGE_ICONS[page] || '';
+    icon = PAGE_ICONS[page] || '';
     const words = title.trim().split(' ');
     let coloredTitle;
     if(words.length === 1){
@@ -8986,8 +9173,8 @@ function renderInsights(d){
   }));
 }
 </script>
-<script src="/analytics.js"></script>
-<script src="app.js?v=20260706"></script>
+<script src="/analytics.js?v=20290729"></script>
+<script src="app.js?v=20260731"></script>
 
 <div id="lh-sticky" style="display:none" class="lhs-widget">
   <div class="lhs-inner">
@@ -9015,6 +9202,49 @@ function renderInsights(d){
       <button class="lhs-reset" onclick="lhTimerReset()" title="Reset">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="modal-welcomeBack">
+  <div class="md wb-md">
+    <div class="wb-ring-wrap">
+      <svg width="84" height="84" viewBox="0 0 84 84">
+        <defs>
+          <linearGradient id="wbRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a695ff"/>
+            <stop offset="100%" stop-color="#f472b6"/>
+          </linearGradient>
+        </defs>
+        <circle class="wb-ring-track" cx="42" cy="42" r="36"/>
+        <circle class="wb-ring-fill" cx="42" cy="42" r="36"/>
+      </svg>
+      <div class="wb-ring-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
+      </div>
+      <div class="wb-ring-pip"></div>
+    </div>
+    <div class="wb-title">Welcome back!</div>
+    <div class="wb-desc">Your study timer continued running while JEETrack was closed. Were you studying during this time?</div>
+    <div class="wb-elapsed-card">
+      <div class="wb-elapsed-lbl">Elapsed while away</div>
+      <div class="wb-elapsed-val" id="wb-elapsed-val">--</div>
+      <div class="wb-elapsed-sub" id="wb-elapsed-sub"></div>
+    </div>
+    <div class="wb-info-line">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>You can keep this time, edit it later, or discard the session.</span>
+    </div>
+    <div class="wb-actions">
+      <button class="wb-btn-primary" onclick="_lhWelcomeBackEndSave()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        End &amp; Save
+      </button>
+      <button class="wb-btn-secondary" onclick="_lhWelcomeBackKeep()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg>
+        Keep Timer
+      </button>
+      <button class="wb-btn-text wb-btn-discard" onclick="_lhWelcomeBackDiscard()">Discard Timer</button>
     </div>
   </div>
 </div>

@@ -1,3 +1,5 @@
+// 📁 FILE LOCATION: supabase/functions/create-razorpay-order/index.ts
+
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 // Creates a Razorpay order server-side, so the donation amount can never be
@@ -5,6 +7,11 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 // project (Dashboard -> Edge Functions -> Secrets, or `supabase secrets set`):
 //   RAZORPAY_KEY_ID
 //   RAZORPAY_KEY_SECRET
+//
+// display_name/show_publicly are stashed in the Razorpay order's `notes` so
+// that razorpay-webhook (which fires from Razorpay's servers with no client
+// context) can still write the correct Hall-of-Support preferences instead
+// of clobbering them with nulls on its upsert.
 
 const ALLOWED_ORIGINS = [
   "https://www.jeetrack.in",
@@ -30,7 +37,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { amount } = await req.json();
+    const { amount, display_name, show_publicly } = await req.json();
 
     if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 1 || amount > 100000) {
       return new Response(JSON.stringify({ error: "Invalid amount" }), {
@@ -51,6 +58,8 @@ Deno.serve(async (req: Request) => {
 
     const auth = btoa(`${keyId}:${keySecret}`);
     const amountPaise = Math.round(amount * 100);
+    const safeDisplayName = typeof display_name === "string" ? display_name.slice(0, 60) : "";
+    const safeShowPublicly = show_publicly !== false;
 
     const orderRes = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
@@ -62,7 +71,11 @@ Deno.serve(async (req: Request) => {
         amount: amountPaise,
         currency: "INR",
         receipt: `coffee_${Date.now()}`,
-        notes: { source: "jeetrack_buy_me_coffee" },
+        notes: {
+          source: "jeetrack_buy_me_coffee",
+          display_name: safeDisplayName,
+          show_publicly: String(safeShowPublicly),
+        },
       }),
     });
 

@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="theme-color" content="#0a0a0f"/>
 <title>Support JEETrack — Buy Me a Chai</title>
-<meta name="description" content="JEETrack is free and always will be. If it's helped your JEE prep, you can chip in for a chai — it goes straight to keeping the servers running and the features coming."/>
+<meta name="description" content="JEETrack is free and always will be. If it's helped your JEE prep, your support helps keep the servers running and the features coming."/>
 <meta property="og:title" content="Support JEETrack"/>
-<meta property="og:description" content="Free forever, run by one JEE aspirant. If JEETrack helped you, buy me a chai."/>
+<meta property="og:description" content="Free forever, built by one JEE aspirant. If JEETrack helped you, support the project."/>
 <meta property="og:url" content="https://www.jeetrack.in/support"/>
 <meta property="og:site_name" content="JEETrack"/>
 <meta property="og:image" content="https://www.jeetrack.in/icon-512.png"/>
@@ -127,6 +127,16 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .pay-methods span{font-size:.68rem;color:var(--mu2);font-family:'DM Mono',monospace;border:1px solid var(--bd2);border-radius:5px;padding:.12rem .4rem}
 
 /* Personal note */
+/* TRANSPARENCY STRIP */
+.transparency{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:1.5rem 1.75rem}
+.transparency-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.transparency-title svg{color:var(--gn)}
+.transparency-list{display:grid;grid-template-columns:repeat(5,auto);gap:.6rem 1.4rem;flex-wrap:wrap}
+.transparency-item{display:flex;align-items:center;gap:.45rem;font-size:.8rem;color:var(--mu)}
+.transparency-item svg{color:var(--gn);flex-shrink:0}
+@media(max-width:700px){.transparency-list{grid-template-columns:repeat(2,auto)}}
+@media(max-width:420px){.transparency-list{grid-template-columns:1fr}}
+
 .note-card{margin-top:3rem;background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:2rem;display:flex;gap:1.25rem;align-items:flex-start;position:relative;overflow:hidden}
 .note-card::after{content:'"';position:absolute;top:-1.2rem;right:1.5rem;font-family:'Syne',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,191,36,.05);line-height:1}
 .note-av{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fbbf24,#f472b6);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#1a1206;flex-shrink:0}
@@ -134,6 +144,56 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .note-body p{color:var(--mu);font-size:.88rem;line-height:1.75}
 .note-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--tx);margin-bottom:.15rem}
 .note-role{font-size:.74rem;color:var(--am);font-weight:600;margin-bottom:.7rem}
+
+/* ───────── SUPPORTER RECOGNITION (purple/pink zone — distinct from the chai/amber menu) ───────── */
+
+.badge-chip{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.3);border-radius:99px;padding:.32rem .85rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:var(--tx);box-shadow:0 0 18px rgba(244,114,182,.12)}
+
+.supporter-opt-row{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;align-items:center;gap:1rem;justify-content:space-between}
+.badge-preview{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--mu)}
+.opt-fields{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
+.opt-name-input{background:var(--sf3);border:1.5px solid var(--bd);border-radius:10px;padding:.5rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;width:180px;transition:border-color .15s}
+.opt-name-input:focus{border-color:var(--pk)}
+.opt-name-input::placeholder{color:var(--mu2)}
+.opt-checkbox{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--mu);cursor:pointer;user-select:none}
+.opt-checkbox input{width:15px;height:15px;accent-color:var(--pk);cursor:pointer}
+
+/* Hall of Support section */
+.hall-section{margin-top:4rem}
+.impact-card{position:relative;background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));border:1px solid rgba(244,114,182,.22);border-radius:22px;padding:2rem;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:1.75rem;overflow:hidden}
+.impact-card::before{content:'';position:absolute;top:-60%;right:-10%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.16),transparent 70%);filter:blur(10px);pointer-events:none}
+.impact-card-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
+.impact-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;position:relative;z-index:1}
+.impact-stat{display:flex;flex-direction:column;align-items:center;text-align:center}
+.impact-stat-icon{font-size:1.3rem;height:1.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
+.impact-stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;height:2.2rem;line-height:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.impact-stat-lbl{font-size:.75rem;color:var(--mu);margin-top:.5rem}
+.impact-since{text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(244,114,182,.15);font-size:.8rem;color:var(--mu);position:relative;z-index:1}
+
+.supporter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.supporter-card{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:.85rem 1rem;transition:all .2s;opacity:0;animation:supporterFadeIn .5s ease forwards}
+.supporter-card:hover{border-color:rgba(244,114,182,.35);transform:translateY(-2px);background:linear-gradient(135deg,rgba(124,106,247,.06),rgba(244,114,182,.03))}
+@keyframes supporterFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.supporter-badge-icon{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.supporter-info{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.supporter-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.supporter-tier{display:inline-flex;width:fit-content;font-size:.66rem;font-weight:700;color:var(--pk);background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);border-radius:6px;padding:.15rem .5rem}
+
+.view-all-btn{display:block;margin:1.5rem auto 0;background:none;border:1.5px solid var(--bd2);color:var(--mu);font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;padding:.7rem 1.6rem;border-radius:11px;cursor:pointer;transition:all .15s}
+.view-all-btn:hover{border-color:var(--pk);color:var(--tx)}
+
+.hall-empty{text-align:center;padding:3rem 2rem;background:var(--sf);border:1px dashed var(--bd2);border-radius:18px;color:var(--mu)}
+.hall-empty-icon{font-size:2rem;margin-bottom:.75rem}
+.hall-empty h4{font-family:'Syne',sans-serif;font-weight:800;color:var(--tx);font-size:1rem;margin-bottom:.4rem}
+.hall-empty p{font-size:.82rem;max-width:320px;margin:0 auto}
+
+@media(max-width:700px){
+  .supporter-opt-row{flex-direction:column;align-items:stretch}
+  .opt-fields{flex-direction:column;align-items:stretch}
+  .opt-name-input{width:100%}
+  .impact-stats-row{grid-template-columns:1fr}
+  .supporter-grid{grid-template-columns:1fr}
+}
 
 /* FOOTER */
 .foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem;position:relative;z-index:2}
@@ -163,12 +223,19 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .cel-stamp svg{stroke-dasharray:32;stroke-dashoffset:32;animation:celCheckDraw .35s ease .42s forwards}
 @keyframes celCheckDraw{to{stroke-dashoffset:0}}
 
-.celebrate h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.65rem;opacity:0;animation:celFadeUp .5s ease .38s forwards}
-.celebrate .cel-sub{color:var(--mu);font-size:.94rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:celFadeUp .5s ease .52s forwards}
+.celebrate h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.65rem;opacity:0;animation:celFadeUp .5s ease .58s forwards}
+.celebrate .cel-sub{color:var(--mu);font-size:.94rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:celFadeUp .5s ease .82s forwards}
 .celebrate .cel-amt{font-family:'Syne',sans-serif;color:var(--am);font-weight:800}
-.celebrate .cel-note{color:var(--mu2);font-size:.8rem;margin-bottom:2.1rem;opacity:0;animation:celFadeUp .5s ease .64s forwards}
+.celebrate .cel-note{color:var(--mu2);font-size:.8rem;margin-bottom:1.1rem;opacity:0;animation:celFadeUp .5s ease .9s forwards}
 @keyframes celFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;padding:.9rem 1.7rem;border-radius:13px;opacity:0;animation:celFadeUp .5s ease .78s forwards;box-shadow:0 10px 30px rgba(124,106,247,.3)}
+.cel-unlock-eyebrow{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--pk);letter-spacing:.02em;margin-bottom:.6rem;opacity:0;animation:celFadeUp .5s ease .5s forwards}
+.cel-badge-chip-big{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,rgba(124,106,247,.18),rgba(244,114,182,.12));border:1.5px solid rgba(244,114,182,.4);border-radius:16px;padding:.85rem 1.6rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;box-shadow:0 0 34px rgba(244,114,182,.25);margin-bottom:.85rem;opacity:0;animation:celFadeUp .5s ease .66s forwards, badgeGlow 2.4s ease-in-out .66s infinite}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 34px rgba(244,114,182,.25)}50%{box-shadow:0 0 46px rgba(244,114,182,.4)}}
+.cel-badge-permanent{font-size:.78rem;color:var(--mu2);max-width:320px;margin:0 auto 1.6rem;line-height:1.6;opacity:0;animation:celFadeUp .5s ease .74s forwards}
+.cel-badge{display:inline-flex;flex-direction:column;align-items:center;gap:.15rem;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);border-radius:14px;padding:.7rem 1.4rem;margin-bottom:1.6rem;opacity:0;animation:celFadeUp .5s ease .7s forwards}
+.cel-badge-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--pk);display:flex;align-items:center;gap:.35rem}
+.cel-badge-sub{font-size:.72rem;color:var(--mu2)}
+.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;padding:.9rem 1.7rem;border-radius:13px;opacity:0;animation:celFadeUp .5s ease .98s forwards;box-shadow:0 10px 30px rgba(124,106,247,.3)}
 
 .spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(26,18,6,.35);border-top-color:#1a1206;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -210,12 +277,12 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
   <div class="hero-orb hero-orb-2"></div>
   <div>
     <div class="hero-pill"><span class="hero-pill-dot"></span>Support JEETrack</div>
-    <h1>JEETrack runs on <em>chai</em>, late nights, and people like you</h1>
-    <p class="hero-sub">It's free and it always will be — no paywalls on your prep. But servers, AI insights, and 2 AM debugging sessions all cost something. If JEETrack has helped your prep, a chai goes a long way.</p>
+    <h1>Built for aspirants. <em>Supported by aspirants.</em></h1>
+    <p class="hero-sub">JEETrack is free today, and we want to keep it that way. If it's helped you stay consistent in your preparation, your support helps cover infrastructure, AI services, and future improvements.</p>
     <div class="hero-meta">
       <div class="hero-meta-item"><span class="hero-meta-num">₹0</span><span class="hero-meta-lbl">Cost to use JEETrack</span></div>
       <div class="hero-meta-item"><span class="hero-meta-num">1</span><span class="hero-meta-lbl">Person building it</span></div>
-      <div class="hero-meta-item"><span class="hero-meta-num">100%</span><span class="hero-meta-lbl">Goes to running costs</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">0</span><span class="hero-meta-lbl">Features behind a paywall</span></div>
     </div>
   </div>
   <div class="chai-stage">
@@ -252,7 +319,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     </div>
     <div class="value-item">
       <div class="value-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-      <div class="value-txt"><h4>Features ship faster</h4><p>Every chai buys back a late-night hour for the next build</p></div>
+      <div class="value-txt"><h4>Features ship faster</h4><p>Every bit of support buys back a late-night hour for the next build</p></div>
     </div>
     <div class="value-item">
       <div class="value-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-8-4.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-8 11-8 11z"/></svg></div>
@@ -262,7 +329,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 
   <div class="section-eyebrow"><span class="section-eyebrow-line"></span>The menu</div>
   <div class="section-title">Pick your order</div>
-  <p class="section-desc">Every rupee goes straight to keeping JEETrack running — no ads, no data-selling, just chai money.</p>
+  <p class="section-desc">Every contribution helps us build a faster, smarter, and more reliable study companion for every JEE aspirant.</p>
 
   <div class="menu-board">
     <div class="menu-header">
@@ -316,7 +383,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     <div class="pay-cta-row">
       <button class="pay-btn" id="pay-btn" onclick="payChai()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        <span id="pay-btn-txt">Pay ₹99</span>
+        <span id="pay-btn-txt">Buy this chai — ₹99</span>
       </button>
       <span class="secure-note">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -325,6 +392,31 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
       <span class="pay-methods"><span>UPI</span><span>Cards</span><span>Netbanking</span></span>
     </div>
     <div class="pay-err" id="pay-err"></div>
+
+    <div class="supporter-opt-row">
+      <div class="badge-preview">You'll receive <span class="badge-chip" id="badge-preview-chip">💛 Bronze Supporter</span></div>
+      <div class="opt-fields">
+        <input type="text" class="opt-name-input" id="supporter-name-input" placeholder="Your name (optional)" maxlength="60"/>
+        <label class="opt-checkbox">
+          <input type="checkbox" id="show-publicly-check" checked/>
+          Display my name in the Hall of Support
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="transparency">
+    <div class="transparency-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      What your support helps cover
+    </div>
+    <div class="transparency-list">
+      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hosting</div>
+      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Database</div>
+      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>AI services</div>
+      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Domain</div>
+      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Future features</div>
+    </div>
   </div>
 
   <div class="note-card">
@@ -332,7 +424,40 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     <div class="note-body">
       <div class="note-name">Aman Mishra</div>
       <div class="note-role">Founder & Developer, JEETrack</div>
-      <p>I built JEETrack alone, as a JEE aspirant who was tired of scattered spreadsheets. It's free because I don't think tracking your prep should cost anything. But if it's genuinely helped you and you'd like to chip in for a chai — thank you, truly. It funds the servers and the late nights that keep this thing alive.</p>
+      <p>I started building JEETrack because I wanted a better way to track my own preparation. What began as a personal tool slowly grew into something used by thousands of JEE aspirants. JEETrack will always remain free, but every contribution helps cover infrastructure, AI costs, and future improvements. Thank you for being part of the journey.</p>
+    </div>
+  </div>
+
+  <div class="hall-section" id="hall-section">
+    <div class="section-eyebrow"><span class="section-eyebrow-line"></span>Community</div>
+    <div class="section-title">❤️ Hall of Support</div>
+    <p class="section-desc">Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant.</p>
+
+    <div class="impact-card" id="impact-card">
+      <div class="impact-card-title">❤️ Community Impact</div>
+      <div class="impact-stats-row">
+        <div class="impact-stat">
+          <div class="impact-stat-icon">👥</div>
+          <div class="impact-stat-value" id="stat-supporters" data-target="0">0</div>
+          <div class="impact-stat-lbl">Supporters</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-icon">☕</div>
+          <div class="impact-stat-value" id="stat-chais" data-target="0">0</div>
+          <div class="impact-stat-lbl">Chais Bought</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-icon">💜</div>
+          <div class="impact-stat-value">Always</div>
+          <div class="impact-stat-lbl">Community Supported</div>
+        </div>
+      </div>
+      <div class="impact-since" id="impact-since">Supporting JEETrack since — ❤️</div>
+    </div>
+
+    <div id="hall-list-wrap">
+      <div class="supporter-grid" id="supporter-grid"></div>
+      <button class="view-all-btn" id="view-all-btn" style="display:none" onclick="expandSupporterList()">View All</button>
     </div>
   </div>
 
@@ -358,7 +483,10 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
         <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#052e22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
     </div>
-    <h2>Chai's on the way ☕</h2>
+    <div class="cel-unlock-eyebrow">🎉 Badge Unlocked</div>
+    <h2 id="cel-heading">Thank You</h2>
+    <div class="cel-badge-chip-big" id="cel-badge-chip">❤️ Supporter</div>
+    <p class="cel-badge-permanent" id="cel-badge-permanent">This badge is now permanently attached to your JEETrack profile.</p>
     <p class="cel-sub">Thank you for the <span class="cel-amt" id="cel-amount">₹99</span> — it genuinely helps keep JEETrack free for every aspirant.</p>
     <p class="cel-note">A receipt has been sent to your email.</p>
     <a href="/" class="cel-btn">
@@ -372,6 +500,22 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 let SUPABASE_URL = null, SUPABASE_ANON_KEY = null, sb = null;
 let selectedAmount = 99;
 
+// ── Badge tiers (must match the badge_tier logic in the hall_of_support SQL view) ──
+const BADGE_TIERS = [
+  { min: 999, emoji: '💎', label: 'Elite Supporter' },
+  { min: 499, emoji: '🏆', label: 'Gold Supporter' },
+  { min: 199, emoji: '💜', label: 'Silver Supporter' },
+  { min: 99,  emoji: '💛', label: 'Bronze Supporter' },
+  { min: 0,   emoji: '❤️', label: 'Supporter' },
+];
+function getBadgeForAmount(amt){
+  return BADGE_TIERS.find(t => amt >= t.min) || BADGE_TIERS[BADGE_TIERS.length - 1];
+}
+function badgeEmojiForLabel(label){
+  const t = BADGE_TIERS.find(t => t.label === label);
+  return t ? t.emoji : '❤️';
+}
+
 async function initSb(){
   try{
     const res = await fetch('/api/config');
@@ -381,6 +525,7 @@ async function initSb(){
       if(window.supabase){ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
     }
   }catch(e){ console.warn('Could not load config', e); }
+  loadHallOfSupport();
 }
 // Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
 // but before DOMContentLoaded — so we wait for that event before touching
@@ -411,7 +556,9 @@ function onCustomInput(input){
 }
 
 function updatePayLabel(){
-  document.getElementById('pay-btn-txt').textContent = selectedAmount > 0 ? `Pay ₹${selectedAmount}` : 'Pay';
+  document.getElementById('pay-btn-txt').textContent = selectedAmount > 0 ? `Buy this chai — ₹${selectedAmount}` : 'Buy this chai';
+  const badge = getBadgeForAmount(selectedAmount || 0);
+  document.getElementById('badge-preview-chip').textContent = `${badge.emoji} ${badge.label}`;
 }
 
 async function payChai(){
@@ -444,9 +591,11 @@ async function payChai(){
   try{
     const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
     const currentUser = userData?.user || null;
+    const supporterName = document.getElementById('supporter-name-input').value.trim();
+    const showPublicly = document.getElementById('show-publicly-check').checked;
 
     const { data, error } = await sb.functions.invoke('create-razorpay-order', {
-      body: { amount: selectedAmount }
+      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly }
     });
     if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
 
@@ -455,7 +604,7 @@ async function payChai(){
       amount: data.amount,
       currency: data.currency || 'INR',
       name: 'JEETrack',
-      description: 'Buy me a chai ☕',
+      description: 'Buy this chai ☕',
       image: 'https://www.jeetrack.in/icon-192.png',
       order_id: data.order_id,
       prefill: { email: currentUser?.email || '' },
@@ -468,7 +617,9 @@ async function payChai(){
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               amount: selectedAmount,
-              user_id: currentUser?.id || null
+              user_id: currentUser?.id || null,
+              display_name: supporterName,
+              show_publicly: showPublicly
             }
           });
           if(!verifyData || !verifyData.verified){
@@ -476,7 +627,8 @@ async function payChai(){
             btn.disabled = false; btnTxt.textContent = prevLabel;
             return;
           }
-          showCelebration(selectedAmount);
+          showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser);
+          loadHallOfSupport();
         }catch(e){
           errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
           btn.disabled = false; btnTxt.textContent = prevLabel;
@@ -499,8 +651,17 @@ async function payChai(){
   }
 }
 
-function showCelebration(amount){
+function showCelebration(amount, badgeTierLabel, isLoggedIn){
   document.getElementById('cel-amount').textContent = `₹${amount}`;
+
+  const label = badgeTierLabel || getBadgeForAmount(amount).label;
+  const emoji = badgeEmojiForLabel(label);
+  document.getElementById('cel-heading').textContent = 'Thank You';
+  document.getElementById('cel-badge-chip').textContent = `${emoji} ${label}`;
+  document.getElementById('cel-badge-permanent').textContent = isLoggedIn
+    ? 'This badge is now permanently attached to your JEETrack profile.'
+    : 'Sign in next time so this badge stays permanently on your profile — for now, thank you!';
+
   const overlay = document.getElementById('celebrate');
   overlay.classList.add('show');
   spawnConfetti();
@@ -526,6 +687,117 @@ function spawnConfetti(){
     piece.style.animationDelay = (Math.random()*0.6)+'s';
     layer.appendChild(piece);
   }
+}
+
+// ── Hall of Support ──
+let _allSupporters = [];
+const SUPPORTER_PREVIEW_COUNT = 8;
+
+async function loadHallOfSupport(){
+  if(!sb) return;
+  try{
+    const [statsRes, listRes] = await Promise.all([
+      sb.from('community_impact_stats').select('*').single(),
+      sb.from('hall_of_support').select('*').order('last_contribution_at', { ascending: false }).limit(60)
+    ]);
+
+    if(statsRes.data){
+      const stats = statsRes.data;
+      document.getElementById('stat-supporters').dataset.target = stats.supporter_count || 0;
+      document.getElementById('stat-chais').dataset.target = stats.chais_bought || 0;
+      if(stats.supporting_since){
+        const since = new Date(stats.supporting_since).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        document.getElementById('impact-since').textContent = `Supporting JEETrack since ${since} ❤️`;
+      } else {
+        document.getElementById('impact-since').textContent = 'Be the first to support JEETrack ❤️';
+      }
+      observeImpactCard();
+    }
+
+    _allSupporters = listRes.data || [];
+    renderSupporters(false);
+  }catch(e){
+    console.warn('Could not load Hall of Support', e);
+  }
+}
+
+function renderSupporters(showAll){
+  const grid = document.getElementById('supporter-grid');
+  const viewAllBtn = document.getElementById('view-all-btn');
+  const wrap = document.getElementById('hall-list-wrap');
+
+  if(_allSupporters.length === 0){
+    wrap.innerHTML = `<div class="hall-empty">
+      <div class="hall-empty-icon">☕</div>
+      <h4>Be the first supporter</h4>
+      <p>No one has bought a chai yet — your name could be the first one in the Hall of Support.</p>
+    </div>`;
+    return;
+  }
+
+  const list = showAll ? _allSupporters : _allSupporters.slice(0, SUPPORTER_PREVIEW_COUNT);
+  grid.innerHTML = list.map((s, i) => {
+    const emoji = badgeEmojiForLabel(s.badge_tier);
+    const name = s.display_name || 'Anonymous';
+    return `<div class="supporter-card" style="animation-delay:${Math.min(i,10) * 0.05}s">
+      <div class="supporter-badge-icon">${emoji}</div>
+      <div class="supporter-info">
+        <div class="supporter-name">${escapeHtml(name)}</div>
+        <div class="supporter-tier">${escapeHtml(s.badge_tier)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  viewAllBtn.style.display = (!showAll && _allSupporters.length > SUPPORTER_PREVIEW_COUNT) ? 'block' : 'none';
+}
+
+function expandSupporterList(){
+  renderSupporters(true);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function animateCounter(el){
+  const target = parseInt(el.dataset.target, 10) || 0;
+  const duration = 1200;
+  const start = performance.now();
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    el.textContent = target;
+    return;
+  }
+  function tick(now){
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+let _impactObserved = false;
+function observeImpactCard(){
+  if(_impactObserved) return;
+  const card = document.getElementById('impact-card');
+  if(!card || typeof IntersectionObserver === 'undefined'){
+    animateCounter(document.getElementById('stat-supporters'));
+    animateCounter(document.getElementById('stat-chais'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && !_impactObserved){
+        _impactObserved = true;
+        animateCounter(document.getElementById('stat-supporters'));
+        animateCounter(document.getElementById('stat-chais'));
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(card);
 }
 </script>
 
