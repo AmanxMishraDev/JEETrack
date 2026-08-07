@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="theme-color" content="#0a0a0f"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0c12"/>
 <title>Support JEETrack — Buy Me a Chai</title>
 <meta name="description" content="JEETrack is free and always will be. If it's helped your JEE prep, your support helps keep the servers running and the features coming."/>
 <meta property="og:title" content="Support JEETrack"/>
@@ -19,241 +19,220 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0a0a0f;--sf:#111118;--sf2:#16161f;--sf3:#1e1e28;
-  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
-  --tx:#f0eff5;--mu:#8b899e;--mu2:#4a4960;
-  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--am2:#d97706;--bl:#60a5fa;
+  --bg:#0b0c12;--sf:#13151e;--sf2:#191b26;--sf3:#20222e;
+  --bd:rgba(238,236,231,.1);--bd2:rgba(238,236,231,.18);
+  --tx:#f3f0ea;--mu:#9899aa;--mu2:#686a7d;
+  --am:#f3b84b;--am2:#d98825;--pk:#ee8ab2;--mint:#62d5ad;--ac:#7c6af7;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
 }
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
+body{
+  background:
+    radial-gradient(circle at 12% 0%, rgba(243,184,75,.11), transparent 30rem),
+    radial-gradient(circle at 92% 22%, rgba(238,138,178,.08), transparent 25rem),
+    var(--bg);
+  color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden
+}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--am);outline-offset:2px;border-radius:6px}
 
-.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.75);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
-.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-links{display:flex;gap:2px}
-.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
-.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav{height:62px;border-bottom:1px solid var(--bd);background:rgba(11,12,18,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1rem,5vw,3rem);position:sticky;top:0;z-index:20}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:1.12rem;text-decoration:none;color:var(--tx)}
+.nav-logo span{color:var(--am)}
+.nav-links{display:flex;gap:.2rem;align-items:center}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.8rem;padding:.55rem .75rem;border-radius:8px;transition:color .15s,background .15s}
+@media(hover:hover){.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.06)}}
 .nav-links a.active{color:var(--am)}
-.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
-.nav-cta:hover{opacity:.85}
+.nav-cta{background:var(--am);color:#241707;font-weight:700;text-decoration:none;padding:.5rem 1.1rem;border-radius:8px;font-size:.82rem;white-space:nowrap}
+
+/* MAIN */
+main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;position:relative;z-index:2}
 
 /* HERO */
-.hero{position:relative;padding:5.5rem 2.5rem 3rem;overflow:hidden;max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:2.5rem;align-items:center;z-index:2}
-.hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px)}
-.hero-orb-1{width:560px;height:560px;background:rgba(251,191,36,.09);top:-260px;left:-140px}
-.hero-orb-2{width:420px;height:420px;background:rgba(244,114,182,.08);top:0;right:-140px}
-.hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.28);color:var(--am);font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:.34rem .9rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.6rem}
-.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--am);animation:pulse 2s ease infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.1rem,4.4vw,3.35rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:1.15rem;position:relative;z-index:1}
-.hero h1 em{font-style:normal;background:linear-gradient(135deg,#fbbf24,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{color:var(--mu);font-size:1.02rem;line-height:1.75;max-width:470px;position:relative;z-index:1}
-.hero-meta{display:flex;gap:1.75rem;margin-top:1.75rem}
-.hero-meta-item{display:flex;flex-direction:column;gap:.2rem}
-.hero-meta-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;background:linear-gradient(135deg,#fbbf24,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-meta-lbl{font-size:.72rem;color:var(--mu2);font-weight:500}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:2rem;min-height:300px}
+.kicker{display:inline-flex;align-items:center;gap:.5rem;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;color:var(--am)}
+.kicker i{width:6px;height:6px;border-radius:50%;background:var(--am);box-shadow:0 0 0 5px rgba(243,184,75,.13);font-style:normal}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5.2vw,3.9rem);line-height:1.05;letter-spacing:-.045em;margin:1.1rem 0 1rem;max-width:620px}
+.hero h1 em{font-style:normal;color:var(--am)}
+.hero-copy{font-size:.98rem;line-height:1.7;color:var(--mu);max-width:510px}
+.hero-meta{display:flex;gap:2rem;margin-top:1.6rem}
+.hero-meta strong{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--am);display:block}
+.hero-meta small{color:var(--mu2);font-size:.7rem;display:block;margin-top:.2rem}
 
-/* CHAI GLASS ILLUSTRATION */
-.chai-stage{position:relative;height:300px;display:flex;align-items:center;justify-content:center}
-.chai-glow{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.24),transparent 70%);filter:blur(12px);animation:chaiGlow 3.5s ease-in-out infinite}
-@keyframes chaiGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
-.steam-wisp{position:absolute;bottom:178px;width:6px;border-radius:6px;background:linear-gradient(to top,rgba(240,239,245,.4),transparent);transform-origin:bottom center;animation:steamRise 3.4s ease-in-out infinite}
-.steam-wisp.s1{left:calc(50% - 22px);height:74px;animation-delay:0s}
-.steam-wisp.s2{left:calc(50% - 2px);height:92px;animation-delay:.6s}
-.steam-wisp.s3{left:calc(50% + 18px);height:68px;animation-delay:1.2s}
-@keyframes steamRise{
-  0%{opacity:0;transform:translateY(0) scaleX(1) rotate(0deg)}
-  20%{opacity:.6}
-  100%{opacity:0;transform:translateY(-66px) scaleX(1.7) rotate(6deg)}
-}
-.chai-stage svg{filter:drop-shadow(0 18px 32px rgba(0,0,0,.45))}
+/* CHAI ILLUSTRATION */
+.chai-stage{height:270px;display:grid;place-items:center;position:relative}
+.chai-glow{position:absolute;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,rgba(243,184,75,.24),transparent 68%);filter:blur(10px);animation:breathe 3.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.07);opacity:.85}}
+.steam{position:absolute;width:5px;border-radius:9px;background:linear-gradient(transparent,rgba(243,240,234,.42));bottom:150px;animation:steam 3s ease-in-out infinite}
+.steam.a{height:66px;left:calc(50% - 22px)}
+.steam.b{height:86px;left:calc(50% - 2px);animation-delay:.7s}
+.steam.c{height:60px;left:calc(50% + 20px);animation-delay:1.3s}
+@keyframes steam{0%,100%{opacity:0;transform:translateY(10px) scaleX(1)}30%{opacity:.55}100%{opacity:0;transform:translateY(-58px) scaleX(1.5)}}
+.chai-stage svg{position:relative;filter:drop-shadow(0 14px 26px rgba(0,0,0,.4))}
 
-/* PAGE SECTIONS */
-.page-wrap{max-width:980px;margin:0 auto;padding:0 2.5rem 5rem;position:relative;z-index:2}
-.section-eyebrow{display:flex;align-items:center;gap:.6rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu2);margin-bottom:.7rem}
-.section-eyebrow-line{width:22px;height:1px;background:var(--bd2)}
-.section-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem}
-.section-desc{color:var(--mu);font-size:.9rem;margin-bottom:2.25rem;max-width:520px}
+/* VALUE STRIP */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin:1.6rem 0 3.5rem;background:var(--bd)}
+.value{background:var(--sf);padding:1.2rem 1.35rem;display:flex;gap:.75rem}
+.value svg{color:var(--am);flex-shrink:0}
+.value strong{font-size:.82rem;display:block}
+.value p{color:var(--mu);font-size:.73rem;line-height:1.5;margin-top:.25rem}
 
-/* VALUE PROPS STRIP */
-.value-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:3.5rem}
-.value-item{background:var(--sf);padding:1.4rem 1.5rem;display:flex;align-items:flex-start;gap:.85rem}
-.value-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(244,114,182,.08));border:1px solid rgba(251,191,36,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--am)}
-.value-txt h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
-.value-txt p{font-size:.76rem;color:var(--mu);line-height:1.5}
+/* MENU */
+.eyebrow{color:var(--mu2);text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;margin-bottom:.65rem}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:-.03em;margin-bottom:.5rem}
+.section-copy{color:var(--mu);font-size:.88rem;margin-bottom:1.6rem;max-width:520px}
 
-/* MENU CARDS (the "tapri menu" for amounts) */
-.menu-board{background:linear-gradient(180deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:22px;padding:2rem;position:relative;overflow:hidden;margin-bottom:1.5rem}
-.menu-board::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(251,191,36,.4),transparent)}
-.menu-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem}
-.menu-header-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;display:flex;align-items:center;gap:.5rem}
-.menu-header-sub{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--mu2);letter-spacing:.03em}
+.board{background:linear-gradient(155deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:20px;padding:clamp(1.15rem,3vw,2rem);position:relative}
+.board::before{content:'';position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--am),transparent)}
+.board-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;gap:1rem;flex-wrap:wrap}
+.board-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.02rem;display:flex;align-items:center;gap:.5rem}
+.board-title svg{color:var(--am)}
+.board-note{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.03em}
 
-.item-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem}
-.item-card{position:relative;background:var(--sf3);border:1.5px solid var(--bd);border-radius:16px;padding:1.35rem 1.1rem 1.15rem;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.3,1);text-align:left;display:flex;flex-direction:column;gap:.65rem;color:var(--tx);font-family:inherit}
-.item-card:hover{border-color:rgba(251,191,36,.4);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
-.item-card.active{border-color:var(--am);background:linear-gradient(160deg,rgba(251,191,36,.1),rgba(244,114,182,.03) 60%);box-shadow:0 8px 30px rgba(251,191,36,.18),inset 0 0 0 1px rgba(251,191,36,.15)}
-.item-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--am);opacity:.9}
-.item-card.active .item-icon{color:var(--am)}
-.item-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;letter-spacing:-.01em;color:var(--tx)}
-.item-desc{font-size:.72rem;color:var(--mu);line-height:1.45;flex:1}
-.item-price{display:inline-flex;align-self:flex-start;align-items:baseline;gap:.15rem;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:.25rem .55rem;font-family:'DM Mono',monospace;font-weight:500;font-size:.82rem;color:var(--am)}
-.item-card.active .item-price{background:var(--am);border-color:var(--am);color:#1a1206}
-.item-check{position:absolute;top:.85rem;right:.85rem;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;transition:all .15s}
-.item-card.active .item-check{background:var(--am);border-color:var(--am)}
-.item-check svg{opacity:0;transform:scale(.5);transition:all .15s;color:#0a0a0f}
-.item-card.active .item-check svg{opacity:1;transform:scale(1)}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.tier{min-height:172px;text-align:left;display:flex;flex-direction:column;gap:.55rem;padding:1rem;border-radius:14px;border:1px solid var(--bd);background:var(--sf3);cursor:pointer;position:relative;color:var(--tx);font-family:inherit;transition:border-color .18s,background .18s,transform .12s}
+@media(hover:hover){.tier:hover{transform:translateY(-3px);border-color:rgba(243,184,75,.5)}}
+.tier:active{transform:scale(.97)}
+.tier.active{border-color:var(--am);background:linear-gradient(150deg,rgba(243,184,75,.14),rgba(238,138,178,.05));box-shadow:inset 0 0 0 1px rgba(243,184,75,.15)}
+.tier-check{position:absolute;right:.7rem;top:.7rem;width:17px;height:17px;border:1px solid var(--mu2);border-radius:50%;display:grid;place-items:center;transition:all .15s}
+.tier.active .tier-check{background:var(--am);border-color:var(--am)}
+.tier-check svg{opacity:0;transform:scale(.5);transition:all .15s;color:#271a07}
+.tier.active .tier-check svg{opacity:1;transform:scale(1)}
+.tier-icon{color:var(--am);margin-bottom:.1rem}
+.tier strong{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem}
+.tier p{font-size:.7rem;color:var(--mu);line-height:1.45;flex:1;margin:0}
+.tier-price{align-self:flex-start;font-family:'DM Mono',monospace;font-weight:500;font-size:.8rem;color:var(--am);background:rgba(243,184,75,.09);border:1px solid rgba(243,184,75,.22);padding:.25rem .5rem;border-radius:7px}
+.tier.active .tier-price{color:#271a07;background:var(--am)}
 
-.custom-row{display:flex;align-items:center;gap:.85rem;background:var(--sf3);border:1.5px dashed var(--bd2);border-radius:14px;padding:.9rem 1.1rem;transition:border-color .18s}
-.custom-row.active{border-style:solid;border-color:var(--am)}
-.custom-row label{font-size:.8rem;color:var(--mu);white-space:nowrap;flex-shrink:0}
-.custom-row .rupee{font-family:'DM Mono',monospace;font-weight:500;color:var(--tx)}
-.custom-row input{flex:1;background:none;border:none;color:var(--tx);font-family:'DM Mono',monospace;font-size:.95rem;outline:none;min-width:0}
-.custom-row input::placeholder{color:var(--mu2);font-family:'DM Sans',sans-serif}
+.custom{display:flex;align-items:center;gap:.6rem;border:1px dashed var(--bd2);padding:.75rem 1rem;border-radius:13px;margin-top:1rem}
+.custom.active{border-style:solid;border-color:var(--am)}
+.custom label{color:var(--mu);font-size:.78rem;white-space:nowrap}
+.custom .rupee{font-family:'DM Mono',monospace;font-weight:500}
+.custom input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:var(--tx);font-family:'DM Mono',monospace;font-size:.95rem}
+.custom input::placeholder{color:var(--mu2);font-family:'DM Sans',sans-serif}
 
-.pay-cta-row{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin-top:1.75rem}
-.pay-btn{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,#34d399,#10b981);color:#052e22;font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;padding:1rem 2rem;border:none;border-radius:13px;cursor:pointer;box-shadow:0 10px 32px rgba(52,211,153,.35);transition:transform .15s,box-shadow .15s}
-.pay-btn:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(52,211,153,.45)}
-.pay-btn:active{transform:translateY(0)}
-.pay-btn:disabled{opacity:.6;cursor:default;transform:none}
-.pay-err{color:#f87171;font-size:.82rem;margin-top:.6rem}
-.secure-note{display:flex;align-items:center;gap:.4rem;color:var(--mu2);font-size:.75rem}
-.pay-methods{display:flex;align-items:center;gap:.4rem;margin-left:.25rem}
-.pay-methods span{font-size:.68rem;color:var(--mu2);font-family:'DM Mono',monospace;border:1px solid var(--bd2);border-radius:5px;padding:.12rem .4rem}
-
-/* Personal note */
-/* TRANSPARENCY STRIP */
-.transparency{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:1.5rem 1.75rem}
-.transparency-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.transparency-title svg{color:var(--gn)}
-.transparency-list{display:grid;grid-template-columns:repeat(5,auto);gap:.6rem 1.4rem;flex-wrap:wrap}
-.transparency-item{display:flex;align-items:center;gap:.45rem;font-size:.8rem;color:var(--mu)}
-.transparency-item svg{color:var(--gn);flex-shrink:0}
-@media(max-width:700px){.transparency-list{grid-template-columns:repeat(2,auto)}}
-@media(max-width:420px){.transparency-list{grid-template-columns:1fr}}
-
-.note-card{margin-top:3rem;background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:2rem;display:flex;gap:1.25rem;align-items:flex-start;position:relative;overflow:hidden}
-.note-card::after{content:'"';position:absolute;top:-1.2rem;right:1.5rem;font-family:'Syne',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,191,36,.05);line-height:1}
-.note-av{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fbbf24,#f472b6);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#1a1206;flex-shrink:0}
-.note-body{position:relative;z-index:1}
-.note-body p{color:var(--mu);font-size:.88rem;line-height:1.75}
-.note-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--tx);margin-bottom:.15rem}
-.note-role{font-size:.74rem;color:var(--am);font-weight:600;margin-bottom:.7rem}
-
-/* ───────── SUPPORTER RECOGNITION (purple/pink zone — distinct from the chai/amber menu) ───────── */
-
-.badge-chip{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.3);border-radius:99px;padding:.32rem .85rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:var(--tx);box-shadow:0 0 18px rgba(244,114,182,.12)}
-
-.supporter-opt-row{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;align-items:center;gap:1rem;justify-content:space-between}
+.supporter-row{border-top:1px solid var(--bd);margin-top:1.3rem;padding-top:1.2rem;display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap}
 .badge-preview{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--mu)}
-.opt-fields{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
-.opt-name-input{background:var(--sf3);border:1.5px solid var(--bd);border-radius:10px;padding:.5rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;width:180px;transition:border-color .15s}
+.badge-chip{font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;color:var(--tx);background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(238,138,178,.16));border:1px solid rgba(238,138,178,.32);border-radius:99px;padding:.35rem .75rem}
+.opt-fields{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem}
+.opt-name-input{border:1px solid var(--bd);background:var(--sf3);border-radius:9px;padding:.55rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:0;width:185px;transition:border-color .15s}
 .opt-name-input:focus{border-color:var(--pk)}
 .opt-name-input::placeholder{color:var(--mu2)}
-.opt-checkbox{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--mu);cursor:pointer;user-select:none}
-.opt-checkbox input{width:15px;height:15px;accent-color:var(--pk);cursor:pointer}
+.opt-checkbox{display:flex;align-items:center;gap:.45rem;color:var(--mu);font-size:.76rem;cursor:pointer;user-select:none}
+.opt-checkbox input{accent-color:var(--pk);width:15px;height:15px;cursor:pointer}
 
-/* Hall of Support section */
-.hall-section{margin-top:4rem}
-.impact-card{position:relative;background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));border:1px solid rgba(244,114,182,.22);border-radius:22px;padding:2rem;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:1.75rem;overflow:hidden}
-.impact-card::before{content:'';position:absolute;top:-60%;right:-10%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.16),transparent 70%);filter:blur(10px);pointer-events:none}
-.impact-card-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
-.impact-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;position:relative;z-index:1}
-.impact-stat{display:flex;flex-direction:column;align-items:center;text-align:center}
-.impact-stat-icon{font-size:1.3rem;height:1.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
-.impact-stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;height:2.2rem;line-height:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.impact-stat-lbl{font-size:.75rem;color:var(--mu);margin-top:.5rem}
-.impact-since{text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(244,114,182,.15);font-size:.8rem;color:var(--mu);position:relative;z-index:1}
+.payrow{display:flex;align-items:center;gap:1rem;margin-top:1.35rem;flex-wrap:wrap}
+.pay-btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;border:0;border-radius:12px;background:linear-gradient(135deg,var(--mint),#2ca884);color:#08271d;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;padding:.9rem 1.4rem;cursor:pointer;box-shadow:0 10px 24px rgba(98,213,173,.2);transition:transform .15s,box-shadow .15s}
+@media(hover:hover){.pay-btn:hover{transform:translateY(-2px)}}
+.pay-btn:active{transform:scale(.97)}
+.pay-btn:disabled{opacity:.65;cursor:wait;transform:none}
+.secure-note{display:flex;align-items:center;gap:.35rem;color:var(--mu2);font-size:.73rem}
+.pay-err{color:#f87171;font-size:.8rem;margin-top:.5rem}
 
-.supporter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
-.supporter-card{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:.85rem 1rem;transition:all .2s;opacity:0;animation:supporterFadeIn .5s ease forwards}
-.supporter-card:hover{border-color:rgba(244,114,182,.35);transform:translateY(-2px);background:linear-gradient(135deg,rgba(124,106,247,.06),rgba(244,114,182,.03))}
-@keyframes supporterFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.supporter-badge-icon{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.supporter-info{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.supporter-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.supporter-tier{display:inline-flex;width:fit-content;font-size:.66rem;font-weight:700;color:var(--pk);background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);border-radius:6px;padding:.15rem .5rem}
-
-.view-all-btn{display:block;margin:1.5rem auto 0;background:none;border:1.5px solid var(--bd2);color:var(--mu);font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;padding:.7rem 1.6rem;border-radius:11px;cursor:pointer;transition:all .15s}
-.view-all-btn:hover{border-color:var(--pk);color:var(--tx)}
-
-.hall-empty{text-align:center;padding:3rem 2rem;background:var(--sf);border:1px dashed var(--bd2);border-radius:18px;color:var(--mu)}
-.hall-empty-icon{font-size:2rem;margin-bottom:.75rem}
-.hall-empty h4{font-family:'Syne',sans-serif;font-weight:800;color:var(--tx);font-size:1rem;margin-bottom:.4rem}
-.hall-empty p{font-size:.82rem;max-width:320px;margin:0 auto}
-
-@media(max-width:700px){
-  .supporter-opt-row{flex-direction:column;align-items:stretch}
-  .opt-fields{flex-direction:column;align-items:stretch}
-  .opt-name-input{width:100%}
-  .impact-stats-row{grid-template-columns:1fr}
-  .supporter-grid{grid-template-columns:1fr}
-}
-
-/* FOOTER */
-.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem;position:relative;z-index:2}
-.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
-.foot a:hover{color:var(--tx)}
-.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
-
-/* ───────── CELEBRATION SCREEN ───────── */
-.celebrate{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden}
-.celebrate.show{display:flex}
-.celebrate-glow{position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.16),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:celGlowPulse 2.6s ease-in-out infinite}
-@keyframes celGlowPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
-
-.confetti-piece{position:absolute;top:-5%;opacity:0;animation:confettiFall linear forwards}
-@keyframes confettiFall{
-  0%{opacity:0;transform:translateY(0) rotate(0deg)}
-  8%{opacity:1}
-  100%{opacity:0;transform:translateY(105vh) rotate(540deg)}
-}
-
-.celebrate-content{position:relative;z-index:2;text-align:center;max-width:460px;padding:2rem}
-
-.cel-stamp-wrap{position:relative;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
-.cel-stamp{width:104px;height:104px;border-radius:50%;background:linear-gradient(150deg,var(--gn),#0d9488);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(52,211,153,.1),0 0 0 12px rgba(52,211,153,.06),0 16px 44px rgba(16,148,136,.4);position:relative;animation:celStampSlam .5s cubic-bezier(.2,1.4,.4,1) both}
-.cel-stamp::before{content:'';position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.35);border-radius:50%}
-@keyframes celStampSlam{0%{transform:scale(2.2) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
-.cel-stamp svg{stroke-dasharray:32;stroke-dashoffset:32;animation:celCheckDraw .35s ease .42s forwards}
-@keyframes celCheckDraw{to{stroke-dashoffset:0}}
-
-.celebrate h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.65rem;opacity:0;animation:celFadeUp .5s ease .58s forwards}
-.celebrate .cel-sub{color:var(--mu);font-size:.94rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:celFadeUp .5s ease .82s forwards}
-.celebrate .cel-amt{font-family:'Syne',sans-serif;color:var(--am);font-weight:800}
-.celebrate .cel-note{color:var(--mu2);font-size:.8rem;margin-bottom:1.1rem;opacity:0;animation:celFadeUp .5s ease .9s forwards}
-@keyframes celFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.cel-unlock-eyebrow{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--pk);letter-spacing:.02em;margin-bottom:.6rem;opacity:0;animation:celFadeUp .5s ease .5s forwards}
-.cel-badge-chip-big{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,rgba(124,106,247,.18),rgba(244,114,182,.12));border:1.5px solid rgba(244,114,182,.4);border-radius:16px;padding:.85rem 1.6rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;box-shadow:0 0 34px rgba(244,114,182,.25);margin-bottom:.85rem;opacity:0;animation:celFadeUp .5s ease .66s forwards, badgeGlow 2.4s ease-in-out .66s infinite}
-@keyframes badgeGlow{0%,100%{box-shadow:0 0 34px rgba(244,114,182,.25)}50%{box-shadow:0 0 46px rgba(244,114,182,.4)}}
-.cel-badge-permanent{font-size:.78rem;color:var(--mu2);max-width:320px;margin:0 auto 1.6rem;line-height:1.6;opacity:0;animation:celFadeUp .5s ease .74s forwards}
-.cel-badge{display:inline-flex;flex-direction:column;align-items:center;gap:.15rem;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.25);border-radius:14px;padding:.7rem 1.4rem;margin-bottom:1.6rem;opacity:0;animation:celFadeUp .5s ease .7s forwards}
-.cel-badge-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--pk);display:flex;align-items:center;gap:.35rem}
-.cel-badge-sub{font-size:.72rem;color:var(--mu2)}
-.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;padding:.9rem 1.7rem;border-radius:13px;opacity:0;animation:celFadeUp .5s ease .98s forwards;box-shadow:0 10px 30px rgba(124,106,247,.3)}
-
-.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(26,18,6,.35);border-top-color:#1a1206;animation:spin .7s linear infinite}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(8,39,29,.35);border-top-color:#08271d;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-@media(max-width:860px){
-  .nav{padding:0 1.25rem}
-  .nav-links{display:none}
-  .hero{grid-template-columns:1fr;padding:3rem 1.25rem 1.5rem;text-align:center}
-  .hero-sub{margin:0 auto}
+/* TRANSPARENCY */
+.transparency{margin-top:1.4rem;padding:1.2rem 1.4rem;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.transparency h3{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
+.transparency h3 svg{color:var(--mint)}
+.trans-list{display:flex;flex-wrap:wrap;gap:.6rem 1.15rem}
+.trans-list span{display:flex;align-items:center;gap:.4rem;color:var(--mu);font-size:.76rem}
+.trans-list svg{color:var(--mint)}
+
+/* NOTE + HALL */
+.note{margin-top:3rem;padding:1.5rem;border:1px solid var(--bd);background:var(--sf);border-radius:18px;display:flex;gap:1rem}
+.avatar{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--am),var(--pk));color:#241707;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;flex-shrink:0}
+.note h3{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem}
+.note .role{font-size:.72rem;color:var(--am);font-weight:700;margin-top:.1rem}
+.note p{font-size:.82rem;line-height:1.7;color:var(--mu);margin-top:.6rem}
+
+.hall{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:3rem;padding:1.1rem 1.3rem;text-decoration:none;border:1px solid rgba(238,138,178,.28);background:linear-gradient(135deg,rgba(124,106,247,.13),rgba(238,138,178,.06));border-radius:16px}
+.hall strong{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:var(--tx);display:block}
+.hall span{font-size:.75rem;color:var(--mu)}
+.hall svg{color:var(--pk);flex-shrink:0}
+.hall:active{transform:scale(.99)}
+
+/* FOOTER */
+.foot{text-align:center;border-top:1px solid var(--bd);padding:1.8rem 1rem;color:var(--mu2);font-size:.75rem;position:relative;z-index:2}
+.foot a{color:var(--mu);text-decoration:none}
+@media(hover:hover){.foot a:hover{color:var(--tx)}}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
+
+/* CELEBRATION */
+.celebrate{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden}
+.celebrate.show{display:flex}
+.celebrate-glow{position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(243,184,75,.16),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:celGlow 2.6s ease-in-out infinite}
+@keyframes celGlow{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+.confetti-piece{position:absolute;top:-5%;opacity:0;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{opacity:0;transform:translateY(0) rotate(0deg)}8%{opacity:1}100%{opacity:0;transform:translateY(105vh) rotate(540deg)}}
+.celebrate-content{position:relative;z-index:2;text-align:center;max-width:440px;padding:2rem}
+.cel-stamp-wrap{height:140px;display:grid;place-items:center;margin-bottom:.4rem}
+.cel-stamp{width:96px;height:96px;border-radius:50%;background:linear-gradient(145deg,var(--mint),#2ca884);display:grid;place-items:center;box-shadow:0 0 0 8px rgba(98,213,173,.1);position:relative;animation:stampSlam .5s cubic-bezier(.2,1.4,.4,1) both}
+.cel-stamp::before{content:'';position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.35);border-radius:50%}
+@keyframes stampSlam{0%{transform:scale(2.2) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.cel-stamp svg{stroke-dasharray:32;stroke-dashoffset:32;animation:checkDraw .35s ease .42s forwards}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+.celebrate h2{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.6rem;opacity:0;animation:fadeUp .5s ease .58s forwards}
+.celebrate .cel-sub{color:var(--mu);font-size:.92rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:fadeUp .5s ease .82s forwards}
+.celebrate .cel-amt{font-family:'Syne',sans-serif;color:var(--am);font-weight:800}
+.celebrate .cel-note{color:var(--mu2);font-size:.78rem;margin-bottom:1rem;opacity:0;animation:fadeUp .5s ease .9s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cel-unlock-eyebrow{font-family:'Syne',sans-serif;font-weight:800;font-size:.82rem;color:var(--pk);letter-spacing:.02em;margin-bottom:.55rem;opacity:0;animation:fadeUp .5s ease .5s forwards}
+.cel-badge-chip-big{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,rgba(124,106,247,.18),rgba(238,138,178,.12));border:1.5px solid rgba(238,138,178,.4);border-radius:16px;padding:.8rem 1.5rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;box-shadow:0 0 30px rgba(238,138,178,.22);margin-bottom:.8rem;opacity:0;animation:fadeUp .5s ease .66s forwards, badgeGlow 2.4s ease-in-out .66s infinite}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 30px rgba(238,138,178,.22)}50%{box-shadow:0 0 42px rgba(238,138,178,.36)}}
+.cel-badge-permanent{font-size:.76rem;color:var(--mu2);max-width:310px;margin:0 auto 1.5rem;line-height:1.6;opacity:0;animation:fadeUp .5s ease .74s forwards}
+.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;padding:.85rem 1.6rem;border-radius:13px;opacity:0;animation:fadeUp .5s ease .98s forwards;box-shadow:0 10px 28px rgba(124,106,247,.28)}
+.cel-btn:active{transform:scale(.97)}
+
+/* ───────── MOBILE ───────── */
+@media(max-width:800px){
+  .nav-links,.nav-cta{display:none}
+  .nav{padding-top:var(--safe-t);height:calc(58px + var(--safe-t))}
+  main{padding-top:1.6rem}
+  .hero{grid-template-columns:1fr;text-align:center;min-height:0;padding-top:.5rem}
+  .hero-copy{margin:0 auto}
+  .kicker{justify-content:center}
   .hero-meta{justify-content:center}
-  .page-wrap{padding:0 1.25rem 4rem}
-  .value-strip{grid-template-columns:1fr}
-  .item-grid{grid-template-columns:repeat(2,1fr)}
-  .note-card{flex-direction:column}
-  .menu-board{padding:1.4rem}
+  .chai-stage{height:190px}
+  .chai-stage svg{transform:scale(.78)}
+  .steam{bottom:112px}
+
+  .strip{grid-template-columns:1fr;margin-bottom:2.4rem}
+  .value{padding:.9rem 1rem}
+
+  /* the four chai options: two rows, two columns — always, even on small phones */
+  .tiers{grid-template-columns:repeat(2,1fr)}
+  .tier{min-height:150px}
+  .board{padding:1rem}
+
+  .payrow{align-items:stretch}
+  .pay-btn{width:100%}
+  .secure-note{justify-content:center;width:100%}
 }
-@media(max-width:480px){
-  .item-grid{grid-template-columns:1fr}
+@media(max-width:430px){
+  main{padding-left:.85rem;padding-right:.85rem;padding-bottom:6.5rem}
+  .hero h1{font-size:2.3rem}
+  .hero-meta{gap:1rem}
+  .hero-meta small{font-size:.62rem}
+  .tiers{gap:.55rem}
+  .tier{padding:.8rem;min-height:158px}
+  .tier p{font-size:.66rem}
+  .supporter-row{align-items:stretch}
+  .opt-name-input{width:100%}
+  .badge-preview{align-self:flex-start}
+  .note{padding:1.2rem}
+  .hall{margin-top:2rem}
+
+  /* sticky thumb-zone pay bar — the primary action always stays reachable */
+  .payrow{position:fixed;left:0;right:0;bottom:0;z-index:50;margin-top:0;background:rgba(11,12,18,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:.65rem .9rem calc(.65rem + var(--safe-b));box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+  .pay-btn{box-shadow:0 8px 22px rgba(98,213,173,.25)}
+  .secure-note{display:none}
+  .pay-err{padding:0 .2rem}
 }
 </style>
 </head>
@@ -267,133 +246,118 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     <a href="/features">Features</a>
     <a href="/faq">FAQ</a>
     <a href="/about">About</a>
-    <a href="/support" class="active">Support Us</a>
+    <a href="/hall-of-support">Hall of Support</a>
   </div>
   <a class="nav-cta" href="/">Get Started Free →</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
-  <div>
-    <div class="hero-pill"><span class="hero-pill-dot"></span>Support JEETrack</div>
-    <h1>Built for aspirants. <em>Supported by aspirants.</em></h1>
-    <p class="hero-sub">JEETrack is free today, and we want to keep it that way. If it's helped you stay consistent in your preparation, your support helps cover infrastructure, AI services, and future improvements.</p>
-    <div class="hero-meta">
-      <div class="hero-meta-item"><span class="hero-meta-num">₹0</span><span class="hero-meta-lbl">Cost to use JEETrack</span></div>
-      <div class="hero-meta-item"><span class="hero-meta-num">1</span><span class="hero-meta-lbl">Person building it</span></div>
-      <div class="hero-meta-item"><span class="hero-meta-num">0</span><span class="hero-meta-lbl">Features behind a paywall</span></div>
-    </div>
-  </div>
-  <div class="chai-stage">
-    <div class="chai-glow"></div>
-    <div class="steam-wisp s1"></div>
-    <div class="steam-wisp s2"></div>
-    <div class="steam-wisp s3"></div>
-    <svg width="150" height="170" viewBox="0 0 150 170" fill="none">
-      <defs>
-        <linearGradient id="chaiLiquid" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fbbf24"/>
-          <stop offset="100%" stop-color="#d97706"/>
-        </linearGradient>
-        <linearGradient id="glassStroke" x1="0" y1="0" x2="1" y2="1">
-          <stop stop-color="#a695ff"/>
-          <stop offset="1" stop-color="#f472b6"/>
-        </linearGradient>
-      </defs>
-      <path d="M38 55 L45 155 Q47 162 55 162 L95 162 Q103 162 105 155 L112 55 Z" fill="rgba(255,255,255,.03)" stroke="url(#glassStroke)" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M43 92 L47.5 155 Q49 160 55 160 L95 160 Q101 160 102.5 155 L107 92 Z" fill="url(#chaiLiquid)" opacity=".92"/>
-      <ellipse cx="75" cy="92" rx="32" ry="6" fill="#fcd34d" opacity=".9"/>
-      <ellipse cx="75" cy="55" rx="37" ry="7" fill="none" stroke="url(#glassStroke)" stroke-width="2.5"/>
-      <ellipse cx="75" cy="163" rx="46" ry="6" fill="none" stroke="rgba(240,239,245,.18)" stroke-width="2"/>
-    </svg>
-  </div>
-</section>
+<main>
 
-<div class="page-wrap">
+  <section class="hero">
+    <div>
+      <div class="kicker"><i></i>Support JEETrack</div>
+      <h1>Built for aspirants. <em>Supported by aspirants.</em></h1>
+      <p class="hero-copy">JEETrack is free today, and we want to keep it that way. If it's helped you stay consistent in your preparation, your support helps cover infrastructure, AI services, and future improvements.</p>
+      <div class="hero-meta">
+        <div><strong>₹0</strong><small>Cost to use JEETrack</small></div>
+        <div><strong>1</strong><small>Person building it</small></div>
+        <div><strong>0</strong><small>Features behind a paywall</small></div>
+      </div>
+    </div>
+    <div class="chai-stage" aria-label="A warm cup of chai illustration">
+      <div class="chai-glow"></div>
+      <div class="steam a"></div>
+      <div class="steam b"></div>
+      <div class="steam c"></div>
+      <svg width="150" height="170" viewBox="0 0 150 170" fill="none">
+        <defs>
+          <linearGradient id="chaiLiquid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f3b84b"/>
+            <stop offset="100%" stop-color="#d98825"/>
+          </linearGradient>
+          <linearGradient id="glassStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#7c6af7"/>
+            <stop offset="1" stop-color="#ee8ab2"/>
+          </linearGradient>
+        </defs>
+        <path d="M38 55 L45 155 Q47 162 55 162 L95 162 Q103 162 105 155 L112 55 Z" fill="rgba(255,255,255,.03)" stroke="url(#glassStroke)" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M43 92 L47.5 155 Q49 160 55 160 L95 160 Q101 160 102.5 155 L107 92 Z" fill="url(#chaiLiquid)" opacity=".92"/>
+        <ellipse cx="75" cy="92" rx="32" ry="6" fill="#fcd34d" opacity=".9"/>
+        <ellipse cx="75" cy="55" rx="37" ry="7" fill="none" stroke="url(#glassStroke)" stroke-width="2.5"/>
+        <ellipse cx="75" cy="163" rx="46" ry="6" fill="none" stroke="rgba(243,240,234,.16)" stroke-width="2"/>
+      </svg>
+    </div>
+  </section>
 
-  <div class="value-strip">
-    <div class="value-item">
-      <div class="value-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="9" width="6" height="12" rx="1"/><rect x="9" y="5" width="6" height="16" rx="1"/><rect x="16" y="12" width="6" height="9" rx="1"/></svg></div>
-      <div class="value-txt"><h4>Servers stay up</h4><p>Hosting, database & AI insights costs, covered month to month</p></div>
+  <section class="strip" aria-label="Why support JEETrack">
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+      <div><strong>Servers stay up</strong><p>Hosting, database & AI insights costs, covered month to month</p></div>
     </div>
-    <div class="value-item">
-      <div class="value-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-      <div class="value-txt"><h4>Features ship faster</h4><p>Every bit of support buys back a late-night hour for the next build</p></div>
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      <div><strong>Features ship faster</strong><p>Every bit of support buys back a late-night hour for the next build</p></div>
     </div>
-    <div class="value-item">
-      <div class="value-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-8-4.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-8 11-8 11z"/></svg></div>
-      <div class="value-txt"><h4>Free, always</h4><p>Support is optional and never gates a single feature</p></div>
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-8-4.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-8 11-8 11z"/></svg>
+      <div><strong>Free, always</strong><p>Support is optional and never gates a single feature</p></div>
     </div>
-  </div>
+  </section>
 
-  <div class="section-eyebrow"><span class="section-eyebrow-line"></span>The menu</div>
+  <div class="eyebrow">The menu</div>
   <div class="section-title">Pick your order</div>
-  <p class="section-desc">Every contribution helps us build a faster, smarter, and more reliable study companion for every JEE aspirant.</p>
+  <p class="section-copy">Every contribution helps us build a faster, smarter, and more reliable study companion for every JEE aspirant.</p>
 
-  <div class="menu-board">
-    <div class="menu-header">
-      <div class="menu-header-title">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+  <div class="board">
+    <div class="board-head">
+      <div class="board-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         JEETrack Tapri
       </div>
-      <div class="menu-header-sub">TODAY'S SPECIAL · IN INR</div>
+      <div class="board-note">Today's special · in INR</div>
     </div>
 
-    <div class="item-grid" id="amount-grid">
-      <button type="button" class="item-card" data-amt="49" onclick="selectAmount(49,this)">
-        <div class="item-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="item-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1.3 14.3a2 2 0 0 1-2 1.7h-3.4a2 2 0 0 1-2-1.7L7 4z"/><path d="M7.6 10.2h8.8"/></svg></div>
-        <div class="item-name">Cutting Chai</div>
-        <div class="item-desc">The smallest thank you — and it still means a lot</div>
-        <div class="item-price">₹49</div>
+    <div class="tiers" id="amount-grid" role="radiogroup" aria-label="Choose a support amount">
+      <button type="button" class="tier item-card" data-amt="49" onclick="selectAmount(49,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1.3 14.3a2 2 0 0 1-2 1.7h-3.4a2 2 0 0 1-2-1.7L7 4z"/><path d="M7.6 10.2h8.8"/></svg>
+        <strong>Cutting Chai</strong>
+        <p>The smallest thank you — and it still means a lot</p>
+        <span class="tier-price item-price">₹49</span>
       </button>
 
-      <button type="button" class="item-card active" data-amt="99" onclick="selectAmount(99,this)">
-        <div class="item-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="item-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3h6.4l-0.85 9.3a1.3 1.3 0 0 1-1.3 1.2H4.65a1.3 1.3 0 0 1-1.3-1.2L2.5 3z"/><path d="M3.1 7h5.2"/><circle cx="16.5" cy="16.5" r="6"/><circle cx="14.6" cy="14.7" r=".55" fill="currentColor" stroke="none"/><circle cx="18.4" cy="15.1" r=".55" fill="currentColor" stroke="none"/><circle cx="16.5" cy="18.3" r=".55" fill="currentColor" stroke="none"/></svg></div>
-        <div class="item-name">Chai + Biscuit</div>
-        <div class="item-desc">The classic round — covers about a day of server costs</div>
-        <div class="item-price">₹99</div>
+      <button type="button" class="tier item-card active" data-amt="99" onclick="selectAmount(99,this)" role="radio" aria-checked="true">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3h6.4l-0.85 9.3a1.3 1.3 0 0 1-1.3 1.2H4.65a1.3 1.3 0 0 1-1.3-1.2L2.5 3z"/><path d="M3.1 7h5.2"/><circle cx="16.5" cy="16.5" r="6"/><circle cx="14.6" cy="14.7" r=".55" fill="currentColor" stroke="none"/><circle cx="18.4" cy="15.1" r=".55" fill="currentColor" stroke="none"/><circle cx="16.5" cy="18.3" r=".55" fill="currentColor" stroke="none"/></svg>
+        <strong>Chai + Biscuit</strong>
+        <p>The classic round — covers about a day of server costs</p>
+        <span class="tier-price item-price">₹99</span>
       </button>
 
-      <button type="button" class="item-card" data-amt="199" onclick="selectAmount(199,this)">
-        <div class="item-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="item-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5a8 8 0 0 1 16 0"/><path d="M3 13.5h18v2.5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.5z"/><path d="M19.5 10.5l3-1.6"/><path d="M9 3.5c0 1.3 1 2.2 3 2.2s3-.9 3-2.2"/></svg></div>
-        <div class="item-name">Full Kettle</div>
-        <div class="item-desc">Fuels a full late-night build sprint on the next feature</div>
-        <div class="item-price">₹199</div>
+      <button type="button" class="tier item-card" data-amt="199" onclick="selectAmount(199,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5a8 8 0 0 1 16 0"/><path d="M3 13.5h18v2.5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.5z"/><path d="M19.5 10.5l3-1.6"/><path d="M9 3.5c0 1.3 1 2.2 3 2.2s3-.9 3-2.2"/></svg>
+        <strong>Full Kettle</strong>
+        <p>Fuels a full late-night build sprint on the next feature</p>
+        <span class="tier-price item-price">₹199</span>
       </button>
 
-      <button type="button" class="item-card" data-amt="499" onclick="selectAmount(499,this)">
-        <div class="item-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="item-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="8" r="2.6"/><path d="M14.7 20a5 5 0 0 1 8.8-3.2"/></svg></div>
-        <div class="item-name">Round for the Squad</div>
-        <div class="item-desc">You and your whole study group's late-night sessions, on us</div>
-        <div class="item-price">₹499</div>
+      <button type="button" class="tier item-card" data-amt="499" onclick="selectAmount(499,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="8" r="2.6"/><path d="M14.7 20a5 5 0 0 1 8.8-3.2"/></svg>
+        <strong>Round for the Squad</strong>
+        <p>You and your whole study group's late-night sessions, on us</p>
+        <span class="tier-price item-price">₹499</span>
       </button>
     </div>
 
-    <div class="custom-row" id="custom-row">
+    <div class="custom" id="custom-row">
       <label for="custom-amt">Make it your own tab</label>
       <span class="rupee">₹</span>
-      <input type="number" id="custom-amt" min="1" step="1" placeholder="e.g. 150" oninput="onCustomInput(this)"/>
+      <input type="number" id="custom-amt" min="1" step="1" placeholder="e.g. 150" aria-label="Custom support amount in rupees" oninput="onCustomInput(this)"/>
     </div>
 
-    <div class="pay-cta-row">
-      <button class="pay-btn" id="pay-btn" onclick="payChai()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        <span id="pay-btn-txt">Buy this chai — ₹99</span>
-      </button>
-      <span class="secure-note">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Secured by Razorpay
-      </span>
-      <span class="pay-methods"><span>UPI</span><span>Cards</span><span>Netbanking</span></span>
-    </div>
-    <div class="pay-err" id="pay-err"></div>
-
-    <div class="supporter-opt-row">
+    <div class="supporter-row">
       <div class="badge-preview">You'll receive <span class="badge-chip" id="badge-preview-chip">💛 Bronze Supporter</span></div>
       <div class="opt-fields">
         <input type="text" class="opt-name-input" id="supporter-name-input" placeholder="Your name (optional)" maxlength="60"/>
@@ -403,74 +367,57 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
         </label>
       </div>
     </div>
+
+    <div class="payrow">
+      <button class="pay-btn" id="pay-btn" onclick="payChai()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <span id="pay-btn-txt">Buy this chai — ₹99</span>
+      </button>
+      <span class="secure-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
+        Secured by Razorpay
+      </span>
+    </div>
+    <div class="pay-err" id="pay-err"></div>
   </div>
 
   <div class="transparency">
-    <div class="transparency-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-      What your support helps cover
-    </div>
-    <div class="transparency-list">
-      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hosting</div>
-      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Database</div>
-      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>AI services</div>
-      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Domain</div>
-      <div class="transparency-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Future features</div>
+    <h3>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      Where your support goes
+    </h3>
+    <div class="trans-list">
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hosting & database</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>AI insights</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>New features</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Keeping it free</span>
     </div>
   </div>
 
-  <div class="note-card">
-    <div class="note-av">A</div>
-    <div class="note-body">
-      <div class="note-name">Aman Mishra</div>
-      <div class="note-role">Founder & Developer, JEETrack</div>
+  <section class="note">
+    <div class="avatar">A</div>
+    <div>
+      <h3>Aman Mishra</h3>
+      <div class="role">Founder & Developer, JEETrack</div>
       <p>I started building JEETrack because I wanted a better way to track my own preparation. What began as a personal tool slowly grew into something used by thousands of JEE aspirants. JEETrack will always remain free, but every contribution helps cover infrastructure, AI costs, and future improvements. Thank you for being part of the journey.</p>
     </div>
-  </div>
+  </section>
 
-  <div class="hall-section" id="hall-section">
-    <div class="section-eyebrow"><span class="section-eyebrow-line"></span>Community</div>
-    <div class="section-title">❤️ Hall of Support</div>
-    <p class="section-desc">Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant.</p>
-
-    <div class="impact-card" id="impact-card">
-      <div class="impact-card-title">❤️ Community Impact</div>
-      <div class="impact-stats-row">
-        <div class="impact-stat">
-          <div class="impact-stat-icon">👥</div>
-          <div class="impact-stat-value" id="stat-supporters" data-target="0">0</div>
-          <div class="impact-stat-lbl">Supporters</div>
-        </div>
-        <div class="impact-stat">
-          <div class="impact-stat-icon">☕</div>
-          <div class="impact-stat-value" id="stat-chais" data-target="0">0</div>
-          <div class="impact-stat-lbl">Chais Bought</div>
-        </div>
-        <div class="impact-stat">
-          <div class="impact-stat-icon">💜</div>
-          <div class="impact-stat-value">Always</div>
-          <div class="impact-stat-lbl">Community Supported</div>
-        </div>
-      </div>
-      <div class="impact-since" id="impact-since">Supporting JEETrack since — ❤️</div>
+  <a href="/hall-of-support" class="hall">
+    <div>
+      <strong>Hall of Support</strong>
+      <span id="hall-teaser-count">See everyone who's supported JEETrack</span>
     </div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+  </a>
 
-    <div id="hall-list-wrap">
-      <div class="supporter-grid" id="supporter-grid"></div>
-      <button class="view-all-btn" id="view-all-btn" style="display:none" onclick="expandSupporterList()">View All</button>
-    </div>
-  </div>
-
-</div>
+</main>
 
 <footer class="foot">
-  <div style="margin-bottom:1rem">
-    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
-  </div>
   <div class="foot-links">
     <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
   </div>
-  © 2026 JEETrack · Built for JEE Aspirants across India
+  JEETrack is free and always will be · © 2026
 </footer>
 
 <!-- ───────── CELEBRATION OVERLAY (shown after a verified payment) ───────── -->
@@ -480,7 +427,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
   <div class="celebrate-content">
     <div class="cel-stamp-wrap">
       <div class="cel-stamp">
-        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#052e22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#08271d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
     </div>
     <div class="cel-unlock-eyebrow">🎉 Badge Unlocked</div>
@@ -500,7 +447,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 let SUPABASE_URL = null, SUPABASE_ANON_KEY = null, sb = null;
 let selectedAmount = 99;
 
-// ── Badge tiers (must match the badge_tier logic in the hall_of_support SQL view) ──
+// ── Badge tiers (must match the badge_tier logic in get_hall_of_support()) ──
 const BADGE_TIERS = [
   { min: 999, emoji: '💎', label: 'Elite Supporter' },
   { min: 499, emoji: '🏆', label: 'Gold Supporter' },
@@ -525,7 +472,8 @@ async function initSb(){
       if(window.supabase){ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
     }
   }catch(e){ console.warn('Could not load config', e); }
-  loadHallOfSupport();
+  loadCommunityTeaser();
+  checkPendingPayment();
 }
 // Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
 // but before DOMContentLoaded — so we wait for that event before touching
@@ -536,10 +484,72 @@ if (document.readyState === 'loading') {
   initSb();
 }
 
+// ── Payment resilience: bfcache/back-button safety net ──
+// If Razorpay's "redirecting..." interstitial gets interrupted by the
+// browser back button, the page is restored from bfcache — a normal
+// load/DOMContentLoaded does NOT fire again, but `pageshow` does (with
+// event.persisted === true for bfcache restores). Checking there, plus on
+// tab focus regain, catches every real-world way a user can land back on
+// this page after paying without the in-page JS handler ever running.
+const PENDING_ORDER_KEY = 'jeetrack_pending_chai_order';
+const PENDING_ORDER_MAX_AGE_MS = 20 * 60 * 1000; // 20 minutes
+
+function savePendingOrder(orderId, amount){
+  try{
+    localStorage.setItem(PENDING_ORDER_KEY, JSON.stringify({ orderId, amount, ts: Date.now() }));
+  }catch(e){}
+}
+function clearPendingOrder(){
+  try{ localStorage.removeItem(PENDING_ORDER_KEY); }catch(e){}
+}
+function getPendingOrder(){
+  try{
+    const raw = localStorage.getItem(PENDING_ORDER_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(Date.now() - parsed.ts > PENDING_ORDER_MAX_AGE_MS){ clearPendingOrder(); return null; }
+    return parsed;
+  }catch(e){ return null; }
+}
+
+let _checkingPending = false;
+async function checkPendingPayment(){
+  if(_checkingPending) return;
+  const pending = getPendingOrder();
+  if(!pending || !sb) return;
+  _checkingPending = true;
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const currentUser = userData?.user || null;
+    const { data } = await sb.functions.invoke('check-payment-status', {
+      body: { order_id: pending.orderId, user_id: currentUser?.id || null }
+    });
+    if(data && data.paid){
+      clearPendingOrder();
+      showCelebration(data.amount || pending.amount, data.badge_tier, !!currentUser);
+      loadCommunityTeaser();
+    }
+  }catch(e){
+    console.warn('Pending payment check failed', e);
+  }finally{
+    _checkingPending = false;
+  }
+}
+
+window.addEventListener('pageshow', function(event){
+  // event.persisted is true specifically on bfcache restores (back button) —
+  // exactly the scenario this whole safety net exists for.
+  checkPendingPayment();
+});
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible') checkPendingPayment();
+});
+
 function selectAmount(amt, el){
   selectedAmount = amt;
-  document.querySelectorAll('.item-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.item-card').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
   el.classList.add('active');
+  el.setAttribute('aria-checked','true');
   document.getElementById('custom-row').classList.remove('active');
   document.getElementById('custom-amt').value = '';
   document.getElementById('pay-err').textContent = '';
@@ -548,7 +558,7 @@ function selectAmount(amt, el){
 
 function onCustomInput(input){
   const v = parseInt(input.value, 10);
-  document.querySelectorAll('.item-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.item-card').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
   document.getElementById('pay-err').textContent = '';
   document.getElementById('custom-row').classList.toggle('active', document.activeElement === input);
   selectedAmount = (v && v > 0) ? v : 0;
@@ -599,6 +609,12 @@ async function payChai(){
     });
     if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
 
+    // Resilience net: if the JS handler below never fires (bfcache back-nav
+    // after Razorpay's "redirecting..." screen, UPI app-switch, tab killed,
+    // etc.) but the payment actually succeeded, checkPendingPayment() picks
+    // this up on the next page load/return and shows the success UI anyway.
+    savePendingOrder(data.order_id, selectedAmount);
+
     const rzp = new Razorpay({
       key: data.key_id,
       amount: data.amount,
@@ -609,6 +625,7 @@ async function payChai(){
       order_id: data.order_id,
       prefill: { email: currentUser?.email || '' },
       theme: { color: '#7c6af7' },
+      redirect: false,
       handler: async function(response){
         try{
           const { data: verifyData } = await sb.functions.invoke('verify-razorpay-payment', {
@@ -622,13 +639,14 @@ async function payChai(){
               show_publicly: showPublicly
             }
           });
+          clearPendingOrder();
           if(!verifyData || !verifyData.verified){
             errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
             btn.disabled = false; btnTxt.textContent = prevLabel;
             return;
           }
           showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser);
-          loadHallOfSupport();
+          loadCommunityTeaser();
         }catch(e){
           errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
           btn.disabled = false; btnTxt.textContent = prevLabel;
@@ -671,7 +689,7 @@ function showCelebration(amount, badgeTierLabel, isLoggedIn){
 function spawnConfetti(){
   const layer = document.getElementById('confetti-layer');
   layer.innerHTML = '';
-  const colors = ['#fbbf24','#f472b6','#a695ff','#34d399','#60a5fa'];
+  const colors = ['#f3b84b','#ee8ab2','#7c6af7','#62d5ad','#60a5fa'];
   const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 80;
   for(let i=0;i<count;i++){
     const piece = document.createElement('div');
@@ -689,115 +707,18 @@ function spawnConfetti(){
   }
 }
 
-// ── Hall of Support ──
-let _allSupporters = [];
-const SUPPORTER_PREVIEW_COUNT = 8;
-
-async function loadHallOfSupport(){
+// ── Hall of Support (compact teaser on this page; full list lives on /hall-of-support) ──
+async function loadCommunityTeaser(){
   if(!sb) return;
   try{
-    const [statsRes, listRes] = await Promise.all([
-      sb.from('community_impact_stats').select('*').single(),
-      sb.from('hall_of_support').select('*').order('last_contribution_at', { ascending: false }).limit(60)
-    ]);
-
-    if(statsRes.data){
-      const stats = statsRes.data;
-      document.getElementById('stat-supporters').dataset.target = stats.supporter_count || 0;
-      document.getElementById('stat-chais').dataset.target = stats.chais_bought || 0;
-      if(stats.supporting_since){
-        const since = new Date(stats.supporting_since).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        document.getElementById('impact-since').textContent = `Supporting JEETrack since ${since} ❤️`;
-      } else {
-        document.getElementById('impact-since').textContent = 'Be the first to support JEETrack ❤️';
-      }
-      observeImpactCard();
+    const { data } = await sb.rpc('get_community_impact_stats').single();
+    if(data && data.supporter_count > 0){
+      document.getElementById('hall-teaser-count').textContent =
+        `${data.supporter_count} supporter${data.supporter_count === 1 ? '' : 's'} · ${data.chais_bought} chai${data.chais_bought === 1 ? '' : 's'} bought →`;
     }
-
-    _allSupporters = listRes.data || [];
-    renderSupporters(false);
   }catch(e){
-    console.warn('Could not load Hall of Support', e);
+    console.warn('Could not load community stats', e);
   }
-}
-
-function renderSupporters(showAll){
-  const grid = document.getElementById('supporter-grid');
-  const viewAllBtn = document.getElementById('view-all-btn');
-  const wrap = document.getElementById('hall-list-wrap');
-
-  if(_allSupporters.length === 0){
-    wrap.innerHTML = `<div class="hall-empty">
-      <div class="hall-empty-icon">☕</div>
-      <h4>Be the first supporter</h4>
-      <p>No one has bought a chai yet — your name could be the first one in the Hall of Support.</p>
-    </div>`;
-    return;
-  }
-
-  const list = showAll ? _allSupporters : _allSupporters.slice(0, SUPPORTER_PREVIEW_COUNT);
-  grid.innerHTML = list.map((s, i) => {
-    const emoji = badgeEmojiForLabel(s.badge_tier);
-    const name = s.display_name || 'Anonymous';
-    return `<div class="supporter-card" style="animation-delay:${Math.min(i,10) * 0.05}s">
-      <div class="supporter-badge-icon">${emoji}</div>
-      <div class="supporter-info">
-        <div class="supporter-name">${escapeHtml(name)}</div>
-        <div class="supporter-tier">${escapeHtml(s.badge_tier)}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  viewAllBtn.style.display = (!showAll && _allSupporters.length > SUPPORTER_PREVIEW_COUNT) ? 'block' : 'none';
-}
-
-function expandSupporterList(){
-  renderSupporters(true);
-}
-
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function animateCounter(el){
-  const target = parseInt(el.dataset.target, 10) || 0;
-  const duration = 1200;
-  const start = performance.now();
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    el.textContent = target;
-    return;
-  }
-  function tick(now){
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(eased * target);
-    if(progress < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-
-let _impactObserved = false;
-function observeImpactCard(){
-  if(_impactObserved) return;
-  const card = document.getElementById('impact-card');
-  if(!card || typeof IntersectionObserver === 'undefined'){
-    animateCounter(document.getElementById('stat-supporters'));
-    animateCounter(document.getElementById('stat-chais'));
-    return;
-  }
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting && !_impactObserved){
-        _impactObserved = true;
-        animateCounter(document.getElementById('stat-supporters'));
-        animateCounter(document.getElementById('stat-chais'));
-        observer.disconnect();
-      }
-    });
-  }, { threshold: 0.3 });
-  observer.observe(card);
 }
 </script>
 

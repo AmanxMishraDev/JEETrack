@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<title>Hall of Support — JEETrack</title>
+<meta name="description" content="Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant."/>
+<meta property="og:title" content="Hall of Support — JEETrack"/>
+<meta property="og:description" content="Every name here represents someone who chose to support JEETrack."/>
+<meta property="og:url" content="https://www.jeetrack.in/hall-of-support"/>
+<meta property="og:site_name" content="JEETrack"/>
+<meta property="og:image" content="https://www.jeetrack.in/icon-512.png"/>
+<link rel="canonical" href="https://www.jeetrack.in/hall-of-support"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--sf:#111118;--sf2:#16161f;--sf3:#1e1e28;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --tx:#f0eff5;--mu:#8b899e;--mu2:#4a4960;
+  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--bl:#60a5fa;
+}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
+
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.75);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav-links a.active{color:var(--pk)}
+.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.85}
+
+.page-header{position:relative;max-width:900px;margin:0 auto;padding:4rem 2.5rem 2.5rem;text-align:center;z-index:2}
+.header-orb{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.1),transparent 70%);top:-220px;left:50%;transform:translateX(-50%);filter:blur(80px);pointer-events:none}
+.page-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(244,114,182,.09);border:1px solid rgba(244,114,182,.28);color:var(--pk);font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:.34rem .9rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.5rem;position:relative;z-index:1}
+.page-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.4vw,3rem);font-weight:800;letter-spacing:-.03em;margin-bottom:1rem;position:relative;z-index:1}
+.page-title em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-sub{color:var(--mu);font-size:1rem;line-height:1.75;max-width:520px;margin:0 auto;position:relative;z-index:1}
+
+.page-wrap{max-width:900px;margin:0 auto;padding:0 2.5rem 5rem;position:relative;z-index:2}
+
+.impact-card{position:relative;background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));border:1px solid rgba(244,114,182,.22);border-radius:22px;padding:2rem;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:2.5rem;overflow:hidden}
+.impact-card::before{content:'';position:absolute;top:-60%;right:-10%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.16),transparent 70%);filter:blur(10px);pointer-events:none}
+.impact-card-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
+.impact-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;position:relative;z-index:1}
+.impact-stat{display:flex;flex-direction:column;align-items:center;text-align:center}
+.impact-stat-icon{font-size:1.3rem;height:1.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
+.impact-stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;height:2.2rem;line-height:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.impact-stat-lbl{font-size:.75rem;color:var(--mu);margin-top:.5rem}
+.impact-since{text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(244,114,182,.15);font-size:.8rem;color:var(--mu);position:relative;z-index:1}
+
+.section-eyebrow{display:flex;align-items:center;gap:.6rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu2);margin-bottom:.7rem}
+.section-eyebrow-line{width:22px;height:1px;background:var(--bd2)}
+.section-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-bottom:1.5rem}
+
+.supporter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+.supporter-card{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:.9rem 1.05rem;transition:all .2s;opacity:0;animation:supporterFadeIn .5s ease forwards}
+.supporter-card:hover{border-color:rgba(244,114,182,.35);transform:translateY(-2px);background:linear-gradient(135deg,rgba(124,106,247,.06),rgba(244,114,182,.03))}
+@keyframes supporterFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.supporter-badge-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.25);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.supporter-info{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.supporter-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.supporter-tier{display:inline-flex;width:fit-content;font-size:.66rem;font-weight:700;color:var(--pk);background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);border-radius:6px;padding:.15rem .5rem}
+
+.view-all-btn{display:block;margin:2rem auto 0;background:none;border:1.5px solid var(--bd2);color:var(--mu);font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;padding:.8rem 2rem;border-radius:12px;cursor:pointer;transition:all .15s}
+.view-all-btn:hover{border-color:var(--pk);color:var(--tx)}
+
+.hall-empty{text-align:center;padding:4rem 2rem;background:var(--sf);border:1px dashed var(--bd2);border-radius:20px;color:var(--mu)}
+.hall-empty-icon{font-size:2.5rem;margin-bottom:1rem}
+.hall-empty h4{font-family:'Syne',sans-serif;font-weight:800;color:var(--tx);font-size:1.1rem;margin-bottom:.5rem}
+.hall-empty p{font-size:.85rem;max-width:360px;margin:0 auto 1.5rem}
+.hall-empty-cta{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#34d399,#10b981);color:#052e22;text-decoration:none;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;padding:.8rem 1.6rem;border-radius:12px}
+
+.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem;position:relative;z-index:2}
+.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
+.foot a:hover{color:var(--tx)}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+
+@media(max-width:860px){
+  .nav{padding:0 1.25rem}
+  .nav-links{display:none}
+  .page-header{padding:3rem 1.25rem 2rem}
+  .page-wrap{padding:0 1.25rem 4rem}
+  .impact-stats-row{grid-template-columns:1fr}
+  .supporter-grid{grid-template-columns:1fr}
+}
+@media(min-width:861px) and (max-width:1080px){
+  .supporter-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/support">Support Us</a>
+    <a href="/hall-of-support" class="active">Hall of Support</a>
+  </div>
+  <a class="nav-cta" href="/support">☕ Support Us</a>
+</nav>
+
+<div class="page-header">
+  <div class="header-orb"></div>
+  <div class="page-pill">Community</div>
+  <h1 class="page-title">❤️ <em>Hall of Support</em></h1>
+  <p class="page-sub">Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant.</p>
+</div>
+
+<div class="page-wrap">
+
+  <div class="impact-card" id="impact-card">
+    <div class="impact-card-title">❤️ Community Impact</div>
+    <div class="impact-stats-row">
+      <div class="impact-stat">
+        <div class="impact-stat-icon">👥</div>
+        <div class="impact-stat-value" id="stat-supporters" data-target="0">0</div>
+        <div class="impact-stat-lbl">Supporters</div>
+      </div>
+      <div class="impact-stat">
+        <div class="impact-stat-icon">☕</div>
+        <div class="impact-stat-value" id="stat-chais" data-target="0">0</div>
+        <div class="impact-stat-lbl">Chais Bought</div>
+      </div>
+      <div class="impact-stat">
+        <div class="impact-stat-icon">💜</div>
+        <div class="impact-stat-value">Always</div>
+        <div class="impact-stat-lbl">Community Supported</div>
+      </div>
+    </div>
+    <div class="impact-since" id="impact-since">Supporting JEETrack since — ❤️</div>
+  </div>
+
+  <div class="section-eyebrow"><span class="section-eyebrow-line"></span>Supporters</div>
+  <div class="section-title">Thank you, everyone</div>
+
+  <div id="hall-list-wrap">
+    <div class="supporter-grid" id="supporter-grid"></div>
+    <button class="view-all-btn" id="view-all-btn" style="display:none" onclick="expandSupporterList()">View All</button>
+  </div>
+
+</div>
+
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/support">Support</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  © 2026 JEETrack · Built for JEE Aspirants across India
+</footer>
+
+<script>
+let sb = null;
+
+const BADGE_TIERS = [
+  { min: 999, emoji: '💎', label: 'Elite Supporter' },
+  { min: 499, emoji: '🏆', label: 'Gold Supporter' },
+  { min: 199, emoji: '💜', label: 'Silver Supporter' },
+  { min: 99,  emoji: '💛', label: 'Bronze Supporter' },
+  { min: 0,   emoji: '❤️', label: 'Supporter' },
+];
+function badgeEmojiForLabel(label){
+  const t = BADGE_TIERS.find(t => t.label === label);
+  return t ? t.emoji : '❤️';
+}
+
+async function initSb(){
+  try{
+    const res = await fetch('/api/config');
+    if(res.ok){
+      const cfg = await res.json();
+      if(window.supabase){ sb = window.supabase.createClient(cfg.url, cfg.key); }
+    }
+  }catch(e){ console.warn('Could not load config', e); }
+  loadHallOfSupport();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSb);
+} else {
+  initSb();
+}
+
+let _allSupporters = [];
+const SUPPORTER_PREVIEW_COUNT = 18;
+
+async function loadHallOfSupport(){
+  if(!sb) return;
+  try{
+    const [statsRes, listRes] = await Promise.all([
+      sb.rpc('get_community_impact_stats').single(),
+      sb.rpc('get_hall_of_support').order('last_contribution_at', { ascending: false }).limit(200)
+    ]);
+
+    if(statsRes.data){
+      const stats = statsRes.data;
+      document.getElementById('stat-supporters').dataset.target = stats.supporter_count || 0;
+      document.getElementById('stat-chais').dataset.target = stats.chais_bought || 0;
+      if(stats.supporting_since){
+        const since = new Date(stats.supporting_since).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        document.getElementById('impact-since').textContent = `Supporting JEETrack since ${since} ❤️`;
+      } else {
+        document.getElementById('impact-since').textContent = 'Be the first to support JEETrack ❤️';
+      }
+      observeImpactCard();
+    }
+
+    _allSupporters = listRes.data || [];
+    renderSupporters(false);
+  }catch(e){
+    console.warn('Could not load Hall of Support', e);
+  }
+}
+
+function renderSupporters(showAll){
+  const grid = document.getElementById('supporter-grid');
+  const viewAllBtn = document.getElementById('view-all-btn');
+  const wrap = document.getElementById('hall-list-wrap');
+
+  if(_allSupporters.length === 0){
+    wrap.innerHTML = `<div class="hall-empty">
+      <div class="hall-empty-icon">☕</div>
+      <h4>Be the first supporter</h4>
+      <p>No one has bought a chai yet — your name could be the first one in the Hall of Support.</p>
+      <a href="/support" class="hall-empty-cta">☕ Buy the first chai</a>
+    </div>`;
+    return;
+  }
+
+  const list = showAll ? _allSupporters : _allSupporters.slice(0, SUPPORTER_PREVIEW_COUNT);
+  grid.innerHTML = list.map((s, i) => {
+    const emoji = badgeEmojiForLabel(s.badge_tier);
+    const name = s.display_name || 'Anonymous';
+    return `<div class="supporter-card" style="animation-delay:${Math.min(i,14) * 0.04}s">
+      <div class="supporter-badge-icon">${emoji}</div>
+      <div class="supporter-info">
+        <div class="supporter-name">${escapeHtml(name)}</div>
+        <div class="supporter-tier">${escapeHtml(s.badge_tier)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  viewAllBtn.style.display = (!showAll && _allSupporters.length > SUPPORTER_PREVIEW_COUNT) ? 'block' : 'none';
+}
+
+function expandSupporterList(){
+  renderSupporters(true);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function animateCounter(el){
+  const target = parseInt(el.dataset.target, 10) || 0;
+  const duration = 1200;
+  const start = performance.now();
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    el.textContent = target;
+    return;
+  }
+  function tick(now){
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+let _impactObserved = false;
+function observeImpactCard(){
+  if(_impactObserved) return;
+  const card = document.getElementById('impact-card');
+  if(!card || typeof IntersectionObserver === 'undefined'){
+    animateCounter(document.getElementById('stat-supporters'));
+    animateCounter(document.getElementById('stat-chais'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && !_impactObserved){
+        _impactObserved = true;
+        animateCounter(document.getElementById('stat-supporters'));
+        animateCounter(document.getElementById('stat-chais'));
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(card);
+}
+</script>
+
+</body>
+</html>
