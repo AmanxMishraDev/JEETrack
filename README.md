@@ -9,7 +9,7 @@
 
 # JEETrack
 
-### The all-in-one preparation tracker for JEE aspirants
+### The all-in-one preparation tracker for JEE aspirants.
 
 <br/>
 
