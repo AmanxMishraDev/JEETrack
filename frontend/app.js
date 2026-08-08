@@ -517,7 +517,7 @@ function showApp(name, email){
     if (activePage && activePage.id === 'page-overview') {
       await checkWelcomeModal();
       if (!document.getElementById('modal-welcome')?.classList.contains('open')) {
-        checkWhatsNew();
+        checkSupportPrompt();
       }
     }
   }, 800);
@@ -883,15 +883,12 @@ const SUPPORTER_BADGE_ICONS = {
     '<path d="M64 47.5 L67.4 57.3 77.8 57.4 69.4 63.8 72.5 73.5 64 67.6 55.5 73.5 58.6 63.8 50.2 57.4 60.6 57.3 Z"/>',
   silver:
     '<path d="M64 46 78 58 64 78 50 58 Z"/>' +
-    '<path d="M50 58 78 58 M64 46 64 78 M57 58 64 46 71 58 M57 58 64 78 71 58 64 78" fill="none" stroke-width=".7" stroke-opacity=".8"/>' +
-    '<path d="M60 51 64 46 68 51 64 55Z" fill-opacity=".85"/>',
+    '<path d="M50 58 78 58 M64 46 64 78" fill="none" stroke-width=".7" stroke-opacity=".7"/>',
   gold:
     '<path d="M54 49 H74 V58 C74 65 69.8 70 64 70 C58.2 70 54 65 54 58 Z M62 70 H66 V75 H62 Z"/>' +
     '<path d="M57 77.5 H71" stroke-width="3" stroke-linecap="round" fill="none"/>' +
     '<path d="M54 51 C48 51 47 58 52 60.5 M74 51 C80 51 81 58 76 60.5" fill="none" stroke-width="2" stroke-linecap="round"/>' +
-    '<path d="M44 74 C40 71 39.5 65 42.5 61 C40 65.5 41 70 44.5 72.5 C47 74.5 47.5 78.5 45.5 81 C46 77.5 46 76 44 74Z" fill-opacity=".85" stroke-width=".6"/>' +
-    '<path d="M84 74 C88 71 88.5 65 85.5 61 C88 65.5 87 70 83.5 72.5 C81 74.5 80.5 78.5 82.5 81 C82 77.5 82 76 84 74Z" fill-opacity=".85" stroke-width=".6"/>' +
-    '<path d="M39 63 C37 60.5 37.3 57 39.5 55 C38 57.5 38.3 60 40 61.7Z M89 63 C91 60.5 90.7 57 88.5 55 C90 57.5 89.7 60 88 61.7Z" fill-opacity=".7" stroke-width=".5"/>',
+    '<path d="M58 73 C52 75 47 73 45 68 M47 70 C44 68.5 43.5 65 45 62 M49 64.5 C47 63 46.5 60.5 47.5 58.5 M70 73 C76 75 81 73 83 68 M81 70 C84 68.5 84.5 65 83 62 M79 64.5 C81 63 81.5 60.5 80.5 58.5" fill="none" stroke="#fffbe9" stroke-opacity=".8" stroke-width="1.5" stroke-linecap="round"/>',
   diamond:
     '<path d="M64 42 82 58 64 82 46 58 Z"/>' +
     '<path d="M46 58 H82 M54 58 64 42 74 58 M54 58 64 82 M74 58 64 82 M59 58 64 50 69 58" fill="none" stroke-width=".7" stroke-opacity=".85"/>' +
@@ -982,19 +979,28 @@ ${sparks}
 function badgeSvg(tierLabel, size){ return SupporterBadge(tierLabel, size); }
 
 
+let currentSupporterBadgeTier = null; // cached so the av-menu popover can render instantly on open
+
+function renderSupporterBadgeChip(iconElId, wrapElId, tier, size){
+  const wrap = document.getElementById(wrapElId);
+  const icon = document.getElementById(iconElId);
+  if(!wrap || !icon) return;
+  if(tier){
+    icon.innerHTML = badgeSvg(tier, size);
+    wrap.setAttribute('data-badge-name', tier);
+    wrap.style.display = 'flex';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
 function loadSupporterBadge(){
   if(!sb || !currentUser) return;
   sb.rpc('get_my_badge', { p_user_id: currentUser.id }).maybeSingle()
     .then(({ data }) => {
-      const wrap = document.getElementById('settings-supporter-badge');
-      if(!wrap) return;
-      if(data && data.badge_tier){
-        document.getElementById('settings-supporter-badge-emoji').innerHTML = badgeSvg(data.badge_tier, 26);
-        document.getElementById('settings-supporter-badge-label').textContent = data.badge_tier;
-        wrap.style.display = 'flex';
-      } else {
-        wrap.style.display = 'none';
-      }
+      currentSupporterBadgeTier = (data && data.badge_tier) || null;
+      renderSupporterBadgeChip('settings-supporter-badge-emoji', 'settings-supporter-badge', currentSupporterBadgeTier, 26);
+      renderSupporterBadgeChip('avMenuBadgeIcon', 'avMenuBadge', currentSupporterBadgeTier, 24);
     })
     .catch(() => {});
 }
@@ -1344,18 +1350,18 @@ async function saveUserProfile(fields) {
   } catch(e) { toast('Could not save — check connection', 'error'); }
 }
 
-const WHATS_NEW_VERSION = 'practice-log-v1';
-function checkWhatsNew(){
-  if(localStorage.getItem('jt_whatsnew_seen')===WHATS_NEW_VERSION) return;
-  setTimeout(()=>{ document.getElementById('modal-whatsNew')?.classList.add('open'); }, 400);
+function checkSupportPrompt(){
+  if(localStorage.getItem('jt_support_prompt_never')==='1') return;
+  setTimeout(()=>{ document.getElementById('modal-supportPrompt')?.classList.add('open'); }, 400);
 }
-function closeWhatsNew(){
-  document.getElementById('modal-whatsNew')?.classList.remove('open');
-  localStorage.setItem('jt_whatsnew_seen', WHATS_NEW_VERSION);
+function closeSupportPrompt(){
+  const chk = document.getElementById('sp-never');
+  if(chk && chk.checked) localStorage.setItem('jt_support_prompt_never', '1');
+  document.getElementById('modal-supportPrompt')?.classList.remove('open');
 }
-function whatsNewExplore(){
-  closeWhatsNew();
-  nav('practice');
+function supportPromptGo(){
+  closeSupportPrompt();
+  window.open('/support', '_blank');
 }
 function updatePracticeNewBadge(){
   const seen = localStorage.getItem('jt_practice_visited')==='1';

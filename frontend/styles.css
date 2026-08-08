@@ -504,6 +504,15 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .av-stat-lbl{font-size:9px;color:var(--mu2);font-weight:500;text-align:center;white-space:nowrap;letter-spacing:.03em}
 .av-stat-divider{width:1px;height:28px;background:rgba(255,255,255,.07);flex-shrink:0}
 
+/* SupporterBadge — icon-only chip with a name tooltip on hover/focus.
+   Used in the settings profile card and the mobile account/stats popover. */
+.badge-tooltip{position:relative;display:inline-flex;align-items:center;justify-content:center;cursor:default;border-radius:10px;padding:2px;transition:background .15s;outline:none}
+.badge-tooltip:hover,.badge-tooltip:focus-visible{background:rgba(255,255,255,.07)}
+.badge-tooltip::after{content:attr(data-badge-name);position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%) translateY(-4px);background:#0a0a0f;color:#f3f0ea;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;box-shadow:0 8px 22px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);z-index:60}
+.badge-tooltip::before{content:'';position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:#0a0a0f;opacity:0;transition:opacity .15s;pointer-events:none;z-index:60}
+.badge-tooltip:hover::after,.badge-tooltip:focus-visible::after,.badge-tooltip:hover::before,.badge-tooltip:focus-visible::before{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){.badge-tooltip::after,.badge-tooltip::before{transition:none}}
+
 .td-filter-row{align-items:center;flex-wrap:nowrap!important;overflow:hidden}
 .td-chip{display:inline-flex;align-items:center;gap:3px;padding:4px 7px;font-size:10.5px;font-weight:500;flex-shrink:1;white-space:nowrap}
 .td-status-sel{margin-left:auto;flex-shrink:0;min-width:0;width:90px;font-size:10.5px;padding:4px 22px 4px 7px!important;height:27px;background-color:var(--sf)}
