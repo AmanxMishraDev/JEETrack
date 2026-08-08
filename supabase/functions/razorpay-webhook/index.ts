@@ -10,9 +10,10 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 // Requires secret: RAZORPAY_WEBHOOK_SECRET (the secret you set when adding
 // the webhook in the dashboard — different from RAZORPAY_KEY_SECRET).
 //
-// display_name/show_publicly are read from payment.notes (set at order
-// creation in create-razorpay-order) so this upsert never clobbers the
-// supporter's Hall-of-Support preferences with nulls.
+// display_name/show_publicly/email are read from payment.notes (set at
+// order creation in create-razorpay-order) so this upsert never clobbers
+// the supporter's Hall-of-Support preferences or guest-claim email with
+// nulls.
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://www.jeetrack.in",
@@ -67,6 +68,9 @@ Deno.serve(async (req: Request) => {
           ? notes.display_name.slice(0, 60)
           : null;
         const showPublicly = notes.show_publicly !== "false";
+        const email = typeof notes.email === "string" && notes.email.length > 0
+          ? notes.email.slice(0, 120)
+          : null;
 
         if (supabaseUrl && serviceKey) {
           // Upsert on razorpay_payment_id so this never creates a duplicate row
@@ -87,6 +91,7 @@ Deno.serve(async (req: Request) => {
               status: eventType === "payment.captured" ? "paid" : "failed",
               display_name: displayName,
               show_publicly: showPublicly,
+              email: email,
             }),
           });
         }

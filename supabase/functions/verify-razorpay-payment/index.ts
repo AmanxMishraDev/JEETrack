@@ -1,14 +1,24 @@
+// 📁 FILE LOCATION: supabase/functions/verify-razorpay-payment/index.ts
+
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 // Verifies a Razorpay payment signature server-side (never trust the client's
-// word that a payment succeeded) and logs it to the `donations` table using
-// the service-role key. Requires RAZORPAY_KEY_SECRET to be set as a secret.
+// word that a payment succeeded). Requires RAZORPAY_KEY_SECRET as a secret.
 //
-// Note: the razorpay-webhook function is the source-of-truth confirmation
-// (fires even if the user's browser closes right after paying). This
-// function gives the user instant feedback in the UI; both write to the
-// same `donations` row via an upsert on razorpay_payment_id, so calling
-// this twice (e.g. an accidental retry) never creates a duplicate.
+// SPEED: signature verification is pure crypto (no network) and the response
+// is sent back the moment that's done — the `donations` write happens via
+// EdgeRuntime.waitUntil() AFTER the response is returned, so the client
+// never waits on a database round trip. The badge tier returned here is a
+// fast client-side computation from the amount; the client separately
+// re-checks for the true PERMANENT (highest-ever) tier a couple seconds
+// later via check-payment-status.
+//
+// email is stored so a guest supporter (user_id null) can later claim this
+// row by signing in with the same address (see claim_guest_donations()).
+//
+// razorpay-webhook is still the redundant source-of-truth write (fires from
+// Razorpay's servers even if this function's background write or the user's
+// browser fails for any reason).
 
 const ALLOWED_ORIGINS = [
   "https://www.jeetrack.in",
@@ -30,6 +40,14 @@ function toHex(buf: ArrayBuffer): string {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function tierForAmount(amount: number): string {
+  if (amount >= 999) return "Elite Supporter";
+  if (amount >= 499) return "Gold Supporter";
+  if (amount >= 199) return "Silver Supporter";
+  if (amount >= 99) return "Bronze Supporter";
+  return "Supporter";
+}
+
 Deno.serve(async (req: Request) => {
   const corsHeaders = corsHeadersFor(req);
 
@@ -38,7 +56,16 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount, user_id } = await req.json();
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      amount,
+      user_id,
+      display_name,
+      show_publicly,
+      email,
+    } = await req.json();
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return new Response(JSON.stringify({ verified: false, error: "Missing fields" }), {
@@ -69,32 +96,40 @@ Deno.serve(async (req: Request) => {
       encoder.encode(`${razorpay_order_id}|${razorpay_payment_id}`)
     );
     const expectedSignature = toHex(sigBuffer);
-
     const verified = expectedSignature === razorpay_signature;
 
-    try {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL");
-      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-      if (supabaseUrl && serviceKey) {
-        await fetch(`${supabaseUrl}/rest/v1/donations?on_conflict=razorpay_payment_id`, {
-          method: "POST",
-          headers: {
-            "apikey": serviceKey,
-            "Authorization": `Bearer ${serviceKey}`,
-            "Content-Type": "application/json",
-            "Prefer": "resolution=merge-duplicates,return=minimal",
-          },
-          body: JSON.stringify({
-            user_id: user_id || null,
-            amount: amount || null,
-            razorpay_order_id,
-            razorpay_payment_id,
-            status: verified ? "paid" : "signature_mismatch",
-          }),
-        });
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (supabaseUrl && serviceKey) {
+      const writePromise = fetch(`${supabaseUrl}/rest/v1/donations?on_conflict=razorpay_payment_id`, {
+        method: "POST",
+        headers: {
+          "apikey": serviceKey,
+          "Authorization": `Bearer ${serviceKey}`,
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates,return=minimal",
+        },
+        body: JSON.stringify({
+          user_id: user_id || null,
+          amount: amount || null,
+          razorpay_order_id,
+          razorpay_payment_id,
+          status: verified ? "paid" : "signature_mismatch",
+          display_name: typeof display_name === "string" ? display_name.slice(0, 60) : null,
+          show_publicly: show_publicly !== false,
+          email: typeof email === "string" ? email.slice(0, 120) : null,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          res.text().then((t) => console.error("donations background write failed:", res.status, t));
+        }
+      }).catch((e) => console.error("donations background write error:", e));
+
+      // @ts-ignore EdgeRuntime is a Supabase/Deno Deploy global, not in std types
+      if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
+        // @ts-ignore
+        EdgeRuntime.waitUntil(writePromise);
       }
-    } catch (logErr) {
-      console.error("donations log error (non-fatal):", logErr);
     }
 
     if (!verified) {
@@ -104,9 +139,13 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    return new Response(JSON.stringify({ verified: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        verified: true,
+        badge_tier: tierForAmount(amount || 0),
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("verify-razorpay-payment error:", e);
     return new Response(JSON.stringify({ verified: false, error: "Server error" }), {

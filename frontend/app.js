@@ -487,7 +487,7 @@ function showApp(name, email){
   if(document.getElementById('settings-email-display'))document.getElementById('settings-email-display').textContent=email||'';
   if(document.getElementById('settings-email-ro'))document.getElementById('settings-email-ro').textContent=email||'';
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
-  loadSupporterBadge();
+  claimGuestDonationsAndLoadBadge();
   setDashGreeting(displayName.split(' ')[0]);
   
   
@@ -829,6 +829,23 @@ function loadSupporterBadge(){
       }
     })
     .catch(() => {});
+}
+
+// Claims any guest (not-logged-in) donations made under this account's
+// email — e.g. someone bought a chai before signing in, using the same
+// email their JEETrack account uses. Safe to call every login: it's a
+// no-op once already claimed (claim_guest_donations() only matches rows
+// with user_id still NULL).
+function claimGuestDonationsAndLoadBadge(){
+  if(!sb || !currentUser){ loadSupporterBadge(); return; }
+  sb.rpc('claim_guest_donations')
+    .then(({ data: claimedCount }) => {
+      if(claimedCount && claimedCount > 0 && typeof toast === 'function'){
+        toast('🎉 Found a previous support contribution — added to your profile!', 'success');
+      }
+      loadSupporterBadge();
+    })
+    .catch(() => { loadSupporterBadge(); });
 }
 
 // ── Debounced network sync ──

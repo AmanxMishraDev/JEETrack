@@ -124,6 +124,7 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
 .opt-name-input::placeholder{color:var(--mu2)}
 .opt-checkbox{display:flex;align-items:center;gap:.45rem;color:var(--mu);font-size:.76rem;cursor:pointer;user-select:none}
 .opt-checkbox input{accent-color:var(--pk);width:15px;height:15px;cursor:pointer}
+.guest-note{font-size:.76rem;color:var(--mu2);margin-top:.6rem;line-height:1.6;max-width:520px}
 
 .payrow{display:flex;align-items:center;gap:1rem;margin-top:1.35rem;flex-wrap:wrap}
 .pay-btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;border:0;border-radius:12px;background:linear-gradient(135deg,var(--mint),#2ca884);color:#08271d;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;padding:.9rem 1.4rem;cursor:pointer;box-shadow:0 10px 24px rgba(98,213,173,.2);transition:transform .15s,box-shadow .15s}
@@ -361,12 +362,16 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
       <div class="badge-preview">You'll receive <span class="badge-chip" id="badge-preview-chip">💛 Bronze Supporter</span></div>
       <div class="opt-fields">
         <input type="text" class="opt-name-input" id="supporter-name-input" placeholder="Your name (optional)" maxlength="60"/>
+        <input type="email" class="opt-name-input" id="supporter-email-input" placeholder="Email (to claim your badge later)" maxlength="120" style="display:none"/>
         <label class="opt-checkbox">
           <input type="checkbox" id="show-publicly-check" checked/>
           Display my name in the Hall of Support
         </label>
       </div>
     </div>
+    <p class="guest-note" id="guest-note" style="display:none">
+      Not signed in — your badge will be reserved under this email. Sign in with the same email anytime to claim it permanently on your JEETrack profile.
+    </p>
 
     <div class="payrow">
       <button class="pay-btn" id="pay-btn" onclick="payChai()">
@@ -474,6 +479,38 @@ async function initSb(){
   }catch(e){ console.warn('Could not load config', e); }
   loadCommunityTeaser();
   checkPendingPayment();
+  setupSupporterFields();
+}
+
+async function setupSupporterFields(){
+  if(!sb) return;
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const user = userData?.user || null;
+    const nameInput = document.getElementById('supporter-name-input');
+    const emailInput = document.getElementById('supporter-email-input');
+    const guestNote = document.getElementById('guest-note');
+
+    if(user){
+      // Logged in: auto-fetch their display name as the value (not just a
+      // placeholder) so it's ready to use without retyping; still editable.
+      const displayName = user.user_metadata?.full_name
+        || user.user_metadata?.username
+        || user.user_metadata?.name
+        || (user.email ? user.email.split('@')[0] : '');
+      if(displayName && !nameInput.value){
+        nameInput.value = displayName;
+        nameInput.placeholder = displayName;
+      }
+      emailInput.style.display = 'none';
+      guestNote.style.display = 'none';
+    } else {
+      // Guest: capture email so this contribution can be claimed later by
+      // signing in with the same address.
+      emailInput.style.display = '';
+      guestNote.style.display = 'block';
+    }
+  }catch(e){ /* non-fatal — checkout still works without prefill */ }
 }
 // Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
 // but before DOMContentLoaded — so we wait for that event before touching
@@ -592,6 +629,18 @@ async function payChai(){
     return;
   }
 
+  const { data: preCheckUser } = await sb.auth.getUser().catch(()=>({data:null}));
+  const isGuest = !preCheckUser?.user;
+  const guestEmail = document.getElementById('supporter-email-input').value.trim();
+  if(isGuest && !guestEmail){
+    errEl.textContent = 'Enter your email so you can claim this badge later by signing in.';
+    return;
+  }
+  if(isGuest && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)){
+    errEl.textContent = 'That email doesn\'t look right — double-check it.';
+    return;
+  }
+
   const btn = document.getElementById('pay-btn');
   const btnTxt = document.getElementById('pay-btn-txt');
   const prevLabel = btnTxt.textContent;
@@ -603,9 +652,10 @@ async function payChai(){
     const currentUser = userData?.user || null;
     const supporterName = document.getElementById('supporter-name-input').value.trim();
     const showPublicly = document.getElementById('show-publicly-check').checked;
+    const supporterEmail = currentUser?.email || guestEmail;
 
     const { data, error } = await sb.functions.invoke('create-razorpay-order', {
-      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly }
+      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly, email: supporterEmail }
     });
     if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
 
@@ -636,7 +686,8 @@ async function payChai(){
               amount: selectedAmount,
               user_id: currentUser?.id || null,
               display_name: supporterName,
-              show_publicly: showPublicly
+              show_publicly: showPublicly,
+              email: supporterEmail
             }
           });
           clearPendingOrder();
@@ -647,6 +698,12 @@ async function payChai(){
           }
           showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser);
           loadCommunityTeaser();
+          // verify-razorpay-payment responds instantly with a fast fallback
+          // tier (computed from just this amount) and writes to the DB in
+          // the background. A couple seconds later the real permanent tier
+          // (their highest-ever contribution) is ready — silently upgrade
+          // the badge chip if it's different, without blocking the reveal.
+          refreshCelebrationBadge(data.order_id, currentUser?.id || null);
         }catch(e){
           errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
           btn.disabled = false; btnTxt.textContent = prevLabel;
@@ -678,12 +735,28 @@ function showCelebration(amount, badgeTierLabel, isLoggedIn){
   document.getElementById('cel-badge-chip').textContent = `${emoji} ${label}`;
   document.getElementById('cel-badge-permanent').textContent = isLoggedIn
     ? 'This badge is now permanently attached to your JEETrack profile.'
-    : 'Sign in next time so this badge stays permanently on your profile — for now, thank you!';
+    : 'Your badge is reserved! Sign in with the same email anytime to claim it permanently on your JEETrack profile.';
 
   const overlay = document.getElementById('celebrate');
   overlay.classList.add('show');
   spawnConfetti();
   document.body.style.overflow = 'hidden';
+}
+
+async function refreshCelebrationBadge(orderId, userId){
+  if(!sb || !userId) return; // anonymous supporters have no permanent/cumulative tier to look up
+  await new Promise(r => setTimeout(r, 2500)); // give the background DB write time to land
+  try{
+    const { data } = await sb.functions.invoke('check-payment-status', {
+      body: { order_id: orderId, user_id: userId }
+    });
+    if(data && data.paid && data.badge_tier){
+      const chip = document.getElementById('cel-badge-chip');
+      const emoji = badgeEmojiForLabel(data.badge_tier);
+      const newText = `${emoji} ${data.badge_tier}`;
+      if(chip.textContent !== newText) chip.textContent = newText;
+    }
+  }catch(e){ /* non-fatal — the fallback tier shown already stands */ }
 }
 
 function spawnConfetti(){
