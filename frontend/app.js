@@ -1376,6 +1376,26 @@ function supportPromptGo(){
   closeSupportPrompt();
   window.open('/support', '_blank');
 }
+
+// Belt-and-suspenders: watch the welcome modal's class directly instead of
+// only relying on every close path (Later/Skip/Allow/etc.) to explicitly
+// call checkSupportPrompt(). This fires exactly once, the moment
+// modal-welcome actually loses its 'open' class, no matter which button or
+// flow caused that.
+(function(){
+  const wm = document.getElementById('modal-welcome');
+  if(!wm) return;
+  let firedForThisOpen = false;
+  const obs = new MutationObserver(() => {
+    const isOpen = wm.classList.contains('open');
+    if(isOpen){ firedForThisOpen = false; return; }
+    if(firedForThisOpen) return;
+    firedForThisOpen = true;
+    setTimeout(() => checkSupportPrompt(), 500);
+  });
+  obs.observe(wm, { attributes: true, attributeFilter: ['class'] });
+})();
+
 function updatePracticeNewBadge(){
   const seen = localStorage.getItem('jt_practice_visited')==='1';
   document.getElementById('practice-new-dot')?.classList.toggle('show', !seen);
@@ -1499,12 +1519,9 @@ function closeWelcomeModal() {
   const eb = document.getElementById('wm-email-btn');
   if (nb) { nb.disabled = false; nb.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Enable'; }
   if (eb) { eb.disabled = false; eb.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Enable'; }
-
-  // The support prompt skips itself while this modal is open (avoids two
-  // modals stacked). Since dismissing this one can otherwise require a full
-  // page reload before the support prompt ever gets a chance to show, queue
-  // it here instead — same session, brief gap so it doesn't feel jarring.
-  setTimeout(() => checkSupportPrompt(), 500);
+  // Note: the support prompt is queued via a MutationObserver watching this
+  // modal's class (see near checkSupportPrompt) — not from here — so it
+  // fires no matter which button/flow actually closes this modal.
 }
 
 function initLandingStarField() {

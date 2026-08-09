@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="theme-color" content="#0a0a0f"/>
+<meta name="theme-color" content="#0b0c12"/>
 <title>Hall of Support — JEETrack</title>
 <meta name="description" content="Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant."/>
 <meta property="og:title" content="Hall of Support — JEETrack"/>
@@ -20,88 +20,105 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0a0a0f;--sf:#111118;--sf2:#16161f;--sf3:#1e1e28;
-  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
-  --tx:#f0eff5;--mu:#8b899e;--mu2:#4a4960;
-  --ac:#7c6af7;--ac2:#a695ff;--pk:#f472b6;--gn:#34d399;--am:#fbbf24;--bl:#60a5fa;
+  --bg:#0b0c12;--sf:#13151e;--sf2:#191b26;--sf3:#20222e;
+  --bd:rgba(238,236,231,.1);--bd2:rgba(238,236,231,.18);
+  --tx:#f3f0ea;--mu:#9899aa;--mu2:#686a7d;
+  --am:#f3b84b;--am2:#d98825;--pk:#ee8ab2;--mint:#62d5ad;--ac:#7c6af7;
 }
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(circle at 12% 0%, rgba(243,184,75,.09), transparent 30rem),
+    radial-gradient(circle at 92% 18%, rgba(238,138,178,.07), transparent 25rem),
+    var(--bg);
+  color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden
+}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+a:focus-visible,button:focus-visible{outline:2px solid var(--am);outline-offset:2px;border-radius:6px}
 
-/* SupporterBadge ambient motion — slow, subtle; the global prefers-reduced-motion
-   rule above already collapses these to a single near-instant frame */
 @keyframes badgeGlowPulse{0%,100%{opacity:.6}50%{opacity:1}}
 @keyframes badgeSparkleTwinkle{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 .b-glow{animation:badgeGlowPulse 5.5s ease-in-out infinite}
 .b-spark{animation:badgeSparkleTwinkle 3.4s ease-in-out infinite}
 
-.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
 
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.75);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em}
+/* NAV */
+.nav{height:62px;border-bottom:1px solid var(--bd);background:rgba(11,12,18,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:flex-start;gap:1.5rem;padding:0 clamp(1rem,5vw,3rem);position:sticky;top:0;z-index:20}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:1.12rem;text-decoration:none;color:var(--tx)}
 .nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-links{display:flex;gap:2px}
-.nav-links a{color:var(--mu);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
-.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.nav-links{display:flex;gap:.2rem;align-items:center;margin-left:auto}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.8rem;padding:.55rem .75rem;border-radius:8px;transition:color .15s,background .15s}
+@media(hover:hover){.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.06)}}
 .nav-links a.active{color:var(--pk)}
-.nav-cta{background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
-.nav-cta:hover{opacity:.85}
+.nav-cta{background:var(--am);color:#241707;font-weight:700;text-decoration:none;padding:.5rem 1.1rem;border-radius:8px;font-size:.82rem;white-space:nowrap}
 
-.page-header{position:relative;max-width:900px;margin:0 auto;padding:4rem 2.5rem 2.5rem;text-align:center;z-index:2}
-.header-orb{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.1),transparent 70%);top:-220px;left:50%;transform:translateX(-50%);filter:blur(80px);pointer-events:none}
-.page-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(244,114,182,.09);border:1px solid rgba(244,114,182,.28);color:var(--pk);font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:.34rem .9rem;border-radius:99px;text-transform:uppercase;margin-bottom:1.5rem;position:relative;z-index:1}
-.page-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.4vw,3rem);font-weight:800;letter-spacing:-.03em;margin-bottom:1rem;position:relative;z-index:1}
-.page-title em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.page-sub{color:var(--mu);font-size:1rem;line-height:1.75;max-width:520px;margin:0 auto;position:relative;z-index:1}
+/* MAIN */
+main{max-width:980px;margin:0 auto;padding:3.4rem clamp(1rem,5vw,2.5rem) 5rem;position:relative;z-index:2}
 
-.page-wrap{max-width:900px;margin:0 auto;padding:0 2.5rem 5rem;position:relative;z-index:2}
+/* HERO */
+.hero{text-align:center;max-width:600px;margin:0 auto 3.2rem}
+.kicker{display:inline-flex;align-items:center;gap:.5rem;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;color:var(--pk);margin-bottom:1rem}
+.kicker i{width:6px;height:6px;border-radius:50%;background:var(--pk);box-shadow:0 0 0 5px rgba(238,138,178,.13);font-style:normal}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.08;letter-spacing:-.04em;margin-bottom:.9rem}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:.98rem;color:var(--mu);line-height:1.7}
 
-.impact-card{position:relative;background:linear-gradient(160deg,rgba(124,106,247,.1),rgba(244,114,182,.05));border:1px solid rgba(244,114,182,.22);border-radius:22px;padding:2rem;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:2.5rem;overflow:hidden}
-.impact-card::before{content:'';position:absolute;top:-60%;right:-10%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.16),transparent 70%);filter:blur(10px);pointer-events:none}
-.impact-card-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
-.impact-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;position:relative;z-index:1}
-.impact-stat{display:flex;flex-direction:column;align-items:center;text-align:center}
-.impact-stat-icon{font-size:1.3rem;height:1.6rem;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
-.impact-stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;height:2.2rem;line-height:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.impact-stat-lbl{font-size:.75rem;color:var(--mu);margin-top:.5rem}
-.impact-since{text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(244,114,182,.15);font-size:.8rem;color:var(--mu);position:relative;z-index:1}
+/* EYEBROW / SECTION TITLE (shared pattern) */
+.eyebrow{display:flex;align-items:center;justify-content:center;gap:.6rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;margin-bottom:.6rem}
+.eyebrow-line{width:22px;height:1px;background:var(--bd2)}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:-.03em;text-align:center;margin-bottom:2.2rem}
 
-.section-eyebrow{display:flex;align-items:center;gap:.6rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu2);margin-bottom:.7rem}
-.section-eyebrow-line{width:22px;height:1px;background:var(--bd2)}
-.section-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-bottom:1.5rem}
+/* STAT CARDS — two large, spacious cards instead of a cramped row */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.stat-card{background:linear-gradient(155deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:20px;padding:1.75rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--pk),transparent);opacity:.5}
+.stat-icon{width:42px;height:42px;border-radius:12px;margin:0 auto .9rem;display:flex;align-items:center;justify-content:center;background:rgba(238,138,178,.1);border:1px solid rgba(238,138,178,.22);color:var(--pk)}
+.stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:2.4rem;letter-spacing:-.02em;line-height:1;margin-bottom:.5rem}
+.stat-label{font-size:.8rem;color:var(--mu);font-weight:500}
 
-.supporter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
-.supporter-card{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:.9rem 1.05rem;transition:all .2s;opacity:0;animation:supporterFadeIn .5s ease forwards}
-.supporter-card:hover{border-color:rgba(244,114,182,.35);transform:translateY(-2px);background:linear-gradient(135deg,rgba(124,106,247,.06),rgba(244,114,182,.03))}
+.since-strip{display:flex;align-items:center;justify-content:center;gap:.55rem;text-align:center;color:var(--mu);font-size:.82rem;padding:.9rem 1rem;margin-bottom:3.2rem}
+.since-strip svg{color:var(--mu2);flex-shrink:0}
+
+/* TIER BREAKDOWN */
+.tier-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:3.4rem}
+.tier-chip{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:1.1rem .75rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.5rem;transition:border-color .2s,transform .2s}
+@media(hover:hover){.tier-chip:hover{transform:translateY(-2px)}}
+.tier-chip-count{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-.02em}
+.tier-chip-label{font-size:.68rem;color:var(--mu);font-weight:600}
+
+/* SUPPORTERS GRID */
+.supporter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.supporter-card{display:flex;align-items:center;gap:.85rem;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:.85rem 1rem;transition:border-color .2s,transform .2s,background .2s;opacity:0;animation:supporterFadeIn .45s ease forwards}
+@media(hover:hover){.supporter-card:hover{border-color:rgba(238,138,178,.35);transform:translateY(-2px);background:linear-gradient(135deg,rgba(124,106,247,.06),rgba(238,138,178,.03))}}
 @keyframes supporterFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.supporter-badge-icon{width:48px;height:56px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.supporter-badge-icon{width:44px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .supporter-info{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.supporter-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.supporter-tier{display:inline-flex;width:fit-content;font-size:.66rem;font-weight:700;color:var(--pk);background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);border-radius:6px;padding:.15rem .5rem}
+.supporter-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.supporter-tier{font-size:.66rem;color:var(--mu);font-weight:600}
 
-.view-all-btn{display:block;margin:2rem auto 0;background:none;border:1.5px solid var(--bd2);color:var(--mu);font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;padding:.8rem 2rem;border-radius:12px;cursor:pointer;transition:all .15s}
-.view-all-btn:hover{border-color:var(--pk);color:var(--tx)}
+.view-all-btn{display:block;margin:1.75rem auto 0;background:none;border:1.5px solid var(--bd2);color:var(--mu);font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;padding:.75rem 2rem;border-radius:12px;cursor:pointer;transition:all .15s}
+@media(hover:hover){.view-all-btn:hover{border-color:var(--pk);color:var(--tx)}}
 
-.hall-empty{text-align:center;padding:4rem 2rem;background:var(--sf);border:1px dashed var(--bd2);border-radius:20px;color:var(--mu)}
-.hall-empty-icon{font-size:2.5rem;margin-bottom:1rem}
-.hall-empty h4{font-family:'Syne',sans-serif;font-weight:800;color:var(--tx);font-size:1.1rem;margin-bottom:.5rem}
-.hall-empty p{font-size:.85rem;max-width:360px;margin:0 auto 1.5rem}
-.hall-empty-cta{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#34d399,#10b981);color:#052e22;text-decoration:none;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;padding:.8rem 1.6rem;border-radius:12px}
+.hall-empty{text-align:center;padding:3.5rem 2rem;background:var(--sf);border:1px dashed var(--bd2);border-radius:20px;color:var(--mu)}
+.hall-empty-icon{width:52px;height:52px;border-radius:14px;margin:0 auto 1.1rem;display:flex;align-items:center;justify-content:center;background:rgba(243,184,75,.1);border:1px solid rgba(243,184,75,.22);color:var(--am)}
+.hall-empty h4{font-family:'Syne',sans-serif;font-weight:800;color:var(--tx);font-size:1.05rem;margin-bottom:.5rem}
+.hall-empty p{font-size:.85rem;max-width:340px;margin:0 auto 1.5rem;line-height:1.6}
+.hall-empty-cta{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--am),var(--am2));color:#241707;text-decoration:none;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;padding:.8rem 1.6rem;border-radius:12px}
 
-.foot{text-align:center;padding:2rem;border-top:1px solid var(--bd);color:var(--mu);font-size:.78rem;position:relative;z-index:2}
-.foot a{color:var(--mu);text-decoration:none;transition:color .15s}
-.foot a:hover{color:var(--tx)}
-.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+/* FOOTER */
+.foot{text-align:center;border-top:1px solid var(--bd);padding:1.8rem 1rem;color:var(--mu2);font-size:.75rem;position:relative;z-index:2}
+.foot a{color:var(--mu);text-decoration:none}
+@media(hover:hover){.foot a:hover{color:var(--tx)}}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
 
-@media(max-width:860px){
-  .nav{padding:0 1.25rem}
-  .nav-links{display:none}
-  .page-header{padding:3rem 1.25rem 2rem}
-  .page-wrap{padding:0 1.25rem 4rem}
-  .impact-stats-row{grid-template-columns:1fr}
+@media(max-width:800px){
+  .nav-links,.nav-cta{display:none}
+  main{padding-top:2rem}
+  .stats-row{grid-template-columns:1fr}
+  .tier-row{grid-template-columns:repeat(2,1fr)}
   .supporter-grid{grid-template-columns:1fr}
 }
-@media(min-width:861px) and (max-width:1080px){
+@media(min-width:801px) and (max-width:1080px){
   .supporter-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
@@ -122,38 +139,41 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
   <a class="nav-cta" href="/support">☕ Support Us</a>
 </nav>
 
-<div class="page-header">
-  <div class="header-orb"></div>
-  <div class="page-pill">Community</div>
-  <h1 class="page-title">❤️ <em>Hall of Support</em></h1>
-  <p class="page-sub">Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant.</p>
-</div>
+<main>
 
-<div class="page-wrap">
+  <section class="hero">
+    <div class="kicker"><i></i>Community</div>
+    <h1>The <em>Hall of Support</em></h1>
+    <p>Every name here represents someone who chose to support JEETrack. Thank you for helping keep it free for every aspirant.</p>
+  </section>
 
-  <div class="impact-card" id="impact-card">
-    <div class="impact-card-title">❤️ Community Impact</div>
-    <div class="impact-stats-row">
-      <div class="impact-stat">
-        <div class="impact-stat-icon">👥</div>
-        <div class="impact-stat-value" id="stat-supporters" data-target="0">0</div>
-        <div class="impact-stat-lbl">Supporters</div>
+  <section class="stats-row" id="impact-card" aria-label="Community impact">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="8" r="2.6"/><path d="M14.7 20a5 5 0 0 1 8.8-3.2"/></svg>
       </div>
-      <div class="impact-stat">
-        <div class="impact-stat-icon">☕</div>
-        <div class="impact-stat-value" id="stat-chais" data-target="0">0</div>
-        <div class="impact-stat-lbl">Chais Bought</div>
-      </div>
-      <div class="impact-stat">
-        <div class="impact-stat-icon">💜</div>
-        <div class="impact-stat-value">Always</div>
-        <div class="impact-stat-lbl">Community Supported</div>
-      </div>
+      <div class="stat-value" id="stat-supporters" data-target="0">0</div>
+      <div class="stat-label">Supporters</div>
     </div>
-    <div class="impact-since" id="impact-since">Supporting JEETrack since — ❤️</div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      </div>
+      <div class="stat-value" id="stat-chais" data-target="0">0</div>
+      <div class="stat-label">Chais Bought</div>
+    </div>
+  </section>
+
+  <div class="since-strip">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span id="impact-since">Supporting JEETrack since —</span>
   </div>
 
-  <div class="section-eyebrow"><span class="section-eyebrow-line"></span>Supporters</div>
+  <div class="eyebrow"><span class="eyebrow-line"></span>The Ranks<span class="eyebrow-line"></span></div>
+  <div class="section-title">Supporter Tiers</div>
+  <div class="tier-row" id="tier-breakdown"></div>
+
+  <div class="eyebrow"><span class="eyebrow-line"></span>Supporters<span class="eyebrow-line"></span></div>
   <div class="section-title">Thank you, everyone</div>
 
   <div id="hall-list-wrap">
@@ -161,12 +181,9 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
     <button class="view-all-btn" id="view-all-btn" style="display:none" onclick="expandSupporterList()">View All</button>
   </div>
 
-</div>
+</main>
 
 <footer class="foot">
-  <div style="margin-bottom:1rem">
-    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:var(--tx);letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
-  </div>
   <div class="foot-links">
     <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/support">Support</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
   </div>
@@ -232,6 +249,7 @@ const SUPPORTER_BADGE_LABEL_TO_KEY = {
   'Bronze Supporter': 'bronze', 'Silver Supporter': 'silver',
   'Gold Supporter': 'gold', 'Diamond Supporter': 'diamond',
 };
+const SUPPORTER_TIER_ORDER = ['diamond', 'gold', 'silver', 'bronze'];
 
 const SUPPORTER_BADGE_SHIELD_OUTER = 'M64 13 C83.5 13 102 20.7 112.3 28.4 C114.4 30 116 32.3 116 35.1 L116 79.5 C116 109.3 97.3 130.3 64 143 C30.7 130.3 12 109.3 12 79.5 L12 35.1 C12 32.3 13.6 30 15.7 28.4 C26 20.7 44.5 13 64 13 Z';
 const SUPPORTER_BADGE_SHIELD_INNER = 'M64 18.5 C81.5 18.5 98 25.7 107.3 32.9 C109 34.2 110.1 36 110.1 38.2 L110.1 78.7 C110.1 104.7 93.2 123.6 64 135.3 C34.8 123.6 17.9 104.7 17.9 78.7 L17.9 38.2 C17.9 36 19 34.2 20.7 32.9 C30 25.7 46.5 18.5 64 18.5 Z';
@@ -278,7 +296,6 @@ function SupporterBadge(tier, size){
     ? `<circle class="b-glow" cx="64" cy="78" r="60" fill="rgba(${t.glow2},.20)" filter="url(#${blurId})"/>`
     : '';
 
-  // Rivet studs along the shield rim — density scales with tier prestige.
   const rivetStep = Math.max(1, Math.round(SUPPORTER_BADGE_RIM_POINTS.length / (t.tickCount / 2)));
   let rivets = '';
   for (let i = 0; i < SUPPORTER_BADGE_RIM_POINTS.length; i += rivetStep) {
@@ -286,7 +303,6 @@ function SupporterBadge(tier, size){
     rivets += `<circle cx="${rx}" cy="${ry}" r="1.15" fill="${t.rim}" fill-opacity=".55"/>`;
   }
 
-  // Sunburst tick ring around the emblem plate — count scales with tier.
   let ticks = '';
   for (let i = 0; i < t.tickCount; i++) {
     const ang = (i / t.tickCount) * Math.PI * 2;
@@ -345,6 +361,7 @@ ${sparks}
 // Backward-compatible alias — existing call sites pass full labels like
 // 'Diamond Supporter' straight from the database.
 function badgeSvg(tierLabel, size){ return SupporterBadge(tierLabel, size); }
+function tierKeyFromLabel(label){ return SUPPORTER_BADGE_LABEL_TO_KEY[label] || 'bronze'; }
 
 
 async function initSb(){
@@ -380,18 +397,43 @@ async function loadHallOfSupport(){
       document.getElementById('stat-chais').dataset.target = stats.chais_bought || 0;
       if(stats.supporting_since){
         const since = new Date(stats.supporting_since).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        document.getElementById('impact-since').textContent = `Supporting JEETrack since ${since} ❤️`;
+        document.getElementById('impact-since').textContent = `Supporting JEETrack since ${since}`;
       } else {
-        document.getElementById('impact-since').textContent = 'Be the first to support JEETrack ❤️';
+        document.getElementById('impact-since').textContent = 'Be the first to support JEETrack';
       }
       observeImpactCard();
     }
 
-    _allSupporters = listRes.data || [];
+    // Rank by tier prestige first (Diamond → Bronze), then most recent
+    // within each tier — turns the grid into a natural leaderboard without
+    // needing to expose raw donation amounts.
+    _allSupporters = (listRes.data || []).slice().sort((a, b) => {
+      const ra = SUPPORTER_TIER_ORDER.indexOf(tierKeyFromLabel(a.badge_tier));
+      const rb = SUPPORTER_TIER_ORDER.indexOf(tierKeyFromLabel(b.badge_tier));
+      if(ra !== rb) return ra - rb;
+      return new Date(b.last_contribution_at) - new Date(a.last_contribution_at);
+    });
+
+    renderTierBreakdown();
     renderSupporters(false);
   }catch(e){
     console.warn('Could not load Hall of Support', e);
   }
+}
+
+function renderTierBreakdown(){
+  const wrap = document.getElementById('tier-breakdown');
+  const counts = { diamond: 0, gold: 0, silver: 0, bronze: 0 };
+  _allSupporters.forEach(s => { counts[tierKeyFromLabel(s.badge_tier)]++; });
+
+  wrap.innerHTML = SUPPORTER_TIER_ORDER.map(key => {
+    const t = SUPPORTER_BADGE_TIERS[key];
+    return `<div class="tier-chip" style="border-color:rgba(${t.glow},.28);background:linear-gradient(160deg,rgba(${t.glow},.08),var(--sf))">
+      ${badgeSvg(key, 34)}
+      <div class="tier-chip-count">${counts[key]}</div>
+      <div class="tier-chip-label">${t.label.replace(' Supporter','')}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderSupporters(showAll){
@@ -401,7 +443,9 @@ function renderSupporters(showAll){
 
   if(_allSupporters.length === 0){
     wrap.innerHTML = `<div class="hall-empty">
-      <div class="hall-empty-icon">☕</div>
+      <div class="hall-empty-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg>
+      </div>
       <h4>Be the first supporter</h4>
       <p>No one has bought a chai yet — your name could be the first one in the Hall of Support.</p>
       <a href="/support" class="hall-empty-cta">☕ Buy the first chai</a>
@@ -413,7 +457,7 @@ function renderSupporters(showAll){
   grid.innerHTML = list.map((s, i) => {
     const name = s.display_name || 'Anonymous';
     return `<div class="supporter-card" style="animation-delay:${Math.min(i,14) * 0.04}s">
-      <div class="supporter-badge-icon">${badgeSvg(s.badge_tier, 46)}</div>
+      <div class="supporter-badge-icon">${badgeSvg(s.badge_tier, 44)}</div>
       <div class="supporter-info">
         <div class="supporter-name">${escapeHtml(name)}</div>
         <div class="supporter-tier">${escapeHtml(s.badge_tier)}</div>
