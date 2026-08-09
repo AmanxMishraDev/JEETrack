@@ -514,13 +514,16 @@ function showApp(name, email){
   
   setTimeout(async () => {
     const activePage = document.querySelector('.page.active');
+    console.log('[supportPrompt debug] activePage id:', activePage?.id, '(needs to be "page-overview")');
     if (activePage && activePage.id === 'page-overview') {
       try {
         await checkWelcomeModal();
       } catch(e) {
-        console.warn('checkWelcomeModal failed:', e);
+        console.warn('[supportPrompt debug] checkWelcomeModal threw:', e);
       }
-      if (!document.getElementById('modal-welcome')?.classList.contains('open')) {
+      const welcomeIsOpen = document.getElementById('modal-welcome')?.classList.contains('open');
+      console.log('[supportPrompt debug] welcome modal open?', welcomeIsOpen, '(support prompt only fires if this is false)');
+      if (!welcomeIsOpen) {
         checkSupportPrompt();
       }
     }
@@ -1355,8 +1358,14 @@ async function saveUserProfile(fields) {
 }
 
 function checkSupportPrompt(){
-  if(localStorage.getItem('jt_support_prompt_never')==='1') return;
-  setTimeout(()=>{ document.getElementById('modal-supportPrompt')?.classList.add('open'); }, 400);
+  const neverFlag = localStorage.getItem('jt_support_prompt_never');
+  console.log('[supportPrompt debug] jt_support_prompt_never flag:', neverFlag, '(must NOT be "1")');
+  if(neverFlag==='1') return;
+  setTimeout(()=>{
+    const el = document.getElementById('modal-supportPrompt');
+    console.log('[supportPrompt debug] modal element found in DOM?', !!el, '— adding .open class now');
+    el?.classList.add('open');
+  }, 400);
 }
 function closeSupportPrompt(){
   const chk = document.getElementById('sp-never');
