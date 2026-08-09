@@ -515,7 +515,11 @@ function showApp(name, email){
   setTimeout(async () => {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id === 'page-overview') {
-      await checkWelcomeModal();
+      try {
+        await checkWelcomeModal();
+      } catch(e) {
+        console.warn('checkWelcomeModal failed:', e);
+      }
       if (!document.getElementById('modal-welcome')?.classList.contains('open')) {
         checkSupportPrompt();
       }
@@ -999,8 +1003,8 @@ function loadSupporterBadge(){
   sb.rpc('get_my_badge', { p_user_id: currentUser.id }).maybeSingle()
     .then(({ data }) => {
       currentSupporterBadgeTier = (data && data.badge_tier) || null;
-      renderSupporterBadgeChip('settings-supporter-badge-emoji', 'settings-supporter-badge', currentSupporterBadgeTier, 26);
-      renderSupporterBadgeChip('avMenuBadgeIcon', 'avMenuBadge', currentSupporterBadgeTier, 24);
+      renderSupporterBadgeChip('settings-supporter-badge-emoji', 'settings-supporter-badge', currentSupporterBadgeTier, 20);
+      renderSupporterBadgeChip('avMenuBadgeIcon', 'avMenuBadge', currentSupporterBadgeTier, 18);
     })
     .catch(() => {});
 }
@@ -1371,7 +1375,7 @@ function updatePracticeNewBadge(){
 
 async function checkWelcomeModal() {
   
-  const notifOn = localStorage.getItem('notif_enabled') === '1' && Notification.permission === 'granted';
+  const notifOn = localStorage.getItem('notif_enabled') === '1' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   // email_reports is already loaded into `userProfile` by loadUserProfile() during
   // login/init — no need to hit user_preferences again here.
   const emailOn = userProfile?.email_reports === 'monthly';

@@ -1359,11 +1359,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span id="avMenuInitials">A</span>
       <img id="avMenuImg" src="" style="display:none"/>
     </div>
-    <div class="av-menu-name" id="avMenuName">JEETrack</div>
-    <div class="av-menu-email" id="avMenuEmail"></div>
-    <div id="avMenuBadge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;margin-top:6px">
-      <span id="avMenuBadgeIcon"></span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;max-width:100%">
+      <div class="av-menu-name" id="avMenuName">JEETrack</div>
+      <div id="avMenuBadge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;flex-shrink:0">
+        <span id="avMenuBadgeIcon"></span>
+      </div>
     </div>
+    <div class="av-menu-email" id="avMenuEmail"></div>
     <div class="av-menu-tag" id="avMenuTag">Free</div>
   </div>
   
@@ -2471,11 +2473,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             </div>
             <input type="file" id="settings-photo-input" accept="image/*" style="display:none" onchange="handleSettingsPhoto(this)"/>
             <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:16px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="settings-name-display">—</div>
-              <div style="font-size:12.5px;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block" id="settings-email-display">—</div>
-              <div id="settings-supporter-badge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;margin-top:8px;width:fit-content">
-                <span id="settings-supporter-badge-emoji"></span>
+              <div style="display:flex;align-items:center;gap:6px;min-width:0">
+                <div style="font-weight:700;font-size:16px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" id="settings-name-display">—</div>
+                <div id="settings-supporter-badge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;flex-shrink:0">
+                  <span id="settings-supporter-badge-emoji"></span>
+                </div>
               </div>
+              <div style="font-size:12.5px;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block" id="settings-email-display">—</div>
               <div style="font-size:11.5px;color:var(--mu2);margin-top:6px;display:flex;align-items:center;gap:5px">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 Click avatar or drag image to upload
