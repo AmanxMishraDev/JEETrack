@@ -5544,8 +5544,6 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
   width:14px; height:14px; accent-color:var(--ac); cursor:pointer; flex-shrink:0;
 }
 .wm-never-again:hover{ color:var(--tx); }
-<<<<<<< HEAD
-=======
 
 /* ── SupporterBadge ambient motion — slow, subtle glow/sparkle on the
    settings-page badge. The global prefers-reduced-motion rule above already
@@ -5554,4 +5552,3 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 @keyframes badgeSparkleTwinkle{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 .b-glow{animation:badgeGlowPulse 5.5s ease-in-out infinite}
 .b-spark{animation:badgeSparkleTwinkle 3.4s ease-in-out infinite}
->>>>>>> development
