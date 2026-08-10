@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0c12"/>
+<title>Support JEETrack — Buy Me a Chai</title>
+<meta name="description" content="JEETrack is free and always will be. If it's helped your JEE prep, your support helps keep the servers running and the features coming."/>
+<meta property="og:title" content="Support JEETrack"/>
+<meta property="og:description" content="Free forever, built by one JEE aspirant. If JEETrack helped you, support the project."/>
+<meta property="og:url" content="https://www.jeetrack.in/support"/>
+<meta property="og:site_name" content="JEETrack"/>
+<meta property="og:image" content="https://www.jeetrack.in/icon-512.png"/>
+<link rel="canonical" href="https://www.jeetrack.in/support"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0b0c12;--sf:#13151e;--sf2:#191b26;--sf3:#20222e;
+  --bd:rgba(238,236,231,.1);--bd2:rgba(238,236,231,.18);
+  --tx:#f3f0ea;--mu:#9899aa;--mu2:#686a7d;
+  --am:#f3b84b;--am2:#d98825;--pk:#ee8ab2;--mint:#62d5ad;--ac:#7c6af7;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+body{
+  background:
+    radial-gradient(circle at 12% 0%, rgba(243,184,75,.11), transparent 30rem),
+    radial-gradient(circle at 92% 22%, rgba(238,138,178,.08), transparent 25rem),
+    var(--bg);
+  color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden
+}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+
+/* SupporterBadge ambient motion — slow, subtle; the global prefers-reduced-motion
+   rule above already collapses these to a single near-instant frame */
+@keyframes badgeGlowPulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes badgeSparkleTwinkle{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+.b-glow{animation:badgeGlowPulse 5.5s ease-in-out infinite}
+.b-spark{animation:badgeSparkleTwinkle 3.4s ease-in-out infinite}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--am);outline-offset:2px;border-radius:6px}
+
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;background:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')}
+
+/* NAV */
+.nav{height:62px;border-bottom:1px solid var(--bd);background:rgba(11,12,18,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:flex-start;gap:1.5rem;padding:0 clamp(1rem,5vw,3rem);position:sticky;top:0;z-index:20;transition:transform .32s ease}
+.nav.nav-hidden{transform:translateY(-100%)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:1.12rem;text-decoration:none;color:var(--tx)}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:.2rem;align-items:center;margin-left:auto}
+.nav-links a{color:var(--mu);text-decoration:none;font-size:.8rem;padding:.55rem .75rem;border-radius:8px;transition:color .15s,background .15s}
+@media(hover:hover){.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.06)}}
+.nav-links a.active{color:var(--am)}
+.nav-cta{background:var(--am);color:#241707;font-weight:700;text-decoration:none;padding:.5rem 1.1rem;border-radius:8px;font-size:.82rem;white-space:nowrap}
+
+/* MAIN */
+main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;position:relative;z-index:2}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:2rem;min-height:300px}
+.kicker{display:inline-flex;align-items:center;gap:.5rem;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;color:var(--am)}
+.kicker i{width:6px;height:6px;border-radius:50%;background:var(--am);box-shadow:0 0 0 5px rgba(243,184,75,.13);font-style:normal}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5.2vw,3.9rem);line-height:1.05;letter-spacing:-.045em;margin:1.1rem 0 1rem;max-width:620px}
+.hero h1 em{font-style:normal;color:var(--am)}
+.hero-copy{font-size:.98rem;line-height:1.7;color:var(--mu);max-width:510px}
+.hero-meta{display:flex;gap:2rem;margin-top:1.6rem}
+.hero-meta strong{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--am);display:block}
+.hero-meta small{color:var(--mu2);font-size:.7rem;display:block;margin-top:.2rem}
+
+/* CHAI ILLUSTRATION */
+.chai-stage{height:270px;display:grid;place-items:center;position:relative}
+.chai-glow{position:absolute;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,rgba(243,184,75,.24),transparent 68%);filter:blur(10px);animation:breathe 3.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.07);opacity:.85}}
+.steam{position:absolute;width:5px;border-radius:9px;background:linear-gradient(transparent,rgba(243,240,234,.42));bottom:150px;animation:steam 3s ease-in-out infinite}
+.steam.a{height:66px;left:calc(50% - 22px)}
+.steam.b{height:86px;left:calc(50% - 2px);animation-delay:.7s}
+.steam.c{height:60px;left:calc(50% + 20px);animation-delay:1.3s}
+@keyframes steam{0%,100%{opacity:0;transform:translateY(10px) scaleX(1)}30%{opacity:.55}100%{opacity:0;transform:translateY(-58px) scaleX(1.5)}}
+.chai-stage svg{position:relative;filter:drop-shadow(0 14px 26px rgba(0,0,0,.4))}
+
+/* VALUE STRIP */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin:1.6rem 0 3.5rem;background:var(--bd)}
+.value{background:var(--sf);padding:1.2rem 1.35rem;display:flex;gap:.75rem}
+.value svg{color:var(--am);flex-shrink:0}
+.value strong{font-size:.82rem;display:block}
+.value p{color:var(--mu);font-size:.73rem;line-height:1.5;margin-top:.25rem}
+
+/* MENU */
+.eyebrow{color:var(--mu2);text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;font-weight:700;margin-bottom:.65rem}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:-.03em;margin-bottom:.5rem}
+.section-copy{color:var(--mu);font-size:.88rem;margin-bottom:1.6rem;max-width:520px}
+
+.board{background:linear-gradient(155deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:20px;padding:clamp(1.15rem,3vw,2rem);position:relative}
+.board::before{content:'';position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--am),transparent)}
+.board-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;gap:1rem;flex-wrap:wrap}
+.board-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.02rem;display:flex;align-items:center;gap:.5rem}
+.board-title svg{color:var(--am)}
+.board-note{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.03em}
+
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.tier{min-height:172px;text-align:left;display:flex;flex-direction:column;gap:.55rem;padding:1rem;border-radius:14px;border:1px solid var(--bd);background:var(--sf3);cursor:pointer;position:relative;color:var(--tx);font-family:inherit;transition:border-color .18s,background .18s,transform .12s}
+@media(hover:hover){.tier:hover{transform:translateY(-3px);border-color:rgba(243,184,75,.5)}}
+.tier:active{transform:scale(.97)}
+.tier.active{border-color:var(--am);background:linear-gradient(150deg,rgba(243,184,75,.14),rgba(238,138,178,.05));box-shadow:inset 0 0 0 1px rgba(243,184,75,.15)}
+.tier-check{position:absolute;right:.7rem;top:.7rem;width:17px;height:17px;border:1px solid var(--mu2);border-radius:50%;display:grid;place-items:center;transition:all .15s}
+.tier.active .tier-check{background:var(--am);border-color:var(--am)}
+.tier-check svg{opacity:0;transform:scale(.5);transition:all .15s;color:#271a07}
+.tier.active .tier-check svg{opacity:1;transform:scale(1)}
+.tier-icon{color:var(--am);margin-bottom:.1rem}
+.tier strong{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem}
+.tier p{font-size:.7rem;color:var(--mu);line-height:1.45;flex:1;margin:0}
+.tier-price{align-self:flex-start;font-family:'DM Mono',monospace;font-weight:500;font-size:.8rem;color:var(--am);background:rgba(243,184,75,.09);border:1px solid rgba(243,184,75,.22);padding:.25rem .5rem;border-radius:7px}
+.tier.active .tier-price{color:#271a07;background:var(--am)}
+
+.custom{display:flex;align-items:center;gap:.6rem;border:1px dashed var(--bd2);padding:.75rem 1rem;border-radius:13px;margin-top:1rem}
+.custom.active{border-style:solid;border-color:var(--am)}
+.custom label{color:var(--mu);font-size:.78rem;white-space:nowrap}
+.custom .rupee{font-family:'DM Mono',monospace;font-weight:500}
+.custom input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:var(--tx);font-family:'DM Mono',monospace;font-size:.95rem}
+.custom input::placeholder{color:var(--mu2);font-family:'DM Sans',sans-serif}
+
+.supporter-row{border-top:1px solid var(--bd);margin-top:1.3rem;padding-top:1.2rem;display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap}
+.badge-preview{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--mu)}
+.badge-chip{display:inline-flex;align-items:center;gap:.4rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;color:var(--tx);background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(238,138,178,.16));border:1px solid rgba(238,138,178,.32);border-radius:99px;padding:.3rem .75rem .3rem .35rem}
+.opt-fields{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem}
+.opt-name-input{border:1px solid var(--bd);background:var(--sf3);border-radius:9px;padding:.55rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:0;width:185px;transition:border-color .15s}
+.opt-name-input:focus{border-color:var(--pk)}
+.opt-name-input::placeholder{color:var(--mu2)}
+.opt-checkbox{display:flex;align-items:center;gap:.45rem;color:var(--mu);font-size:.76rem;cursor:pointer;user-select:none}
+.opt-checkbox input{accent-color:var(--pk);width:15px;height:15px;cursor:pointer}
+.note-toggle{background:none;border:none;color:var(--mu2);font-size:.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:.5rem 0 0;text-align:left;transition:color .15s}
+.note-toggle:hover{color:var(--pk)}
+.note-field-wrap{margin-top:.5rem}
+.note-textarea{width:100%;background:var(--sf3);border:1px solid var(--bd);border-radius:10px;padding:.6rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:0;resize:none;transition:border-color .15s}
+.note-textarea:focus{border-color:var(--pk)}
+.note-textarea::placeholder{color:var(--mu2)}
+.note-char-count{font-size:.68rem;color:var(--mu2);text-align:right;margin-top:.25rem}
+
+
+.payrow{display:flex;align-items:center;gap:1rem;margin-top:1.35rem;flex-wrap:wrap}
+.pay-btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;border:0;border-radius:12px;background:linear-gradient(135deg,var(--am),var(--am2));color:#2a1a06;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;padding:.9rem 1.4rem;cursor:pointer;box-shadow:0 10px 24px rgba(243,184,75,.28);transition:transform .15s,box-shadow .15s}
+@media(hover:hover){.pay-btn:hover{transform:translateY(-2px)}}
+.pay-btn:active{transform:scale(.97)}
+.pay-btn:disabled{opacity:.65;cursor:wait;transform:none}
+.secure-note{display:flex;align-items:center;gap:.35rem;color:var(--mu2);font-size:.73rem}
+.pay-err{color:#f87171;font-size:.8rem;margin-top:.5rem}
+
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(42,26,6,.35);border-top-color:#2a1a06;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TRANSPARENCY */
+.transparency{margin-top:1.4rem;padding:1.2rem 1.4rem;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.transparency h3{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
+.transparency h3 svg{color:var(--mint)}
+.trans-list{display:flex;flex-wrap:wrap;gap:.6rem 1.15rem}
+.trans-list span{display:flex;align-items:center;gap:.4rem;color:var(--mu);font-size:.76rem}
+.trans-list svg{color:var(--mint)}
+
+/* NOTE + HALL */
+.note{margin-top:3rem;padding:1.5rem;border:1px solid var(--bd);background:var(--sf);border-radius:18px;display:flex;gap:1rem}
+.avatar{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--am),var(--pk));color:#241707;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;flex-shrink:0}
+.note h3{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem}
+.note .role{font-size:.72rem;color:var(--am);font-weight:700;margin-top:.1rem}
+.note p{font-size:.82rem;line-height:1.7;color:var(--mu);margin-top:.6rem}
+
+.hall{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:3rem;padding:1.1rem 1.3rem;text-decoration:none;border:1px solid rgba(238,138,178,.28);background:linear-gradient(135deg,rgba(124,106,247,.13),rgba(238,138,178,.06));border-radius:16px}
+.hall strong{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:var(--tx);display:block}
+.hall span{font-size:.75rem;color:var(--mu)}
+.hall svg{color:var(--pk);flex-shrink:0}
+.hall:active{transform:scale(.99)}
+
+/* FOOTER */
+.foot{text-align:center;border-top:1px solid var(--bd);padding:1.8rem 1rem;color:var(--mu2);font-size:.75rem;position:relative;z-index:2}
+.foot a{color:var(--mu);text-decoration:none}
+@media(hover:hover){.foot a:hover{color:var(--tx)}}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
+
+/* CELEBRATION */
+.celebrate{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden}
+.celebrate.show{display:flex}
+.celebrate-glow{position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(243,184,75,.16),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:celGlow 2.6s ease-in-out infinite}
+@keyframes celGlow{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+.confetti-piece{position:absolute;top:-5%;opacity:0;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{opacity:0;transform:translateY(0) rotate(0deg)}8%{opacity:1}100%{opacity:0;transform:translateY(105vh) rotate(540deg)}}
+.celebrate-content{position:relative;z-index:2;text-align:center;max-width:440px;padding:2rem}
+.cel-stamp-wrap{height:140px;display:grid;place-items:center;margin-bottom:.4rem}
+.cel-stamp{width:96px;height:96px;border-radius:50%;background:linear-gradient(145deg,var(--mint),#2ca884);display:grid;place-items:center;box-shadow:0 0 0 8px rgba(98,213,173,.1);position:relative;animation:stampSlam .5s cubic-bezier(.2,1.4,.4,1) both}
+.cel-stamp::before{content:'';position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.35);border-radius:50%}
+@keyframes stampSlam{0%{transform:scale(2.2) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.cel-stamp svg{stroke-dasharray:32;stroke-dashoffset:32;animation:checkDraw .35s ease .42s forwards}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+.celebrate h2{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.6rem;opacity:0;animation:fadeUp .5s ease .58s forwards}
+.celebrate .cel-sub{color:var(--mu);font-size:.92rem;line-height:1.7;margin-bottom:.5rem;opacity:0;animation:fadeUp .5s ease .82s forwards}
+.celebrate .cel-amt{font-family:'Syne',sans-serif;color:var(--am);font-weight:800}
+.celebrate .cel-note{color:var(--mu2);font-size:.78rem;margin-bottom:1rem;opacity:0;animation:fadeUp .5s ease .9s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cel-unlock-eyebrow{font-family:'Syne',sans-serif;font-weight:800;font-size:.82rem;color:var(--pk);letter-spacing:.02em;margin-bottom:.55rem;opacity:0;animation:fadeUp .5s ease .5s forwards}
+.cel-badge-chip-big{display:inline-flex;flex-direction:column;align-items:center;gap:.35rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;margin-bottom:.9rem;opacity:0;animation:fadeUp .5s ease .66s forwards}
+.cel-badge-chip-big span{background:linear-gradient(135deg,rgba(124,106,247,.18),rgba(238,138,178,.12));border:1px solid rgba(238,138,178,.35);border-radius:99px;padding:.4rem 1.1rem;box-shadow:0 0 24px rgba(238,138,178,.18)}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 30px rgba(238,138,178,.22)}50%{box-shadow:0 0 42px rgba(238,138,178,.36)}}
+.cel-badge-permanent{font-size:.76rem;color:var(--mu2);max-width:310px;margin:0 auto 1.5rem;line-height:1.6;opacity:0;animation:fadeUp .5s ease .74s forwards}
+.cel-supporter-note{max-width:340px;margin:0 auto 1rem;background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:12px;padding:.8rem 1rem;color:var(--tx);font-size:.82rem;font-style:italic;line-height:1.6;text-align:left}
+.cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;padding:.85rem 1.6rem;border-radius:13px;opacity:0;animation:fadeUp .5s ease .98s forwards;box-shadow:0 10px 28px rgba(124,106,247,.28)}
+.cel-btn:active{transform:scale(.97)}
+
+/* ───────── MOBILE ───────── */
+@media(max-width:800px){
+  .nav-links,.nav-cta{display:none}
+  .nav{padding-top:var(--safe-t);height:calc(58px + var(--safe-t))}
+  main{padding-top:1.6rem}
+  .hero{grid-template-columns:1fr;text-align:center;min-height:0;padding-top:.5rem}
+  .hero-copy{margin:0 auto}
+  .kicker{justify-content:center}
+  .hero-meta{justify-content:center}
+  .chai-stage{height:190px}
+  .chai-stage svg{transform:scale(.78)}
+  .steam{bottom:112px}
+
+  .strip{grid-template-columns:1fr;margin-bottom:2.4rem}
+  .value{padding:.9rem 1rem}
+
+  /* the four chai options: two rows, two columns — always, even on small phones */
+  .tiers{grid-template-columns:repeat(2,1fr)}
+  .tier{min-height:150px}
+  .board{padding:1rem}
+
+  .payrow{align-items:stretch}
+  .pay-btn{width:100%}
+  .secure-note{justify-content:center;width:100%}
+
+  /* the sticky pay bar already owns the thumb zone on mobile — the footer
+     just adds scroll depth with nothing the person needs there */
+  .foot{display:none}
+}
+@media(max-width:430px){
+  main{padding-left:.85rem;padding-right:.85rem;padding-bottom:6.5rem}
+  .hero h1{font-size:2.3rem}
+  .hero-meta{gap:1rem}
+  .hero-meta small{font-size:.62rem}
+  .tiers{gap:.55rem}
+  .tier{padding:.8rem;min-height:158px}
+  .tier p{font-size:.66rem}
+  .supporter-row{align-items:stretch}
+  .opt-name-input{width:100%}
+  .badge-preview{align-self:flex-start}
+  .note{padding:1.2rem}
+  .hall{margin-top:2rem}
+
+  /* sticky thumb-zone pay bar — the primary action always stays reachable */
+  .payrow{position:fixed;left:0;right:0;bottom:0;z-index:50;margin-top:0;background:rgba(11,12,18,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--bd);padding:.65rem .9rem calc(.65rem + var(--safe-b));box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+  .pay-btn{box-shadow:0 8px 22px rgba(243,184,75,.3)}
+  .secure-note{display:none}
+  .pay-err{padding:0 .2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/hall-of-support">Hall of Support</a>
+  </div>
+  <a class="nav-cta" href="/">Get Started Free →</a>
+</nav>
+
+<main>
+
+  <section class="hero">
+    <div>
+      <div class="kicker"><i></i>Support JEETrack</div>
+      <h1>Built for aspirants. <em>Supported by aspirants.</em></h1>
+      <p class="hero-copy">JEETrack is free today, and we want to keep it that way. If it's helped you stay consistent in your preparation, your support helps cover infrastructure, AI services, and future improvements.</p>
+      <div class="hero-meta">
+        <div><strong>₹0</strong><small>Cost to use JEETrack</small></div>
+        <div><strong>1</strong><small>Person building it</small></div>
+        <div><strong>0</strong><small>Features behind a paywall</small></div>
+      </div>
+    </div>
+    <div class="chai-stage" aria-label="A warm cup of chai illustration">
+      <div class="chai-glow"></div>
+      <div class="steam a"></div>
+      <div class="steam b"></div>
+      <div class="steam c"></div>
+      <svg width="150" height="170" viewBox="0 0 150 170" fill="none">
+        <defs>
+          <linearGradient id="chaiLiquid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f3b84b"/>
+            <stop offset="100%" stop-color="#d98825"/>
+          </linearGradient>
+          <linearGradient id="glassStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#7c6af7"/>
+            <stop offset="1" stop-color="#ee8ab2"/>
+          </linearGradient>
+        </defs>
+        <path d="M38 55 L45 155 Q47 162 55 162 L95 162 Q103 162 105 155 L112 55 Z" fill="rgba(255,255,255,.03)" stroke="url(#glassStroke)" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M43 92 L47.5 155 Q49 160 55 160 L95 160 Q101 160 102.5 155 L107 92 Z" fill="url(#chaiLiquid)" opacity=".92"/>
+        <ellipse cx="75" cy="92" rx="32" ry="6" fill="#fcd34d" opacity=".9"/>
+        <ellipse cx="75" cy="55" rx="37" ry="7" fill="none" stroke="url(#glassStroke)" stroke-width="2.5"/>
+        <ellipse cx="75" cy="163" rx="46" ry="6" fill="none" stroke="rgba(243,240,234,.16)" stroke-width="2"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="strip" aria-label="Why support JEETrack">
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+      <div><strong>Servers stay up</strong><p>Hosting, database & AI insights costs, covered month to month</p></div>
+    </div>
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      <div><strong>Features ship faster</strong><p>Every bit of support buys back a late-night hour for the next build</p></div>
+    </div>
+    <div class="value">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-8-4.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-8 11-8 11z"/></svg>
+      <div><strong>Free, always</strong><p>Support is optional and never gates a single feature</p></div>
+    </div>
+  </section>
+
+  <div class="eyebrow">The menu</div>
+  <div class="section-title">Pick your order</div>
+  <p class="section-copy">Every contribution helps us build a faster, smarter, and more reliable study companion for every JEE aspirant.</p>
+
+  <div class="board">
+    <div class="board-head">
+      <div class="board-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        JEETrack Tapri
+      </div>
+      <div class="board-note">Today's special · in INR</div>
+    </div>
+
+    <div class="tiers" id="amount-grid" role="radiogroup" aria-label="Choose a support amount">
+      <button type="button" class="tier item-card" data-amt="49" onclick="selectAmount(49,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1.3 14.3a2 2 0 0 1-2 1.7h-3.4a2 2 0 0 1-2-1.7L7 4z"/><path d="M7.6 10.2h8.8"/></svg>
+        <strong>Cutting Chai</strong>
+        <p>The smallest thank you, and it still means a lot.</p>
+        <span class="tier-price item-price">₹49</span>
+      </button>
+
+      <button type="button" class="tier item-card active" data-amt="99" onclick="selectAmount(99,this)" role="radio" aria-checked="true">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3h6.4l-0.85 9.3a1.3 1.3 0 0 1-1.3 1.2H4.65a1.3 1.3 0 0 1-1.3-1.2L2.5 3z"/><path d="M3.1 7h5.2"/><circle cx="16.5" cy="16.5" r="6"/><circle cx="14.6" cy="14.7" r=".55" fill="currentColor" stroke="none"/><circle cx="18.4" cy="15.1" r=".55" fill="currentColor" stroke="none"/><circle cx="16.5" cy="18.3" r=".55" fill="currentColor" stroke="none"/></svg>
+        <strong>Chai + Biscuit</strong>
+        <p>Helps cover hosting and infrastructure.</p>
+        <span class="tier-price item-price">₹99</span>
+      </button>
+
+      <button type="button" class="tier item-card" data-amt="199" onclick="selectAmount(199,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13.5a8 8 0 0 1 16 0"/><path d="M3 13.5h18v2.5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2.5z"/><path d="M19.5 10.5l3-1.6"/><path d="M9 3.5c0 1.3 1 2.2 3 2.2s3-.9 3-2.2"/></svg>
+        <strong>Full Kettle</strong>
+        <p>Helps fund the next feature update.</p>
+        <span class="tier-price item-price">₹199</span>
+      </button>
+
+      <button type="button" class="tier item-card" data-amt="499" onclick="selectAmount(499,this)" role="radio" aria-checked="false">
+        <span class="tier-check item-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <svg class="tier-icon" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="8" r="2.6"/><path d="M14.7 20a5 5 0 0 1 8.8-3.2"/></svg>
+        <strong>Round for the Squad</strong>
+        <p>Helps JEETrack grow even faster.</p>
+        <span class="tier-price item-price">₹499</span>
+      </button>
+    </div>
+
+    <div class="custom" id="custom-row">
+      <label for="custom-amt">Make it your own tab</label>
+      <span class="rupee">₹</span>
+      <input type="number" id="custom-amt" min="1" step="1" placeholder="e.g. 150" aria-label="Custom support amount in rupees" oninput="onCustomInput(this)"/>
+    </div>
+
+    <div class="supporter-row">
+      <div class="badge-preview">You'll receive <span class="badge-chip" id="badge-preview-chip">Bronze Supporter</span></div>
+      <div class="opt-fields">
+        <input type="text" class="opt-name-input" id="supporter-name-input" placeholder="Your name (optional)" maxlength="60"/>
+        <label class="opt-checkbox">
+          <input type="checkbox" id="show-publicly-check" checked/>
+          Display my name in the Hall of Support
+        </label>
+      </div>
+    </div>
+
+    <button type="button" class="note-toggle" id="note-toggle" onclick="toggleNoteField()">+ Leave a note 💬</button>
+    <div class="note-field-wrap" id="note-field-wrap" style="display:none">
+      <textarea class="note-textarea" id="supporter-note-input" maxlength="200" rows="2" placeholder="Say something to JEETrack — kept private, just for us" oninput="updateNoteCharCount()"></textarea>
+      <div class="note-char-count" id="note-char-count">200 left</div>
+    </div>
+
+    <div class="payrow">
+      <button class="pay-btn" id="pay-btn" onclick="payChai()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <span id="pay-btn-txt">Buy this chai — ₹99</span>
+      </button>
+      <span class="secure-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
+        Secured by Razorpay
+      </span>
+    </div>
+    <div class="pay-err" id="pay-err"></div>
+  </div>
+
+  <div class="transparency">
+    <h3>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      Where your support goes
+    </h3>
+    <div class="trans-list">
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hosting & database</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>AI insights</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>New features</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Keeping it free</span>
+    </div>
+  </div>
+
+  <a href="/hall-of-support" class="hall">
+    <div>
+      <strong>Hall of Support</strong>
+      <span id="hall-teaser-count">See everyone who's supported JEETrack</span>
+    </div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+  </a>
+
+  <section class="note">
+    <div class="avatar">A</div>
+    <div>
+      <h3>Aman Mishra</h3>
+      <div class="role">Founder & Developer, JEETrack</div>
+      <p>I started building JEETrack because I wanted a better way to track my own preparation. What began as a personal tool slowly grew into something used by thousands of JEE aspirants. JEETrack will always remain free, but every contribution helps cover infrastructure, AI costs, and future improvements. Thank you for being part of the journey.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  JEETrack is free and always will be · © 2026
+</footer>
+
+<!-- ───────── CELEBRATION OVERLAY (shown after a verified payment) ───────── -->
+<div class="celebrate" id="celebrate">
+  <div class="celebrate-glow"></div>
+  <div id="confetti-layer"></div>
+  <div class="celebrate-content">
+    <div class="cel-stamp-wrap">
+      <div class="cel-stamp">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#08271d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+    <div class="cel-unlock-eyebrow">🎉 Badge Unlocked</div>
+    <h2 id="cel-heading">Thank You</h2>
+    <div class="cel-badge-chip-big" id="cel-badge-chip">Bronze Supporter</div>
+    <p class="cel-badge-permanent" id="cel-badge-permanent">This badge is now permanently attached to your JEETrack profile.</p>
+    <p class="cel-sub">Thank you for the <span class="cel-amt" id="cel-amount">₹99</span> — it genuinely helps keep JEETrack free for every aspirant.</p>
+    <div class="cel-supporter-note" id="cel-supporter-note" style="display:none"></div>
+    <p class="cel-note">A receipt has been sent to your email.</p>
+    <a href="/" class="cel-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      Back to JEETrack
+    </a>
+  </div>
+</div>
+
+<!-- UI-only: hides the nav bar on scroll-down, reveals it on scroll-up. No payment/app logic here. -->
+<script>
+(function(){
+  var nav = document.querySelector('.nav');
+  if(!nav) return;
+  var lastY = window.scrollY;
+  var ticking = false;
+  function onScroll(){
+    var y = window.scrollY;
+    if(y > lastY && y > 80) nav.classList.add('nav-hidden');
+    else nav.classList.remove('nav-hidden');
+    lastY = y;
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ window.requestAnimationFrame(onScroll); ticking = true; }
+  }, { passive: true });
+})();
+</script>
+
+<script>
+let SUPABASE_URL = null, SUPABASE_ANON_KEY = null, sb = null;
+let selectedAmount = 99;
+
+// ── Badge tiers (must match the badge_tier logic in get_hall_of_support()) ──
+const BADGE_TIERS = [
+  { min: 499, label: 'Diamond Supporter' },
+  { min: 199, label: 'Gold Supporter' },
+  { min: 99,  label: 'Silver Supporter' },
+  { min: 0,   label: 'Bronze Supporter' },
+];
+function getBadgeForAmount(amt){
+  return BADGE_TIERS.find(t => amt >= t.min) || BADGE_TIERS[BADGE_TIERS.length - 1];
+}
+
+// ── SupporterBadge — premium layered SVG shield badge, reusable across the app ──
+// Usage: SupporterBadge('bronze'|'silver'|'gold'|'diamond', size)  — also accepts
+// the full label ('Bronze Supporter', etc.) for drop-in compatibility with data
+// coming straight from get_hall_of_support() / get_my_badge().
+const SUPPORTER_BADGE_TIERS = {
+  bronze: {
+    label: 'Bronze Supporter',
+    glow: '201,133,63',
+    stops: ['#f6d6a5', '#d99a4e', '#8a5623'],
+    rim: '#f9e2bb',
+    emblemStops: ['#7a4c24', '#3d2410'],
+    iconFill: '#fff6e9',
+    iconStroke: '#5c3818',
+    sparkCount: 3,
+    tickCount: 8,
+  },
+  silver: {
+    label: 'Silver Supporter',
+    glow: '183,193,212',
+    stops: ['#f6f8fc', '#c7d0e0', '#828da2'],
+    rim: '#eef2f9',
+    emblemStops: ['#4a5062', '#20232b'],
+    iconFill: '#ffffff',
+    iconStroke: '#3a3f4a',
+    sparkCount: 3,
+    tickCount: 10,
+  },
+  gold: {
+    label: 'Gold Supporter',
+    glow: '230,177,45',
+    stops: ['#fff2c2', '#eab429', '#8f6708'],
+    rim: '#fff5cc',
+    emblemStops: ['#8f6708', '#4a3403'],
+    iconFill: '#fffbe9',
+    iconStroke: '#6b4c05',
+    sparkCount: 4,
+    tickCount: 12,
+  },
+  diamond: {
+    label: 'Diamond Supporter',
+    glow: '141,159,247',
+    glow2: '195,150,250',
+    stops: ['#f2fcff', '#a9def5', '#8296f2', '#6a5bd0'],
+    rim: '#eefcff',
+    emblemStops: ['#4f43a8', '#211c4d'],
+    iconFill: '#ffffff',
+    iconStroke: '#3a2f80',
+    sparkCount: 6,
+    tickCount: 16,
+    premium: true,
+  },
+};
+const SUPPORTER_BADGE_LABEL_TO_KEY = {
+  'Bronze Supporter': 'bronze', 'Silver Supporter': 'silver',
+  'Gold Supporter': 'gold', 'Diamond Supporter': 'diamond',
+};
+
+const SUPPORTER_BADGE_SHIELD_OUTER = 'M64 13 C83.5 13 102 20.7 112.3 28.4 C114.4 30 116 32.3 116 35.1 L116 79.5 C116 109.3 97.3 130.3 64 143 C30.7 130.3 12 109.3 12 79.5 L12 35.1 C12 32.3 13.6 30 15.7 28.4 C26 20.7 44.5 13 64 13 Z';
+const SUPPORTER_BADGE_SHIELD_INNER = 'M64 18.5 C81.5 18.5 98 25.7 107.3 32.9 C109 34.2 110.1 36 110.1 38.2 L110.1 78.7 C110.1 104.7 93.2 123.6 64 135.3 C34.8 123.6 17.9 104.7 17.9 78.7 L17.9 38.2 C17.9 36 19 34.2 20.7 32.9 C30 25.7 46.5 18.5 64 18.5 Z';
+
+// Points roughly tracing SHIELD_OUTER's silhouette (12 stops around the
+// perimeter), used to scatter small rivet studs along the rim.
+const SUPPORTER_BADGE_RIM_POINTS = [
+  [64, 14.2], [83, 17.5], [100.5, 26.5], [114.3, 34.5],
+  [115, 56], [115, 79.5], [104, 104], [82, 123.5],
+  [64, 141.5], [46, 123.5], [24, 104], [13, 79.5],
+  [13, 56], [13.7, 34.5], [27.5, 26.5], [45, 17.5],
+];
+
+const SUPPORTER_BADGE_ICONS = {
+  bronze:
+    '<path d="M64 47 L67.53 57.15 78.27 57.36 69.71 63.85 72.82 74.14 64 68 55.18 74.14 58.29 63.85 49.73 57.36 60.47 57.15 Z" fill="none" stroke-opacity=".5" stroke-width="1"/>' +
+    '<path d="M64 47.5 L67.4 57.3 77.8 57.4 69.4 63.8 72.5 73.5 64 67.6 55.5 73.5 58.6 63.8 50.2 57.4 60.6 57.3 Z"/>',
+  silver:
+    '<path d="M64 46 78 58 64 78 50 58 Z"/>' +
+    '<path d="M50 58 78 58 M64 46 64 78" fill="none" stroke-width=".7" stroke-opacity=".7"/>',
+  gold:
+    '<path d="M54 49 H74 V58 C74 65 69.8 70 64 70 C58.2 70 54 65 54 58 Z M62 70 H66 V75 H62 Z"/>' +
+    '<path d="M57 77.5 H71" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+    '<path d="M54 51 C48 51 47 58 52 60.5 M74 51 C80 51 81 58 76 60.5" fill="none" stroke-width="2" stroke-linecap="round"/>' +
+    '<path d="M58 73 C52 75 47 73 45 68 M47 70 C44 68.5 43.5 65 45 62 M49 64.5 C47 63 46.5 60.5 47.5 58.5 M70 73 C76 75 81 73 83 68 M81 70 C84 68.5 84.5 65 83 62 M79 64.5 C81 63 81.5 60.5 80.5 58.5" fill="none" stroke="#fffbe9" stroke-opacity=".8" stroke-width="1.5" stroke-linecap="round"/>',
+  diamond:
+    '<path d="M64 42 82 58 64 82 46 58 Z"/>' +
+    '<path d="M46 58 H82 M54 58 64 42 74 58 M54 58 64 82 M74 58 64 82 M59 58 64 50 69 58" fill="none" stroke-width=".7" stroke-opacity=".85"/>' +
+    '<path d="M58 49 64 42 70 49 64 54Z" fill-opacity=".9"/>' +
+    '<path d="M64 30 V37 M64 87 V94 M40 62 H33 M95 62 H88" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".55"/>',
+};
+
+function SupporterBadge(tier, size){
+  size = size || 28;
+  const key = SUPPORTER_BADGE_TIERS[tier] ? tier : (SUPPORTER_BADGE_LABEL_TO_KEY[tier] || 'bronze');
+  const t = SUPPORTER_BADGE_TIERS[key];
+  const uid = 'sb' + Math.random().toString(36).slice(2, 9);
+  const glowId = uid + 'g', mainId = uid + 'm', rimId = uid + 'r', sheenId = uid + 's', embId = uid + 'e', dropId = uid + 'd', blurId = uid + 'b', clipId = uid + 'c';
+
+  const stopsCount = t.stops.length;
+  const mainStops = t.stops.map((c, i) => `<stop offset="${Math.round(i / (stopsCount - 1) * 100)}%" stop-color="${c}"/>`).join('');
+
+  const glow2 = t.glow2
+    ? `<circle class="b-glow" cx="64" cy="78" r="60" fill="rgba(${t.glow2},.20)" filter="url(#${blurId})"/>`
+    : '';
+
+  // Rivet studs along the shield rim — density scales with tier prestige.
+  const rivetStep = Math.max(1, Math.round(SUPPORTER_BADGE_RIM_POINTS.length / (t.tickCount / 2)));
+  let rivets = '';
+  for (let i = 0; i < SUPPORTER_BADGE_RIM_POINTS.length; i += rivetStep) {
+    const [rx, ry] = SUPPORTER_BADGE_RIM_POINTS[i];
+    rivets += `<circle cx="${rx}" cy="${ry}" r="1.15" fill="${t.rim}" fill-opacity=".55"/>`;
+  }
+
+  // Sunburst tick ring around the emblem plate — count scales with tier.
+  let ticks = '';
+  for (let i = 0; i < t.tickCount; i++) {
+    const ang = (i / t.tickCount) * Math.PI * 2;
+    const x1 = 64 + Math.cos(ang) * 27, y1 = 62 + Math.sin(ang) * 27;
+    const x2 = 64 + Math.cos(ang) * 29.6, y2 = 62 + Math.sin(ang) * 29.6;
+    ticks += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${t.rim}" stroke-opacity=".5" stroke-width="1" stroke-linecap="round"/>`;
+  }
+
+  const sparkPositions = [
+    [20, 34], [110, 40], [16, 96], [112, 92], [64, 8], [96, 118],
+  ];
+  let sparks = '';
+  for (let i = 0; i < t.sparkCount; i++) {
+    const [sx, sy] = sparkPositions[i];
+    const r = i % 2 === 0 ? 2.1 : 1.4;
+    const delay = (i * 0.55).toFixed(2);
+    sparks += `<path class="b-spark" style="opacity:.3;animation-delay:${delay}s;transform-box:fill-box;transform-origin:center" d="M${sx} ${sy - r}L${sx + r * 0.35} ${sy - r * 0.35}L${sx + r} ${sy}L${sx + r * 0.35} ${sy + r * 0.35}L${sx} ${sy + r}L${sx - r * 0.35} ${sy + r * 0.35}L${sx - r} ${sy}L${sx - r * 0.35} ${sy - r * 0.35}Z" fill="${t.rim}"/>`;
+  }
+
+  return `<svg width="${size}" height="${Math.round(size * 148 / 128)}" viewBox="0 0 128 148" aria-hidden="true" style="flex-shrink:0;display:block;overflow:visible">
+<defs>
+  <radialGradient id="${glowId}" cx="50%" cy="52%" r="55%"><stop offset="0%" stop-color="rgba(${t.glow},.55)"/><stop offset="100%" stop-color="rgba(${t.glow},0)"/></radialGradient>
+  <linearGradient id="${mainId}" x1="20%" y1="0%" x2="85%" y2="100%">${mainStops}</linearGradient>
+  <linearGradient id="${rimId}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${t.rim}"/><stop offset="100%" stop-color="${t.stops[t.stops.length - 1]}"/></linearGradient>
+  <radialGradient id="${sheenId}" cx="32%" cy="20%" r="45%"><stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="${embId}" cx="42%" cy="38%" r="65%"><stop offset="0%" stop-color="${t.emblemStops[0]}"/><stop offset="100%" stop-color="${t.emblemStops[1]}"/></radialGradient>
+  <filter id="${blurId}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+  <filter id="${dropId}" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="1.4" stdDeviation="1.3" flood-color="#000" flood-opacity=".38"/></filter>
+  <clipPath id="${clipId}"><path d="${SUPPORTER_BADGE_SHIELD_INNER}"/></clipPath>
+</defs>
+
+<circle class="b-glow" cx="64" cy="78" r="52" fill="url(#${glowId})" filter="url(#${blurId})"/>
+${glow2}
+
+<path d="${SUPPORTER_BADGE_SHIELD_OUTER}" fill="url(#${rimId})"/>
+<g filter="url(#${dropId})">
+  <path d="${SUPPORTER_BADGE_SHIELD_INNER}" fill="url(#${mainId})"/>
+</g>
+<path d="${SUPPORTER_BADGE_SHIELD_INNER}" fill="url(#${sheenId})" clip-path="url(#${clipId})"/>
+<path d="${SUPPORTER_BADGE_SHIELD_INNER}" fill="none" stroke="#000" stroke-opacity=".14" stroke-width="1"/>
+<g clip-path="url(#${clipId})">${rivets}</g>
+
+<g stroke="${t.emblemStops[1]}">${ticks}</g>
+<circle cx="64" cy="62" r="25" fill="url(#${embId})"/>
+<circle cx="64" cy="62" r="25" fill="none" stroke="${t.emblemStops[1]}" stroke-opacity=".7" stroke-width="1"/>
+<circle cx="64" cy="62" r="25" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="1" transform="translate(0,-0.8)"/>
+
+<g fill="${t.iconFill}" stroke="${t.iconStroke}" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" filter="url(#${dropId})">
+  ${SUPPORTER_BADGE_ICONS[key]}
+</g>
+
+${sparks}
+</svg>`;
+}
+
+// Backward-compatible alias — existing call sites pass full labels like
+// 'Diamond Supporter' straight from the database.
+function badgeSvg(tierLabel, size){ return SupporterBadge(tierLabel, size); }
+
+function badgeChipHtml(tierLabel, size){
+  return badgeSvg(tierLabel, size) + '<span>' + tierLabel + '</span>';
+}
+
+async function initSb(){
+  try{
+    const res = await fetch('/api/config');
+    if(res.ok){
+      const cfg = await res.json();
+      SUPABASE_URL = cfg.url; SUPABASE_ANON_KEY = cfg.key;
+      if(window.supabase){ sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+    }
+  }catch(e){ console.warn('Could not load config', e); }
+  loadCommunityTeaser();
+  checkPendingPayment();
+  setupSupporterFields();
+}
+
+function toggleNoteField(){
+  const wrap = document.getElementById('note-field-wrap');
+  const toggle = document.getElementById('note-toggle');
+  const isOpen = wrap.style.display !== 'none';
+  wrap.style.display = isOpen ? 'none' : 'block';
+  toggle.style.display = isOpen ? '' : 'none';
+  if(!isOpen) document.getElementById('supporter-note-input').focus();
+}
+function updateNoteCharCount(){
+  const input = document.getElementById('supporter-note-input');
+  const left = 200 - input.value.length;
+  document.getElementById('note-char-count').textContent = `${left} left`;
+}
+
+async function setupSupporterFields(){
+  if(!sb) return;
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const user = userData?.user || null;
+    const nameInput = document.getElementById('supporter-name-input');
+
+    if(user){
+      // Logged in: auto-fetch their display name as the value (not just a
+      // placeholder) so it's ready to use without retyping; still editable.
+      const displayName = user.user_metadata?.full_name
+        || user.user_metadata?.username
+        || user.user_metadata?.name
+        || (user.email ? user.email.split('@')[0] : '');
+      if(displayName && !nameInput.value){
+        nameInput.value = displayName;
+        nameInput.placeholder = displayName;
+      }
+    }
+    // Guests: nothing to prefill here — Razorpay Checkout collects their
+    // email directly during payment (see payChai()'s prefill/readonly config).
+  }catch(e){ /* non-fatal — checkout still works without prefill */ }
+}
+// Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
+// but before DOMContentLoaded — so we wait for that event before touching
+// window.supabase, otherwise it may still be undefined.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSb);
+} else {
+  initSb();
+}
+updatePayLabel();
+
+// ── Payment resilience: bfcache/back-button safety net ──
+// If Razorpay's "redirecting..." interstitial gets interrupted by the
+// browser back button, the page is restored from bfcache — a normal
+// load/DOMContentLoaded does NOT fire again, but `pageshow` does (with
+// event.persisted === true for bfcache restores). Checking there, plus on
+// tab focus regain, catches every real-world way a user can land back on
+// this page after paying without the in-page JS handler ever running.
+const PENDING_ORDER_KEY = 'jeetrack_pending_chai_order';
+const PENDING_ORDER_MAX_AGE_MS = 20 * 60 * 1000; // 20 minutes
+
+function savePendingOrder(orderId, amount, note){
+  try{
+    localStorage.setItem(PENDING_ORDER_KEY, JSON.stringify({ orderId, amount, note: note || '', ts: Date.now() }));
+  }catch(e){}
+}
+function clearPendingOrder(){
+  try{ localStorage.removeItem(PENDING_ORDER_KEY); }catch(e){}
+}
+function getPendingOrder(){
+  try{
+    const raw = localStorage.getItem(PENDING_ORDER_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(Date.now() - parsed.ts > PENDING_ORDER_MAX_AGE_MS){ clearPendingOrder(); return null; }
+    return parsed;
+  }catch(e){ return null; }
+}
+
+let _checkingPending = false;
+async function checkPendingPayment(){
+  if(_checkingPending) return;
+  const pending = getPendingOrder();
+  if(!pending || !sb) return;
+  _checkingPending = true;
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const currentUser = userData?.user || null;
+    const { data } = await sb.functions.invoke('check-payment-status', {
+      body: { order_id: pending.orderId, user_id: currentUser?.id || null }
+    });
+    if(data && data.paid){
+      clearPendingOrder();
+      showCelebration(data.amount || pending.amount, data.badge_tier, !!currentUser, pending.note);
+      loadCommunityTeaser();
+    }
+  }catch(e){
+    console.warn('Pending payment check failed', e);
+  }finally{
+    _checkingPending = false;
+  }
+}
+
+window.addEventListener('pageshow', function(event){
+  // event.persisted is true specifically on bfcache restores (back button) —
+  // exactly the scenario this whole safety net exists for.
+  checkPendingPayment();
+});
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible') checkPendingPayment();
+});
+
+function selectAmount(amt, el){
+  selectedAmount = amt;
+  document.querySelectorAll('.item-card').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
+  el.classList.add('active');
+  el.setAttribute('aria-checked','true');
+  document.getElementById('custom-row').classList.remove('active');
+  document.getElementById('custom-amt').value = '';
+  document.getElementById('pay-err').textContent = '';
+  updatePayLabel();
+}
+
+function onCustomInput(input){
+  const v = parseInt(input.value, 10);
+  document.querySelectorAll('.item-card').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
+  document.getElementById('pay-err').textContent = '';
+  document.getElementById('custom-row').classList.toggle('active', document.activeElement === input);
+  selectedAmount = (v && v > 0) ? v : 0;
+  updatePayLabel();
+}
+
+function updatePayLabel(){
+  document.getElementById('pay-btn-txt').textContent = selectedAmount > 0 ? `Buy this chai — ₹${selectedAmount}` : 'Buy this chai';
+  const badge = getBadgeForAmount(selectedAmount || 0);
+  document.getElementById('badge-preview-chip').innerHTML = badgeChipHtml(badge.label, 30);
+}
+
+async function payChai(){
+  const errEl = document.getElementById('pay-err');
+  errEl.textContent = '';
+
+  if(!selectedAmount || selectedAmount < 1){
+    errEl.textContent = 'Pick an item or enter a custom amount first.';
+    return;
+  }
+  if(selectedAmount > 100000){
+    errEl.textContent = 'That amount looks too large — try something smaller.';
+    return;
+  }
+  if(!sb){
+    errEl.textContent = 'Still connecting — try again in a second.';
+    return;
+  }
+  if(typeof Razorpay === 'undefined'){
+    errEl.textContent = 'Payment gateway still loading — try again in a moment.';
+    return;
+  }
+
+  const nameInput = document.getElementById('supporter-name-input');
+  const showPubliclyCheck = document.getElementById('show-publicly-check');
+  if(showPubliclyCheck.checked && !nameInput.value.trim()){
+    errEl.textContent = 'Please enter your name to be shown in the Hall of Support, or uncheck the box to stay anonymous.';
+    nameInput.focus();
+    return;
+  }
+
+  const btn = document.getElementById('pay-btn');
+  const btnTxt = document.getElementById('pay-btn-txt');
+  const prevLabel = btnTxt.textContent;
+  btn.disabled = true;
+  btnTxt.innerHTML = '<span class="spin"></span>';
+
+  try{
+    const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
+    const currentUser = userData?.user || null;
+    const supporterName = document.getElementById('supporter-name-input').value.trim();
+    const showPublicly = document.getElementById('show-publicly-check').checked;
+    const supporterNote = document.getElementById('supporter-note-input').value.trim().slice(0, 200);
+
+    const { data, error } = await sb.functions.invoke('create-razorpay-order', {
+      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly, note: supporterNote }
+    });
+    if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
+
+    // Resilience net: if the JS handler below never fires (bfcache back-nav
+    // after Razorpay's "redirecting..." screen, UPI app-switch, tab killed,
+    // etc.) but the payment actually succeeded, checkPendingPayment() picks
+    // this up on the next page load/return and shows the success UI anyway.
+    savePendingOrder(data.order_id, selectedAmount, supporterNote);
+
+    const rzp = new Razorpay({
+      key: data.key_id,
+      amount: data.amount,
+      currency: data.currency || 'INR',
+      name: 'JEETrack',
+      description: 'Buy this chai ☕',
+      image: 'https://www.jeetrack.in/icon-192.png',
+      order_id: data.order_id,
+      // Logged-in users: prefilled AND locked (readonly) so they never have
+      // to re-type their own account email. Guests: left blank/editable —
+      // Razorpay Checkout requires and collects it during payment; that
+      // Razorpay-collected email is the source of truth (see webhook).
+      prefill: { email: currentUser?.email || '' },
+      readonly: { email: !!currentUser },
+      theme: { color: '#7c6af7' },
+      redirect: false,
+      handler: async function(response){
+        try{
+          const { data: verifyData } = await sb.functions.invoke('verify-razorpay-payment', {
+            body: {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: selectedAmount,
+              user_id: currentUser?.id || null,
+              display_name: supporterName,
+              show_publicly: showPublicly,
+              note: supporterNote
+            }
+          });
+          clearPendingOrder();
+          if(!verifyData || !verifyData.verified){
+            errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
+            btn.disabled = false; btnTxt.textContent = prevLabel;
+            return;
+          }
+          showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser, supporterNote);
+          loadCommunityTeaser();
+          // verify-razorpay-payment responds instantly with a fast fallback
+          // tier (computed from just this amount) and writes to the DB in
+          // the background. A couple seconds later the real permanent tier
+          // (their highest-ever contribution) is ready — silently upgrade
+          // the badge chip if it's different, without blocking the reveal.
+          refreshCelebrationBadge(data.order_id, currentUser?.id || null);
+        }catch(e){
+          errEl.textContent = 'Payment received but verification failed — email support@jeetrack.in with your payment ID.';
+          btn.disabled = false; btnTxt.textContent = prevLabel;
+        }
+      },
+      modal: {
+        ondismiss: function(){ btn.disabled = false; btnTxt.textContent = prevLabel; }
+      }
+    });
+    rzp.on('payment.failed', function(){
+      errEl.textContent = 'Payment failed — please try again.';
+      btn.disabled = false; btnTxt.textContent = prevLabel;
+    });
+    rzp.open();
+    btn.disabled = false; btnTxt.textContent = prevLabel;
+  }catch(e){
+    console.error('Chai payment error:', e);
+    errEl.textContent = 'Could not start payment — please try again.';
+    btn.disabled = false; btnTxt.textContent = prevLabel;
+  }
+}
+
+function showCelebration(amount, badgeTierLabel, isLoggedIn, note){
+  document.getElementById('cel-amount').textContent = `₹${amount}`;
+
+  const label = badgeTierLabel || getBadgeForAmount(amount).label;
+  document.getElementById('cel-heading').textContent = 'Thank You';
+  document.getElementById('cel-badge-chip').innerHTML = badgeChipHtml(label, 84);
+  document.getElementById('cel-badge-permanent').textContent = isLoggedIn
+    ? 'This badge is now permanently attached to your JEETrack profile.'
+    : 'Your badge is reserved! Sign in with the same email anytime to claim it permanently on your JEETrack profile.';
+
+  const noteEl = document.getElementById('cel-supporter-note');
+  if(note && note.trim()){
+    noteEl.textContent = `💬 "${note.trim()}"`;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  const overlay = document.getElementById('celebrate');
+  overlay.classList.add('show');
+  spawnConfetti();
+  document.body.style.overflow = 'hidden';
+}
+
+async function refreshCelebrationBadge(orderId, userId){
+  if(!sb || !userId) return; // anonymous supporters have no permanent/cumulative tier to look up
+  await new Promise(r => setTimeout(r, 2500)); // give the background DB write time to land
+  try{
+    const { data } = await sb.functions.invoke('check-payment-status', {
+      body: { order_id: orderId, user_id: userId }
+    });
+    if(data && data.paid && data.badge_tier){
+      const chip = document.getElementById('cel-badge-chip');
+      if(chip.dataset.tier !== data.badge_tier){
+        chip.dataset.tier = data.badge_tier;
+        chip.innerHTML = badgeChipHtml(data.badge_tier, 84);
+      }
+    }
+  }catch(e){ /* non-fatal — the fallback tier shown already stands */ }
+}
+
+function spawnConfetti(){
+  const layer = document.getElementById('confetti-layer');
+  layer.innerHTML = '';
+  const colors = ['#f3b84b','#ee8ab2','#7c6af7','#62d5ad','#60a5fa'];
+  const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 80;
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 5 + Math.random()*6;
+    const isRound = Math.random() > 0.5;
+    piece.style.width = size+'px';
+    piece.style.height = (isRound ? size : size*0.4 + Math.random()*8)+'px';
+    piece.style.borderRadius = isRound ? '50%' : '2px';
+    piece.style.left = Math.random()*100+'%';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration = (2.4 + Math.random()*1.8)+'s';
+    piece.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(piece);
+  }
+}
+
+// ── Hall of Support (compact teaser on this page; full list lives on /hall-of-support) ──
+async function loadCommunityTeaser(){
+  if(!sb) return;
+  try{
+    const { data } = await sb.rpc('get_community_impact_stats').single();
+    if(data && data.supporter_count > 0){
+      document.getElementById('hall-teaser-count').textContent =
+        `${data.supporter_count} supporter${data.supporter_count === 1 ? '' : 's'} · ${data.chais_bought} chai${data.chais_bought === 1 ? '' : 's'} bought →`;
+    }
+  }catch(e){
+    console.warn('Could not load community stats', e);
+  }
+}
+</script>
+
+</body>
+</html>

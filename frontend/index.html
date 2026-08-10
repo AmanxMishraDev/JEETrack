@@ -993,6 +993,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <a href="/privacy">Privacy</a>
       <span class="ls-footer-sep">·</span>
       <a href="/terms">Terms</a>
+      <span class="ls-footer-sep">·</span>
+      <a href="/support">☕ Support Us</a>
     </div>
     <div class="ls-footer-copy">© 2026 JEETrack · Built for JEE aspirants across India</div>
   </footer>
@@ -1357,7 +1359,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <span id="avMenuInitials">A</span>
       <img id="avMenuImg" src="" style="display:none"/>
     </div>
-    <div class="av-menu-name" id="avMenuName">JEETrack</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;max-width:100%">
+      <div class="av-menu-name" id="avMenuName">JEETrack</div>
+      <div id="avMenuBadge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;flex-shrink:0">
+        <span id="avMenuBadgeIcon"></span>
+      </div>
+    </div>
     <div class="av-menu-email" id="avMenuEmail"></div>
     <div class="av-menu-tag" id="avMenuTag">Free</div>
   </div>
@@ -1379,7 +1386,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
   </div>
   <div class="av-menu-actions">
-    <button class="av-menu-view-btn" onclick="closeAvMenu();nav('settings');syncMobNav('settings');showSettingsPanel('profile',document.querySelector('.settings-nav-item'))">
+    <button class="av-menu-view-btn" onclick="closeAvMenu();nav('settings');syncMobNav('settings');settingsNavTap('profile',document.querySelector('.settings-nav-item'))">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       View Profile
     </button>
@@ -2391,55 +2398,91 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
 <div class="page" id="page-settings">
   <div class="ph"><div><div class="pt">Settings</div><div class="ps">Profile, data & preferences</div></div></div>
-  <div class="settings-layout">
-    
-    <div class="settings-sidebar">
-      <div class="settings-nav-label">Account</div>
-      <button class="settings-nav-item active" data-tip="Profile" onclick="showSettingsPanel('profile',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="snl">Profile</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Study Info" onclick="showSettingsPanel('study',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <span class="snl">Study Info</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Goals" onclick="showSettingsPanel('goals',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-        <span class="snl">Goals</span>
-      </button>
-      <div class="settings-nav-sep"></div>
-      <div class="settings-nav-label">Preferences</div>
-      <button class="settings-nav-item" data-tip="Appearance" onclick="showSettingsPanel('appearance',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 8a4 4 0 0 1 0 8"/></svg>
-        <span class="snl">Appearance</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Alerts" onclick="showSettingsPanel('alerts',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="snl">Alerts</span>
-      </button>
-      <div class="settings-nav-sep"></div>
-      <div class="settings-nav-label">System</div>
-      <button class="settings-nav-item" data-tip="Data" onclick="showSettingsPanel('data',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        <span class="snl">Data & Backup</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Account" onclick="showSettingsPanel('account',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M4 19c0-2.5 1.8-4 4-4s4 1.5 4 4"/><line x1="16" y1="10" x2="20" y2="10"/><line x1="16" y1="14" x2="18" y2="14"/></svg>
-        <span class="snl">Account</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Feedback" onclick="showSettingsPanel('feedback',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="snl">Feedback</span>
-      </button>
-      <button class="settings-nav-item" data-tip="Contact" onclick="showSettingsPanel('contact',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span class="snl">Contact</span>
-      </button>
+  <div class="settings-layout" id="settings-layout">
+
+    <div class="settings-sidebar" id="settings-sidebar">
+
+      <div class="settings-nav-group">
+        <div class="settings-nav-label">Account</div>
+        <div class="settings-nav-card">
+          <button class="settings-nav-item active" data-tip="Profile" onclick="settingsNavTap('profile',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <span class="sni-body"><span class="snl">Profile</span><span class="sni-sub">Name, photo & email</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Study Info" onclick="settingsNavTap('study',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <span class="sni-body"><span class="snl">Study Info</span><span class="sni-sub">Class, target year & coaching</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Goals" onclick="settingsNavTap('goals',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+            <span class="sni-body"><span class="snl">Goals</span><span class="sni-sub">Mains & Advanced score targets</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-nav-group">
+        <div class="settings-nav-label">Preferences</div>
+        <div class="settings-nav-card">
+          <button class="settings-nav-item" data-tip="Appearance" onclick="settingsNavTap('appearance',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 8a4 4 0 0 1 0 8"/></svg></span>
+            <span class="sni-body"><span class="snl">Appearance</span><span class="sni-sub">Theme, accent color & layout</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Alerts" onclick="settingsNavTap('alerts',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+            <span class="sni-body"><span class="snl">Alerts</span><span class="sni-sub">Notifications & email reports</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-nav-group">
+        <div class="settings-nav-label">System</div>
+        <div class="settings-nav-card">
+          <button class="settings-nav-item" data-tip="Data" onclick="settingsNavTap('data',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+            <span class="sni-body"><span class="snl">Data & Backup</span><span class="sni-sub">Export, import & reset data</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Account" onclick="settingsNavTap('account',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M4 19c0-2.5 1.8-4 4-4s4 1.5 4 4"/><line x1="16" y1="10" x2="20" y2="10"/><line x1="16" y1="14" x2="18" y2="14"/></svg></span>
+            <span class="sni-body"><span class="snl">Account</span><span class="sni-sub">Session & app info</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Feedback" onclick="settingsNavTap('feedback',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span class="sni-body"><span class="snl">Feedback</span><span class="sni-sub">Send us a bug report or idea</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item" data-tip="Contact" onclick="settingsNavTap('contact',this)">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            <span class="sni-body"><span class="snl">Contact</span><span class="sni-sub">Support, website & policies</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="settings-nav-item settings-nav-item-support" data-tip="Support Us" onclick="window.open('/support','_blank')">
+            <span class="sni-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
+            <span class="sni-body"><span class="snl">Support Us ☕</span><span class="sni-sub">Buy the team a coffee</span></span>
+            <svg class="sni-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
     </div>
 
-    
-    <div class="settings-panel-area">
-      
+
+    <div class="settings-panel-area" id="settings-panel-area">
+
+      <div class="settings-mob-header">
+        <button class="settings-back-btn" onclick="settingsMobileBack()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Settings</span>
+        </button>
+        <div class="settings-mob-header-title" id="settings-mob-detail-title">Profile</div>
+      </div>
+
       <div class="settings-panel active" id="sp-profile">
         <div class="settings-section">
           <div class="settings-avatar-area" id="settings-avatar-dropzone">
@@ -2462,7 +2505,12 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             </div>
             <input type="file" id="settings-photo-input" accept="image/*" style="display:none" onchange="handleSettingsPhoto(this)"/>
             <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:16px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="settings-name-display">—</div>
+              <div style="display:flex;align-items:center;gap:6px;min-width:0">
+                <div style="font-weight:700;font-size:16px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" id="settings-name-display">—</div>
+                <div id="settings-supporter-badge" class="badge-tooltip" tabindex="0" data-badge-name="" style="display:none;flex-shrink:0">
+                  <span id="settings-supporter-badge-emoji"></span>
+                </div>
+              </div>
               <div style="font-size:12.5px;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block" id="settings-email-display">—</div>
               <div style="font-size:11.5px;color:var(--mu2);margin-top:6px;display:flex;align-items:center;gap:5px">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -2493,18 +2541,18 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Edit Profile
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l">
               <div class="settings-row-title">Display Name</div>
               <div class="settings-row-sub">Shown across the app</div>
             </div>
             <input type="text" class="fi" id="settings-name-input" maxlength="40" style="width:200px;padding:8px 12px;font-size:13.5px" placeholder="Your name"/>
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l"><div class="settings-row-title">Email</div><div class="settings-row-sub">Cannot be changed here</div></div>
             <span style="font-size:12.5px;color:var(--mu);background:var(--sf2);padding:6px 12px;border-radius:7px;border:1px solid var(--bd);max-width:220px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;box-sizing:border-box" id="settings-email-ro">—</span>
           </div>
-          <div class="settings-row" style="padding:.9rem 1.5rem">
+          <div class="settings-row settings-row-actions">
             <div style="flex:1"></div>
             <button class="btn bp settings-save-btn" id="profile-save-btn" disabled onclick="saveProfileSettings()" style="padding:8px 20px;font-size:13px">Save Changes</button>
           </div>
@@ -2518,7 +2566,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             Academic Info
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l"><div class="settings-row-title">Class / Year</div><div class="settings-row-sub">Your current academic year</div></div>
             <select class="fs" id="settings-class" style="width:175px;padding:8px 12px;font-size:13px">
               <option value="11">Class 11</option>
@@ -2527,13 +2575,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               <option value="other">Other</option>
             </select>
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l"><div class="settings-row-title">Target JEE Year</div><div class="settings-row-sub">Which year are you targeting?</div></div>
             <select class="fs" id="settings-year" style="width:175px;padding:8px 12px;font-size:13px">
               
             </select>
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l"><div class="settings-row-title">Study Mode</div><div class="settings-row-sub">How you primarily study</div></div>
             <select class="fs" id="settings-mode" style="width:175px;padding:8px 12px;font-size:13px" onchange="buildSettingsCoachingSelect()">
               <option value="online">Online</option>
@@ -2542,17 +2590,17 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               <option value="self">Self Study</option>
             </select>
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-field">
             <div class="settings-row-l"><div class="settings-row-title">Coaching Institute</div><div class="settings-row-sub">Your coaching center, if any</div></div>
             <select class="fs" id="settings-coaching" style="width:175px;padding:8px 12px;font-size:13px" onchange="toggleCustomCoaching()">
               
             </select>
           </div>
-          <div class="settings-row" id="settings-custom-coaching-row" style="display:none">
+          <div class="settings-row settings-row-field" id="settings-custom-coaching-row" style="display:none">
             <div class="settings-row-l"><div class="settings-row-title">Institute Name</div></div>
             <input type="text" class="fi" id="settings-custom-coaching" style="width:175px;padding:8px 12px;font-size:13px" placeholder="Enter name"/>
           </div>
-          <div class="settings-row" style="padding:.9rem 1.5rem">
+          <div class="settings-row settings-row-actions">
             <div style="flex:1"></div>
             <button class="btn bp settings-save-btn" id="study-save-btn" disabled onclick="saveStudySettings()" style="padding:8px 20px;font-size:13px">Save Changes</button>
           </div>
@@ -2566,22 +2614,22 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             Score Goals
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-goal">
             <div class="settings-row-l">
               <div class="settings-row-title">JEE Mains Goal</div>
               <div class="settings-row-sub">Out of 300 marks</div>
             </div>
-            <div style="display:flex;align-items:center;gap:9px">
+            <div class="settings-goal-field">
               <input type="number" class="fi" id="goal-mains" min="1" max="300" value="200" style="width:95px;padding:8px 12px;font-size:14px;text-align:center"/>
               <span style="font-size:12px;color:var(--mu);font-weight:500">/300</span>
             </div>
           </div>
-          <div class="settings-row">
+          <div class="settings-row settings-row-goal">
             <div class="settings-row-l">
               <div class="settings-row-title">JEE Advanced Goal</div>
               <div class="settings-row-sub">Out of 360 marks</div>
             </div>
-            <div style="display:flex;align-items:center;gap:9px">
+            <div class="settings-goal-field">
               <input type="number" class="fi" id="goal-adv" min="1" max="360" value="150" style="width:95px;padding:8px 12px;font-size:14px;text-align:center"/>
               <span style="font-size:12px;color:var(--mu);font-weight:500">/360</span>
             </div>
@@ -2606,7 +2654,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
               </div>
             </div>
           </div>
-          <div class="settings-row" style="border-top:1px solid var(--bd);padding:.9rem 1.5rem">
+          <div class="settings-row settings-row-actions" style="border-top:1px solid var(--bd)">
             <div style="flex:1"></div>
             <button class="btn bp settings-save-btn" id="goals-save-btn" disabled onclick="saveGoalSettings()" style="padding:8px 20px;font-size:13px">Save Goals</button>
           </div>
@@ -2641,8 +2689,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
           <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importData(this)"/>
         </div>
-        <div class="settings-section" style="border-color:rgba(248,113,113,.2)">
-          <div class="settings-section-hdr" style="color:var(--rd);background:rgba(248,113,113,.06)">
+        <div class="settings-section settings-section-danger">
+          <div class="settings-section-hdr settings-section-hdr-danger">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             Danger Zone
           </div>
@@ -2749,9 +2797,9 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         
         <div class="settings-section">
           <div class="settings-section-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5.7 5.7a8 8 0 1 0 12.6 0"/></svg>Accent Color</div>
-          <div class="settings-row" style="flex-wrap:wrap;gap:12px">
+          <div class="settings-row settings-row-accent" style="flex-wrap:wrap;gap:12px">
             <div class="settings-row-l"><div class="settings-row-title">Choose accent</div><div class="settings-row-sub">Used for buttons, active states, highlights</div></div>
-            <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <div class="accent-dot-grid">
               <button class="accent-dot" data-color="#7c6af7" onclick="applyAccent('#7c6af7','#a695ff')" title="Violet" style="background:#7c6af7"></button>
               <button class="accent-dot" data-color="#3b82f6" onclick="applyAccent('#3b82f6','#60a5fa')" title="Blue" style="background:#3b82f6"></button>
               <button class="accent-dot" data-color="#34d399" onclick="applyAccent('#34d399','#6ee7b7')" title="Emerald" style="background:#34d399"></button>
@@ -2965,6 +3013,32 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
   </div>
 </div>
+
+<script>
+function settingsNavTap(id, btn){
+  showSettingsPanel(id, btn);
+  if (window.innerWidth <= 768) settingsMobileEnter(id);
+}
+function settingsMobileEnter(id){
+  const layout = document.getElementById('settings-layout');
+  if (!layout) return;
+  const titles = {profile:'Profile',study:'Study Info',goals:'Goals',appearance:'Appearance',alerts:'Alerts',data:'Data & Backup',account:'Account',feedback:'Feedback',contact:'Contact'};
+  const t = document.getElementById('settings-mob-detail-title');
+  if (t) t.textContent = titles[id] || 'Settings';
+  layout.classList.add('mob-detail');
+  const area = document.getElementById('settings-panel-area');
+  if (area) area.scrollTop = 0;
+}
+function settingsMobileBack(){
+  const layout = document.getElementById('settings-layout');
+  if (layout) layout.classList.remove('mob-detail');
+}
+function settingsMobileReset(){
+  const layout = document.getElementById('settings-layout');
+  if (layout) layout.classList.remove('mob-detail');
+}
+</script>
+
 
 <div id="mob-tests-choice-page" class="page" style="display:none">
   <div class="mob-tests-choice" style="display:flex">
@@ -4172,34 +4246,37 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 </div>
 
-<div class="mo" id="modal-whatsNew" style="z-index:10000;align-items:center!important" onclick="if(event.target===this)closeWhatsNew()">
+<div class="mo" id="modal-supportPrompt" style="z-index:10000;align-items:center!important" onclick="if(event.target===this)closeSupportPrompt()">
   <div class="pmo" style="max-width:380px">
-    <div class="pmo-glow pmo-glow-green"></div>
-    <button class="pmo-close" onclick="closeWhatsNew()">
+    <div class="pmo-glow pmo-glow-red"></div>
+    <button class="pmo-close" onclick="closeSupportPrompt()">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div style="text-align:center;padding:6px 0 4px">
-      <div style="width:56px;height:56px;border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(52,211,153,.08));border:1px solid rgba(52,211,153,.3);box-shadow:0 0 28px rgba(52,211,153,.18)">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg>
+      <div class="sp-heart-wrap" style="width:56px;height:56px;border-radius:16px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(244,63,94,.22),rgba(255,107,129,.14));border:1px solid rgba(244,63,94,.32)">
+        <svg class="sp-heart-beat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <defs><linearGradient id="spHeartGrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff6b81"/><stop offset="1" stop-color="#e0245e"/></linearGradient></defs>
+          <path d="M12 21s-8-4.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-8 11-8 11z" fill="url(#spHeartGrad)"/>
+        </svg>
       </div>
-      <div style="display:inline-block;padding:3px 10px;border-radius:99px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);color:#34d399;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:11px">New Module</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;margin-bottom:8px;color:var(--tx)">Practice Log is here 🎯</div>
-      <div style="font-size:12.5px;color:var(--mu);line-height:1.55;margin-bottom:16px">
-        Track every question you solve, chapter by chapter — and watch it add up.
+      <div class="sp-fade-in" style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;margin-bottom:10px;color:var(--tx);animation-delay:.08s">Keep JEETrack Running</div>
+      <div class="sp-fade-in" style="font-size:13px;color:var(--tx);font-weight:700;line-height:1.5;margin-bottom:10px;animation-delay:.16s">
+        JEETrack is free. Keeping it running isn't.
+      </div>
+      <div class="sp-fade-in" style="font-size:12.5px;color:var(--mu);line-height:1.65;margin-bottom:4px;animation-delay:.24s">
+        As more students use JEETrack, the cost of running and improving the platform continues to grow. Your support helps us cover infrastructure costs and keep building JEETrack for JEE aspirants.
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:18px;padding:0 2px">
-      <div class="wn-feature-row"><span class="wn-feature-dot">✓</span>Log questions in one tap, right from Syllabus</div>
-      <div class="wn-feature-row"><span class="wn-feature-dot">✓</span>Daily streaks, goals &amp; subject-wise trends</div>
-      <div class="wn-feature-row"><span class="wn-feature-dot">✓</span>A full activity timeline of your practice</div>
-    </div>
-    <div class="pmo-footer">
-      <button class="pmo-btn-cancel" onclick="closeWhatsNew()">Maybe later</button>
-      <button class="pmo-btn-save" style="background:linear-gradient(135deg,#34d399,#6ee7b7);box-shadow:0 4px 18px rgba(52,211,153,.35);color:#0a0a0f" onclick="whatsNewExplore()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        Explore Practice Log
+    <div class="pmo-footer sp-fade-in" style="justify-content:center;animation-delay:.32s">
+      <button class="pmo-btn-save" style="width:100%;justify-content:center;background:linear-gradient(135deg,#ff6b81,#e0245e);box-shadow:0 4px 18px rgba(224,36,94,.4);color:#fff" onclick="supportPromptGo()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        Support JEETrack
       </button>
     </div>
+    <label class="wm-never-again sp-fade-in" style="animation-delay:.38s">
+      <input type="checkbox" id="sp-never">
+      <span>Don't show this again</span>
+    </label>
   </div>
 </div>
 
@@ -4397,7 +4474,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
     
     <div class="cel-change-goal-wrap">
-      <button class="cel-change-goal-btn" onclick="closeCel();nav('settings');setTimeout(()=>showSettingsPanel('goals',document.querySelector('.settings-nav-item[data-tip=Goals]')),200)">
+      <button class="cel-change-goal-btn" onclick="closeCel();nav('settings');setTimeout(()=>settingsNavTap('goals',document.querySelector('.settings-nav-item[data-tip=Goals]')),200)">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 3 12c0 1.5.33 2.92.93 4.2"/><path d="M4.93 19.07A10 10 0 0 0 21 12c0-1.5-.33-2.92-.93-4.2"/></svg>
         Raise your goal
       </button>
@@ -5132,7 +5209,7 @@ function _handleRoute(){
   if(path === '/settings'){
     _navInternal('settings', false);
     if(tab && _settingsTabs.includes(tab)){
-      setTimeout(()=>{ const btn=document.querySelector(`.settings-nav-item[onclick*="'${tab}'"]`); showSettingsPanel(tab,btn); }, 80);
+      setTimeout(()=>{ const btn=document.querySelector(`.settings-nav-item[onclick*="'${tab}'"]`); settingsNavTap(tab,btn); }, 80);
     }
     return;
   }
@@ -9163,6 +9240,31 @@ function renderInsights(d){
   }));
 }
 </script>
+<<<<<<< HEAD
+=======
+<script>
+(function(){
+  var _origNav = window.nav;
+  if (typeof _origNav === 'function') {
+    window.nav = function(page, push){
+      _origNav(page, push);
+      if (page === 'settings' && window.innerWidth <= 768 && typeof settingsMobileReset === 'function') {
+        settingsMobileReset();
+      }
+    };
+  }
+  window.addEventListener('popstate', function(){
+    if (window.innerWidth <= 768) {
+      var layout = document.getElementById('settings-layout');
+      var settingsPage = document.getElementById('page-settings');
+      if (layout && layout.classList.contains('mob-detail') && settingsPage && settingsPage.classList.contains('active')) {
+        layout.classList.remove('mob-detail');
+      }
+    }
+  });
+})();
+</script>
+>>>>>>> development
 <script src="/analytics.js?v=20290729"></script>
 <script src="app.js?v=20260731"></script>
 

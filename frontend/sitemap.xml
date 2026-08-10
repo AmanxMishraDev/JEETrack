@@ -30,6 +30,20 @@
   </url>
 
   <url>
+    <loc>https://www.jeetrack.in/support</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://www.jeetrack.in/hall-of-support</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
     <loc>https://www.jeetrack.in/privacy</loc>
     <lastmod>2026-07-04</lastmod>
     <changefreq>monthly</changefreq>

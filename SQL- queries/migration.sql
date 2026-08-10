@@ -15,11 +15,17 @@ create table if not exists user_preferences (
 );
 alter table user_preferences enable row level security;
 create policy "Users can manage own preferences"
-  on user_preferences for all using (auth.uid() = user_id);
+  on user_preferences for all using ((select auth.uid()) = user_id);
 
--- Allow edge function (service role) to read all preferences
+-- Allow the edge function (service role) to read all preferences.
+-- IMPORTANT: restricted TO service_role — without this, the policy defaults
+-- to the `public` role and lets ANY client (including anon) read every
+-- user's preferences. (This was fixed live on production on 2026-07-26;
+-- keeping this script in sync so a fresh run never reintroduces the bug.)
 create policy "Service role can read all preferences"
-  on user_preferences for select using (true);
+  on user_preferences for select
+  to service_role
+  using (true);
 
 -- ── ACTIVITY TRACKING ──
 -- Update last_active_at whenever user syncs data
