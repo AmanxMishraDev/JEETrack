@@ -2317,6 +2317,8 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 
 .settings-mob-header{display:none}
 .settings-back-btn{display:none}
+.settings-goal-field{display:flex;align-items:center;gap:9px}
+.accent-dot-grid{display:flex;gap:9px;flex-wrap:wrap}
 
 @media(max-width:640px){
   
@@ -2505,6 +2507,18 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
   .settings-avatar-area{padding:1.3rem 1rem;gap:1rem}
   .settings-av{width:68px;height:68px;font-size:24px}
   .settings-section-hdr{padding:.65rem 1rem}
+
+  
+  .settings-row-goal{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:12px}
+  .settings-row-goal .settings-row-l{width:auto;flex:1;min-width:0}
+  .settings-goal-field{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .settings-goal-field input.fi{width:76px!important;flex-shrink:0;padding:8px 6px!important;font-size:14px!important}
+
+  
+  .settings-row-accent{flex-direction:column;align-items:stretch;gap:12px}
+  .settings-row-accent .settings-row-l{width:100%}
+  .accent-dot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 10px;width:100%;justify-items:center}
+  .accent-dot-grid .accent-dot{width:100%;max-width:36px;height:36px}
 }
 .settings-signout-row:hover{background:rgba(248,113,113,.07)!important;border-radius:0}
 .btn.settings-save-btn{transition:all .22s cubic-bezier(.4,0,.2,1)}

@@ -106,10 +106,16 @@ main{max-width:980px;margin:0 auto;padding:3.4rem clamp(1rem,5vw,2.5rem) 5rem;po
 .hall-empty-cta{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--am),var(--am2));color:#241707;text-decoration:none;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;padding:.8rem 1.6rem;border-radius:12px}
 
 /* FOOTER */
-.foot{text-align:center;border-top:1px solid var(--bd);padding:1.8rem 1rem;color:var(--mu2);font-size:.75rem;position:relative;z-index:2}
-.foot a{color:var(--mu);text-decoration:none}
-@media(hover:hover){.foot a:hover{color:var(--tx)}}
-.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
+.foot{border-top:1px solid var(--bd);padding:3rem 1.5rem 2.2rem;position:relative;z-index:2}
+.foot-inner{max-width:520px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.9rem}
+.foot-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-.03em;text-decoration:none;color:var(--tx);transition:opacity .15s}
+@media(hover:hover){.foot-logo:hover{opacity:.8}}
+.foot-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.foot-tagline{font-size:.83rem;color:var(--mu);max-width:300px;line-height:1.6}
+.foot-links{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem;padding-top:1.4rem;border-top:1px solid var(--bd);width:100%}
+.foot-links a{color:var(--mu);text-decoration:none;font-size:.8rem;padding:.4rem .7rem;border-radius:7px;transition:color .15s,background .15s}
+@media(hover:hover){.foot-links a:hover{color:var(--tx);background:rgba(255,255,255,.05)}}
+.foot-bottom{font-size:.72rem;color:var(--mu2);margin-top:.3rem}
 
 @media(max-width:800px){
   .nav-links,.nav-cta{display:none}
@@ -184,10 +190,19 @@ main{max-width:980px;margin:0 auto;padding:3.4rem clamp(1rem,5vw,2.5rem) 5rem;po
 </main>
 
 <footer class="foot">
-  <div class="foot-links">
-    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/support">Support</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  <div class="foot-inner">
+    <a href="/" class="foot-logo">JEE<span>Track</span></a>
+    <p class="foot-tagline">Free forever. Built for JEE aspirants, by a JEE aspirant.</p>
+    <div class="foot-links">
+      <a href="/features">Features</a>
+      <a href="/faq">FAQ</a>
+      <a href="/about">About</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
+    <div class="foot-bottom">© 2026 JEETrack · Built for JEE Aspirants across India</div>
   </div>
-  © 2026 JEETrack · Built for JEE Aspirants across India
 </footer>
 
 <script>

@@ -132,7 +132,14 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
 .opt-name-input::placeholder{color:var(--mu2)}
 .opt-checkbox{display:flex;align-items:center;gap:.45rem;color:var(--mu);font-size:.76rem;cursor:pointer;user-select:none}
 .opt-checkbox input{accent-color:var(--pk);width:15px;height:15px;cursor:pointer}
-.guest-note{font-size:.76rem;color:var(--mu2);margin-top:.6rem;line-height:1.6;max-width:520px}
+.note-toggle{background:none;border:none;color:var(--mu2);font-size:.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;padding:.5rem 0 0;text-align:left;transition:color .15s}
+.note-toggle:hover{color:var(--pk)}
+.note-field-wrap{margin-top:.5rem}
+.note-textarea{width:100%;background:var(--sf3);border:1px solid var(--bd);border-radius:10px;padding:.6rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:0;resize:none;transition:border-color .15s}
+.note-textarea:focus{border-color:var(--pk)}
+.note-textarea::placeholder{color:var(--mu2)}
+.note-char-count{font-size:.68rem;color:var(--mu2);text-align:right;margin-top:.25rem}
+
 
 .payrow{display:flex;align-items:center;gap:1rem;margin-top:1.35rem;flex-wrap:wrap}
 .pay-btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;border:0;border-radius:12px;background:linear-gradient(135deg,var(--am),var(--am2));color:#2a1a06;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;padding:.9rem 1.4rem;cursor:pointer;box-shadow:0 10px 24px rgba(243,184,75,.28);transition:transform .15s,box-shadow .15s}
@@ -196,6 +203,7 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
 .cel-badge-chip-big span{background:linear-gradient(135deg,rgba(124,106,247,.18),rgba(238,138,178,.12));border:1px solid rgba(238,138,178,.35);border-radius:99px;padding:.4rem 1.1rem;box-shadow:0 0 24px rgba(238,138,178,.18)}
 @keyframes badgeGlow{0%,100%{box-shadow:0 0 30px rgba(238,138,178,.22)}50%{box-shadow:0 0 42px rgba(238,138,178,.36)}}
 .cel-badge-permanent{font-size:.76rem;color:var(--mu2);max-width:310px;margin:0 auto 1.5rem;line-height:1.6;opacity:0;animation:fadeUp .5s ease .74s forwards}
+.cel-supporter-note{max-width:340px;margin:0 auto 1rem;background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:12px;padding:.8rem 1rem;color:var(--tx);font-size:.82rem;font-style:italic;line-height:1.6;text-align:left}
 .cel-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;padding:.85rem 1.6rem;border-radius:13px;opacity:0;animation:fadeUp .5s ease .98s forwards;box-shadow:0 10px 28px rgba(124,106,247,.28)}
 .cel-btn:active{transform:scale(.97)}
 
@@ -375,16 +383,18 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
       <div class="badge-preview">You'll receive <span class="badge-chip" id="badge-preview-chip">Bronze Supporter</span></div>
       <div class="opt-fields">
         <input type="text" class="opt-name-input" id="supporter-name-input" placeholder="Your name (optional)" maxlength="60"/>
-        <input type="email" class="opt-name-input" id="supporter-email-input" placeholder="Email (to claim your badge later)" maxlength="120" style="display:none"/>
         <label class="opt-checkbox">
           <input type="checkbox" id="show-publicly-check" checked/>
           Display my name in the Hall of Support
         </label>
       </div>
     </div>
-    <p class="guest-note" id="guest-note" style="display:none">
-      Not signed in — your badge will be reserved under this email. Sign in with the same email anytime to claim it permanently on your JEETrack profile.
-    </p>
+
+    <button type="button" class="note-toggle" id="note-toggle" onclick="toggleNoteField()">+ Leave a note 💬</button>
+    <div class="note-field-wrap" id="note-field-wrap" style="display:none">
+      <textarea class="note-textarea" id="supporter-note-input" maxlength="200" rows="2" placeholder="Say something to JEETrack — kept private, just for us" oninput="updateNoteCharCount()"></textarea>
+      <div class="note-char-count" id="note-char-count">200 left</div>
+    </div>
 
     <div class="payrow">
       <button class="pay-btn" id="pay-btn" onclick="payChai()">
@@ -453,6 +463,7 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
     <div class="cel-badge-chip-big" id="cel-badge-chip">Bronze Supporter</div>
     <p class="cel-badge-permanent" id="cel-badge-permanent">This badge is now permanently attached to your JEETrack profile.</p>
     <p class="cel-sub">Thank you for the <span class="cel-amt" id="cel-amount">₹99</span> — it genuinely helps keep JEETrack free for every aspirant.</p>
+    <div class="cel-supporter-note" id="cel-supporter-note" style="display:none"></div>
     <p class="cel-note">A receipt has been sent to your email.</p>
     <a href="/" class="cel-btn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -684,14 +695,26 @@ async function initSb(){
   setupSupporterFields();
 }
 
+function toggleNoteField(){
+  const wrap = document.getElementById('note-field-wrap');
+  const toggle = document.getElementById('note-toggle');
+  const isOpen = wrap.style.display !== 'none';
+  wrap.style.display = isOpen ? 'none' : 'block';
+  toggle.style.display = isOpen ? '' : 'none';
+  if(!isOpen) document.getElementById('supporter-note-input').focus();
+}
+function updateNoteCharCount(){
+  const input = document.getElementById('supporter-note-input');
+  const left = 200 - input.value.length;
+  document.getElementById('note-char-count').textContent = `${left} left`;
+}
+
 async function setupSupporterFields(){
   if(!sb) return;
   try{
     const { data: userData } = await sb.auth.getUser().catch(()=>({data:null}));
     const user = userData?.user || null;
     const nameInput = document.getElementById('supporter-name-input');
-    const emailInput = document.getElementById('supporter-email-input');
-    const guestNote = document.getElementById('guest-note');
 
     if(user){
       // Logged in: auto-fetch their display name as the value (not just a
@@ -704,14 +727,9 @@ async function setupSupporterFields(){
         nameInput.value = displayName;
         nameInput.placeholder = displayName;
       }
-      emailInput.style.display = 'none';
-      guestNote.style.display = 'none';
-    } else {
-      // Guest: capture email so this contribution can be claimed later by
-      // signing in with the same address.
-      emailInput.style.display = '';
-      guestNote.style.display = 'block';
     }
+    // Guests: nothing to prefill here — Razorpay Checkout collects their
+    // email directly during payment (see payChai()'s prefill/readonly config).
   }catch(e){ /* non-fatal — checkout still works without prefill */ }
 }
 // Deferred scripts (supabase-js, Razorpay checkout.js) run after HTML parsing
@@ -734,9 +752,9 @@ updatePayLabel();
 const PENDING_ORDER_KEY = 'jeetrack_pending_chai_order';
 const PENDING_ORDER_MAX_AGE_MS = 20 * 60 * 1000; // 20 minutes
 
-function savePendingOrder(orderId, amount){
+function savePendingOrder(orderId, amount, note){
   try{
-    localStorage.setItem(PENDING_ORDER_KEY, JSON.stringify({ orderId, amount, ts: Date.now() }));
+    localStorage.setItem(PENDING_ORDER_KEY, JSON.stringify({ orderId, amount, note: note || '', ts: Date.now() }));
   }catch(e){}
 }
 function clearPendingOrder(){
@@ -766,7 +784,7 @@ async function checkPendingPayment(){
     });
     if(data && data.paid){
       clearPendingOrder();
-      showCelebration(data.amount || pending.amount, data.badge_tier, !!currentUser);
+      showCelebration(data.amount || pending.amount, data.badge_tier, !!currentUser, pending.note);
       loadCommunityTeaser();
     }
   }catch(e){
@@ -840,18 +858,6 @@ async function payChai(){
     return;
   }
 
-  const { data: preCheckUser } = await sb.auth.getUser().catch(()=>({data:null}));
-  const isGuest = !preCheckUser?.user;
-  const guestEmail = document.getElementById('supporter-email-input').value.trim();
-  if(isGuest && !guestEmail){
-    errEl.textContent = 'Enter your email so you can claim this badge later by signing in.';
-    return;
-  }
-  if(isGuest && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)){
-    errEl.textContent = 'That email doesn\'t look right — double-check it.';
-    return;
-  }
-
   const btn = document.getElementById('pay-btn');
   const btnTxt = document.getElementById('pay-btn-txt');
   const prevLabel = btnTxt.textContent;
@@ -863,10 +869,10 @@ async function payChai(){
     const currentUser = userData?.user || null;
     const supporterName = document.getElementById('supporter-name-input').value.trim();
     const showPublicly = document.getElementById('show-publicly-check').checked;
-    const supporterEmail = currentUser?.email || guestEmail;
+    const supporterNote = document.getElementById('supporter-note-input').value.trim().slice(0, 200);
 
     const { data, error } = await sb.functions.invoke('create-razorpay-order', {
-      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly, email: supporterEmail }
+      body: { amount: selectedAmount, display_name: supporterName, show_publicly: showPublicly, note: supporterNote }
     });
     if(error || !data || data.error) throw new Error((data && data.error) || error?.message || 'Could not start payment');
 
@@ -874,7 +880,7 @@ async function payChai(){
     // after Razorpay's "redirecting..." screen, UPI app-switch, tab killed,
     // etc.) but the payment actually succeeded, checkPendingPayment() picks
     // this up on the next page load/return and shows the success UI anyway.
-    savePendingOrder(data.order_id, selectedAmount);
+    savePendingOrder(data.order_id, selectedAmount, supporterNote);
 
     const rzp = new Razorpay({
       key: data.key_id,
@@ -884,7 +890,12 @@ async function payChai(){
       description: 'Buy this chai ☕',
       image: 'https://www.jeetrack.in/icon-192.png',
       order_id: data.order_id,
+      // Logged-in users: prefilled AND locked (readonly) so they never have
+      // to re-type their own account email. Guests: left blank/editable —
+      // Razorpay Checkout requires and collects it during payment; that
+      // Razorpay-collected email is the source of truth (see webhook).
       prefill: { email: currentUser?.email || '' },
+      readonly: { email: !!currentUser },
       theme: { color: '#7c6af7' },
       redirect: false,
       handler: async function(response){
@@ -898,7 +909,7 @@ async function payChai(){
               user_id: currentUser?.id || null,
               display_name: supporterName,
               show_publicly: showPublicly,
-              email: supporterEmail
+              note: supporterNote
             }
           });
           clearPendingOrder();
@@ -907,7 +918,7 @@ async function payChai(){
             btn.disabled = false; btnTxt.textContent = prevLabel;
             return;
           }
-          showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser);
+          showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser, supporterNote);
           loadCommunityTeaser();
           // verify-razorpay-payment responds instantly with a fast fallback
           // tier (computed from just this amount) and writes to the DB in
@@ -937,7 +948,7 @@ async function payChai(){
   }
 }
 
-function showCelebration(amount, badgeTierLabel, isLoggedIn){
+function showCelebration(amount, badgeTierLabel, isLoggedIn, note){
   document.getElementById('cel-amount').textContent = `₹${amount}`;
 
   const label = badgeTierLabel || getBadgeForAmount(amount).label;
@@ -946,6 +957,14 @@ function showCelebration(amount, badgeTierLabel, isLoggedIn){
   document.getElementById('cel-badge-permanent').textContent = isLoggedIn
     ? 'This badge is now permanently attached to your JEETrack profile.'
     : 'Your badge is reserved! Sign in with the same email anytime to claim it permanently on your JEETrack profile.';
+
+  const noteEl = document.getElementById('cel-supporter-note');
+  if(note && note.trim()){
+    noteEl.textContent = `💬 "${note.trim()}"`;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
 
   const overlay = document.getElementById('celebrate');
   overlay.classList.add('show');

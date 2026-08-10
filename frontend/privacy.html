@@ -391,242 +391,159 @@
   <div class="hero-badge"><span class="hero-badge-dot"></span>Legal</div>
   <h1>Privacy <em>Policy</em></h1>
   <p>What we collect, why we collect it, who we share it with, and how you can control or delete it.</p>
-  <div class="updated">Last updated: June 30, 2026</div>
+  <div class="updated">Last updated: August 9, 2026</div>
 </section>
 
 <div class="doc-wrap">
 
-  <div class="toc">
+<div class="toc">
     <div class="toc-title">On this page</div>
     <a href="#overview">Overview</a>
-    <a href="#what-we-collect">What we collect</a>
-    <a href="#how-we-use">How we use it</a>
-    <a href="#ai-insights">AI Insights & Groq</a>
-    <a href="#analytics">Analytics</a>
-    <a href="#sharing">Who we share data with</a>
-    <a href="#storage">Storage & security</a>
-    <a href="#retention">Retention & deletion</a>
-    <a href="#your-rights">Your rights & choices</a>
-    <a href="#children">Children & minors</a>
-    <a href="#cookies">Cookies & local storage</a>
-    <a href="#notifications">Push notifications</a>
-    <a href="#changes">Changes to this policy</a>
+    <a href="#collect">What we collect</a>
+    <a href="#use">How we use data</a>
+    <a href="#analytics">Analytics & session replay</a>
+    <a href="#ai">AI Insights</a>
+    <a href="#sharing">Third-party providers</a>
+    <a href="#security">Storage, security & retention</a>
+    <a href="#rights">Your rights & deletion</a>
+    <a href="#minors">Children & minors</a>
+    <a href="#cookies">Cookies, notifications & changes</a>
     <a href="#contact">Contact us</a>
   </div>
 
   <article class="doc">
-
     <div class="doc-summary">
       <strong>The short version:</strong>
       <ul>
-        <li>JEETrack stores the study data you enter (test scores, study hours, syllabus progress, tasks) so the app works. We don't sell your data.</li>
-        <li>We use <strong>Supabase</strong> to store your account and data and to power our internal analytics, and <strong>Groq</strong> to generate your AI Insights, and <strong>Resend</strong> to send report emails.</li>
-        <li>You can export or permanently delete all your data anytime from <strong>Settings → Data & Backup</strong>.</li>
-        <li>Many JEETrack users are under 18. If you're under 18, please use JEETrack with a parent or guardian's knowledge — see <a href="#children">Children &amp; Minors</a>.</li>
+        <li>We collect the account, profile, study, and technical information needed to run JEETrack.</li>
+        <li>We use <strong>PostHog</strong> for product analytics and session replay to understand bugs and product usage.</li>
+        <li><strong>Razorpay</strong> processes optional support contributions. Payment details are handled through Razorpay rather than stored by JEETrack.</li>
+        <li>We don't sell your personal data or use it for third-party advertising.</li>
+        <li>You can export or request deletion of your JEETrack data at any time, subject to limited legal, backup, or provider retention.</li>
       </ul>
     </div>
 
     <section id="overview">
       <h2><span class="num">1</span>Overview</h2>
-      <p>JEETrack ("JEETrack", "we", "us", "our") is a study-tracking web app built for JEE (Joint Entrance Examination) aspirants in India, accessible at <a href="https://www.jeetrack.in">www.jeetrack.in</a>. JEETrack is built and operated by an individual developer, not a registered company.</p>
-      <p>This Privacy Policy explains what information JEETrack collects when you use the app, how that information is used, who it's shared with, and what choices you have. It applies to the JEETrack website, the JEETrack Progressive Web App (PWA) when installed on your device, and any related services described below.</p>
-      <p>By creating an account or using JEETrack, you agree to the collection and use of information as described in this policy. If you don't agree, please don't use the app.</p>
+      <p>JEETrack is a study-tracking web app and Progressive Web App for JEE aspirants in India, available at <a href="https://www.jeetrack.in">www.jeetrack.in</a>. It is built and operated by an individual developer, not a registered company.</p>
+      <p>This Privacy Policy explains what we collect, why we use it, which providers process it, and the choices available to you.</p>
     </section>
 
-    <section id="what-we-collect">
+    <section id="collect">
       <h2><span class="num">2</span>What we collect</h2>
-      <p>We try to collect only what's needed to make JEETrack work and to improve it. Here's exactly what that includes:</p>
-
-      <h3>Account information</h3>
-      <p>When you sign up, you create an account through <strong>Supabase Authentication</strong>, using either:</p>
+      <h3>Account & profile information</h3>
       <ul>
-        <li><strong>Email and password</strong> — we (via Supabase) store your email address and a securely hashed password. We never see or store your password in plain text.</li>
-        <li><strong>Google Sign-In (OAuth)</strong> — Google shares your name, email address, and profile picture (if available) with us, so we can create your account without you typing a password.</li>
+        <li>Email address and account credentials through Supabase Authentication</li>
+        <li>Name and profile picture when provided through Google Sign-In</li>
+        <li>Display name, avatar, academic year, target JEE year, study mode, and coaching information you choose to provide</li>
       </ul>
-
-      <h3>Profile & onboarding information</h3>
-      <p>During onboarding, you may provide:</p>
+      <h3>Study data</h3>
       <ul>
-        <li>Display name and profile photo (uploaded photo or a preset avatar)</li>
-        <li>Academic year (Class 11, Class 12, or Dropper) and target JEE year</li>
-        <li>Study mode (online, offline, hybrid, self-study) and coaching institute name, if any</li>
+        <li>Mock test scores, subject breakdowns, dates, and notes</li>
+        <li>Study hours and timer sessions</li>
+        <li>Syllabus progress</li>
+        <li>To-do and backlog items, goals, and feedback you send us</li>
       </ul>
-
-      <h3>Study data you create</h3>
-      <p>This is the core of the app — the data you log to track your preparation:</p>
-      <ul>
-        <li>Mock test scores for JEE Mains and JEE Advanced (subject-wise breakdowns, totals, dates, notes)</li>
-        <li>Study hours logged by subject and type (lecture, practice, revision), including timer sessions</li>
-        <li>Syllabus completion status for Physics, Chemistry, and Maths chapters</li>
-        <li>To-do and backlog tasks, including titles, priorities, due dates, and notes</li>
-        <li>Score goals you set for yourself</li>
-        <li>Feedback or messages you send us through the in-app feedback form</li>
-      </ul>
-
-      <h3>Technical & usage information</h3>
-      <p>We automatically derive some usage information from the study data you create and from your account activity — for example, which features you use (mock tests, study hours, syllabus tracker, AI Insights, backlog), how often you open the app, and your signup date. This is calculated directly from your existing Supabase records, not from a separate tracking script, and is used only for our own internal analytics dashboard to understand product usage at an aggregate level.</p>
-
-      <h3>Information we do <em>not</em> intentionally collect</h3>
-      <p>We don't ask for or knowingly collect your government ID numbers, financial/payment details (JEETrack is free — we don't process payments), or precise GPS location.</p>
+      <h3>Technical & usage data</h3>
+      <p>We and our providers may process information such as browser/device information, IP address, timestamps, pages or features used, interaction events, and session activity. This helps us operate, secure, debug, and improve JEETrack.</p>
+      <p>We do not intentionally ask JEETrack users for government ID numbers, precise GPS location, or full payment credentials for the app itself.</p>
     </section>
 
-    <section id="how-we-use">
-      <h2><span class="num">3</span>How we use your information</h2>
-      <p>We use the information described above to:</p>
+    <section id="use">
+      <h2><span class="num">3</span>How we use data</h2>
       <ul>
-        <li>Create and maintain your account, and let you sign in securely</li>
-        <li>Save and sync your study data across your devices</li>
-        <li>Generate your dashboards, charts, streaks, and the study-hours heatmap</li>
-        <li>Generate your AI Insights reports (see below)</li>
-        <li>Send you transactional emails (like monthly report emails) and, if you opt in, push notifications for test reminders and study nudges</li>
-        <li>Personalize onboarding and dashboard calibration based on your class/target year</li>
-        <li>Understand how people use JEETrack, fix bugs, and decide what to build next</li>
-        <li>Respond to feedback or support requests you send us</li>
+        <li>Create and secure accounts and sync your study data</li>
+        <li>Generate dashboards, charts, streaks, reports, and other app features</li>
+        <li>Generate AI Insights when you request them</li>
+        <li>Send transactional emails and optional reminders or monthly reports</li>
+        <li>Understand feature usage, diagnose bugs, improve performance, and decide what to build</li>
+        <li>Process and support optional contributions to JEETrack</li>
+        <li>Respond to support requests and comply with legal obligations</li>
       </ul>
-      <p>We do <strong>not</strong> sell your personal data to advertisers or other third parties, and JEETrack does not run third-party advertising.</p>
-    </section>
-
-    <section id="ai-insights">
-      <h2><span class="num">4</span>AI Insights & Groq</h2>
-      <p>JEETrack's "AI Insights" feature analyzes your test scores, study hours, syllabus progress, and backlog data to generate a personalized weekly breakdown. To do this, when you tap <strong>Generate Insights</strong>, JEETrack sends a summary of that data — built from what you've logged in the app — to <strong><a href="https://groq.com" target="_blank" rel="noopener">Groq</a></strong>, a third-party AI inference provider, which runs a large language model (Llama 3.3 70B) to produce the analysis text.</p>
-      <div class="callout">
-        <p>This means a snapshot of your performance data (scores, hours, syllabus gaps) is sent to Groq's servers at the moment you request an insight. We've designed the request to include only what's needed to generate the report — not your name, email, or account credentials — but the academic data itself (e.g. "scored 62% in Physics on partial syllabus") is included so the AI can analyze it.</p>
-      </div>
-      <p>This request happens through our own backend (a Supabase Edge Function), which requires you to be signed in — it isn't called automatically or in the background. Groq processes this data to return a response and does not use it to train their models for the purposes of this integration, per their API terms; we encourage you to review <a href="https://groq.com/privacy-policy" target="_blank" rel="noopener">Groq's own privacy policy</a> for how they handle API data.</p>
+      <p>We do <strong>not sell your personal data</strong> and JEETrack does not run third-party advertising.</p>
     </section>
 
     <section id="analytics">
-      <h2><span class="num">5</span>Analytics</h2>
-      <p>We run our own internal analytics dashboard to understand how people use JEETrack so we can fix what's broken and improve what isn't. Unlike many apps, we don't use a third-party analytics or tracking service — our analytics are built entirely from the same <strong>Supabase</strong> database that stores your study data. There's no separate tracking script running in your browser, no session recording, and no third-party company receiving your usage events.</p>
-
-      <div class="tag-row">
-        <span class="tag purple">Derived from existing data</span>
-        <span class="tag green">No session recording</span>
-        <span class="tag amber">No third-party tracker</span>
+      <h2><span class="num">4</span>Analytics & session replay</h2>
+      <p>JEETrack uses <strong>PostHog</strong> for product analytics and session replay. This helps us understand how features are used, reproduce bugs, identify confusing interactions, and improve the Service. PostHog provides product analytics and session replay as part of its platform. See <a href="https://posthog.com/privacy" target="_blank" rel="noopener">PostHog's Privacy Policy</a> for its own processing practices.</p>
+      <p>Depending on how the Service is configured, PostHog may receive information such as interaction events, page or feature usage, browser/device information, timestamps, and session recordings of interactions with the app. Session replay can capture visual and interaction activity during a session. We configure tracking to support product improvement and should not intentionally send passwords or payment credentials as analytics data.</p>
+      <div class="callout amber">
+        <p><strong>Session recordings are not the same as screen access.</strong> They record interactions with JEETrack through the web app; they do not give JEETrack access to unrelated activity elsewhere on your device.</p>
       </div>
+      <p>PostHog may use cookies, local storage, or similar technologies to provide its analytics features. Its processing is also governed by PostHog's own privacy and contractual terms.</p>
+    </section>
 
-      <h3>What this means in practice</h3>
-      <p>When you log a mock test, study session, backlog item, or generate an AI Insight, that record already exists in your account's Supabase tables. Our admin dashboard queries those same tables in aggregate — for example, counting how many users logged a test this week, or what percentage of users have tried AI Insights — without adding any new tracking of your individual behavior beyond what's needed for the app to function.</p>
-
-      <h3>Identification</h3>
-      <p>Because this analytics data comes from your account records rather than a separate tracking pixel, it's inherently tied to your user ID, email, and profile fields (class, target year, coaching institute) the same way your regular app data is — there's no additional identifier or fingerprinting involved.</p>
-
-      <p>This approach means one less third-party company has access to your usage patterns, and there's no separate analytics privacy policy to review — your data stays within the same Supabase infrastructure described throughout this policy.</p>
+    <section id="ai">
+      <h2><span class="num">5</span>AI Insights</h2>
+      <p>When you request AI Insights, JEETrack sends a summary of relevant academic data, such as scores, study hours, syllabus progress, and backlog information, through our backend to <strong><a href="https://groq.com" target="_blank" rel="noopener">Groq</a></strong> so it can generate the requested analysis.</p>
+      <p>The request is designed to include the information needed for the analysis rather than your account credentials. AI Insights are generated only when you request them, not continuously in the background.</p>
+      <p>Groq's handling of API data is governed by its own policies and terms. Please review its privacy documentation for details about its processing.</p>
     </section>
 
     <section id="sharing">
-      <h2><span class="num">6</span>Who we share data with</h2>
-      <p>We don't sell or rent your personal information. We do share data with the service providers who help us run JEETrack — each only gets the data it needs to do its job:</p>
-
+      <h2><span class="num">6</span>Third-party providers</h2>
+      <p>We do not sell or rent your personal information. We share information with providers only as needed to operate JEETrack:</p>
       <div class="table-wrap">
         <table class="dtable">
-          <tr><th>Provider</th><th>What they're used for</th><th>What they receive</th></tr>
-          <tr>
-            <td><strong>Supabase</strong></td>
-            <td>Authentication, database, Edge Functions (our backend), and our internal analytics dashboard</td>
-            <td>Account credentials, all study data you create, profile info</td>
-          </tr>
-          <tr>
-            <td><strong>Google</strong></td>
-            <td>Sign-in via Google OAuth (optional, if you choose it)</td>
-            <td>Your Google account email, name, and profile picture</td>
-          </tr>
-          <tr>
-            <td><strong>Groq</strong></td>
-            <td>Generating AI Insights reports</td>
-            <td>A summary of your academic performance data, only when you request an insight</td>
-          </tr>
-          <tr>
-            <td><strong>Resend</strong></td>
-            <td>Sending monthly report emails and transactional emails</td>
-            <td>Your email address, and the content of the report (built from your data)</td>
-          </tr>
-          <tr>
-            <td><strong>Vercel</strong></td>
-            <td>Hosting the website and serverless functions</td>
-            <td>Standard web request data (IP address, browser info) as part of serving the site</td>
-          </tr>
+          <tr><th>Provider</th><th>Purpose</th><th>Typical data involved</th></tr>
+          <tr><td><strong>Supabase</strong></td><td>Authentication, database and backend</td><td>Account, profile and study data</td></tr>
+          <tr><td><strong>Google</strong></td><td>Optional Google Sign-In</td><td>Name, email and profile picture</td></tr>
+          <tr><td><strong>Groq</strong></td><td>AI Insights</td><td>Academic data needed for the requested insight</td></tr>
+          <tr><td><strong>Resend</strong></td><td>Transactional and report emails</td><td>Email address and email/report content</td></tr>
+          <tr><td><strong>Vercel</strong></td><td>Hosting</td><td>Standard web request and technical data</td></tr>
+          <tr><td><strong>PostHog</strong></td><td>Product analytics and session replay</td><td>Usage events, technical data and session interactions</td></tr>
+          <tr><td><strong>Razorpay</strong></td><td>Optional support contributions</td><td>Payment and transaction information, plus details you provide during checkout</td></tr>
         </table>
       </div>
-
-      <p>We may also disclose information if required to by law, legal process, or government request, or if necessary to protect the rights, property, or safety of JEETrack, our users, or others.</p>
-      <p>If JEETrack is ever acquired, merged, or its assets transferred, your information may be transferred as part of that transaction — we'll notify you if that happens.</p>
+      <p>Razorpay's <a href="https://razorpay.com/buyer-privacy-notice/" target="_blank" rel="noopener">Buyer Privacy Notice</a> explains that payment processing may involve personal identifiers, transaction/payment data, and device or technical data, and that information may be shared with financial institutions, service providers, affiliates, or regulators where necessary.</p>
+      <p>We may also disclose information when required by law, legal process, or to protect the rights, safety, and security of JEETrack or others.</p>
     </section>
 
-    <section id="storage">
-      <h2><span class="num">7</span>Storage & security</h2>
-      <p>Your account and study data are stored in a <strong>Supabase</strong> PostgreSQL database with Row Level Security enabled, meaning the database itself enforces that you can only ever read or write your own data — not other users' data. Communication between your browser and our backend uses HTTPS encryption.</p>
-      <p>JEETrack also keeps a local copy of your data in your browser's local storage so the app stays fast and usable on flaky connections, syncing it back to Supabase when you're online.</p>
-      <p>No method of transmission or storage is 100% secure, and we can't guarantee absolute security — but we use industry-standard practices (encrypted connections, access-controlled databases, hashed passwords) to protect your information.</p>
+    <section id="security">
+      <h2><span class="num">7</span>Storage, security & retention</h2>
+      <p>Your account and study data are stored through Supabase. Row Level Security is used to restrict database access, and communications with our backend use HTTPS. JEETrack may also store cached or local copies of app data in your browser for performance and offline-friendly behavior.</p>
+      <p>We use reasonable security measures, but no internet service can guarantee absolute security.</p>
+      <p>We generally retain account and study data while your account is active. After deletion, some information may remain temporarily in backups, logs, fraud-prevention records, or provider systems where necessary for security, legal, accounting, or regulatory reasons, after which it is deleted or otherwise handled according to applicable retention requirements.</p>
     </section>
 
-    <section id="retention">
-      <h2><span class="num">8</span>Retention & deletion</h2>
-      <p>We keep your account and study data for as long as your account is active, so your tracker keeps working and your history stays intact for streaks, trends, and comparisons.</p>
-      <p>You're in control of this data:</p>
+    <section id="rights">
+      <h2><span class="num">8</span>Your rights & deletion</h2>
+      <p>You can access, correct, export, and delete your JEETrack data through available account controls, or contact us for help.</p>
       <ul>
-        <li><strong>Export:</strong> Go to <em>Settings → Data &amp; Backup → Export JSON Backup</em> to download all your data, or <em>Export PDF Report</em> for a formatted summary.</li>
-        <li><strong>Delete everything:</strong> Go to <em>Settings → Data &amp; Backup → Reset All Data</em> to permanently and irreversibly erase your scores, study hours, tasks, backlog, and syllabus progress.</li>
-        <li><strong>Delete your account entirely:</strong> Email us at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we'll delete your account and associated data from our systems.</li>
+        <li><strong>Export:</strong> Use <em>Settings → Data &amp; Backup</em> to export available backups/reports.</li>
+        <li><strong>Delete data:</strong> Use <em>Settings → Data &amp; Backup → Reset All Data</em> where available.</li>
+        <li><strong>Delete your account:</strong> Contact <a href="mailto:support@jeetrack.in">support@jeetrack.in</a>.</li>
+        <li><strong>Notifications:</strong> You can disable optional push notifications and report emails from the relevant settings or browser permissions.</li>
       </ul>
-      <p>Some information may persist for a short period in backups or logs even after deletion, but it will no longer be linked to active use of the product and will age out per our providers' standard retention schedules.</p>
+      <p>For information processed directly by third-party providers such as PostHog or Razorpay, their own privacy policies and legal retention requirements may also apply.</p>
     </section>
 
-    <section id="your-rights">
-      <h2><span class="num">9</span>Your rights & choices</h2>
-      <p>Regardless of where you live, you can:</p>
-      <ul>
-        <li><strong>Access</strong> your data anytime through the app, or request a copy from us directly</li>
-        <li><strong>Correct</strong> inaccurate profile information from Settings</li>
-        <li><strong>Export</strong> your data as a JSON backup or PDF report</li>
-        <li><strong>Delete</strong> your data or your account, as described above</li>
-        <li><strong>Opt out</strong> of push notifications and monthly email reports anytime from Settings</li>
-        <li><strong>Withdraw consent</strong> for Google Sign-In data sharing by disconnecting JEETrack from your Google account settings, or by deleting your JEETrack account</li>
-      </ul>
-      <p>If you're an Indian resident, these rights are consistent with the Digital Personal Data Protection Act, 2023 (DPDP Act). If you're located outside India and a different privacy law applies to you (such as the GDPR), we'll honor equivalent rights on request — contact us and we'll do our best to accommodate it.</p>
-    </section>
-
-    <section id="children">
-      <h2><span class="num">10</span>Children & minors</h2>
-      <div class="callout amber">
-        <p>We know many JEETrack users are between 16 and 18 years old, since that's the typical age range for JEE aspirants. This section is here deliberately, not as boilerplate.</p>
-      </div>
-      <p>If you are under 18, you should use JEETrack with the involvement, awareness, or consent of a parent or legal guardian, consistent with applicable law in your jurisdiction. JEETrack does not knowingly collect more information from a minor than is needed to provide the study-tracking features described in this policy, and we don't use minors' data for advertising.</p>
-      <p>If you are a parent or guardian and believe your child has provided personal information to JEETrack and you'd like it reviewed, exported, or deleted, contact us at <a href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we will act on that request.</p>
+    <section id="minors">
+      <h2><span class="num">9</span>Children & minors</h2>
+      <p>JEETrack is designed for JEE aspirants, many of whom are under 18. If you are under 18, use JEETrack with the awareness and, where required by applicable law, consent of a parent or legal guardian.</p>
+      <p>We do not knowingly use minors' data for advertising. If a parent or guardian believes a minor has provided personal information and wants it reviewed or deleted, contact <a href="mailto:support@jeetrack.in">support@jeetrack.in</a>.</p>
     </section>
 
     <section id="cookies">
-      <h2><span class="num">11</span>Cookies & local storage</h2>
-      <p>JEETrack uses your browser's local storage to keep you signed in and to cache your study data for offline-friendly performance. Supabase Authentication may also use cookies or similar tokens to manage your login session securely. We don't use cookies for third-party advertising, cross-site ad tracking, or third-party analytics — our internal analytics dashboard reads directly from your existing account data rather than setting any tracking cookies of its own.</p>
-      <p>JEETrack also registers a <strong>service worker</strong> in your browser (if you enable notifications) to support offline caching and push notifications. This service worker can store cached copies of app files on your device — it does not collect personal data on its own.</p>
-    </section>
-
-    <section id="notifications">
-      <h2><span class="num">12</span>Push notifications & emails</h2>
-      <p>If you opt in, JEETrack can send browser push notifications for test reminders, daily study nudges, and backlog reminders. You can disable these anytime from Settings or your browser's notification permissions — this is entirely optional and off by default.</p>
-      <p>If you opt in to monthly reports, we'll send a curated progress email (via Resend) on the 1st of each month, including a PDF performance summary built from your data. You can unsubscribe anytime from Settings.</p>
-    </section>
-
-    <section id="changes">
-      <h2><span class="num">13</span>Changes to this policy</h2>
-      <p>We may update this Privacy Policy as JEETrack evolves — for example, if we add a new feature or change a service provider. If we make material changes, we'll update the "Last updated" date at the top of this page, and where appropriate, notify you in-app. Continuing to use JEETrack after changes take effect means you accept the revised policy.</p>
+      <h2><span class="num">10</span>Cookies, notifications & changes</h2>
+      <p>JEETrack and its providers may use cookies, local storage, service workers, authentication tokens, or similar technologies for login, caching, analytics, session replay, and notifications. You can control some of these technologies through browser or device settings, although disabling them may affect functionality.</p>
+      <p>We may update this policy when JEETrack or its providers change. Material changes will be reflected by updating the date above and, where appropriate, notifying users in-app.</p>
     </section>
 
     <section id="contact">
-      <h2><span class="num">14</span>Contact us</h2>
-      <p>If you have questions about this Privacy Policy, want to exercise any of your rights, or want to report a concern, reach out:</p>
+      <h2><span class="num">11</span>Contact us</h2>
+      <p>For privacy questions, data requests, or concerns:</p>
       <div class="contact-box">
         <p style="margin-bottom:0.4rem"><strong>Email:</strong> <a href="mailto:support@jeetrack.in">support@jeetrack.in</a></p>
         <p style="margin-bottom:0"><strong>GitHub:</strong> <a href="https://github.com/AmanxMishraDev/JEETrack" target="_blank" rel="noopener">github.com/AmanxMishraDev/JEETrack</a></p>
       </div>
     </section>
-
   </article>
 </div>
 
 <section class="cta-section">
   <h2>Questions about your data?</h2>
-  <p>We're a small team building this for JEE aspirants — reach out anytime.</p>
+  <p>Questions about your data? We're here to help.</p>
   <a href="mailto:support@jeetrack.in" class="cta-btn">Email support@jeetrack.in →</a>
 </section>
 
