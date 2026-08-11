@@ -488,6 +488,7 @@ function showApp(name, email){
   if(document.getElementById('settings-email-ro'))document.getElementById('settings-email-ro').textContent=email||'';
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
   claimGuestDonationsAndLoadBadge();
+  startActivityHeartbeat();
   setDashGreeting(displayName.split(' ')[0]);
   
   
@@ -1012,6 +1013,26 @@ function loadSupporterBadge(){
     .catch(() => {});
 }
 
+// Activity heartbeat — replaces the old per-write DB trigger on hours/tests
+// (that trigger fired on every single save and forced a full user_preferences
+// row rewrite just to bump a timestamp). Now decoupled from data writes
+// entirely: pings at most once per 5 min (matches the server-side staleness
+// window in ping_activity()), only while the tab is actually visible and the
+// user is logged in. Fire-and-forget, no UI, no effect on save speed.
+let _activityHeartbeatStarted = false;
+function startActivityHeartbeat(){
+  if(_activityHeartbeatStarted || !sb || !currentUser) return;
+  _activityHeartbeatStarted = true;
+  const ping = () => {
+    if(sb && currentUser && document.visibilityState === 'visible'){
+      sb.rpc('ping_activity').catch(()=>{});
+    }
+  };
+  ping();
+  setInterval(ping, 5 * 60 * 1000);
+  document.addEventListener('visibilitychange', ping);
+}
+
 // Claims any guest (not-logged-in) donations made under this account's
 // email — e.g. someone bought a chai before signing in, using the same
 // email their JEETrack account uses. Safe to call every login: it's a
@@ -1071,16 +1092,16 @@ async function _syncToServer(){
     const syncTimestamp = new Date().toISOString();
 
     const changedTests = (S.tests||[]).map(t=>_payloadTest(t,uid)).filter(p=>_syncSnapshot.tests[p.id]!==_snapKey(p));
-    if(changedTests.length) ops.push(sb.from('tests').upsert(changedTests).then(({error})=>{ if(!error) changedTests.forEach(p=>_syncSnapshot.tests[p.id]=_snapKey(p)); }));
+    if(changedTests.length) ops.push(sb.rpc('save_tests', { p_rows: changedTests }).then(({error})=>{ if(!error) changedTests.forEach(p=>_syncSnapshot.tests[p.id]=_snapKey(p)); }));
 
     const changedHours = (S.hours||[]).map(h=>_payloadHour(h,uid)).filter(p=>_syncSnapshot.hours[p.id]!==_snapKey(p));
-    if(changedHours.length) ops.push(sb.from('hours').upsert(changedHours).then(({error})=>{ if(!error) changedHours.forEach(p=>_syncSnapshot.hours[p.id]=_snapKey(p)); }));
+    if(changedHours.length) ops.push(sb.rpc('save_hours', { p_rows: changedHours }).then(({error})=>{ if(!error) changedHours.forEach(p=>_syncSnapshot.hours[p.id]=_snapKey(p)); }));
 
     const changedBacklogs = (S.backlogs||[]).map(b=>_payloadBacklog(b,uid)).filter(p=>_syncSnapshot.backlogs[p.id]!==_snapKey(p));
-    if(changedBacklogs.length) ops.push(sb.from('backlogs').upsert(changedBacklogs).then(({error})=>{ if(!error) changedBacklogs.forEach(p=>_syncSnapshot.backlogs[p.id]=_snapKey(p)); }));
+    if(changedBacklogs.length) ops.push(sb.rpc('save_backlogs', { p_rows: changedBacklogs }).then(({error})=>{ if(!error) changedBacklogs.forEach(p=>_syncSnapshot.backlogs[p.id]=_snapKey(p)); }));
 
     const changedTodos = (S.todos||[]).map(t=>_payloadTodo(t,uid)).filter(p=>_syncSnapshot.todos[p.id]!==_snapKey(p));
-    if(changedTodos.length) ops.push(sb.from('todos').upsert(changedTodos).then(({error})=>{ if(!error) changedTodos.forEach(p=>_syncSnapshot.todos[p.id]=_snapKey(p)); }));
+    if(changedTodos.length) ops.push(sb.rpc('save_todos', { p_rows: changedTodos }).then(({error})=>{ if(!error) changedTodos.forEach(p=>_syncSnapshot.todos[p.id]=_snapKey(p)); }));
 
     const changedUpcoming = (S.upcoming||[]).map(u=>_payloadUpcoming(u,uid)).filter(p=>_syncSnapshot.upcoming[p.id]!==_snapKey(p));
     if(changedUpcoming.length) ops.push(sb.from('upcoming').upsert(changedUpcoming).then(({error})=>{ if(!error) changedUpcoming.forEach(p=>_syncSnapshot.upcoming[p.id]=_snapKey(p)); }));
@@ -1093,7 +1114,7 @@ async function _syncToServer(){
     }
 
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
-    if(changedPracticeLogs.length) ops.push(sb.from('practice_logs').upsert(changedPracticeLogs).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
+    if(changedPracticeLogs.length) ops.push(sb.rpc('save_practice_logs', { p_rows: changedPracticeLogs }).then(({error})=>{ if(!error) changedPracticeLogs.forEach(p=>_syncSnapshot.practiceLogs[p.id]=_snapKey(p)); }));
 
     // Streaks — now also diff-checked, since with Practice Log firing saves
     // far more often, an unconditional call here adds up fast.
