@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v6';
+const CACHE_VERSION = 'jeetrack-v7';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -75,7 +75,12 @@ self.addEventListener('fetch', e => {
 
   
   if (SUPABASE_HOST_PATTERN.test(url.hostname)) {
-    e.respondWith(fetch(e.request));
+    // fetch(e.request) alone still lets the BROWSER's native HTTP cache
+    // (separate from this SW's Cache Storage) validate against ETag/
+    // Cache-Control headers and serve a 304 — which then gets treated as
+    // "nothing changed" even when the underlying data genuinely has.
+    // { cache: 'no-store' } forces a real network round-trip every time.
+    e.respondWith(fetch(e.request, { cache: 'no-store' }));
     return;
   }
 
