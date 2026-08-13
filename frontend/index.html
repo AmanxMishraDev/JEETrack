@@ -105,6 +105,11 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 </head>
 <body>
 
+<div id="outage-banner" style="position:fixed;top:0;left:0;right:0;z-index:999999;background:#7f1d1d;color:#fff;font-family:sans-serif;font-size:14px;line-height:1.4;padding:10px 16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+  ⚠️ Sorry, we're currently facing a server/database outage — login and some features may not work right now. We're on it, please try again shortly.
+  <span onclick="document.getElementById('outage-banner').style.display='none'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-weight:bold;padding:0 6px;">✕</span>
+</div>
+
 <div id="splash">
   <div class="splash-spotlight"></div>
   <div class="splash-orb splash-orb-1"></div>
