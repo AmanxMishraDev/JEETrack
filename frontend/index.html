@@ -5234,6 +5234,7 @@ window.addEventListener('popstate', function(e) {
 });
 
 function nav(page, _pushState){
+  console.log('[nav debug] nav() called with page:', page, 'at time:', new Date().toISOString());
   
   const path = _pageToPath[page] || '/dashboard';
   if(_pushState !== false){
@@ -5303,7 +5304,8 @@ function nav(page, _pushState){
     const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,practice:renderPractice,settings:renderSettings})[page];
     if(_renderFn){
       _navCache.dirty[page]=false;
-      setTimeout(()=>_renderFn(), 0);
+      console.log('[nav debug] about to render page:', page, '| S.hours.length:', (typeof S!=='undefined'&&S.hours)?S.hours.length:'S not ready', '| S.tests.length:', (typeof S!=='undefined'&&S.tests)?S.tests.length:'S not ready');
+      setTimeout(()=>{ console.log('[nav debug] rendering NOW for page:', page, '| S.hours.length:', (typeof S!=='undefined'&&S.hours)?S.hours.length:'S not ready'); _renderFn(); }, 0);
     }
   }
 

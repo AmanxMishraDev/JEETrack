@@ -515,15 +515,13 @@ function showApp(name, email){
   
   setTimeout(async () => {
     const activePage = document.querySelector('.page.active');
-    console.log('[supportPrompt debug] activePage id:', activePage?.id, '(needs to be "page-overview")');
     if (activePage && activePage.id === 'page-overview') {
       try {
         await checkWelcomeModal();
       } catch(e) {
-        console.warn('[supportPrompt debug] checkWelcomeModal threw:', e);
+        console.warn('checkWelcomeModal failed:', e);
       }
       const welcomeIsOpen = document.getElementById('modal-welcome')?.classList.contains('open');
-      console.log('[supportPrompt debug] welcome modal open?', welcomeIsOpen, '(support prompt only fires if this is false)');
       if (!welcomeIsOpen) {
         checkSupportPrompt();
       }
@@ -713,10 +711,15 @@ async function loadUserData(){
     const {data:verRow} = await sb.from('user_preferences').select('updated_at').eq('user_id',uidCheck).maybeSingle();
     const serverUpdatedAt = verRow?.updated_at || null;
     const localKnown = localStorage.getItem('jt3_known_updated_at');
-    console.log('[loadUserData debug] serverUpdatedAt:', serverUpdatedAt, '| localKnown:', localKnown, '| match:', serverUpdatedAt===localKnown);
-    if(serverUpdatedAt && localKnown && serverUpdatedAt === localKnown){
+    // Compare as actual instants, not raw strings — Postgres returns
+    // timestamptz as "...+00:00" while JS's toISOString() produces "...Z".
+    // Same instant, different string — a strict string match here was
+    // ALWAYS failing even when nothing had changed, silently forcing a
+    // full fetch on every single load instead of ever using the cache.
+    const serverMs = serverUpdatedAt ? new Date(serverUpdatedAt).getTime() : null;
+    const localMs = localKnown ? new Date(localKnown).getTime() : null;
+    if(serverMs && localMs && serverMs === localMs){
       const saved = localStorage.getItem('jt3');
-      console.log('[loadUserData debug] SHORT-CIRCUIT: using cached jt3, hours count in cache:', saved ? (JSON.parse(saved).hours||[]).length : 'no jt3 in localStorage!');
       if(saved){
         let p = JSON.parse(saved);
         if(p.backlogStreak>365) p.backlogStreak=0;
@@ -725,6 +728,7 @@ async function loadUserData(){
         if(!p.practiceLogs) p.practiceLogs=[];
         S=p;
         _seedSyncSnapshot();
+        console.log('[loadUserData debug] resolved via SHORT-CIRCUIT at time:', new Date().toISOString(), '| S.hours.length:', S.hours.length);
         return; // nothing changed anywhere — skip the full fetch entirely
       }
     }
@@ -776,7 +780,7 @@ async function loadUserData(){
     }
     _seedSyncSnapshot();
     try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
-    console.log('[loadUserData debug] FULL FETCH done. S.hours.length:', S.hours.length, '| S.tests.length:', S.tests.length);
+    console.log('[loadUserData debug] resolved via FULL FETCH at time:', new Date().toISOString(), '| S.hours.length:', S.hours.length);
   }catch(e){
     console.error('Load error:',e);
     
@@ -1383,12 +1387,9 @@ async function saveUserProfile(fields) {
 
 function checkSupportPrompt(){
   const neverFlag = localStorage.getItem('jt_support_prompt_never');
-  console.log('[supportPrompt debug] jt_support_prompt_never flag:', neverFlag, '(must NOT be "1")');
   if(neverFlag==='1') return;
   setTimeout(()=>{
-    const el = document.getElementById('modal-supportPrompt');
-    console.log('[supportPrompt debug] modal element found in DOM?', !!el, '— adding .open class now');
-    el?.classList.add('open');
+    document.getElementById('modal-supportPrompt')?.classList.add('open');
   }, 400);
 }
 function closeSupportPrompt(){
