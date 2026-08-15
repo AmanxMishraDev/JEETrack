@@ -5552,3 +5552,73 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 @keyframes badgeSparkleTwinkle{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 .b-glow{animation:badgeGlowPulse 5.5s ease-in-out infinite}
 .b-spark{animation:badgeSparkleTwinkle 3.4s ease-in-out infinite}
+
+/* ============================================================
+   INDEPENDENCE DAY THEME (15 Aug) — add class="id-theme" to <body>
+   Non-destructive: only applies when .id-theme is present on body.
+   Remove the class (or the whole block) anytime to go back to normal.
+   ============================================================ */
+.id-theme{
+  --id-saffron:#FF9933;
+  --id-white:#F5F5F0;
+  --id-green:#138808;
+  --id-navy:#0d2f7a;
+}
+
+/* tricolor strip pinned to the very top of the viewport */
+.id-theme .id-strip{
+  position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;
+  background:linear-gradient(90deg,var(--id-saffron) 0 33.33%,var(--id-white) 33.33% 66.66%,var(--id-green) 66.66% 100%);
+}
+
+/* sidebar gets a subtle saffron→green top accent + tricolor edge on the active nav pill */
+.id-theme .sb{border-top:3px solid transparent;border-image:linear-gradient(90deg,var(--id-saffron),var(--id-white),var(--id-green)) 1;}
+.id-theme .ni.active{
+  background:linear-gradient(90deg,rgba(255,153,51,.16),rgba(245,245,240,.06),rgba(19,136,8,.16));
+  border-left:3px solid var(--id-saffron);
+  box-shadow:inset 0 0 0 1px rgba(19,136,8,.15);
+}
+.id-theme .logo span{
+  background:linear-gradient(90deg,var(--id-saffron),var(--id-white) 50%,var(--id-green));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* Ashoka-chakra style accent ring around the avatar */
+.id-theme .profile-avatar,
+.id-theme #mob-avatar{
+  box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--id-navy);
+}
+
+/* festive banner — drop this markup wherever you want (e.g. top of dashboard) */
+.id-banner{
+  position:relative;overflow:hidden;border-radius:var(--r);
+  padding:16px 18px;margin-bottom:16px;
+  background:linear-gradient(90deg,rgba(255,153,51,.14),rgba(245,245,240,.05),rgba(19,136,8,.14));
+  border:1px solid rgba(255,153,51,.25);
+  display:flex;align-items:center;gap:12px;
+}
+.id-banner .id-banner-flag{font-size:22px;line-height:1;flex-shrink:0}
+.id-banner .id-banner-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--tx)}
+.id-banner .id-banner-sub{font-size:11.5px;color:var(--mu);margin-top:2px}
+.id-banner::after{
+  content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,153,51,.18),transparent 70%);
+}
+
+/* small tricolor badge/pill you can drop next to headings */
+.id-pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;
+  padding:3px 9px;border-radius:999px;color:var(--tx);
+  background:linear-gradient(90deg,rgba(255,153,51,.18),rgba(245,245,240,.08),rgba(19,136,8,.18));
+  border:1px solid rgba(255,153,51,.3);
+}
+
+/* primary buttons get a faint saffron→green sheen instead of the usual purple, only in this theme */
+.id-theme .btn.bp{
+  background:linear-gradient(90deg,var(--id-saffron),#e8863f 50%,var(--id-green)) !important;
+  border:none !important;
+}
+
+@media (max-width:768px){
+  .id-theme .mob-topbar{border-bottom:2px solid transparent;border-image:linear-gradient(90deg,var(--id-saffron),var(--id-white),var(--id-green)) 1;}
+}

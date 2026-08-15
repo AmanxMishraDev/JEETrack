@@ -713,8 +713,10 @@ async function loadUserData(){
     const {data:verRow} = await sb.from('user_preferences').select('updated_at').eq('user_id',uidCheck).maybeSingle();
     const serverUpdatedAt = verRow?.updated_at || null;
     const localKnown = localStorage.getItem('jt3_known_updated_at');
+    console.log('[loadUserData debug] serverUpdatedAt:', serverUpdatedAt, '| localKnown:', localKnown, '| match:', serverUpdatedAt===localKnown);
     if(serverUpdatedAt && localKnown && serverUpdatedAt === localKnown){
       const saved = localStorage.getItem('jt3');
+      console.log('[loadUserData debug] SHORT-CIRCUIT: using cached jt3, hours count in cache:', saved ? (JSON.parse(saved).hours||[]).length : 'no jt3 in localStorage!');
       if(saved){
         let p = JSON.parse(saved);
         if(p.backlogStreak>365) p.backlogStreak=0;
@@ -774,6 +776,7 @@ async function loadUserData(){
     }
     _seedSyncSnapshot();
     try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
+    console.log('[loadUserData debug] FULL FETCH done. S.hours.length:', S.hours.length, '| S.tests.length:', S.tests.length);
   }catch(e){
     console.error('Load error:',e);
     

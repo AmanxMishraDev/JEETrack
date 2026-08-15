@@ -105,11 +105,6 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 </head>
 <body>
 
-<div id="outage-banner" style="position:fixed;top:0;left:0;right:0;z-index:999999;background:#7f1d1d;color:#fff;font-family:sans-serif;font-size:14px;line-height:1.4;padding:10px 16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-  ⚠️ Sorry, we're currently facing a server/database outage — login and some features may not work right now. We're on it, please try again shortly.
-  <span onclick="document.getElementById('outage-banner').style.display='none'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-weight:bold;padding:0 6px;">✕</span>
-</div>
-
 <div id="splash">
   <div class="splash-spotlight"></div>
   <div class="splash-orb splash-orb-1"></div>
@@ -7102,7 +7097,7 @@ function renderOvPracticeCard(){
     </div>`;
 }
 
-function renderPractice(){ensureChartJs().then(function(){_renderPractice();});}
+function renderPractice(){ensureChartJs().then(function(){_renderPractice();}, function(){console.warn('[renderPractice] Chart.js failed to load — rendering without it'); _renderPractice();});}
 function _renderPractice(){
   const all=S.practiceLogs||[];
   const emptyEl=document.getElementById('pl-empty'), contentEl=document.getElementById('pl-content');
@@ -7390,7 +7385,7 @@ function fltSubjDd(exam,val){
   else renderAdv();
 }
 
-function renderOverview(){ensureChartJs().then(function(){_renderOverview();});}
+function renderOverview(){ensureChartJs().then(function(){_renderOverview();}, function(){console.warn('[renderOverview] Chart.js failed to load — rendering without it'); _renderOverview();});}
 function _renderOverview(){
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>b.date.localeCompare(a.date));
   const adv=S.tests.filter(t=>t.exam==='advanced').sort((a,b)=>b.date.localeCompare(a.date));
@@ -7526,7 +7521,7 @@ function renderOvWeek(){
   }
 }
 
-function renderMains(){ensureChartJs().then(function(){_renderMains();});}
+function renderMains(){ensureChartJs().then(function(){_renderMains();}, function(){console.warn('[renderMains] Chart.js failed to load — rendering without it'); _renderMains();});}
 function _renderMains(){
   const tests=getTests('mains');const m=M.mn;
   const sf=F.mains.subj;
@@ -7654,7 +7649,7 @@ function renderMnUnified(){
   }
 }
 
-function renderAdv(){ensureChartJs().then(function(){_renderAdv();});}
+function renderAdv(){ensureChartJs().then(function(){_renderAdv();}, function(){console.warn('[renderAdv] Chart.js failed to load — rendering without it'); _renderAdv();});}
 function _renderAdv(){
   const tests=getTests('advanced');const m=M.adv;
   const sf=F.advanced.subj;
@@ -7769,7 +7764,7 @@ function renderAdvUnified(){
   }
 }
 
-function renderCmp(){ensureChartJs().then(function(){_renderCmp();});}
+function renderCmp(){ensureChartJs().then(function(){_renderCmp();}, function(){console.warn('[renderCmp] Chart.js failed to load — rendering without it'); _renderCmp();});}
 function _renderCmp(){
   const m=M.cmp;
   const mains=S.tests.filter(t=>t.exam==='mains').sort((a,b)=>a.date.localeCompare(b.date));
@@ -7795,7 +7790,7 @@ function _renderCmp(){
   if(!uC('cmpHC',cmpHCData,cmpHCOpts)){CIs['cmpHC']=new Chart(document.getElementById('cmpHC').getContext('2d'),{type:'bar',data:cmpHCData,options:cmpHCOpts});}
 }
 
-function renderHours(){ensureChartJs().then(function(){_renderHours();});}
+function renderHours(){ensureChartJs().then(function(){_renderHours();}, function(){console.warn('[renderHours] Chart.js failed to load — rendering without it'); _renderHours();});}
 function _renderHours(){
   F.hours.subj=document.getElementById('hr-subj').value;
   const hrs=getHrs();
