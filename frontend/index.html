@@ -5188,7 +5188,6 @@ function _setRobotsMeta(shouldIndex){
 }
 
 function _handleRoute(){
-  console.log('[handleRoute debug] _handleRoute() called, window.location.pathname:', window.location.pathname, 'history.state:', JSON.stringify(history.state));
   const path = window.location.pathname;
   const tab = new URLSearchParams(window.location.search).get('tab');
   
@@ -5235,7 +5234,6 @@ window.addEventListener('popstate', function(e) {
 });
 
 function nav(page, _pushState){
-  console.log('[nav debug] nav() called with page:', page, 'at time:', new Date().toISOString());
   
   const path = _pageToPath[page] || '/dashboard';
   if(_pushState !== false){
@@ -5305,8 +5303,7 @@ function nav(page, _pushState){
     const _renderFn=({overview:renderOverview,mains:renderMains,advanced:renderAdv,compare:renderCmp,hours:renderHours,todo:renderTodo,backlog:renderBacklog,syllabus:renderSyl,practice:renderPractice,settings:renderSettings})[page];
     if(_renderFn){
       _navCache.dirty[page]=false;
-      console.log('[nav debug] about to render page:', page, '| S.hours.length:', (typeof S!=='undefined'&&S.hours)?S.hours.length:'S not ready', '| S.tests.length:', (typeof S!=='undefined'&&S.tests)?S.tests.length:'S not ready');
-      setTimeout(()=>{ console.log('[nav debug] rendering NOW for page:', page, '| S.hours.length:', (typeof S!=='undefined'&&S.hours)?S.hours.length:'S not ready'); _renderFn(); }, 0);
+      setTimeout(()=>_renderFn(), 0);
     }
   }
 

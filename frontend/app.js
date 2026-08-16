@@ -488,7 +488,7 @@ function showApp(name, email){
   if(document.getElementById('settings-email-ro'))document.getElementById('settings-email-ro').textContent=email||'';
   if(document.getElementById('settings-name-input'))document.getElementById('settings-name-input').value=displayName;
   claimGuestDonationsAndLoadBadge();
-  startActivityHeartbeat();
+  try{ startActivityHeartbeat(); }catch(e){ console.warn('startActivityHeartbeat failed:', e); }
   setDashGreeting(displayName.split(' ')[0]);
   
   
@@ -506,7 +506,6 @@ function showApp(name, email){
     
     history.replaceState({page: _routeMap[_currentPath] || 'overview'}, '', _currentPath);
   }
-  console.log('[showApp debug] about to call _handleRoute(), pathname:', window.location.pathname);
   _handleRoute();
   localStorage.removeItem('groq_key');
   if(localStorage.getItem('notif_enabled')==='1')document.getElementById('notif-bell-btn')?.classList.add('active');
@@ -729,7 +728,6 @@ async function loadUserData(){
         if(!p.practiceLogs) p.practiceLogs=[];
         S=p;
         _seedSyncSnapshot();
-        console.log('[loadUserData debug] resolved via SHORT-CIRCUIT at time:', new Date().toISOString(), '| S.hours.length:', S.hours.length);
         return; // nothing changed anywhere — skip the full fetch entirely
       }
     }
@@ -781,7 +779,6 @@ async function loadUserData(){
     }
     _seedSyncSnapshot();
     try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
-    console.log('[loadUserData debug] resolved via FULL FETCH at time:', new Date().toISOString(), '| S.hours.length:', S.hours.length);
   }catch(e){
     console.error('Load error:',e);
     
@@ -1033,7 +1030,7 @@ function startActivityHeartbeat(){
   _activityHeartbeatStarted = true;
   const ping = () => {
     if(sb && currentUser && document.visibilityState === 'visible'){
-      sb.rpc('ping_activity').catch(()=>{});
+      Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
     }
   };
   ping();
