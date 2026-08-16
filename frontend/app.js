@@ -733,24 +733,16 @@ async function loadUserData(){
     }
   }catch(e){}
 
-  try{
-    const uid = currentUser.id;
-    const [tests,hours,backlogs,todos,upcoming,syllabus,streaks,practiceLogs] = await Promise.all([
-      sb.from('tests').select('*').eq('user_id',uid),
-      sb.from('hours').select('*').eq('user_id',uid),
-      sb.from('backlogs').select('*').eq('user_id',uid),
-      sb.from('todos').select('*').eq('user_id',uid),
-      sb.from('upcoming').select('*').eq('user_id',uid),
-      sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid).maybeSingle(),
-      sb.from('streaks').select('*').eq('user_id',uid).maybeSingle(),
-      sb.from('practice_logs').select('*').eq('user_id',uid)
-    ]);
-    S.tests=(tests.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
-    S.hours=(hours.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
-    S.backlogs=(backlogs.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
-    S.todos=(todos.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
-    S.upcoming=(upcoming.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-    const syllabusState = syllabus.data && syllabus.data.syllabus_state;
+  // Single RPC instead of 8 parallel SELECTs — same batching idea as
+  // save_tests/save_hours/etc. on the write side, applied to the read side.
+  // Cuts a full load from 8 round trips down to 1.
+  const _applyFullState = (full, uid) => {
+    S.tests=(full.tests||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
+    S.hours=(full.hours||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
+    S.backlogs=(full.backlogs||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
+    S.todos=(full.todos||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
+    S.upcoming=(full.upcoming||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
+    const syllabusState = full.user_preferences && full.user_preferences.syllabus_state;
     if(syllabusState){
       S.syllabus={
         physics:syllabusState.physics||[],
@@ -759,16 +751,16 @@ async function loadUserData(){
       };
       S=migrateSyllabus(S);
     }
-    S.practiceLogs=(practiceLogs.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
-    if(streaks.data){
-      S.backlogStreak = Math.min(streaks.data.backlog_streak||0, 365);
-      S.backlogBestStreak = Math.min(streaks.data.best_streak||0, 365);
-      S.lastBLClear = streaks.data.last_clear;
-      S.subjStreaks = streaks.data.subj_streaks||{physics:0,chemistry:0,maths:0};
-      S.subjBestStreaks = streaks.data.subj_best_streaks||{physics:0,chemistry:0,maths:0};
-      
-      S.hwtDismissed = streaks.data.hwt_dismissed||[];
-      
+    S.practiceLogs=(full.practice_logs||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
+    if(full.streaks){
+      S.backlogStreak = Math.min(full.streaks.backlog_streak||0, 365);
+      S.backlogBestStreak = Math.min(full.streaks.best_streak||0, 365);
+      S.lastBLClear = full.streaks.last_clear;
+      S.subjStreaks = full.streaks.subj_streaks||{physics:0,chemistry:0,maths:0};
+      S.subjBestStreaks = full.streaks.subj_best_streaks||{physics:0,chemistry:0,maths:0};
+
+      S.hwtDismissed = full.streaks.hwt_dismissed||[];
+
       try{
         const cacheKey='jt_hwt_dismissed_'+uid;
         const localArr=JSON.parse(localStorage.getItem(cacheKey)||'[]');
@@ -778,34 +770,23 @@ async function loadUserData(){
       }catch(e){}
     }
     _seedSyncSnapshot();
-    try{ localStorage.setItem('jt3_known_updated_at', (syllabus.data && syllabus.data.updated_at) || ''); }catch(e){}
+    try{ localStorage.setItem('jt3_known_updated_at', (full.user_preferences && full.user_preferences.updated_at) || ''); }catch(e){}
+  };
+
+  try{
+    const uid = currentUser.id;
+    const { data: full, error } = await sb.rpc('get_full_state');
+    if(error) throw error;
+    _applyFullState(full||{}, uid);
   }catch(e){
     console.error('Load error:',e);
     
     try {
       await new Promise(r => setTimeout(r, 1500));
       const uid2 = currentUser.id;
-      const [tests2,hours2,backlogs2,todos2,upcoming2,syllabus2,streaks2,practiceLogs2] = await Promise.all([
-        sb.from('tests').select('*').eq('user_id',uid2),
-        sb.from('hours').select('*').eq('user_id',uid2),
-        sb.from('backlogs').select('*').eq('user_id',uid2),
-        sb.from('todos').select('*').eq('user_id',uid2),
-        sb.from('upcoming').select('*').eq('user_id',uid2),
-        sb.from('user_preferences').select('syllabus_state, updated_at').eq('user_id',uid2).maybeSingle(),
-        sb.from('streaks').select('*').eq('user_id',uid2).maybeSingle(),
-        sb.from('practice_logs').select('*').eq('user_id',uid2)
-      ]);
-      S.tests=(tests2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
-      S.hours=(hours2.data||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
-      S.backlogs=(backlogs2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
-      S.todos=(todos2.data||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
-      S.upcoming=(upcoming2.data||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
-      const syllabusState2 = syllabus2.data && syllabus2.data.syllabus_state;
-      if(syllabusState2){ S.syllabus={physics:syllabusState2.physics||[],chemistry:syllabusState2.chemistry||[],maths:syllabusState2.maths||[]}; S=migrateSyllabus(S); }
-      S.practiceLogs=(practiceLogs2.data||[]).map(r=>({id:r.id,subject:r.subject,chapterId:r.chapter_id,chapterName:r.chapter_name,questions:r.questions,date:r.date,loggedAt:r.logged_at}));
-      if(streaks2.data){ S.backlogStreak=Math.min(streaks2.data.backlog_streak||0,365); S.backlogBestStreak=Math.min(streaks2.data.best_streak||0,365); S.lastBLClear=streaks2.data.last_clear; S.subjStreaks=streaks2.data.subj_streaks||{physics:0,chemistry:0,maths:0}; S.subjBestStreaks=streaks2.data.subj_best_streaks||{physics:0,chemistry:0,maths:0}; }
-      _seedSyncSnapshot();
-      try{ localStorage.setItem('jt3_known_updated_at', (syllabus2.data && syllabus2.data.updated_at) || ''); }catch(e){}
+      const { data: full2, error: error2 } = await sb.rpc('get_full_state');
+      if(error2) throw error2;
+      _applyFullState(full2||{}, uid2);
       console.log('Retry load succeeded');
     } catch(e2) {
       console.error('Retry load also failed, falling back to localStorage:', e2);

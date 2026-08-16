@@ -7776,7 +7776,7 @@ function _renderCmp(){
   const partial=S.tests.filter(t=>t.type==='partial'),full=S.tests.filter(t=>t.type==='full');
   const gA=(arr,s)=>{const v=arr.map(t=>scoreVal(t,m,s));return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):0;};
   const totA=arr=>arr.length?+(arr.reduce((a,b)=>a+scoreVal(b,m,null),0)/arr.length).toFixed(1):0;
-  const cmpTCData={labels:['Physics','Chemistry','Maths','Overall'],datasets:[{label:'Partial',data:['physics','chemistry','maths'].map(s=>gA(partial,s)).concat([totA(partial)]),backgroundColor:'#fbbf24',borderRadius:4,barThickness:16},{label:'Full',data:['physics','chemistry','maths'].map(s=>gA(full,s)).concat([totA(full)]),backgroundColor:'#34d399',borderRadius:4,barThickness:16}]};
+  const cmpTCData={labels:['Physics','Chemistry','Maths','Overall'],datasets:[{label:'Partial',data:['physics','chemistry','maths'].map(s=>gA(partial,s)).concat([totA(partial)]),backgroundColor:'#2dd4bf',borderRadius:4,barThickness:16},{label:'Full',data:['physics','chemistry','maths'].map(s=>gA(full,s)).concat([totA(full)]),backgroundColor:'#fbbf24',borderRadius:4,barThickness:16}]};
   const cmpTCOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),y:{...sO().y,min:0,ticks:{...sO().y.ticks,callback:m==='pct'?v=>v+'%':v=>v}}}};
   if(!uC('cmpTC',cmpTCData,cmpTCOpts)){CIs['cmpTC']=new Chart(document.getElementById('cmpTC').getContext('2d'),{type:'bar',data:cmpTCData,options:cmpTCOpts});}
   const sAE=(exam,s)=>{const v=S.tests.filter(t=>t.exam===exam).map(t=>+pct(t[s],t.max/3));return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):0;};
