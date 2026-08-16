@@ -5188,6 +5188,7 @@ function _setRobotsMeta(shouldIndex){
 }
 
 function _handleRoute(){
+  console.log('[handleRoute debug] _handleRoute() called, window.location.pathname:', window.location.pathname, 'history.state:', JSON.stringify(history.state));
   const path = window.location.pathname;
   const tab = new URLSearchParams(window.location.search).get('tab');
   

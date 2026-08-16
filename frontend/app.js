@@ -506,6 +506,7 @@ function showApp(name, email){
     
     history.replaceState({page: _routeMap[_currentPath] || 'overview'}, '', _currentPath);
   }
+  console.log('[showApp debug] about to call _handleRoute(), pathname:', window.location.pathname);
   _handleRoute();
   localStorage.removeItem('groq_key');
   if(localStorage.getItem('notif_enabled')==='1')document.getElementById('notif-bell-btn')?.classList.add('active');
