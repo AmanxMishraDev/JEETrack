@@ -1011,7 +1011,9 @@ function startActivityHeartbeat(){
   _activityHeartbeatStarted = true;
   const ping = () => {
     if(sb && currentUser && document.visibilityState === 'visible'){
-      Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
+      sb.auth.getSession().then(({ data }) => {
+        if(data?.session) Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
+      }).catch(()=>{});
     }
   };
   ping();
@@ -2783,7 +2785,7 @@ async function finishOnboarding() {
       const res = await fetch(obData.avatarDataUrl);
       const blob = await res.blob();
       const ext = blob.type.includes('png') ? 'png' : 'jpg';
-      const path = `avatars/${currentUser.id}.${ext}`;
+      const path = `${currentUser.id}/avatar.${ext}`;
       await sb.storage.from('avatars').upload(path, blob, { upsert: true });
       const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
       if (urlData?.publicUrl) fields.avatar_url = urlData.publicUrl;
@@ -3097,7 +3099,7 @@ async function selectPresetAvatar(svgUrl, label) {
       if (sb && currentUser) {
         try {
           const imgBlob = await (await fetch(dataUrl)).blob();
-          const path = `avatars/${currentUser.id}.svg`;
+          const path = `${currentUser.id}/avatar.svg`;
           await sb.storage.from('avatars').upload(path, imgBlob, { upsert: true, contentType: 'image/svg+xml' });
           const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
           if (urlData?.publicUrl) {
@@ -3142,7 +3144,7 @@ function handleSettingsPhoto(input) {
         const res = await fetch(dataUrl);
         const blob = await res.blob();
         const ext = blob.type.includes('png') ? 'png' : 'jpg';
-        const path = `avatars/${currentUser.id}.${ext}`;
+        const path = `${currentUser.id}/avatar.${ext}`;
         await sb.storage.from('avatars').upload(path, blob, { upsert: true });
         const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
         if (urlData?.publicUrl) {
