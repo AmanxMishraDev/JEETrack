@@ -1006,18 +1006,27 @@ function loadSupporterBadge(){
 // window in ping_activity()), only while the tab is actually visible and the
 // user is logged in. Fire-and-forget, no UI, no effect on save speed.
 let _activityHeartbeatStarted = false;
+const PING_INTERVAL_MS = 5 * 60 * 1000;
+// Client-side throttle, mirrors ping_activity()'s own 5-min staleness window.
+// Without this, visibilitychange (tab switches, app-switches, screen
+// lock/unlock on mobile) fired a full ping on every single occurrence with
+// no cooldown — 18.8k calls/~17.6% of total DB exec time in prod, the vast
+// majority of them no-op UPDATEs the server was already going to skip.
+let _lastPingAt = 0;
 function startActivityHeartbeat(){
   if(_activityHeartbeatStarted || !sb || !currentUser) return;
   _activityHeartbeatStarted = true;
   const ping = () => {
-    if(sb && currentUser && document.visibilityState === 'visible'){
-      sb.auth.getSession().then(({ data }) => {
-        if(data?.session) Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
-      }).catch(()=>{});
-    }
+    if(!sb || !currentUser || document.visibilityState !== 'visible') return;
+    const now = Date.now();
+    if(now - _lastPingAt < PING_INTERVAL_MS) return;
+    _lastPingAt = now;
+    sb.auth.getSession().then(({ data }) => {
+      if(data?.session) Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
+    }).catch(()=>{});
   };
   ping();
-  setInterval(ping, 5 * 60 * 1000);
+  setInterval(ping, PING_INTERVAL_MS);
   document.addEventListener('visibilitychange', ping);
 }
 
