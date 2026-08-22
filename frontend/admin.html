@@ -415,8 +415,9 @@ tr.fb-expand-row{background:transparent!important;}
     <h2>Admin Control Panel</h2>
     <p>JEETrack internal analytics &amp; operations — authorized access only</p>
     <input class="login-input" type="password" id="pwd-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"/>
-    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
     <div class="login-err" id="login-err">Wrong password. Try again.</div>
+    <div class="login-err" id="login-attempts" style="display:none;color:#F59E0B;"></div>
   </div>
 </div>
 
@@ -909,6 +910,21 @@ tr.fb-expand-row{background:transparent!important;}
               </div>
 
               <div class="compose-field">
+                <span class="compose-label">Sign-off (footer)</span>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                  <label class="from-addr-opt">
+                    <input type="radio" name="ce-signoff" id="sig-founder" value="founder" checked onchange="updateFromPreview()">
+                    <span class="from-addr-pill">🧑 Aman Mishra</span>
+                  </label>
+                  <label class="from-addr-opt">
+                    <input type="radio" name="ce-signoff" id="sig-support" value="support" onchange="updateFromPreview()">
+                    <span class="from-addr-pill">💬 JEETrack Support Team</span>
+                  </label>
+                </div>
+                <div style="font-size:.7rem;color:var(--mu);margin-top:.4rem;">Use <strong style="color:var(--tx)">Aman Mishra</strong> for personal/founder emails, <strong style="color:var(--tx)">Support Team</strong> for general announcements &amp; support replies.</div>
+              </div>
+
+              <div class="compose-field">
                 <span class="compose-label">Subject <span class="hint-tag">{{name}} supported</span></span>
                 <input class="compose-input" id="ce-subject" placeholder="Hey {{name}}, something exciting!"/>
               </div>
@@ -1293,12 +1309,52 @@ document.addEventListener('DOMContentLoaded', () => {
       sel.appendChild(opt);
     });
   }
+  if (document.getElementById('login-screen').style.display !== 'none') {
+    _renderLoginLockUI();
+  }
 });
 
 
+function _getLoginState() {
+  try { return JSON.parse(sessionStorage.getItem('jt_login_state') || '{}'); }
+  catch(_) { return {}; }
+}
+function _setLoginState(state) {
+  sessionStorage.setItem('jt_login_state', JSON.stringify(state));
+}
+
+function _renderLoginLockUI() {
+  const state = _getLoginState();
+  const btn = document.getElementById('login-btn');
+  const input = document.getElementById('pwd-input');
+  const attemptsEl = document.getElementById('login-attempts');
+
+  if (state.lockedUntil && Date.now() < state.lockedUntil) {
+    const secsLeft = Math.ceil((state.lockedUntil - Date.now()) / 1000);
+    btn.disabled = true;
+    input.disabled = true;
+    attemptsEl.style.display = 'block';
+    attemptsEl.style.color = '#F87171';
+    attemptsEl.textContent = `Too many failed attempts. Try again in ${Math.floor(secsLeft/60)}:${String(secsLeft%60).padStart(2,'0')}`;
+    setTimeout(_renderLoginLockUI, 1000);
+    return true;
+  }
+
+  btn.disabled = false;
+  input.disabled = false;
+  if (state.lockedUntil && Date.now() >= state.lockedUntil) {
+    _setLoginState({});
+    attemptsEl.style.display = 'none';
+  }
+  return false;
+}
+
 async function doLogin() {
+  if (_renderLoginLockUI()) return;
+
   const pwd = document.getElementById('pwd-input').value;
   const errEl = document.getElementById('login-err');
+  const attemptsEl = document.getElementById('login-attempts');
   errEl.style.display = 'none';
   try {
     const res = await fetch(`${API_BASE}?action=login`, {
@@ -1307,9 +1363,30 @@ async function doLogin() {
       body: JSON.stringify({ password: pwd }),
     });
     const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || 'Wrong password');
+
+    if (res.status === 429) {
+      _setLoginState({ lockedUntil: Date.now() + (data.retryAfterMs || 5 * 60 * 1000) });
+      _renderLoginLockUI();
+      return;
+    }
+
+    if (!res.ok || !data.ok) {
+      errEl.textContent = data.error || 'Wrong password';
+      errEl.style.display = 'block';
+      if (typeof data.attemptsRemaining === 'number') {
+        attemptsEl.style.display = 'block';
+        attemptsEl.style.color = data.attemptsRemaining <= 1 ? '#F87171' : '#F59E0B';
+        attemptsEl.textContent = data.attemptsRemaining > 0
+          ? `${data.attemptsRemaining} attempt${data.attemptsRemaining === 1 ? '' : 's'} remaining before lockout`
+          : `Last attempt used — next wrong attempt will lock you out`;
+      }
+      return;
+    }
+
     _token = data.token;
     sessionStorage.setItem('jt_admin_token', _token);
+    _setLoginState({});
+    attemptsEl.style.display = 'none';
     enterDashboard();
   } catch(e) {
     errEl.textContent = e.message;
@@ -2275,7 +2352,18 @@ function insertSnippet(type) {
 }
 
 
-function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
+const SIGNOFFS = {
+  founder: { name: 'Aman Mishra', role: 'Founder, JEETrack' },
+  support: { name: 'JEETrack Support Team', role: "We're here to help" }
+};
+
+function getSignoff() {
+  const checked = document.querySelector('input[name="ce-signoff"]:checked');
+  return SIGNOFFS[checked ? checked.value : 'founder'];
+}
+
+function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA, signoff) {
+  const sig = signoff || SIGNOFFS.founder;
   const cta = (includeCTA && ctaText && ctaText.trim()) ? `
       <tr>
         <td align="center" style="padding:0 40px 40px;">
@@ -2328,8 +2416,8 @@ function buildEmailHTML(name, bodyHtml, ctaText, ctaUrl, includeCTA) {
         <tr>
           <td style="padding:22px;">
             <p style="margin:0;color:#B4BCD0;font-size:14px;">Best Regards,</p>
-            <p style="margin:12px 0 4px;color:#ffffff;font-size:22px;font-weight:700;">Aman Mishra</p>
-            <p style="margin:0;color:#D8B4FE;font-size:15px;">Founder, JEETrack</p>
+            <p style="margin:12px 0 4px;color:#ffffff;font-size:22px;font-weight:700;">${sig.name}</p>
+            <p style="margin:0;color:#D8B4FE;font-size:15px;">${sig.role}</p>
           </td>
         </tr>
       </table>
@@ -2381,7 +2469,7 @@ function previewEmail() {
   const ctaText = document.getElementById('ce-cta-text')?.value || '';
   const ctaUrl  = document.getElementById('ce-cta-url')?.value  || '';
   if (!body.trim()) { showToast('Write body first!'); return; }
-  _renderPreview(buildEmailHTML('Aman', body, ctaText, ctaUrl, ctaEnabled), subject, fromName);
+  _renderPreview(buildEmailHTML('Aman', body, ctaText, ctaUrl, ctaEnabled, getSignoff()), subject, fromName);
 }
 
 function previewCustom() {
@@ -2441,7 +2529,7 @@ async function sendCustomEmail() {
     const ctaText = ctaEnabled ? (document.getElementById('ce-cta-text')?.value||'').trim() : '';
     const ctaUrl  = ctaEnabled ? (document.getElementById('ce-cta-url')?.value||'https://www.jeetrack.in').trim() : '';
     if (!body) { showToast('Email body required!'); return; }
-    htmlBody = buildEmailHTML('{{name}}', body, ctaText, ctaUrl, ctaEnabled);
+    htmlBody = buildEmailHTML('{{name}}', body, ctaText, ctaUrl, ctaEnabled, getSignoff());
     isRawHtml = true;
   }
 

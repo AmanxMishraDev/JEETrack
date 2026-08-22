@@ -48,13 +48,14 @@ function verifyToken(token) {
 
 
 const _loginAttempts = {};
+const LOGIN_MAX_ATTEMPTS = 5;
 function loginRateLimited(ip) {
   const now = Date.now();
   const rec = _loginAttempts[ip] || { count: 0, resetAt: now + 15 * 60 * 1000 };
   if (now > rec.resetAt) { rec.count = 0; rec.resetAt = now + 15 * 60 * 1000; }
   rec.count++;
   _loginAttempts[ip] = rec;
-  return rec.count > 5; 
+  return { limited: rec.count > LOGIN_MAX_ATTEMPTS, remaining: Math.max(0, LOGIN_MAX_ATTEMPTS - rec.count), retryAfterMs: rec.resetAt - now };
 }
 function clientIp(req) {
   const fwd = req.headers['x-forwarded-for'];
@@ -314,16 +315,18 @@ export default async function handler(req, res) {
   
   if (action === 'login') {
     const ip = clientIp(req);
-    if (loginRateLimited(ip)) {
-      return res.status(429).json({ error: 'Too many attempts. Try again in a few minutes.' });
+    const rl = loginRateLimited(ip);
+    if (rl.limited) {
+      return res.status(429).json({ error: 'Too many attempts. Try again in a few minutes.', retryAfterMs: rl.retryAfterMs });
     }
     const { password } = req.body || {};
     if (!ADMIN_PASSWORD || !safeCompare(password, ADMIN_PASSWORD)) {
       
       await new Promise(r => setTimeout(r, 300));
-      return res.status(401).json({ error: 'Wrong password' });
+      return res.status(401).json({ error: 'Wrong password', attemptsRemaining: rl.remaining, maxAttempts: LOGIN_MAX_ATTEMPTS });
     }
     const exp = Date.now() + TOKEN_TTL_MS;
+    delete _loginAttempts[ip];
     return res.status(200).json({ ok: true, token: signToken({ exp }), expiresAt: exp });
   }
 
