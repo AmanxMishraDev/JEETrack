@@ -59,7 +59,7 @@ async function initSupabase(){
       if(res2.ok){ const cfg2=await res2.json(); SUPABASE_URL=cfg2.url; SUPABASE_ANON_KEY=cfg2.key; }
     }
   } catch(e) {
-    console.warn('Could not fetch /api/config \u2014 running in offline/demo mode', e);
+    console.warn('Could not fetch /api/config, retrying\u2026', e);
     
     try {
       const res3 = await fetch('/api/config?_=' + Date.now());
@@ -68,14 +68,15 @@ async function initSupabase(){
   }
 
   if(!SUPABASE_URL || !SUPABASE_ANON_KEY){
-    
-    const saved = localStorage.getItem('jt3');
-    if(saved){ try{ const p=JSON.parse(saved); if(p&&!p.backlogStreak||p.backlogStreak>365) p.backlogStreak=0; if(p&&(!p.backlogBestStreak||p.backlogBestStreak>365)) p.backlogBestStreak=0; S=p; }catch(e){} }
+    // Config fetch genuinely failed after retries. Previously this silently
+    // fell back to a fake "Demo User" session showing cached local data under
+    // a hardcoded demo@jeetrack.app email — confusing and looked like a
+    // session/account mix-up. Show a clear retry screen instead; never fake
+    // a logged-in state when we don't actually have one.
     _authResolved = true;
     clearTimeout(_splashSafetyTimer);
-    if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');
     hideSplash();
-    showApp('Demo User','demo@jeetrack.app');
+    showConfigError();
     return;
   }
 
@@ -417,6 +418,41 @@ function hideSplash(){
   if(window.jtSplash) window.jtSplash.ready();
   sp.classList.add('fade-out');
   setTimeout(() => { sp.style.display = 'none'; }, 650);
+}
+
+function showConfigError(){
+  const el = document.getElementById('config-error-screen');
+  if(el){
+    el.classList.remove('hidden');
+    el.style.display = 'flex';
+  }
+}
+
+function hideConfigError(){
+  const el = document.getElementById('config-error-screen');
+  if(el){
+    el.style.display = 'none';
+    el.classList.add('hidden');
+  }
+}
+
+let _configRetryInFlight = false;
+function retryConfigLoad(){
+  if(_configRetryInFlight) return;
+  _configRetryInFlight = true;
+  const btn = document.getElementById('config-error-retry-btn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Retrying\u2026'; }
+
+  hideConfigError();
+  if(window.jtSplash){
+    const sp = document.getElementById('splash');
+    if(sp){ sp.style.display=''; sp.classList.remove('fade-out'); window.__splashStart = Date.now(); }
+  }
+
+  initSupabase().finally(() => {
+    _configRetryInFlight = false;
+    if(btn){ btn.disabled = false; btn.textContent = 'Retry'; }
+  });
 }
 
 function showAuthScreen(fromSignOut){

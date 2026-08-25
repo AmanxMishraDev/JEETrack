@@ -105,6 +105,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 </head>
 <body>
 
+<div id="config-error-screen" class="hidden" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;background:#0b0b14;color:#f5f5f7;text-align:center;padding:24px;">
+  <div style="font-size:40px;line-height:1;margin-bottom:16px;">⚠️</div>
+  <div style="font-size:18px;font-weight:600;margin-bottom:8px;">Couldn't connect to JEETrack</div>
+  <div style="font-size:14px;opacity:0.7;max-width:320px;margin-bottom:20px;">Check your internet connection and try again. Your account and data are safe.</div>
+  <button id="config-error-retry-btn" onclick="retryConfigLoad()" style="background:linear-gradient(135deg,#a695ff,#f472b6);border:none;color:#0b0b14;font-weight:600;padding:10px 24px;border-radius:999px;cursor:pointer;font-size:14px;">Retry</button>
+</div>
+
 <div id="splash">
   <div class="splash-spotlight"></div>
   <div class="splash-orb splash-orb-1"></div>
