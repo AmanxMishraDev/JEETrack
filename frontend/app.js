@@ -36,6 +36,38 @@ function _shouldShowOnboarding(userId, profileStatus) {
   return true;                                     
 }
 
+function _withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error((label || 'Request') + ' timed out')), ms))
+  ]);
+}
+
+// ── Online/offline banner ──
+// Reassures the user their work isn't lost (save() always writes to
+// localStorage first, regardless of network — see save()), and pushes any
+// pending changes the moment the connection comes back, since _syncToServer
+// only fires from save()/flushSave() and wouldn't otherwise retry on its own
+// after a failed attempt until the user edits something again.
+let _backOnlineHideTimer = null;
+function _updateNetworkBanner(isOnline){
+  const el = document.getElementById('network-banner');
+  if(!el) return;
+  clearTimeout(_backOnlineHideTimer);
+  if(!isOnline){
+    el.className = 'show offline';
+    el.textContent = "You're offline — your progress is saved on this device and will sync once you're back online.";
+  } else {
+    el.className = 'show online';
+    el.textContent = "Back online — syncing your data\u2026";
+    if(sb && currentUser) flushSave();
+    _backOnlineHideTimer = setTimeout(() => { el.className = ''; }, 3000);
+  }
+}
+window.addEventListener('online', () => _updateNetworkBanner(true));
+window.addEventListener('offline', () => _updateNetworkBanner(false));
+if(!navigator.onLine) _updateNetworkBanner(false);
+
 async function initSupabase(){
   
   let _authResolved = false;
@@ -112,7 +144,7 @@ async function initSupabase(){
       if(_appInitialized) return; 
       _appInitialized = true;
       currentUser = session.user;
-      loadUserData().then(async () => {
+      _withTimeout(loadUserData(), 15000, 'Loading your data').then(async () => {
         const profileStatus = await loadUserProfile();
         const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
         if(needsOnboarding){
@@ -124,6 +156,11 @@ async function initSupabase(){
           showApp(name, session.user.email);
         }
         registerPushNotifications();
+      }).catch((err) => {
+        console.warn('Failed to load user data', err);
+        _appInitialized = false;
+        hideSplash();
+        showConfigError('Couldn\u2019t load your data. Check your connection and try again.');
       });
     }
   });
@@ -165,7 +202,7 @@ async function initSupabase(){
       _appInitialized = true;
       currentUser = session.user;
       if(window.jtSplash) window.jtSplash.setProgress(55, 'Loading your data');
-      loadUserData().then(async () => {
+      _withTimeout(loadUserData(), 15000, 'Loading your data').then(async () => {
         const profileStatus = await loadUserProfile();
         if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');
         const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
@@ -179,6 +216,11 @@ async function initSupabase(){
           showApp(name, session.user.email);
           registerPushNotifications();
         }
+      }).catch((err) => {
+        console.warn('Failed to load user data', err);
+        _appInitialized = false;
+        hideSplash();
+        showConfigError('Couldn\u2019t load your data. Check your connection and try again.');
       });
     } else {
       showAuthScreen();
@@ -420,9 +462,11 @@ function hideSplash(){
   setTimeout(() => { sp.style.display = 'none'; }, 650);
 }
 
-function showConfigError(){
+function showConfigError(message){
   const el = document.getElementById('config-error-screen');
   if(el){
+    const msgEl = document.getElementById('config-error-message');
+    if(msgEl && message) msgEl.textContent = message;
     el.classList.remove('hidden');
     el.style.display = 'flex';
   }
@@ -443,16 +487,11 @@ function retryConfigLoad(){
   const btn = document.getElementById('config-error-retry-btn');
   if(btn){ btn.disabled = true; btn.textContent = 'Retrying\u2026'; }
 
-  hideConfigError();
-  if(window.jtSplash){
-    const sp = document.getElementById('splash');
-    if(sp){ sp.style.display=''; sp.classList.remove('fade-out'); window.__splashStart = Date.now(); }
-  }
-
-  initSupabase().finally(() => {
-    _configRetryInFlight = false;
-    if(btn){ btn.disabled = false; btn.textContent = 'Retry'; }
-  });
+  // A full reload is the safest retry here: initSupabase() can fail partway
+  // through (config OK, data load timed out) leaving _appInitialized / sb /
+  // onAuthStateChange listeners in a half-set-up state. Reloading guarantees
+  // a clean run instead of us having to carefully unwind partial state.
+  location.reload();
 }
 
 function showAuthScreen(fromSignOut){
