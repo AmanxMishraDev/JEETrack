@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v8';
+const CACHE_VERSION = 'jeetrack-v9';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -33,8 +33,17 @@ const APP_SHELL = [
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(STATIC_ASSETS).catch(() => {}))
+    caches.open(CACHE_NAME).then(cache => {
+      // Cache each file individually — if one fails (e.g. a CDN hiccup for
+      // a font URL), it shouldn't take the whole install down with it, which
+      // is what addAll() does (all-or-nothing). Previously APP_SHELL was
+      // defined but never actually passed to addAll(), so index.html/app.js/
+      // styles.css were never precached — meaning ANY offline navigation had
+      // nothing to fall back to and hit the raw "Offline and no cached
+      // version available" text.
+      const all = [...STATIC_ASSETS, ...APP_SHELL];
+      return Promise.all(all.map(url => cache.add(url).catch(() => {})));
+    })
   );
   self.skipWaiting();
 });
@@ -88,7 +97,17 @@ self.addEventListener('fetch', e => {
   
   
   if (APP_SHELL.some(p => url.pathname === p) || url.pathname === '/') {
-    e.respondWith(fetch(e.request));
+    e.respondWith(
+      fetch(e.request).catch(async () => {
+        // Previously this had no .catch() at all — offline, the rejected
+        // fetch promise reached respondWith() unhandled and the browser
+        // showed its own generic network-error page instead of anything
+        // from this app. Fall back to whichever of these three files we
+        // do have cached from install.
+        const cached = await caches.match(e.request) || await caches.match('/index.html');
+        return cached || new Response('Offline and no cached version available', { status: 503, statusText: 'Service Unavailable' });
+      })
+    );
     return;
   }
 
@@ -109,7 +128,12 @@ self.addEventListener('fetch', e => {
           // request, caches.match() resolves to undefined — and
           // respondWith(undefined) throws "Failed to convert value to
           // 'Response'". Always resolve to a real Response.
-          const cached = await caches.match(e.request);
+          //
+          // A route like '/dashboard' will never itself be in the cache
+          // (this is a client-side-routed SPA — only index.html/app.js/
+          // styles.css get precached) so fall back to the cached shell
+          // page rather than only trying an exact-URL match.
+          const cached = await caches.match(e.request) || await caches.match('/index.html');
           return cached || new Response('Offline and no cached version available', { status: 503, statusText: 'Service Unavailable' });
         })
     );
@@ -127,7 +151,7 @@ self.addEventListener('fetch', e => {
         return res;
       })
       .catch(async () => {
-        const cached = await caches.match(e.request);
+        const cached = await caches.match(e.request) || await caches.match('/index.html');
         return cached || new Response('Offline and no cached version available', { status: 503, statusText: 'Service Unavailable' });
       })
   );

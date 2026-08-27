@@ -1077,31 +1077,29 @@ function loadSupporterBadge(){
 // Activity heartbeat — replaces the old per-write DB trigger on hours/tests
 // (that trigger fired on every single save and forced a full user_preferences
 // row rewrite just to bump a timestamp). Now decoupled from data writes
-// entirely: pings at most once per 5 min (matches the server-side staleness
-// window in ping_activity()), only while the tab is actually visible and the
-// user is logged in. Fire-and-forget, no UI, no effect on save speed.
+// entirely: pings at most once per calendar day (local date), only while
+// the tab is visible and the user is logged in. Fire-and-forget, no UI,
+// no effect on save speed. Day-granularity means no periodic timer is
+// needed at all — the local-date check on visibilitychange is enough.
 let _activityHeartbeatStarted = false;
-const PING_INTERVAL_MS = 5 * 60 * 1000;
-// Client-side throttle, mirrors ping_activity()'s own 5-min staleness window.
-// Without this, visibilitychange (tab switches, app-switches, screen
-// lock/unlock on mobile) fired a full ping on every single occurrence with
-// no cooldown — 18.8k calls/~17.6% of total DB exec time in prod, the vast
-// majority of them no-op UPDATEs the server was already going to skip.
-let _lastPingAt = 0;
+const LAST_PING_DATE_KEY = 'jt_last_ping_date';
+function _todayLocal(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 function startActivityHeartbeat(){
   if(_activityHeartbeatStarted || !sb || !currentUser) return;
   _activityHeartbeatStarted = true;
   const ping = () => {
     if(!sb || !currentUser || document.visibilityState !== 'visible') return;
-    const now = Date.now();
-    if(now - _lastPingAt < PING_INTERVAL_MS) return;
-    _lastPingAt = now;
+    const today = _todayLocal();
+    if(localStorage.getItem(LAST_PING_DATE_KEY) === today) return; // already pinged today
+    localStorage.setItem(LAST_PING_DATE_KEY, today);
     sb.auth.getSession().then(({ data }) => {
       if(data?.session) Promise.resolve(sb.rpc('ping_activity')).catch(()=>{});
     }).catch(()=>{});
   };
   ping();
-  setInterval(ping, PING_INTERVAL_MS);
   document.addEventListener('visibilitychange', ping);
 }
 

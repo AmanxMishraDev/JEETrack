@@ -241,7 +241,22 @@ async function triggerEdgeFunction(fnName, body = {}) {
 function dateFrom(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
-  return d.toISOString().split('T')[0];
+  return toISTDateKey(d);
+}
+
+// All user-facing dates in JEETrack (signup timestamps included) are meant
+// to be bucketed by IST calendar day, since that's where the users are.
+// `toISOString().split('T')[0]` gives the UTC date instead, which silently
+// shifts any event between 00:00-05:29 IST onto the previous day's bucket
+// (that window is 18:30-23:59 UTC the day before) — this was causing
+// "new users per day" (and D1/D7/D30 retention, which compares against
+// IST-local `date` strings from hours/tests) to look wrong for signups or
+// checks landing in that window.
+function toISTDateKey(date) {
+  return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // en-CA => YYYY-MM-DD
+}
+function toISTMonthKey(date) {
+  return toISTDateKey(date).slice(0, 7);
 }
 
 
@@ -403,7 +418,7 @@ export default async function handler(req, res) {
         if (!u.created_at) return;
         const d = new Date(u.created_at);
         if (d < cutoff) return;
-        const key = d.toISOString().split('T')[0];
+        const key = toISTDateKey(d);
         byDay[key] = (byDay[key] || 0) + 1;
       });
 
@@ -411,7 +426,7 @@ export default async function handler(req, res) {
       const labels = [], values = [];
       for (let i = days - 1; i >= 0; i--) {
         const d = new Date(); d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
+        const key = toISTDateKey(d);
         labels.push(key);
         values.push(byDay[key] || 0);
       }
@@ -916,7 +931,7 @@ export default async function handler(req, res) {
       
       const byMonth = {};
       feedbacks.forEach(f => {
-        const m = f.created_at?.slice(0, 7) || 'unknown';
+        const m = f.created_at ? toISTMonthKey(new Date(f.created_at)) : 'unknown';
         byMonth[m] = (byMonth[m] || 0) + 1;
       });
 
@@ -976,7 +991,7 @@ export default async function handler(req, res) {
         const wasActiveOnDay = (n) => {
           const target = new Date(signup);
           target.setDate(target.getDate() + n);
-          return dates.has(target.toISOString().split('T')[0]);
+          return dates.has(toISTDateKey(target));
         };
 
         if (daysSinceSignup >= 1)  { d1Eligible++;  if (wasActiveOnDay(1))  d1Users.push(u.id); }
