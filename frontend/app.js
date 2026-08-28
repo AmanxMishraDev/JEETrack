@@ -2326,6 +2326,7 @@ function loadPublicSiteConfig(){
         el.setAttribute('data-count-to', String(Math.max(0, Math.round(val))));
         el.setAttribute('data-count-display', fmt(val));
       };
+      applyHero('hus-students', 'students_count', _fmtStatPlain);
       applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);
       applyHero('hus-study-hours', 'study_hours_count', _fmtStatK);
       applyHero('hus-backlogs', 'backlogs_count', _fmtStatK);
