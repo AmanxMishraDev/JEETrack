@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v9';
+const CACHE_VERSION = 'jeetrack-v10';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -98,7 +98,13 @@ self.addEventListener('fetch', e => {
   
   if (APP_SHELL.some(p => url.pathname === p) || url.pathname === '/') {
     e.respondWith(
-      fetch(e.request).catch(async () => {
+      // Same issue as the Supabase case above: a plain fetch() lets the
+      // BROWSER's own HTTP cache (not this SW's Cache Storage) silently
+      // serve a stale app.js/index.html on Cache-Control/ETag grounds, even
+      // right after a fresh deploy and a fresh SW activate. { cache:
+      // 'no-store' } forces a real round-trip so app.js updates land for
+      // every user as soon as they're online, not just on a hard-refresh.
+      fetch(e.request, { cache: 'no-store' }).catch(async () => {
         // Previously this had no .catch() at all — offline, the rejected
         // fetch promise reached respondWith() unhandled and the browser
         // showed its own generic network-error page instead of anything
@@ -115,7 +121,7 @@ self.addEventListener('fetch', e => {
   
   if (e.request.headers.get('accept')?.includes('text/html')) {
     e.respondWith(
-      fetch(e.request)
+      fetch(e.request, { cache: 'no-store' })
         .then(res => {
           if (res && res.status === 200) {
             const clone = res.clone();
