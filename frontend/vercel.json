@@ -9,14 +9,31 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/faq", "destination": "/faq.html" },
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/features", "destination": "/features.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/support", "destination": "/support.html" },
-    { "source": "/hall-of-support", "destination": "/hall-of-support.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
+
+    { "source": "/favicon.svg", "destination": "/assets/icons/favicon.svg" },
+    { "source": "/favicon.png", "destination": "/assets/icons/favicon.png" },
+    { "source": "/icon-152.png", "destination": "/assets/icons/icon-152.png" },
+    { "source": "/icon-192.png", "destination": "/assets/icons/icon-192.png" },
+    { "source": "/jeetrack-logo-email.png", "destination": "/assets/icons/jeetrack-logo-email.png" },
+
+    { "source": "/faq", "destination": "/pages/faq.html" },
+    { "source": "/faq.html", "destination": "/pages/faq.html" },
+    { "source": "/privacy", "destination": "/pages/privacy.html" },
+    { "source": "/privacy.html", "destination": "/pages/privacy.html" },
+    { "source": "/terms", "destination": "/pages/terms.html" },
+    { "source": "/terms.html", "destination": "/pages/terms.html" },
+    { "source": "/features", "destination": "/pages/features.html" },
+    { "source": "/features.html", "destination": "/pages/features.html" },
+    { "source": "/about", "destination": "/pages/about.html" },
+    { "source": "/about.html", "destination": "/pages/about.html" },
+    { "source": "/support", "destination": "/pages/support.html" },
+    { "source": "/support.html", "destination": "/pages/support.html" },
+    { "source": "/hall-of-support", "destination": "/pages/hall-of-support.html" },
+    { "source": "/hall-of-support.html", "destination": "/pages/hall-of-support.html" },
+
+    { "source": "/admin", "destination": "/admin/admin.html" },
+    { "source": "/admin.html", "destination": "/admin/admin.html" },
+
+    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|favicon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
   ]
 }
