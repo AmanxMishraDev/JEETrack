@@ -1068,6 +1068,7 @@ function loadSupporterBadge(){
   sb.rpc('get_my_badge', { p_user_id: currentUser.id }).maybeSingle()
     .then(({ data }) => {
       currentSupporterBadgeTier = (data && data.badge_tier) || null;
+      localStorage.setItem(CACHED_BADGE_TIER_KEY, currentSupporterBadgeTier || '');
       renderSupporterBadgeChip('settings-supporter-badge-emoji', 'settings-supporter-badge', currentSupporterBadgeTier, 20);
       renderSupporterBadgeChip('avMenuBadgeIcon', 'avMenuBadge', currentSupporterBadgeTier, 18);
     })
@@ -1108,8 +1109,30 @@ function startActivityHeartbeat(){
 // email their JEETrack account uses. Safe to call every login: it's a
 // no-op once already claimed (claim_guest_donations() only matches rows
 // with user_id still NULL).
+//
+// Both this and get_my_badge() (inside loadSupporterBadge) used to run on
+// EVERY single app-load with zero caching — unlike get_full_state, which
+// skips its fetch entirely when nothing changed. That made this pair the
+// single biggest combined DB time consumer in production (>12%), ahead of
+// get_full_state itself, purely from running unconditionally on every
+// load. A donation/badge status realistically changes at most once in a
+// blue moon, so — same reasoning as the activity heartbeat — this only
+// needs day-granularity: check the DB once per calendar day, and on every
+// other load that same day, render straight from the cached tier with no
+// network call at all.
+const LAST_BADGE_CHECK_DATE_KEY = 'jt_last_badge_check_date';
+const CACHED_BADGE_TIER_KEY = 'jt_cached_badge_tier';
 function claimGuestDonationsAndLoadBadge(){
   if(!sb || !currentUser){ loadSupporterBadge(); return; }
+  const today = _todayLocal();
+  if(localStorage.getItem(LAST_BADGE_CHECK_DATE_KEY) === today){
+    // Already checked the DB today — render from cache, no network call.
+    currentSupporterBadgeTier = localStorage.getItem(CACHED_BADGE_TIER_KEY) || null;
+    renderSupporterBadgeChip('settings-supporter-badge-emoji', 'settings-supporter-badge', currentSupporterBadgeTier, 20);
+    renderSupporterBadgeChip('avMenuBadgeIcon', 'avMenuBadge', currentSupporterBadgeTier, 18);
+    return;
+  }
+  localStorage.setItem(LAST_BADGE_CHECK_DATE_KEY, today);
   sb.rpc('claim_guest_donations')
     .then(({ data: claimedCount }) => {
       if(claimedCount && claimedCount > 0 && typeof toast === 'function'){
@@ -1117,7 +1140,10 @@ function claimGuestDonationsAndLoadBadge(){
       }
       loadSupporterBadge();
     })
-    .catch(() => { loadSupporterBadge(); });
+    .catch(() => {
+      localStorage.removeItem(LAST_BADGE_CHECK_DATE_KEY); // let it retry next load, not stuck for the rest of the day
+      loadSupporterBadge();
+    });
 }
 
 // ── Debounced network sync ──
@@ -2365,8 +2391,10 @@ function _rollOdometer(el){
   el.dataset.rolled = '1';
   const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
   const display = el.getAttribute('data-count-display') || String(target);
-  const startVal = Math.round(target * 0.55); // start partway in — a quick punch, not a long grind from zero
-  const DUR = 850; // short and snappy
+  const startPct = el.dataset.countStartPct !== undefined ? parseFloat(el.dataset.countStartPct) : 0.55;
+  const startVal = Math.round(target * startPct); // start partway in — a quick punch, not a long grind from zero
+  const DUR = el.dataset.countDuration ? parseInt(el.dataset.countDuration, 10) : 850; // short and snappy by default
+  const power = el.dataset.countEasePower ? parseFloat(el.dataset.countEasePower) : 3;
   el.style.opacity = '0';
   el.style.transform = 'translateY(3px)';
   requestAnimationFrame(() => {
@@ -2377,7 +2405,7 @@ function _rollOdometer(el){
   const t0 = performance.now();
   function frame(now){
     const p = Math.min(1, (now - t0) / DUR);
-    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    const eased = 1 - Math.pow(1 - p, power); // easeOutCubic (or gentler, per element)
     const val = Math.round(startVal + (target - startVal) * eased);
     el.textContent = val.toLocaleString('en-IN');
     if (p < 1) requestAnimationFrame(frame);
@@ -2385,16 +2413,64 @@ function _rollOdometer(el){
   }
   requestAnimationFrame(frame);
 }
+function _buildPremiumOdometer(el){
+  if (!el || el.dataset.rolled === '1') return;
+  el.dataset.rolled = '1';
+  const display = el.getAttribute('data-count-display') || (el.getAttribute('data-count-to') || '0');
+  const chars = display.split('');
+  el.innerHTML = '';
+  el.style.display = 'inline-flex';
+  el.style.alignItems = 'baseline';
+  el.style.fontVariantNumeric = 'tabular-nums';
+  const REEL_DUR = 1800; // slower, deliberate — a real spin-down, not a quick tick
+  const reels = [];
+  chars.forEach((ch) => {
+    if (/[0-9]/.test(ch)) {
+      const reel = document.createElement('span');
+      reel.style.cssText = 'display:inline-block;overflow:hidden;height:1em;width:.62em;position:relative;vertical-align:baseline;';
+      const strip = document.createElement('span');
+      strip.style.cssText = `display:block;transform:translateY(-900%);transition:transform ${REEL_DUR}ms cubic-bezier(.16,1,.3,1);will-change:transform;`;
+      for (let d = 0; d <= 9; d++){
+        const row = document.createElement('span');
+        row.style.cssText = 'display:block;height:1em;line-height:1em;text-align:center;';
+        row.textContent = String(d);
+        strip.appendChild(row);
+      }
+      reel.appendChild(strip);
+      el.appendChild(reel);
+      reels.push({ strip, digit: parseInt(ch, 10) });
+    } else {
+      const span = document.createElement('span');
+      span.textContent = ch;
+      span.style.cssText = 'opacity:0;transition:opacity .5s ease .9s;';
+      el.appendChild(span);
+      requestAnimationFrame(() => requestAnimationFrame(() => { span.style.opacity = '1'; }));
+    }
+  });
+  requestAnimationFrame(() => {
+    reels.forEach((r, idx) => {
+      r.strip.style.transitionDelay = (idx * 110) + 'ms';
+      requestAnimationFrame(() => { r.strip.style.transform = `translateY(-${r.digit * 10}%)`; });
+    });
+  });
+  const totalTime = REEL_DUR + reels.length * 110 + 100;
+  setTimeout(() => {
+    el.style.transition = 'filter .7s ease';
+    el.style.filter = 'drop-shadow(0 0 9px rgba(162,155,254,.6))';
+    setTimeout(() => { el.style.filter = 'none'; }, 800);
+  }, totalTime);
+}
 function _initCountUp(scopeEl){
   const root = document.getElementById('landing');
   const container = scopeEl || root;
   if (!container) return;
   const els = container.querySelectorAll('.odo-num[data-count-to]');
   if (!els.length) return;
-  if (!('IntersectionObserver' in window)) { els.forEach(_rollOdometer); return; }
+  const roll = (el) => el.classList.contains('premium-odo') ? _buildPremiumOdometer(el) : _rollOdometer(el);
+  if (!('IntersectionObserver' in window)) { els.forEach(roll); return; }
   const obs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
-      if (e.isIntersecting) { _rollOdometer(e.target); obs.unobserve(e.target); }
+      if (e.isIntersecting) { roll(e.target); obs.unobserve(e.target); }
     });
   }, { root: root, threshold: 0.4 });
   els.forEach(function(el){ obs.observe(el); });

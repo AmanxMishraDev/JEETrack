@@ -162,8 +162,6 @@ jeetrack/
 └── README.md
 ```
 
-> **Why `sw.js`, `manifest.json`, `robots.txt`, `sitemap.xml`, and the Google verification file stay at the `frontend/` root instead of moving into subfolders:** each of these has a hard requirement — from the browser spec, a search engine, or Google Search Console — to be served at an exact, unmoved URL path. Everything else that had no such constraint (icons, admin, marketing pages) has been organized into its own folder. Public URLs for every page and asset are unchanged (see `vercel.json`) — only where the files physically live on disk changed.
-
 > **Note on `database/sql/`:** these are kept as reference/history, not an auto-applied migrations folder — they were run manually via the Supabase SQL Editor in the order listed in Quick Start below. If you manage schema changes with the Supabase CLI going forward, put new ones in `supabase/migrations/` instead so `supabase db push` picks them up automatically.
 
 ---
