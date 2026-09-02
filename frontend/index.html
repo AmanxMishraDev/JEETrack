@@ -517,7 +517,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         </div>
         <div>
           <div class="land-trusted-count" id="land-trusted-count-live" style="font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em;">
-            <span class="odo-num" id="hus-students" data-count-to="2956" data-count-display="2,956+" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;background:linear-gradient(135deg,#fff,#a29bfe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">0</span> students trust JEETrack
+            <span class="odo-num premium-odo" id="hus-students" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#f1efff;">—</span> students trust JEETrack
           </div>
           <div class="land-trusted-label">Track · Analyse · Improve · Repeat</div>
         </div>
@@ -1966,12 +1966,24 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     <button class="fc active" data-group="hr-period" onclick="fltH('week',this)">This Week</button>
     <button class="fc" data-group="hr-period" onclick="fltH('month',this)">This Month</button>
     <button class="fc" data-group="hr-period" onclick="fltH('all',this)">All Time</button>
+    <button class="fc" data-group="hr-period" onclick="fltH('custom',this)">Custom</button>
     <select class="fc" id="hr-subj" onchange="renderHours()">
       <option value="all">All Subjects</option>
       <option value="physics">Physics</option>
       <option value="chemistry">Chemistry</option>
       <option value="maths">Maths</option>
     </select>
+</div>
+
+  <div class="hr-custom-range-panel" id="hr-custom-range" style="display:none">
+    <div class="hr-custom-range-field">
+      <label>From</label>
+      <input type="date" class="fc" id="hr-from" onchange="fltHCustom()"/>
+    </div>
+    <div class="hr-custom-range-field">
+      <label>To</label>
+      <input type="date" class="fc" id="hr-to" onchange="fltHCustom()"/>
+    </div>
   </div>
 
   
@@ -4686,7 +4698,7 @@ let S = JSON.parse(localStorage.getItem('jt3')||'null') || {
   subjBestStreaks:{physics:0,chemistry:0,maths:0},
   notifiedHWT:[]
 };
-const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all'},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:false,sylClass:'all',practice:{period:'week',subj:'all',chapter:'all',from:null,to:null,feedShown:20}};
+const F={mains:{session:'all',type:'all',subj:'all'},advanced:{paper:'all',type:'all',subj:'all'},hours:{period:'week',subj:'all',from:null,to:null},backlog:{subj:'all',status:'pending'},todo:{subj:'all',status:'pending'},syl:'physics',sylIncludeAdv:false,sylClass:'all',practice:{period:'week',subj:'all',chapter:'all',from:null,to:null,feedShown:20}};
 const M={ov:'pct',mn:'pct',adv:'pct',cmp:'pct'};
 let CIs={};
 let undoStack=null;
@@ -6184,7 +6196,14 @@ function flt(exam,key,val,el){
 function fltH(val,el){
   F.hours.period=val;
   document.querySelectorAll('[data-group="hr-period"]').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');renderHours();
+  el.classList.add('active');
+  document.getElementById('hr-custom-range').style.display=val==='custom'?'flex':'none';
+  renderHours();
+}
+function fltHCustom(){
+  F.hours.from=document.getElementById('hr-from').value||null;
+  F.hours.to=document.getElementById('hr-to').value||null;
+  renderHours();
 }
 function fltBl(k,v,el){F.backlog[k]=v;document.querySelectorAll(`[data-group="bl-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderBacklog();}
 function fltTd(k,v,el){F.todo[k]=v;document.querySelectorAll(`[data-group="td-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderTodo();}
@@ -6200,6 +6219,7 @@ function getHrs(){
   if(F.hours.subj!=='all')h=h.filter(x=>x.subject===F.hours.subj);
   if(F.hours.period==='week'){const c=new Date();c.setDate(c.getDate()-7);h=h.filter(x=>x.date>=c.toISOString().split('T')[0]);}
   else if(F.hours.period==='month'){const c=new Date();c.setDate(c.getDate()-30);h=h.filter(x=>x.date>=c.toISOString().split('T')[0]);}
+  else if(F.hours.period==='custom'){ if(F.hours.from)h=h.filter(x=>x.date>=F.hours.from); if(F.hours.to)h=h.filter(x=>x.date<=F.hours.to); }
   return h;
 }
 

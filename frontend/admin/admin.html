@@ -2773,7 +2773,7 @@ function renderFeedbackTable(feedbacks) {
       </td>
       <td>
         <button class="action-btn btn-primary" style="padding:.25rem .55rem;font-size:.68rem;white-space:nowrap;"
-          onclick="replyToFeedback('${esc(f.user_id||'')}','${esc(f.email||'')}','${esc(f.subject||'')}')">
+          onclick="replyToFeedback('${esc(f.user_id||'')}','${esc(f.email||'')}','${esc(f.subject||'')}','${esc(f.account_name||(f.email?f.email.split('@')[0]:'there'))}')">
           ✉️ Reply
         </button>
       </td>
@@ -2843,19 +2843,19 @@ function toggleFeedbackExpand(i, cell) {
   mainRow.insertAdjacentElement('afterend', expandRow);
 }
 
-function replyToFeedback(userId, email, subject) {
+function replyToFeedback(userId, email, subject, name) {
   
   const navEl = document.querySelector('.nav-item[onclick*=\'email\']');
   if (navEl) showPage('email', navEl);
 
   setTimeout(() => {
     
-    const replySubject = subject ? `Re: ${subject}` : 'Thank You for Your Feedback!';
+    const replySubject = `Thank You for Your Feedback, ${name}!`;
     document.getElementById('ce-subject').value = replySubject;
 
     
     document.getElementById('ce-body').value =
-      `Dear <strong>{{name}}</strong>,\n\nThank you for your valuable feedback and kind words about JEETrack.\n\n${subject ? `Regarding: "<em>${subject}</em>"\n\n` : ''}[Write your reply here...]\n\nIf you have any further questions or suggestions, feel free to reach out at <a href="mailto:support@jeetrack.in" style="color:#D8B4FE;text-decoration:none;font-weight:600;">support@jeetrack.in</a>.`;
+      `Hi <strong>${name}</strong>,\n\nThank you so much for your kind feedback and for taking the time to share your suggestions. I'm really glad you're finding JEETrack helpful!\n\n${subject ? `Regarding: "<em>${subject}</em>"\n\n` : ''}[Write your reply here...]\n\nIf you have any further questions or suggestions, feel free to reach out at <a href="mailto:support@jeetrack.in" style="color:#D8B4FE;text-decoration:none;font-weight:600;">support@jeetrack.in</a>.`;
 
     
     const customBtn = [...document.querySelectorAll('#page-email .recipient-tabs .rtab')]

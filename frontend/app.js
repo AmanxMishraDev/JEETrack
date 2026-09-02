@@ -2351,6 +2351,7 @@ function loadPublicSiteConfig(){
         if (!el || val === null || val === undefined) return;
         el.setAttribute('data-count-to', String(Math.max(0, Math.round(val))));
         el.setAttribute('data-count-display', fmt(val));
+        if (el.dataset.fakeLoop === '1') _resolveFakeLoop(el);
       };
       applyHero('hus-students', 'students_count', _fmtStatPlain);
       applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);
@@ -2413,8 +2414,52 @@ function _rollOdometer(el){
   }
   requestAnimationFrame(frame);
 }
+function _startFakeCountLoop(el){
+  if (el.dataset.fakeLoop === '1') return;
+  el.dataset.fakeLoop = '1';
+  el.innerHTML = '';
+  el.style.display = 'inline-flex';
+  el.style.alignItems = 'baseline';
+  el.style.fontVariantNumeric = 'tabular-nums';
+  el.style.opacity = '.5'; // subtly signals "still loading", never claims a real number
+  const reels = [];
+  for (let i = 0; i < 4; i++){
+    const reel = document.createElement('span');
+    reel.style.cssText = 'display:inline-block;overflow:hidden;height:1em;width:.62em;position:relative;vertical-align:baseline;';
+    const strip = document.createElement('span');
+    strip.style.cssText = 'display:block;transition:transform 1.1s cubic-bezier(.45,0,.2,1);will-change:transform;';
+    for (let d = 0; d <= 9; d++){
+      const row = document.createElement('span');
+      row.style.cssText = 'display:block;height:1em;line-height:1em;text-align:center;';
+      row.textContent = String(d);
+      strip.appendChild(row);
+    }
+    reel.appendChild(strip);
+    el.appendChild(reel);
+    reels.push(strip);
+  }
+  let tick = 0;
+  const step = () => {
+    tick++;
+    reels.forEach((strip, idx) => {
+      strip.style.transitionDelay = (idx * 70) + 'ms';
+      strip.style.transform = `translateY(-${((tick + idx * 3) % 10) * 10}%)`;
+    });
+  };
+  step();
+  el._fakeLoopTimer = setInterval(step, 1300); // gentle endless drift — a safety net, never a fabricated real number
+}
+function _resolveFakeLoop(el){
+  if (el._fakeLoopTimer) { clearInterval(el._fakeLoopTimer); el._fakeLoopTimer = null; }
+  el.dataset.fakeLoop = '';
+  el.dataset.rolled = '';
+  el.style.opacity = '1';
+  _buildPremiumOdometer(el);
+}
 function _buildPremiumOdometer(el){
-  if (!el || el.dataset.rolled === '1') return;
+  if (!el || el.dataset.rolled === '1' || el.dataset.fakeLoop === '1') return;
+  const rawTarget = el.getAttribute('data-count-to');
+  if (rawTarget === null || rawTarget === '') { _startFakeCountLoop(el); return; }
   el.dataset.rolled = '1';
   const display = el.getAttribute('data-count-display') || (el.getAttribute('data-count-to') || '0');
   const chars = display.split('');
@@ -2464,7 +2509,7 @@ function _initCountUp(scopeEl){
   const root = document.getElementById('landing');
   const container = scopeEl || root;
   if (!container) return;
-  const els = container.querySelectorAll('.odo-num[data-count-to]');
+  const els = container.querySelectorAll('.odo-num[data-count-to], .premium-odo');
   if (!els.length) return;
   const roll = (el) => el.classList.contains('premium-odo') ? _buildPremiumOdometer(el) : _rollOdometer(el);
   if (!('IntersectionObserver' in window)) { els.forEach(roll); return; }
