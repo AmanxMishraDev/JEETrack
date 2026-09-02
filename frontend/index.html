@@ -1961,28 +1961,26 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </div>
 
   
-  <div class="prem-filter-bar">
-    <span class="prem-filter-label">Filter</span>
-    <button class="fc active" data-group="hr-period" onclick="fltH('week',this)">This Week</button>
-    <button class="fc" data-group="hr-period" onclick="fltH('month',this)">This Month</button>
-    <button class="fc" data-group="hr-period" onclick="fltH('all',this)">All Time</button>
-    <button class="fc" data-group="hr-period" onclick="fltH('custom',this)">Custom</button>
-    <select class="fc" id="hr-subj" onchange="renderHours()">
-      <option value="all">All Subjects</option>
-      <option value="physics">Physics</option>
-      <option value="chemistry">Chemistry</option>
-      <option value="maths">Maths</option>
-    </select>
-</div>
-
-  <div class="hr-custom-range-panel" id="hr-custom-range" style="display:none">
-    <div class="hr-custom-range-field">
-      <label>From</label>
-      <input type="date" class="fc" id="hr-from" onchange="fltHCustom()"/>
+  <div class="pl-filter-bar" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <span class="prem-filter-label">Filter</span>
+      <button class="fc active" data-group="hr-period" onclick="fltH('week',this)">This Week</button>
+      <button class="fc" data-group="hr-period" onclick="fltH('month',this)">This Month</button>
+      <button class="fc" data-group="hr-period" onclick="fltH('all',this)">All Time</button>
+      <button class="fc" data-group="hr-period" onclick="fltH('custom',this)">Custom</button>
     </div>
-    <div class="hr-custom-range-field">
-      <label>To</label>
-      <input type="date" class="fc" id="hr-to" onchange="fltHCustom()"/>
+    <div class="pl-filter-right">
+      <div class="pl-custom-range" id="hr-custom-range" style="display:none">
+        <input type="date" class="fc" id="hr-from" onchange="fltHCustom()"/>
+        <span style="color:var(--mu);font-size:11px">to</span>
+        <input type="date" class="fc" id="hr-to" onchange="fltHCustom()"/>
+      </div>
+      <select class="fc" id="hr-subj" onchange="renderHours()">
+        <option value="all">All Subjects</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="maths">Maths</option>
+      </select>
     </div>
   </div>
 
