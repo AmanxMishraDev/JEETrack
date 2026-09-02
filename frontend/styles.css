@@ -5223,15 +5223,17 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 
 .hr-custom-range-panel{
   display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;
+  width:100%;max-width:100%;box-sizing:border-box;
   background:var(--sf);border:1px solid var(--bd);border-radius:12px;
   padding:10px 12px;margin:-4px 0 12px;box-shadow:0 2px 12px rgba(0,0,0,.15);
   animation:fadeSlideUp .25s ease both;
 }
-.hr-custom-range-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:130px}
+.hr-custom-range-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:130px;max-width:100%}
 .hr-custom-range-field label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mu2)}
-.hr-custom-range-field input[type="date"]{width:100%;padding:7px 9px;font-size:12px}
-@media(max-width:480px){
+.hr-custom-range-field input[type="date"]{width:100%;max-width:100%;box-sizing:border-box;padding:7px 9px;font-size:12px}
+@media(max-width:640px){
   .hr-custom-range-panel{flex-direction:column;align-items:stretch}
+  .hr-custom-range-field{min-width:0;width:100%}
 }
 
 .pl-filter-bar{
