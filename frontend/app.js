@@ -202,7 +202,24 @@ async function initSupabase(){
       _appInitialized = true;
       currentUser = session.user;
       if(window.jtSplash) window.jtSplash.setProgress(55, 'Loading your data');
-      _withTimeout(loadUserData(), 15000, 'Loading your data').then(async () => {
+      // Two-stage wait instead of one hard 15s cutoff: a brief slowdown
+      // (DB under load, a busy morning peak, etc.) used to hit this same
+      // 15s ceiling as a genuine outage, dropping straight to a "Couldn't
+      // load your data — Retry" screen whose retry does a full page
+      // reload (see retryConfigLoad()). During a real slowdown that meant
+      // every affected user reloaded within seconds of each other — a
+      // reload storm landing on a server that was already struggling,
+      // making things worse right when it could least afford it. Now: at
+      // 15s, just reassure ("still working") without failing anything —
+      // real responses during a degraded-but-recovering window have been
+      // observed completing well under a minute. Only offer the
+      // reload-based retry after 45s total, a threshold actual outages
+      // clear but brief load spikes generally don't.
+      const _stillWorkingTimer = setTimeout(() => {
+        if(window.jtSplash) window.jtSplash.setProgress(55, 'Still working — hang tight, this can take a bit longer than usual');
+      }, 15000);
+      _withTimeout(loadUserData(), 45000, 'Loading your data').then(async () => {
+        clearTimeout(_stillWorkingTimer);
         const profileStatus = await loadUserProfile();
         if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');
         const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
@@ -217,6 +234,7 @@ async function initSupabase(){
           registerPushNotifications();
         }
       }).catch((err) => {
+        clearTimeout(_stillWorkingTimer);
         console.warn('Failed to load user data', err);
         _appInitialized = false;
         hideSplash();
