@@ -279,6 +279,7 @@ Vercel auto-deploys on every push — no manual steps needed.
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — how the pieces fit together
 - [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) — Database IO investigation: what was consuming budget on the free tier and what was fixed
+- [`docs/SECURITY.md`](docs/SECURITY.md) — responsible disclosure / how to report a vulnerability
 
 ## 🤝 Contributing
 

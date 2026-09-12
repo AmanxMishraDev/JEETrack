@@ -12,7 +12,7 @@ const ADMIN_PASSWORD       = process.env.ADMIN_PASSWORD;
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const ADMIN_TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || ADMIN_PASSWORD;
+const ADMIN_TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET;
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; 
 
 function safeCompare(a, b) {
@@ -58,6 +58,8 @@ function loginRateLimited(ip) {
   return { limited: rec.count > LOGIN_MAX_ATTEMPTS, remaining: Math.max(0, LOGIN_MAX_ATTEMPTS - rec.count), retryAfterMs: rec.resetAt - now };
 }
 function clientIp(req) {
+  const real = req.headers['x-real-ip'];
+  if (real) return String(real).trim();
   const fwd = req.headers['x-forwarded-for'];
   if (fwd) return String(fwd).split(',')[0].trim();
   return req.socket?.remoteAddress || 'unknown';
@@ -320,6 +322,11 @@ export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  if (!ADMIN_PASSWORD || !ADMIN_TOKEN_SECRET) {
+    console.error('[Admin API] Missing required env var(s): ADMIN_PASSWORD and ADMIN_TOKEN_SECRET must both be set (and be different values)');
+    return res.status(500).json({ error: 'Server misconfigured' });
+  }
+
   
   if (req.method === 'POST' && typeof req.body === 'string') {
     try { req.body = JSON.parse(req.body); } catch {}
@@ -564,20 +571,21 @@ export default async function handler(req, res) {
     if (action === 'user_detail') {
       const { distinct_id } = req.query;
       if (!distinct_id) return res.status(400).json({ error: 'distinct_id required' });
+      const safeDistinctId = encodeURIComponent(distinct_id);
 
       
       const [
         testsData, hoursData, backlogs, todos, feedbacks, streaks, prefs, authUser, practiceLogsData
       ] = await Promise.all([
-        sbQuery(`tests?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
-        sbQuery(`hours?select=*&user_id=eq.${distinct_id}&order=date.desc`).catch(() => []),
-        sbCount('backlogs', `user_id=eq.${distinct_id}`).catch(() => 0),
-        sbCount('todos', `user_id=eq.${distinct_id}`).catch(() => 0),
-        sbQuery(`feedback?select=*&user_id=eq.${distinct_id}&order=created_at.desc`).catch(() => []),
-        sbQuery(`streaks?select=*&user_id=eq.${distinct_id}`).catch(() => []),
-        sbQuery(`user_preferences?select=*&user_id=eq.${distinct_id}`).catch(() => []),
-        sbAuthGetUser(distinct_id).catch(() => null),
-        sbQuery(`practice_logs?select=subject,questions&user_id=eq.${distinct_id}`).catch(() => []),
+        sbQuery(`tests?select=*&user_id=eq.${safeDistinctId}&order=created_at.desc`).catch(() => []),
+        sbQuery(`hours?select=*&user_id=eq.${safeDistinctId}&order=date.desc`).catch(() => []),
+        sbCount('backlogs', `user_id=eq.${safeDistinctId}`).catch(() => 0),
+        sbCount('todos', `user_id=eq.${safeDistinctId}`).catch(() => 0),
+        sbQuery(`feedback?select=*&user_id=eq.${safeDistinctId}&order=created_at.desc`).catch(() => []),
+        sbQuery(`streaks?select=*&user_id=eq.${safeDistinctId}`).catch(() => []),
+        sbQuery(`user_preferences?select=*&user_id=eq.${safeDistinctId}`).catch(() => []),
+        sbAuthGetUser(safeDistinctId).catch(() => null),
+        sbQuery(`practice_logs?select=subject,questions&user_id=eq.${safeDistinctId}`).catch(() => []),
       ]);
 
       

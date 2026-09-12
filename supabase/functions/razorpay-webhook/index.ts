@@ -1,6 +1,7 @@
 // 📁 FILE LOCATION: supabase/functions/razorpay-webhook/index.ts
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { timingSafeEqual } from "node:crypto";
 
 // Razorpay Webhook — the source-of-truth confirmation for a payment,
 // independent of whether the user's browser stayed open after paying.
@@ -30,6 +31,17 @@ function toHex(buf: ArrayBuffer): string {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// Same escaping intent as hall-of-support.html's escapeHtml() (which relies
+// on the browser DOM), reimplemented here since edge functions have no DOM.
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Keep in sync with get_hall_of_support()'s badge_tier CASE in Postgres.
 function tierForAmount(amount: number): string {
   if (amount >= 499) return "Diamond Supporter";
@@ -40,6 +52,7 @@ function tierForAmount(amount: number): string {
 
 function receiptHtml(opts: { name: string; amount: number; paymentId: string; date: string; tier: string }): string {
   const { name, amount, paymentId, date, tier } = opts;
+  const safeName = escapeHtml(name);
   return `
   <div style="background:#0a0a0f;padding:32px 16px;font-family:-apple-system,Segoe UI,Roboto,sans-serif">
     <div style="max-width:480px;margin:0 auto;background:#111118;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08)">
@@ -48,7 +61,7 @@ function receiptHtml(opts: { name: string; amount: number; paymentId: string; da
         <div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:4px">Thank you for your support ❤️</div>
       </div>
       <div style="padding:28px 24px">
-        <p style="color:#f0eff5;font-size:15px;line-height:1.6;margin:0 0 20px">Hi ${name},</p>
+        <p style="color:#f0eff5;font-size:15px;line-height:1.6;margin:0 0 20px">Hi ${safeName},</p>
         <p style="color:#8b899e;font-size:14px;line-height:1.7;margin:0 0 24px">Your contribution to JEETrack was successful. It genuinely helps keep JEETrack free for every JEE aspirant — thank you.</p>
         <div style="background:#16161f;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;margin-bottom:20px">
           <div style="display:flex;justify-content:space-between;padding:6px 0;color:#8b899e;font-size:13px"><span>Amount</span><span style="color:#f0eff5;font-weight:700">₹${amount}</span></div>
@@ -61,6 +74,19 @@ function receiptHtml(opts: { name: string; amount: number; paymentId: string; da
       </div>
     </div>
   </div>`;
+}
+
+// Same length-leak-safe pattern as admin.js's safeCompare(): on a length
+// mismatch we still run a same-length comparison before returning false,
+// so the response time doesn't leak how long the real signature is.
+function safeCompare(a: string, b: string): boolean {
+  const aBuf = new TextEncoder().encode(a);
+  const bBuf = new TextEncoder().encode(b);
+  if (aBuf.length !== bBuf.length) {
+    timingSafeEqual(aBuf, new Uint8Array(aBuf.length));
+    return false;
+  }
+  return timingSafeEqual(aBuf, bBuf);
 }
 
 Deno.serve(async (req: Request) => {
@@ -89,7 +115,7 @@ Deno.serve(async (req: Request) => {
     const sigBuffer = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(rawBody));
     const expectedSignature = toHex(sigBuffer);
 
-    if (expectedSignature !== signature) {
+    if (!safeCompare(expectedSignature, signature)) {
       console.error("Webhook signature mismatch");
       return new Response("Invalid signature", { status: 400 });
     }

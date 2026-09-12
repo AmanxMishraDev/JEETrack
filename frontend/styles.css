@@ -1810,6 +1810,9 @@ select.fc{appearance:none;-webkit-appearance:none;padding-right:26px;background-
 .auth-legal-note a{color:var(--ac2);text-decoration:none}
 .auth-legal-note a:hover{text-decoration:underline}
 
+.auth-turnstile{display:flex;justify-content:center;margin:2px 0 14px;min-height:0}
+.auth-turnstile:empty{margin:0}
+
 .auth-submit-pro{
   width:100%;padding:13px;border-radius:12px;border:none;cursor:pointer;
   background:linear-gradient(120deg,#6034a6,#9b3fb0,#c12c89);background-size:200% 200%;

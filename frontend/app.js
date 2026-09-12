@@ -23,6 +23,7 @@ if ('serviceWorker' in navigator) {
 
 let SUPABASE_URL = null;
 let SUPABASE_ANON_KEY = null;
+let TURNSTILE_SITE_KEY = null;
 
 let sb = null;
 let currentUser = null;
@@ -84,18 +85,19 @@ async function initSupabase(){
       const cfg = await res.json();
       SUPABASE_URL = cfg.url;
       SUPABASE_ANON_KEY = cfg.key;
+      TURNSTILE_SITE_KEY = cfg.turnstileSiteKey || null;
       if(window.jtSplash) window.jtSplash.setProgress(35, 'Preparing dashboard');
     } else {
       
       const res2 = await fetch('/api/config?_=' + Date.now());
-      if(res2.ok){ const cfg2=await res2.json(); SUPABASE_URL=cfg2.url; SUPABASE_ANON_KEY=cfg2.key; }
+      if(res2.ok){ const cfg2=await res2.json(); SUPABASE_URL=cfg2.url; SUPABASE_ANON_KEY=cfg2.key; TURNSTILE_SITE_KEY=cfg2.turnstileSiteKey || null; }
     }
   } catch(e) {
     console.warn('Could not fetch /api/config, retrying\u2026', e);
     
     try {
       const res3 = await fetch('/api/config?_=' + Date.now());
-      if(res3.ok){ const cfg3=await res3.json(); SUPABASE_URL=cfg3.url; SUPABASE_ANON_KEY=cfg3.key; }
+      if(res3.ok){ const cfg3=await res3.json(); SUPABASE_URL=cfg3.url; SUPABASE_ANON_KEY=cfg3.key; TURNSTILE_SITE_KEY=cfg3.turnstileSiteKey || null; }
     } catch(e2) {}
   }
 
@@ -250,6 +252,75 @@ async function initSupabase(){
 let authTab = 'login';
 let _authSlideAnimating = false;
 
+// ── Turnstile (CAPTCHA) ──
+// Rendered lazily the first time the auth modal opens (landingOpenAuth),
+// not on page load — no reason to spend a challenge on someone who never
+// clicks Sign In. Silently does nothing if TURNSTILE_SITE_KEY isn't
+// configured yet (see /api/config), so shipping this doesn't require the
+// env var to be set first — same optional-feature pattern as PostHog.
+let _turnstileWidgetIds = { login: null, signup: null };
+let _turnstileTokens = { login: null, signup: null };
+let _turnstileRenderAttempts = 0;
+
+function _renderTurnstileWidgets(){
+  if(!TURNSTILE_SITE_KEY) return;
+  if(typeof window.turnstile === 'undefined'){
+    // The script tag is async — on a slow connection it may not have
+    // finished loading yet by the time the modal first opens.
+    if(_turnstileRenderAttempts++ < 20) setTimeout(_renderTurnstileWidgets, 250);
+    return;
+  }
+  ['login','signup'].forEach(mode => {
+    if(_turnstileWidgetIds[mode] !== null) return; 
+    const el = document.getElementById('turnstile-' + mode);
+    if(!el) return;
+    _turnstileWidgetIds[mode] = window.turnstile.render(el, {
+      sitekey: TURNSTILE_SITE_KEY,
+      theme: 'dark',
+      callback: (token) => { _turnstileTokens[mode] = token; },
+      'expired-callback': () => { _turnstileTokens[mode] = null; },
+      'error-callback': () => { _turnstileTokens[mode] = null; },
+    });
+  });
+}
+
+function _resetTurnstile(mode){
+  _turnstileTokens[mode] = null;
+  if(TURNSTILE_SITE_KEY && typeof window.turnstile !== 'undefined' && _turnstileWidgetIds[mode] !== null){
+    try { window.turnstile.reset(_turnstileWidgetIds[mode]); } catch(e) {}
+  }
+}
+
+// ── Client-side login attempt backoff ──
+// Cosmetic/UX layer only — Supabase Auth (and now Turnstile) are the real
+// enforcement. This just stops someone from mashing the Sign In button and
+// gives a clear "wait a bit" message instead of a wall of server errors.
+// Resets on page reload by design; not meant to survive a refresh.
+const _loginAttemptState = {}; // email(lowercased) -> { count, blockedUntil }
+const LOGIN_ATTEMPT_LIMIT = 5;
+const LOGIN_ATTEMPT_COOLDOWN_MS = 60 * 1000;
+
+function _checkLoginBackoff(email){
+  const rec = _loginAttemptState[email];
+  if(!rec || !rec.blockedUntil) return { blocked: false };
+  const remainingMs = rec.blockedUntil - Date.now();
+  if(remainingMs <= 0){ delete _loginAttemptState[email]; return { blocked: false }; }
+  return { blocked: true, remainingSec: Math.ceil(remainingMs / 1000) };
+}
+
+function _recordLoginFailure(email){
+  const rec = _loginAttemptState[email] || { count: 0, blockedUntil: null };
+  rec.count++;
+  if(rec.count >= LOGIN_ATTEMPT_LIMIT){
+    rec.blockedUntil = Date.now() + LOGIN_ATTEMPT_COOLDOWN_MS;
+    rec.count = 0; 
+  }
+  _loginAttemptState[email] = rec;
+}
+
+function _clearLoginFailures(email){ delete _loginAttemptState[email]; }
+
+
 function switchAuthMode(mode){
   if (mode === authTab || _authSlideAnimating) return;
   const viewport = document.getElementById('auth-slide-viewport');
@@ -403,18 +474,34 @@ async function doAuthPro(mode){
   const email = document.getElementById('auth-email-'+mode).value.trim();
   const pass = document.getElementById('auth-pass-'+mode).value;
   if(!email || !pass){ showAuthErrPro(mode, 'Please enter your email and password.'); return; }
+  const emailKey = email.toLowerCase();
+
+  if(mode === 'login'){
+    const backoff = _checkLoginBackoff(emailKey);
+    if(backoff.blocked){
+      showAuthErrPro(mode, `Too many attempts. Try again in ${backoff.remainingSec}s.`);
+      return;
+    }
+  }
+
+  if(TURNSTILE_SITE_KEY && !_turnstileTokens[mode]){
+    showAuthErrPro(mode, 'Please complete the verification below.');
+    return;
+  }
+
   const btn = document.getElementById('auth-btn-'+mode);
   btn.disabled = true; btn.classList.add('loading'); hideAuthMsgPro(mode);
   try{
+    const captchaToken = TURNSTILE_SITE_KEY ? _turnstileTokens[mode] : undefined;
     if(mode === 'signup'){
       const name = document.getElementById('auth-name-signup').value.trim() || email.split('@')[0];
-      const { error } = await sb.auth.signUp({ email, password: pass, options:{ data:{ full_name: name } } });
+      const { error } = await sb.auth.signUp({ email, password: pass, options:{ data:{ full_name: name }, captchaToken } });
       if(error) throw error;
       showAuthInfoPro(mode, 'Check your email for a confirmation link. After confirming, sign in here.');
     } else {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass, options:{ captchaToken } });
       if(error) throw error;
-      
+      _clearLoginFailures(emailKey);
     }
   }catch(e){
     let msg = e.message || 'Something went wrong. Try again.';
@@ -422,8 +509,10 @@ async function doAuthPro(mode){
     if (msg.toLowerCase().includes('password') && (msg.toLowerCase().includes('character') || msg.toLowerCase().includes('least') || msg.toLowerCase().includes('uppercase') || msg.toLowerCase().includes('lowercase') || msg.toLowerCase().includes('symbol') || msg.toLowerCase().includes('number') || msg.toLowerCase().includes('digit'))) {
       msg = 'Password must be 6+ chars with a number & symbol.';
     }
+    if(mode === 'login') _recordLoginFailure(emailKey);
     showAuthErrPro(mode, msg);
   }
+  _resetTurnstile(mode); // tokens are single-use regardless of outcome
   btn.disabled = false; btn.classList.remove('loading');
 }
 
@@ -2617,6 +2706,7 @@ function landingOpenAuth(mode) {
   const wasOpen = scrim.classList.contains('open');
   scrim.classList.add('open');
   document.body.style.overflow = 'hidden';
+  _renderTurnstileWidgets();
   if (wasOpen) {
     switchAuthTab(mode);
   } else {

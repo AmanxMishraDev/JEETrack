@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-js:
+    name: Lint (frontend + api)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  lint-edge-functions:
+    name: Lint (Supabase edge functions)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: deno lint supabase/functions
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Placeholder — real test suite lands in Phase 7 of the hardening
+      # roadmap. This keeps a "test" status check present from day one
+      # so branch protection can require it without waiting for Vitest.
+      - run: echo "No automated tests yet — tracked in Phase 7 of the hardening roadmap."
