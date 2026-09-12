@@ -509,7 +509,16 @@ function retryConfigLoad(){
   // through (config OK, data load timed out) leaving _appInitialized / sb /
   // onAuthStateChange listeners in a half-set-up state. Reloading guarantees
   // a clean run instead of us having to carefully unwind partial state.
-  location.reload();
+  //
+  // The reload itself is jittered (0.3s-2.3s) rather than instant. Everyone
+  // who lands on this screen because of a *shared* slowdown (not their own
+  // connection) tends to hit the 45s timeout within moments of each other,
+  // and people click "Retry" fast once it appears — an un-jittered reload
+  // here turns that into a synchronized burst of full page loads (config
+  // fetch + auth + get_full_state) landing on a DB that's already struggling,
+  // which is exactly what produced the timeout cascade this was meant to fix.
+  // Spreading reloads over a ~2s window turns the burst into a trickle.
+  setTimeout(() => { location.reload(); }, 300 + Math.random() * 2000);
 }
 
 function showAuthScreen(fromSignOut){
@@ -550,6 +559,7 @@ function showApp(name, email){
   hideSplash();
   document.getElementById('onboarding').classList.remove('show');
   document.getElementById('main-app').style.display='flex';
+  if(typeof _restoreHoursFilter==='function'){ try{ _restoreHoursFilter(); }catch(e){ console.warn('_restoreHoursFilter failed:', e); } }
   loadPublicSiteConfig().catch(()=>{});
   if(S.backlogStreak>365)S.backlogStreak=0;
   if(S.backlogBestStreak>365)S.backlogBestStreak=0;
@@ -801,7 +811,7 @@ async function loadUserData(){
   // this is always accurate — no staleness window, no multi-device risk.
   try{
     const uidCheck = currentUser.id;
-    const {data:verRow} = await sb.from('user_preferences').select('updated_at').eq('user_id',uidCheck).maybeSingle();
+    const {data:verRow} = await sb.from('sync_state').select('updated_at').eq('user_id',uidCheck).maybeSingle();
     const serverUpdatedAt = verRow?.updated_at || null;
     const localKnown = localStorage.getItem('jt3_known_updated_at');
     // Compare as actual instants, not raw strings — Postgres returns
@@ -863,7 +873,7 @@ async function loadUserData(){
       }catch(e){}
     }
     _seedSyncSnapshot();
-    try{ localStorage.setItem('jt3_known_updated_at', (full.user_preferences && full.user_preferences.updated_at) || ''); }catch(e){}
+    try{ localStorage.setItem('jt3_known_updated_at', full.updated_at || ''); }catch(e){}
   };
 
   try{
@@ -875,7 +885,13 @@ async function loadUserData(){
     console.error('Load error:',e);
     
     try {
-      await new Promise(r => setTimeout(r, 1500));
+      // Jittered delay (1.5s-3.5s) instead of a fixed 1500ms: if a batch of
+      // users' first attempts fail together because the DB is genuinely
+      // under load, a fixed delay makes every one of them retry in lockstep
+      // at the same instant, adding a synchronized second wave right on top
+      // of whatever caused the slowdown. Spreading retries over a window
+      // smooths that back out into a trickle instead of a spike.
+      await new Promise(r => setTimeout(r, 1500 + Math.random() * 2000));
       const uid2 = currentUser.id;
       const { data: full2, error: error2 } = await sb.rpc('get_full_state');
       if(error2) throw error2;
@@ -1224,7 +1240,7 @@ async function _syncToServer(){
     const syllabusStateKey = _snapKey(syllabusStatePayload);
     const syllabusChanged = _syncSnapshot._syllabus !== syllabusStateKey;
     if(syllabusChanged){
-      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload,updated_at:syncTimestamp},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
+      ops.push(sb.from('user_preferences').upsert({user_id:uid,syllabus_state:syllabusStatePayload},{onConflict:'user_id'}).then(({error})=>{ if(!error) _syncSnapshot._syllabus = syllabusStateKey; }));
     }
 
     const changedPracticeLogs = (S.practiceLogs||[]).map(p=>_payloadPracticeLog(p,uid)).filter(p=>_syncSnapshot.practiceLogs[p.id]!==_snapKey(p));
@@ -1242,15 +1258,17 @@ async function _syncToServer(){
 
     // Bump the shared freshness marker whenever ANYTHING changed this round —
     // this is what lets loadUserData()'s version-check (on any device) detect
-    // "something changed" without a blind time-based guess. If syllabus was
-    // the thing that changed, it already bumped updated_at above with this
-    // same timestamp; otherwise do one small standalone upsert here. Safe —
-    // PostgREST's upsert-on-conflict only touches the columns provided.
+    // "something changed" without a blind time-based guess. This now lives on
+    // its own sync_state row instead of user_preferences: previously this
+    // upsert landed on the same row that also holds syllabus_state, profile
+    // fields, and goals — 74% of all writes to that row were this timestamp
+    // bump, not real preference data, and it was the row that seized up
+    // under lock contention on 2026-09-09. A dedicated row per user means
+    // this fires on every save round (cheap, single-column) without
+    // contending with actual preference writes or the version-check read.
     if(ops.length){
       try{
-        if(!syllabusChanged){
-          await sb.from('user_preferences').upsert({user_id:uid, updated_at:syncTimestamp},{onConflict:'user_id'});
-        }
+        await sb.from('sync_state').upsert({user_id:uid, updated_at:syncTimestamp},{onConflict:'user_id'});
         localStorage.setItem('jt3_known_updated_at', syncTimestamp);
       }catch(e){}
     }
@@ -2367,9 +2385,23 @@ function loadPublicSiteConfig(){
         const el = document.getElementById(elId);
         const val = data[key];
         if (!el || val === null || val === undefined) return;
-        el.setAttribute('data-count-to', String(Math.max(0, Math.round(val))));
+        const newTarget = String(Math.max(0, Math.round(val)));
+        const targetChanged = el.getAttribute('data-count-to') !== newTarget;
+        el.setAttribute('data-count-to', newTarget);
         el.setAttribute('data-count-display', fmt(val));
-        if (el.dataset.fakeLoop === '1') _resolveFakeLoop(el);
+        if (el.dataset.fakeLoop === '1') { _resolveFakeLoop(el); return; }
+        // If this counter already animated (e.g. the 1200ms race in
+        // showAuthScreen() timed out before this fetch resolved), it would
+        // have rolled to whatever fallback value was hardcoded in the HTML.
+        // dataset.rolled='1' normally blocks re-animating, which meant real
+        // data landing late got silently dropped and the counter stayed
+        // stuck on the stale number for the rest of the visit. Reset the
+        // guard so it can correct itself once the true value comes in.
+        if (targetChanged && el.dataset.rolled === '1') {
+          el.dataset.rolled = '';
+          if (el.classList.contains('premium-odo')) _buildPremiumOdometer(el);
+          else _rollOdometer(el);
+        }
       };
       applyHero('hus-students', 'students_count', _fmtStatPlain);
       applyHero('hus-mock-tests', 'mock_tests_count', _fmtStatK);

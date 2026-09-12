@@ -527,7 +527,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="hus-item">
           <span class="hus-icon" style="color:#f472b6;background:rgba(244,114,182,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" id="hus-mock-tests" data-count-to="3000" data-count-display="3K+">0</span></div>
+            <div class="hus-num"><span class="odo-num premium-odo" id="hus-mock-tests">—</span></div>
             <div class="hus-lbl">Mock Tests Analyzed</div>
           </div>
         </div>
@@ -535,7 +535,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="hus-item">
           <span class="hus-icon" style="color:#34d399;background:rgba(52,211,153,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" id="hus-study-hours" data-count-to="15000" data-count-display="15K+">0</span></div>
+            <div class="hus-num"><span class="odo-num premium-odo" id="hus-study-hours">—</span></div>
             <div class="hus-lbl">Hours Grinded</div>
           </div>
         </div>
@@ -543,7 +543,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="hus-item">
           <span class="hus-icon" style="color:#fbbf24;background:rgba(251,191,36,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" id="hus-backlogs" data-count-to="4000" data-count-display="4K+">0</span></div>
+            <div class="hus-num"><span class="odo-num premium-odo" id="hus-backlogs">—</span></div>
             <div class="hus-lbl">Backlogs Cleared</div>
           </div>
         </div>
@@ -551,7 +551,7 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
         <div class="hus-item">
           <span class="hus-icon" style="color:#a29bfe;background:rgba(162,155,254,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
           <div>
-            <div class="hus-num"><span class="odo-num" id="hus-questions-practiced" data-count-to="50000" data-count-display="50K+">0</span></div>
+            <div class="hus-num"><span class="odo-num premium-odo" id="hus-questions-practiced">—</span></div>
             <div class="hus-lbl">Questions Practiced</div>
           </div>
         </div>
@@ -6196,12 +6196,46 @@ function fltH(val,el){
   document.querySelectorAll('[data-group="hr-period"]').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('hr-custom-range').style.display=val==='custom'?'flex':'none';
+  _saveHoursFilter();
   renderHours();
 }
 function fltHCustom(){
   F.hours.from=document.getElementById('hr-from').value||null;
   F.hours.to=document.getElementById('hr-to').value||null;
+  _saveHoursFilter();
   renderHours();
+}
+// The hours filter (period/subject/custom date range) previously lived only
+// in the in-memory F object, so it silently reset to the defaults ('This
+// Week', 'All Subjects') every time the app was closed and reopened — even
+// though the buttons/inputs made it look like a saved preference. These two
+// functions persist it to localStorage and restore + re-sync the filter bar
+// UI (active button, custom-range inputs, subject dropdown) on load.
+const HOURS_FILTER_KEY='jt_hours_filter';
+function _saveHoursFilter(){
+  try{
+    localStorage.setItem(HOURS_FILTER_KEY, JSON.stringify({period:F.hours.period, subj:F.hours.subj, from:F.hours.from, to:F.hours.to}));
+  }catch(e){}
+}
+function _restoreHoursFilter(){
+  let saved=null;
+  try{ saved=JSON.parse(localStorage.getItem(HOURS_FILTER_KEY)||'null'); }catch(e){ saved=null; }
+  if(!saved || typeof saved!=='object') return;
+
+  const validPeriods=['week','month','all','custom'];
+  F.hours.period = validPeriods.includes(saved.period) ? saved.period : 'week';
+  F.hours.subj = saved.subj || 'all';
+  F.hours.from = saved.from || null;
+  F.hours.to = saved.to || null;
+
+  document.querySelectorAll('[data-group="hr-period"]').forEach(e=>{
+    e.classList.toggle('active', e.getAttribute('onclick')===`fltH('${F.hours.period}',this)`);
+  });
+  const rangeEl=document.getElementById('hr-custom-range');
+  if(rangeEl) rangeEl.style.display = F.hours.period==='custom' ? 'flex' : 'none';
+  const fromEl=document.getElementById('hr-from'); if(fromEl) fromEl.value=F.hours.from||'';
+  const toEl=document.getElementById('hr-to'); if(toEl) toEl.value=F.hours.to||'';
+  const subjEl=document.getElementById('hr-subj'); if(subjEl) subjEl.value=F.hours.subj;
 }
 function fltBl(k,v,el){F.backlog[k]=v;document.querySelectorAll(`[data-group="bl-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderBacklog();}
 function fltTd(k,v,el){F.todo[k]=v;document.querySelectorAll(`[data-group="td-${k}"]`).forEach(e=>e.classList.remove('active'));el.classList.add('active');renderTodo();}
@@ -7849,6 +7883,7 @@ function _renderCmp(){
 function renderHours(){ensureChartJs().then(function(){_renderHours();}, function(){console.warn('[renderHours] Chart.js failed to load — rendering without it'); _renderHours();});}
 function _renderHours(){
   F.hours.subj=document.getElementById('hr-subj').value;
+  _saveHoursFilter();
   const hrs=getHrs();
   const _dateIndex={};
   S.hours.forEach(h=>{(_dateIndex[h.date]=_dateIndex[h.date]||[]).push(h);});
