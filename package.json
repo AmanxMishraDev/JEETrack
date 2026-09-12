@@ -1,0 +1,12 @@
+{
+  "name": "jeetrack",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0"
+  }
+}

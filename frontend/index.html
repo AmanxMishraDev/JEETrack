@@ -92,6 +92,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 function loadScript(src){return new Promise(function(res,rej){if(document.querySelector('script[src="'+src+'"]')){res();return;}var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 window._chartJsUrl='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
@@ -830,6 +831,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
             </div>
           </div>
 
+          <div id="turnstile-login" class="auth-turnstile"></div>
+
           <button class="auth-submit-pro" id="auth-btn-login" onclick="doAuthPro('login')">
             <span class="auth-btn-label">Sign In</span>
             <svg class="auth-btn-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
@@ -878,6 +881,8 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
           </div>
 
           <div class="auth-legal-note">By creating an account, you agree to our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.</div>
+
+          <div id="turnstile-signup" class="auth-turnstile"></div>
 
           <button class="auth-submit-pro" id="auth-btn-signup" onclick="doAuthPro('signup')">
             <span class="auth-btn-label">Create Account</span>
