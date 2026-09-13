@@ -30,11 +30,63 @@ function corsHeadersFor(req: Request) {
   };
 }
 
+// This endpoint has no auth requirement at all (donations can be made as a
+// guest), so IP is the only identity signal available — matches the
+// per-IP-for-anonymous-endpoints strategy from the hardening roadmap.
+// Supabase's gateway populates x-forwarded-for with the real client IP
+// (see https://supabase.com/docs/guides/functions/examples/cloudflare-turnstile
+// for the same pattern used elsewhere in Supabase's own docs).
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  return fwd ? fwd.split(",")[0].trim() : "unknown";
+}
+
+// Backed by Upstash Redis, not Postgres — this fires on every request to
+// a public, no-auth endpoint, so keeping it off the database entirely
+// avoids adding load to the free-tier Database IO budget for a check
+// that's pure "have we seen this IP too much," not real app data.
+// Requires UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN secrets (set
+// via `supabase secrets set` or Dashboard -> Edge Functions -> Secrets).
+// Fails OPEN (allows the request) if those aren't set or the check
+// errors: a transient network blip should never be able to block real
+// donations, and Razorpay's own order-level idempotency plus the
+// amount/signature checks downstream are the real backstop anyway.
+const RATE_LIMIT_SCRIPT = "local c = redis.call('INCR', KEYS[1]); if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end; return c";
+
+async function checkRateLimit(key: string, max: number, windowSeconds: number): Promise<boolean> {
+  const upstashUrl = Deno.env.get("UPSTASH_REDIS_REST_URL");
+  const upstashToken = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+  if (!upstashUrl || !upstashToken) return true;
+  try {
+    const res = await fetch(upstashUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${upstashToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["EVAL", RATE_LIMIT_SCRIPT, "1", key, String(windowSeconds)]),
+    });
+    if (!res.ok) return true;
+    const { result } = await res.json();
+    return result <= max;
+  } catch {
+    return true;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   const corsHeaders = corsHeadersFor(req);
 
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  const allowed = await checkRateLimit(`razorpay-order:${clientIp(req)}`, 30, 3600);
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {

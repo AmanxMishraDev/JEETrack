@@ -38,11 +38,52 @@ function tierForAmount(amount: number): string {
   return "Supporter";
 }
 
+// Same per-IP pattern as create-razorpay-order/verify-razorpay-payment
+// (Upstash Redis, not Postgres — keeps this public endpoint's traffic
+// off the free-tier Database IO budget). Limit is higher here since this
+// is polled on every page load/pageshow while an order is pending, not a
+// one-shot action.
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  return fwd ? fwd.split(",")[0].trim() : "unknown";
+}
+
+const RATE_LIMIT_SCRIPT = "local c = redis.call('INCR', KEYS[1]); if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end; return c";
+
+async function checkRateLimit(key: string, max: number, windowSeconds: number): Promise<boolean> {
+  const upstashUrl = Deno.env.get("UPSTASH_REDIS_REST_URL");
+  const upstashToken = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+  if (!upstashUrl || !upstashToken) return true;
+  try {
+    const res = await fetch(upstashUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${upstashToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["EVAL", RATE_LIMIT_SCRIPT, "1", key, String(windowSeconds)]),
+    });
+    if (!res.ok) return true;
+    const { result } = await res.json();
+    return result <= max;
+  } catch {
+    return true;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   const corsHeaders = corsHeadersFor(req);
 
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  const allowed = await checkRateLimit(`payment-status:${clientIp(req)}`, 60, 3600);
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
