@@ -1,19 +1,19 @@
-import { cors } from './lib/cors.js';
-import { verifyToken, ADMIN_PASSWORD, ADMIN_TOKEN_SECRET } from './lib/auth.js';
+import { cors } from '../../../server/admin/lib/cors.js';
+import { verifyToken, ADMIN_PASSWORD, ADMIN_TOKEN_SECRET } from '../../../server/admin/lib/auth.js';
 
-import login from './handlers/login.js';
-import stats from './handlers/stats.js';
-import newUsers from './handlers/new-users.js';
-import subjects from './handlers/subjects.js';
-import exams from './handlers/exams.js';
-import users from './handlers/users.js';
-import demographics from './handlers/demographics.js';
-import userDetail from './handlers/user-detail.js';
-import { triggerMonthly, triggerReview } from './handlers/triggers.js';
-import { getSiteConfig, saveSiteConfig } from './handlers/site-config.js';
-import dbStats from './handlers/db-stats.js';
-import { feedbackList, feedbackFeature, feedbackStats } from './handlers/feedback.js';
-import retention from './handlers/retention.js';
+import login from '../../../server/admin/handlers/login.js';
+import stats from '../../../server/admin/handlers/stats.js';
+import newUsers from '../../../server/admin/handlers/new-users.js';
+import subjects from '../../../server/admin/handlers/subjects.js';
+import exams from '../../../server/admin/handlers/exams.js';
+import users from '../../../server/admin/handlers/users.js';
+import demographics from '../../../server/admin/handlers/demographics.js';
+import userDetail from '../../../server/admin/handlers/user-detail.js';
+import { triggerMonthly, triggerReview } from '../../../server/admin/handlers/triggers.js';
+import { getSiteConfig, saveSiteConfig } from '../../../server/admin/handlers/site-config.js';
+import dbStats from '../../../server/admin/handlers/db-stats.js';
+import { feedbackList, feedbackFeature, feedbackStats } from '../../../server/admin/handlers/feedback.js';
+import retention from '../../../server/admin/handlers/retention.js';
 
 // Every authenticated action, keyed by `?action=`. `login` is handled
 // separately below since it runs *before* the token gate. Actions removed
