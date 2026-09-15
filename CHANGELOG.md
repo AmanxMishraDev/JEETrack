@@ -104,6 +104,41 @@ a time.
   understood risk). Checked against live traffic: the actual footprint
   is tens of extra tiny rows per day, total, across every user.
 
+### Phase 4 — Validation schema layer
+- Added Zod (`^4.6.5` — checked npm for the actual current version
+  rather than assuming v3) as a real runtime dependency in `admin.js`,
+  and via `esm.sh` in `create-razorpay-order` (matching this repo's
+  existing esm.sh convention for edge-function imports).
+- Added a shared `validate(schema, data)` helper in `admin.js` with a
+  consistent 400 error shape, and schemas for exactly what the roadmap
+  calls out: the login body, and the `users`/`user_detail`/
+  `feedback_list` query params — admin.js's highest-traffic actions.
+  Every schema was checked against admin.html's actual call sites
+  before being written (sortable columns, hardcoded pageSize, where
+  distinct_id always comes from) so nothing legitimate gets rejected.
+- `user_detail`'s `distinct_id` is now validated as an actual UUID
+  instead of a bare truthy check.
+- `create-razorpay-order`'s manual amount/length checks replaced with
+  a Zod schema. Caught a real bug in my own first draft before
+  shipping: a plain `.email()` field rejected empty-string emails,
+  which would've broken the one real call site (support.html never
+  sends an email today) — fixed with a preprocess step that treats
+  empty/missing as "no email," while still validating format when a
+  value is actually provided.
+- display_name over 60 chars now gets rejected (400) instead of
+  silently truncated — matches the roadmap's own stated intent
+  ("malformed input → rejected, not silently coerced") and confirmed
+  safe since the client already enforces `maxlength="60"`.
+- Verified by actually exercising the real handler function (not just
+  the schemas in isolation) with realistic request shapes for all 4
+  validated actions, both valid and invalid — confirmed valid input
+  reaches the real logic and invalid input gets a clean 400 with a
+  specific error message, no regressions to the auth-gating flow.
+- Not yet covered (staying in scope with what the roadmap explicitly
+  lists for this phase): `feedback_feature` and every other admin.js
+  action, plus `verify-razorpay-payment`/`check-payment-status`'s
+  bodies. Natural next candidates whenever this phase continues.
+
 ## [2026-09-12] — Phase 0, 1 & 1.5 shipped
 
 ### Phase 0 — Baseline safety net
