@@ -92,6 +92,7 @@ async function doUpdatePassword(){
     history.replaceState(null, '', window.location.pathname);
 
     setTimeout(async () => {
+      await loadDashboardBundle();
       closeM('newPassword');
       document.getElementById('auth-pass-newpass').value = '';
       document.getElementById('auth-pass-newpass2').value = '';
@@ -176,7 +177,7 @@ async function doAuthPro(mode){
       if(error) throw error;
       showAuthInfoPro(mode, 'Check your email for a confirmation link. After confirming, sign in here.');
     } else {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass, options:{ captchaToken } });
+      const { error } = await sb.auth.signInWithPassword({ email, password: pass, options:{ captchaToken } });
       if(error) throw error;
       _clearLoginFailures(emailKey);
     }

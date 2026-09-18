@@ -61,13 +61,34 @@ function _updateNetworkBanner(isOnline){
   } else {
     el.className = 'show online';
     el.textContent = "Back online — syncing your data\u2026";
-    if(sb && currentUser) flushSave();
+    if(sb && currentUser && typeof flushSave === 'function') flushSave();
     _backOnlineHideTimer = setTimeout(() => { el.className = ''; }, 3000);
   }
 }
 window.addEventListener('online', () => _updateNetworkBanner(true));
 window.addEventListener('offline', () => _updateNetworkBanner(false));
 if(!navigator.onLine) _updateNetworkBanner(false);
+
+// Everything needed to render the authenticated dashboard (nav, all
+// .page renderers, sync engine, settings, onboarding, badges, feedback —
+// formerly a static <script src="dashboard-controller.js"> tag plus the
+// full app.js bundle, loaded unconditionally on every single page view)
+// now lives in one lazy-loaded file, fetched only once we actually know
+// the visitor has a session. A landing-page visit that never logs in
+// never downloads or parses any of it. loadScript() is the small helper
+// already defined in index.html (used for Chart.js/jsPDF) — same
+// dedupe-via-querySelector behavior, so calling this twice in one
+// session (e.g. sign out then back in) is safe.
+let _dashboardBundleLoaded = false;
+let _dashboardBundlePromise = null;
+function loadDashboardBundle() {
+  if (_dashboardBundleLoaded) return Promise.resolve();
+  if (_dashboardBundlePromise) return _dashboardBundlePromise; // already in flight — share it, don't double-inject
+  _dashboardBundlePromise = loadScript('/dashboard-bundle.generated.js').then(() => {
+    _dashboardBundleLoaded = true;
+  });
+  return _dashboardBundlePromise;
+}
 
 async function initSupabase(){
   
@@ -139,14 +160,14 @@ async function initSupabase(){
     } else if(event === 'SIGNED_OUT'){
       _appInitialized = false;
       currentUser = null;
-      S = getDefaultState();
+      S = (typeof getDefaultState === 'function') ? getDefaultState() : {};
       showAuthScreen(true);
       setTimeout(initSlideshow, 100);
     } else if(event === 'SIGNED_IN' && session?.user){
       if(_appInitialized) return; 
       _appInitialized = true;
       currentUser = session.user;
-      _withTimeout(loadUserData(), 15000, 'Loading your data').then(async () => {
+      loadDashboardBundle().then(() => _withTimeout(loadUserData(), 15000, 'Loading your data')).then(async () => {
         const profileStatus = await loadUserProfile();
         const needsOnboarding = _shouldShowOnboarding(session.user.id, profileStatus);
         if(needsOnboarding){
@@ -185,6 +206,7 @@ async function initSupabase(){
       if(_recErr){
         toast(_recErr.message || 'This reset link has expired. Please request a new one.', 'error');
       } else {
+        await loadDashboardBundle();
         openM('newPassword');
       }
     } catch(e){
@@ -220,7 +242,7 @@ async function initSupabase(){
       const _stillWorkingTimer = setTimeout(() => {
         if(window.jtSplash) window.jtSplash.setProgress(55, 'Still working — hang tight, this can take a bit longer than usual');
       }, 15000);
-      _withTimeout(loadUserData(), 45000, 'Loading your data').then(async () => {
+      loadDashboardBundle().then(() => _withTimeout(loadUserData(), 45000, 'Loading your data')).then(async () => {
         clearTimeout(_stillWorkingTimer);
         const profileStatus = await loadUserProfile();
         if(window.jtSplash) window.jtSplash.setProgress(90, 'Almost ready');

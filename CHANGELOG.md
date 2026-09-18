@@ -6,6 +6,132 @@ a time.
 
 ## [Unreleased]
 
+### Phase 5 — Break up the monolith files (admin.js)
+- Restructured `frontend/api/admin.js` (1,135 lines, 17 actions all in one
+  file/function) into `frontend/api/admin/`: `index.js` (router — env
+  check, auth gate, action dispatch table), `lib/` (auth, rate-limit,
+  supabase client, cache, labels, dates, cors, validation — 8 files), and
+  `handlers/` (one file per action or tight group of related actions — 13
+  files). Kept as `admin/index.js` rather than a flat rename so the
+  Vercel route stays `/api/admin` (directory + `index.js` maps the same
+  as a top-level `admin.js` — verified against `vercel.json`'s rewrites).
+- Pure refactor, no behavior changes: every comment, edge case, and Phase
+  4 validation schema was carried over verbatim, just relocated to the
+  file matching its concern. Verified with (1) `node --check` on every
+  new file, (2) a real import of the full module graph to catch typo'd
+  import paths, (3) ESLint against the new tree — identical 5 pre-existing
+  warnings, zero new ones, (4) a diff of every `action === '...'` branch
+  in the old file against the new dispatch table — all 17 actions
+  (16 handlers + `login`) accounted for, none dropped or duplicated, and
+  (5) a behavioral-equivalence harness: mocked Supabase/Upstash responses
+  fed to the old monolith and the new router side by side across 24 cases
+  covering every action plus edge cases (bad UUID, oversized `pageSize`,
+  wrong/right password, unauthorized, unknown action) — byte-for-byte
+  identical JSON output and status codes in every case (the one expected
+  diff being the login token's embedded timestamp, which differs between
+  any two calls to `Date.now()` by construction).
+- Every new file is well under the roadmap's ~300–400 line guideline;
+  the largest (`handlers/feedback.js`) is 152 lines.
+- `frontend/app.js` + `index.html` (the other Phase 5 target) intentionally
+  not started in this pass — see the note left for that work: it's a much
+  higher-risk split (shared global scope across `app.js` and 5 inline
+  `<script>` blocks in `index.html`, 131 `onclick="..."` handlers, no
+  bundler yet, no test suite yet) and needs an agreed approach before
+  touching a file this central to the live app.
+- Follow-up: split `frontend/app.js` (4,223 lines) into 10 files under
+  `frontend/js/app/` (boot/auth, auth forms, shell/data, badges,
+  sync/engagement, landing, landing interactions, onboarding, settings,
+  feedback), loaded in the same order as 10 `<script>` tags — deliberately
+  kept as classic (non-module) scripts sharing one global scope, same as
+  before, since real module conversion would've meant rewriting all 131
+  `onclick` call sites. Verified by concatenating all 10 files back
+  together and diffing against the original — byte-for-byte, checksum
+  identical. Also fixed `sw.js`'s precache list (was hardcoded to the old
+  single `/app.js` path) and `eslint.config.js` (was scoped to the single
+  file; added ~65 cross-chunk globals so lint doesn't flood with
+  false-positive `no-undef` now that the code is split across files).
+- Caught post-deploy: the initial admin.js split (lib/ + handlers/ nested
+  inside `frontend/api/admin/`) pushed the project over Vercel Hobby's
+  12-serverless-function limit — every `.js` file under `frontend/api/`
+  counts as its own function, so 22 helper files became 22 functions.
+  Fixed by moving `lib/` and `handlers/` to `/server/admin/` (outside
+  `frontend/api/`) — Vercel's build-time import tracing still bundles
+  them into the one real function (`frontend/api/admin/index.js`), but
+  only that one file counts against the limit. Down to 2 functions total.
+  Re-ran the full behavioral-equivalence harness after the move — still
+  byte-for-byte identical.
+
+### Phase 6 — Build pipeline for the frontend
+- Added Vite (chosen over esbuild — the plan is React later, and
+  Vite+React is the standard pairing; deferred until Phases 7-8 are done
+  and there's test coverage as a safety net first).
+- `frontend/js/app/*.js` (the 10 Phase 5 chunks) are concatenated by a
+  build script (`frontend/scripts/build-app-bundle.mjs`) into
+  `main.generated.js`, with `window.x = x` auto-generated for every
+  top-level declaration (225 of them) — Vite requires a real ES module as
+  its entry, but the chunks themselves are still deliberately classic
+  global-scope code (same 131-onclick-handler reason as Phase 5). The
+  10 source files stay the single source of truth; the generated file is
+  gitignored and rebuilt every `npm run build`. Verified: the
+  auto-extracted exposure list matches a hand-built one exactly, every
+  `onclick` handler resolves (either from this list or from a function
+  confirmed to live in `index.html` itself), and the minified output
+  still contains all 225 `window.x=` assignments (nothing tree-shaken).
+- Restructured `frontend/` for Vite: moved everything that should pass
+  through untouched (`admin/`, `analytics.js`, `assets/`, `pages/`,
+  `manifest.json`, `sw.js`, etc.) into `frontend/public/`. `frontend/api/`
+  untouched — separate from the static build entirely.
+- Content-hashed JS/CSS output filenames + immutable `Cache-Control` on
+  `/assets/*`, `no-cache` on `/index.html` (`vercel.json`). Vercel now
+  runs an actual build (`installCommand`/`buildCommand`/`outputDirectory`
+  added to `frontend/vercel.json`, since Root Directory is `frontend` and
+  the real `package.json`/`node_modules` live one level up at the repo
+  root).
+- `sw.js` simplified: the old per-file precache list can't hardcode
+  content-hashed filenames (they change every build), so hashed assets
+  now just fall through to normal browser HTTP caching. Only
+  `/index.html` still gets the special always-fetch-fresh treatment,
+  since it's the one file whose content says which hashed bundle to load.
+- Switched the CSS minifier to esbuild's (Vite's new default,
+  lightningcss, hard-errors on `:not(::before)` in `styles.css` —
+  technically invalid CSS, long tolerated silently by every browser, not
+  worth touching app CSS to fix in a build-tooling phase).
+- Follow-up: extracted the largest remaining inline `<script>` block in
+  `index.html` (lines 4541–9337, 4,799 lines — over half the file) into
+  `frontend/js/app/dashboard-controller.js`. Verified lossless by
+  splicing the extracted file back inline at the same spot and diffing
+  the result against the pre-extraction file: byte-for-byte identical.
+  The smaller scattered inline blocks (a splash-screen block and a
+  24-line settings-nav block) were left alone — most of the size was in
+  this one block, and splitting the smaller ones carries the same
+  execution-order risk for much less payoff.
+- Superseded the above the same day: rather than reinserting
+  `dashboard-controller.js` as a classic script at its original document
+  position, folded it into a second, lazily-loaded bundle —
+  `frontend/public/dashboard-bundle.generated.js` — built alongside
+  `main.generated.js` by the same `build-app-bundle.mjs`, containing
+  everything only needed once a user is actually logged in
+  (`dashboard-controller.js` + the 6 dashboard-only Phase 5 chunks —
+  shell/data, badges, sync/engagement, onboarding, settings, feedback).
+  `app-01-boot-auth.js`'s `loadDashboardBundle()` fetches it only after
+  `initSupabase()` confirms a session, so a landing-page-only visit never
+  downloads or parses it — this also resolves the `window.nav` ordering
+  concern above, since `nav` (defined in `dashboard-controller.js`) is
+  never referenced by anything that can run before the bundle loads: the
+  only call sites are `onclick` handlers inside `#main-app`/onboarding,
+  which can't be reached until after login. `index.html` is now 4,460
+  source lines (was 9,436); shipped bytes down to 324KB, and the
+  always-loaded core JS bundle itself dropped from 125KB to 44.6KB since
+  dashboard code moved out of it.
+- Cache-Control for the three remaining non-hashed classic scripts
+  (`analytics.js`, `splash.js`, `dashboard-bundle.generated.js`) is now
+  `no-cache` in `vercel.json`, same treatment as `index.html` — dropped
+  their manual `?v=YYYYMMDD` cache-busting query strings, which needed
+  remembering to bump on every content change and were easy to forget,
+  especially now that `dashboard-bundle.generated.js` carries most of the
+  app's JS. `no-cache` forces revalidation on every load instead, so
+  there's nothing left to remember.
+
 ### Phase 2 — Close the repo ↔ production drift
 - Pulled every index actually running in production
   (`pg_indexes`) and committed them as idempotent

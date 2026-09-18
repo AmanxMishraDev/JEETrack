@@ -68,9 +68,18 @@ Even after fixes above were deployed, some users kept hitting old code —
 *browser's own* HTTP cache (separate from the SW's Cache Storage) silently
 serve a stale response on Cache-Control/ETag grounds. Added
 `{ cache: 'no-store' }` to force a real round-trip on every app-shell
-fetch, and added `frontend/scripts/bump-sw-version.js` (wired into the
-build command) so `CACHE_VERSION` is derived from actual file content
-hashes instead of relying on someone remembering to bump it by hand.
+fetch, and added `frontend/scripts/bump-sw-version.js` so `CACHE_VERSION`
+was derived from actual file content hashes instead of relying on
+someone remembering to bump it by hand.
+>
+> **Phase 6 update:** this hash-based auto-bump was retired once the Vite
+> build started emitting content-hashed `/assets/*.js`/`*.css` filenames
+> (see CHANGELOG) — those already change on every content change, and
+> `index.html` is served `no-cache`, so there's no stale-app.js problem
+> left for `CACHE_VERSION` to solve. The `no-store` fetch for `index.html`
+> itself (the one file that isn't hashed) stays. `CACHE_VERSION` is now a
+> plain manual bump in `frontend/public/sw.js`, used only when the
+> service worker's own logic changes.
 
 ## Net effect
 

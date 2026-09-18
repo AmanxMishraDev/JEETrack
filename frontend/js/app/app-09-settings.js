@@ -602,11 +602,15 @@ saveGoalSettings = function() {
   }, 400);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof _isKnownPath === 'function' && !_isKnownPath(window.location.pathname)) {
-    if (typeof show404 === 'function') { show404(); return; }
-  }
-  initSupabase(); 
+// Boot trigger moved to frontend/js/app/app-00-routing.js (core bundle) —
+// it needs to fire immediately regardless of auth state, before this file
+// (dashboard-only, lazy-loaded after auth resolves) is even fetched.
+// Everything else that WAS in this DOMContentLoaded handler is
+// dashboard-only DOM wiring (settings dirty-tracking, mobile nav touch
+// handlers, avatar dropzone) — by the time this file loads, DOMContentLoaded
+// has already fired (it only loads after an async auth check completes),
+// so waiting for that event here would never fire. Run immediately instead.
+function _initSettingsDomHooks() {
   setTimeout(initSettingsDirtyTracking, 600);
   if (typeof _lhRestoreTimer === 'function') _lhRestoreTimer();
 
@@ -689,5 +693,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
-});
+}
+_initSettingsDomHooks();
 

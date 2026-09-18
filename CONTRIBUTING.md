@@ -16,10 +16,22 @@ collaborators granted direct access to the repo.
 
 ## Before opening a PR
 
-- **Don't touch `frontend/sw.js`'s `CACHE_VERSION` by hand** — it's derived
-  automatically by `frontend/scripts/bump-sw-version.js` as part of the
-  build. If you're editing `app.js`, `index.html`, or `styles.css`, the
-  version bump happens on deploy, not in your commit.
+- **The service worker lives at `frontend/public/sw.js`**, not
+  `frontend/sw.js` — that root-level file was a stale, unbuilt duplicate
+  (a leftover from before `public/` became the convention for
+  pass-through static files) and has been deleted. Edit `public/sw.js`
+  directly.
+- **`CACHE_VERSION` in `public/sw.js` is now a plain manual bump**, not
+  content-hash-derived. The old `bump-sw-version.js` script (hashing a
+  single `app.js` and writing to the un-deployed root `sw.js`) predated
+  both the `js/app/*.js` chunk split and the Vite build's content-hashed
+  `/assets/*.js`/`*.css` output, and was quietly broken by both — it's
+  been removed. Bumping `CACHE_VERSION` is only needed when `sw.js`'s own
+  caching/fetch *logic* changes (to force old service workers to update);
+  it does nothing for ordinary app changes, since those already get a
+  fresh hashed filename every build and `index.html` is served
+  `no-cache`, so clients always see the latest bundle without any SW
+  version bump at all.
 - If you touch anything under `frontend/` that changes a public URL or a
   file's physical location, double-check `frontend/vercel.json` — most
   routes are static-file rewrites, and clean URLs (`/faq`, `/admin`, etc.)
