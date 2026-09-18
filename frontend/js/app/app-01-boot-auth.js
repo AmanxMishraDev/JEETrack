@@ -33,7 +33,7 @@ let _appInitialized = false;
 
 function _shouldShowOnboarding(userId, profileStatus) {
   if (profileStatus === 'error' || profileStatus === 'no_client') return false; 
-  if (userProfile.onboarding_done) return false;  
+  if (window.userProfile.onboarding_done) return false;  
   return true;                                     
 }
 
@@ -160,7 +160,7 @@ async function initSupabase(){
     } else if(event === 'SIGNED_OUT'){
       _appInitialized = false;
       currentUser = null;
-      S = (typeof getDefaultState === 'function') ? getDefaultState() : {};
+      window.S = (typeof getDefaultState === 'function') ? getDefaultState() : {};
       showAuthScreen(true);
       setTimeout(initSlideshow, 100);
     } else if(event === 'SIGNED_IN' && session?.user){
@@ -175,7 +175,7 @@ async function initSupabase(){
           document.getElementById('landing').classList.add('hidden');
           showOnboarding();
         } else {
-          const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+          const name = window.userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showApp(name, session.user.email);
         }
         registerPushNotifications();
@@ -207,7 +207,7 @@ async function initSupabase(){
         toast(_recErr.message || 'This reset link has expired. Please request a new one.', 'error');
       } else {
         await loadDashboardBundle();
-        openM('newPassword');
+        window.openM('newPassword');
       }
     } catch(e){
       hideSplash();
@@ -253,7 +253,7 @@ async function initSupabase(){
           showOnboarding();
         } else {
           
-          const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+          const name = window.userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
           showApp(name, session.user.email);
           registerPushNotifications();
         }

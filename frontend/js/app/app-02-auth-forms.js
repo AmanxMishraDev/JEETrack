@@ -108,7 +108,7 @@ async function doUpdatePassword(){
             document.getElementById('landing')?.classList.add('hidden');
             showOnboarding();
           } else {
-            const name = userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+            const name = window.userProfile.username || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
             showApp(name, session.user.email);
             registerPushNotifications();
           }
@@ -223,7 +223,7 @@ async function signOut(){
   if(insContent){ insContent.innerHTML=''; insContent.style.display='none'; }
   if(insEmpty)  { insEmpty.style.display=''; }
   currentUser = null;
-  S = getDefaultState();
+  window.S = getDefaultState();
   localStorage.removeItem('jt3');
   localStorage.removeItem('jt3_known_updated_at');
   showAuthScreen(true);
