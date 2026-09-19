@@ -183,5 +183,5 @@ const dashBanner = `
 // work as plain globals in a classic script and don't need this.
 ${dashExposure}
 `;
-fs.writeFileSync(path.join(PUBLIC_DIR, 'dashboard-bundle.generated.js'), dashBanner + dashCombined);
-console.log(`[build-app-bundle] wrote dashboard-bundle.generated.js (${(dashBanner + dashCombined).split('\n').length} lines, ${dashSnapshotNames.size + dashMutableNames.size} let/const exposed: ${dashSnapshotNames.size} snapshot, ${dashMutableNames.size} live-bound)`);
+fs.writeFileSync(path.join(PUBLIC_DIR, 'dashboard-bundle.generated.js'), dashCombined + dashBanner);
+console.log(`[build-app-bundle] wrote dashboard-bundle.generated.js (${(dashCombined + dashBanner).split('\n').length} lines, ${dashSnapshotNames.size + dashMutableNames.size} let/const exposed: ${dashSnapshotNames.size} snapshot, ${dashMutableNames.size} live-bound)`);
