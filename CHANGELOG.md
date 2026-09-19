@@ -6,6 +6,46 @@ a time.
 
 ## [Unreleased]
 
+### Phase 7 — Automated tests
+- Added Vitest, wired into CI (`npm test` replaces the Phase-0 placeholder
+  test job). 39 tests, all passing, covering the roadmap's priority list:
+  1. **Admin auth** (`test/admin/auth.test.mjs`) — valid/expired/tampered/
+     missing/wrong-secret tokens all return the correct status; a valid
+     token demonstrably passes the auth gate.
+  2. **Login rate limiting** (`test/admin/rate-limit.test.mjs`) — the
+     `LOGIN_MAX_ATTEMPTS`+1th attempt from one IP returns 429, scoped
+     per-IP, resets on a correct login, fails open (not closed) if
+     Upstash is unreachable.
+  3. **Razorpay webhook** (`supabase/functions/razorpay-webhook/
+     index.test.ts`) — Deno-native tests (not Vitest — this is Deno
+     runtime code, same reasoning `eslint.config.js` already uses to lint
+     it separately): valid signature processed and upserts (not inserts)
+     on `razorpay_payment_id`; missing/tampered signature or tampered
+     body rejected with no DB call made; a replayed captured-payment
+     event does not send a second receipt email; missing webhook secret
+     fails closed (503). Required a small, behavior-preserving refactor
+     to `index.ts` — extracted `handleRequest` as its own export instead
+     of an anonymous callback passed directly to `Deno.serve`, guarded
+     behind `import.meta.main` — so the handler can be unit-tested
+     without actually starting an HTTP server. Verified via diff that
+     this changed exactly those two lines and nothing else.
+  4. **Phase 4 schema validation** (`test/admin/validation.test.mjs`) —
+     every schema (`login`, `users`, `user_detail`, `feedback_list`)
+     rejects out-of-range/malformed input rather than silently
+     coercing/clamping it (negative page, oversized `pageSize`/`limit`,
+     invalid UUID, non-enum `sort`/`dir`, rating outside 1-5), plus
+     router-level checks that a validated action returns 400 before ever
+     reaching its handler.
+  5. **Query-performance smoke test** (`test/db/query-performance.test.mjs`,
+     `npm run test:db`) — seeds 50k rows into `hours` and asserts the
+     `user_id` lookup plan is an Index Scan, not a Seq Scan, guarding the
+     indexes committed in Phase 2. Needs a full local Supabase stack
+     (`supabase start`) since `hours.user_id` has a foreign key to
+     `auth.users`, which only exists there, not in a bare Postgres —
+     intentionally not wired into CI yet since I could not run it myself
+     (no Postgres/Docker in the environment this was written in); run it
+     locally and confirm before adding it as a CI gate.
+
 ### Phase 5 — Break up the monolith files (admin.js)
 - Restructured `frontend/api/admin.js` (1,135 lines, 17 actions all in one
   file/function) into `frontend/api/admin/`: `index.js` (router — env

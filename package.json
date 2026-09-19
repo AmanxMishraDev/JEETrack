@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:db": "vitest run --config vitest.db.config.mjs",
     "build": "node frontend/scripts/build-app-bundle.mjs && vite build frontend --config frontend/vite.config.mjs"
   },
   "dependencies": {
@@ -14,6 +16,8 @@
     "eslint": "^9.15.0",
     "globals": "^15.12.0",
     "jsdom": "^30.1.0",
-    "vite": "^8.3.0"
+    "pg": "^8.23.0",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   }
 }
