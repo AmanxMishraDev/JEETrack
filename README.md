@@ -2,7 +2,7 @@
 
 <br/>
 
-<img src="frontend/assets/icons/favicon.svg" alt="JEETrack Logo" width="100" />
+<img src="frontend\public\assets\icons\favicon.svg" alt="JEETrack Logo" width="100" />
 
 <br/>
 <br/>
