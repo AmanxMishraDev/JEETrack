@@ -1,6 +1,6 @@
 
 
-const CACHE_VERSION = 'jeetrack-v11';
+const CACHE_VERSION = 'jeetrack-v12';
 const CACHE_NAME = CACHE_VERSION;
 
 const STATIC_ASSETS = [
@@ -27,7 +27,16 @@ const SUPABASE_HOST_PATTERN = /\.supabase\.co$/;
 
 const APP_SHELL = [
   '/index.html',
-  '/app.js',
+  '/js/app/app-01-boot-auth.js',
+  '/js/app/app-02-auth-forms.js',
+  '/js/app/app-03-shell-data.js',
+  '/js/app/app-04-badges.js',
+  '/js/app/app-05-sync-engagement.js',
+  '/js/app/app-06-landing.js',
+  '/js/app/app-07-landing-interactions.js',
+  '/js/app/app-08-onboarding.js',
+  '/js/app/app-09-settings.js',
+  '/js/app/app-10-feedback.js',
   '/styles.css',
 ];
 

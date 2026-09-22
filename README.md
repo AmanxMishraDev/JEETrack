@@ -2,7 +2,7 @@
 
 <br/>
 
-<img src="frontend/assets/icons/favicon.svg" alt="JEETrack Logo" width="100" />
+<img src="frontend\public\assets\icons\favicon.svg" alt="JEETrack Logo" width="100" />
 
 <br/>
 <br/>
@@ -178,9 +178,16 @@ cd JEETrack
 ### 2 · Set up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Open **SQL Editor** and run `database/sql/supabase-schema.sql`
-3. Run `database/sql/migration.sql` then `database/sql/onboarding-trigger.sql`
-4. Copy your **Project URL** and **anon key** from **Settings → API**
+2. Open **SQL Editor** and run, in this order:
+   1. `database/sql/supabase-schema.sql`
+   2. `database/sql/migration.sql`
+   3. `database/sql/onboarding-trigger.sql`
+   4. `database/sql/practice_log_supabase_schema.sql`
+   5. `database/sql/razorpay-and-fixes-migration.sql`
+   6. `database/sql/razorpay-security-hardening-migration.sql`
+   7. `database/sql/review-migration.sql`
+   8. `database/sql/existing-indexes-snapshot.sql`, `database/sql/live-rpc-functions-snapshot.sql`, `database/sql/student-count-sync-trigger.sql` (any order between these three; all idempotent)
+3. Copy your **Project URL** and **anon key** from **Settings → API**
 
 ### 3 · Configure the frontend
 

@@ -43,7 +43,7 @@ Vercel serverless functions handle the few things that need a private key
 ## Data flow for a typical session
 
 1. Browser loads `frontend/index.html` (served via Vercel, cached by
-   `frontend/sw.js` as an app-shell).
+   `frontend/public/sw.js` as an app-shell).
 2. `app.js` authenticates via Supabase Auth, then calls the
    `get_full_state` RPC once per session (skipped entirely if a cached
    local copy is already fresh — see `docs/PERFORMANCE.md`).

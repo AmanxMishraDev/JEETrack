@@ -89,7 +89,7 @@ function safeCompare(a: string, b: string): boolean {
   return timingSafeEqual(aBuf, bBuf);
 }
 
-Deno.serve(async (req: Request) => {
+export async function handleRequest(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -217,4 +217,8 @@ Deno.serve(async (req: Request) => {
     console.error("razorpay-webhook error:", e);
     return new Response("Server error", { status: 500 });
   }
-});
+}
+
+if (import.meta.main) {
+  Deno.serve(handleRequest);
+}

@@ -27,13 +27,21 @@ jobs:
         with:
           deno-version: v1.x
       - run: deno lint supabase/functions
+      - name: Razorpay webhook tests
+        run: deno test --allow-env supabase/functions/razorpay-webhook
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Placeholder — real test suite lands in Phase 7 of the hardening
-      # roadmap. This keeps a "test" status check present from day one
-      # so branch protection can require it without waiting for Vitest.
-      - run: echo "No automated tests yet — tracked in Phase 7 of the hardening roadmap."
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      # The query-performance smoke test (test/db/) needs a full local
+      # Supabase stack (auth.users, RLS, etc. — not just bare Postgres),
+      # which isn't wired up here yet. Run it locally via `npm run test:db`
+      # after `supabase start`; see that file's own header comment.

@@ -1,6 +1,7 @@
 // 📁 FILE LOCATION: supabase/functions/create-razorpay-order/index.ts
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { z } from "https://esm.sh/zod@4.6.5";
 
 // Creates a Razorpay order server-side, so the donation amount can never be
 // tampered with from the client. Requires two secrets to be set on this
@@ -30,6 +31,67 @@ function corsHeadersFor(req: Request) {
   };
 }
 
+// This endpoint has no auth requirement at all (donations can be made as a
+// guest), so IP is the only identity signal available — matches the
+// per-IP-for-anonymous-endpoints strategy from the hardening roadmap.
+// Supabase's gateway populates x-forwarded-for with the real client IP
+// (see https://supabase.com/docs/guides/functions/examples/cloudflare-turnstile
+// for the same pattern used elsewhere in Supabase's own docs).
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  return fwd ? fwd.split(",")[0].trim() : "unknown";
+}
+
+// Backed by Upstash Redis, not Postgres — this fires on every request to
+// a public, no-auth endpoint, so keeping it off the database entirely
+// avoids adding load to the free-tier Database IO budget for a check
+// that's pure "have we seen this IP too much," not real app data.
+// Requires UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN secrets (set
+// via `supabase secrets set` or Dashboard -> Edge Functions -> Secrets).
+// Fails OPEN (allows the request) if those aren't set or the check
+// errors: a transient network blip should never be able to block real
+// donations, and Razorpay's own order-level idempotency plus the
+// amount/signature checks downstream are the real backstop anyway.
+const RATE_LIMIT_SCRIPT = "local c = redis.call('INCR', KEYS[1]); if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end; return c";
+
+async function checkRateLimit(key: string, max: number, windowSeconds: number): Promise<boolean> {
+  const upstashUrl = Deno.env.get("UPSTASH_REDIS_REST_URL");
+  const upstashToken = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+  if (!upstashUrl || !upstashToken) return true;
+  try {
+    const res = await fetch(upstashUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${upstashToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(["EVAL", RATE_LIMIT_SCRIPT, "1", key, String(windowSeconds)]),
+    });
+    if (!res.ok) return true;
+    const { result } = await res.json();
+    return result <= max;
+  } catch {
+    return true;
+  }
+}
+
+// Request validation (Phase 4). Same amount bounds as the manual check
+// this replaces; email is optional and empty-string-safe since the one
+// real call site (support.html) never actually sends it today — this
+// schema still validates format when a value IS provided (e.g. once a
+// guest-donation email field ships), rather than accepting garbage.
+const emailField = z.preprocess(
+  (v) => (v === "" || v == null) ? undefined : v,
+  z.string().email().max(120).optional(),
+).default("");
+
+const orderSchema = z.object({
+  amount: z.number().finite().min(1).max(100000),
+  display_name: z.string().max(60).optional().default(""),
+  show_publicly: z.boolean().optional().default(true),
+  email: emailField,
+});
+
 Deno.serve(async (req: Request) => {
   const corsHeaders = corsHeadersFor(req);
 
@@ -37,15 +99,25 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  try {
-    const { amount, display_name, show_publicly, email } = await req.json();
+  const allowed = await checkRateLimit(`razorpay-order:${clientIp(req)}`, 30, 3600);
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
-    if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 1 || amount > 100000) {
-      return new Response(JSON.stringify({ error: "Invalid amount" }), {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const parsed = orderSchema.safeParse(body);
+    if (!parsed.success) {
+      const message = parsed.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ");
+      return new Response(JSON.stringify({ error: message }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const { amount, display_name, show_publicly, email } = parsed.data;
 
     const keyId = Deno.env.get("RAZORPAY_KEY_ID");
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
@@ -59,9 +131,9 @@ Deno.serve(async (req: Request) => {
 
     const auth = btoa(`${keyId}:${keySecret}`);
     const amountPaise = Math.round(amount * 100);
-    const safeDisplayName = typeof display_name === "string" ? display_name.slice(0, 60) : "";
-    const safeShowPublicly = show_publicly !== false;
-    const safeEmail = typeof email === "string" ? email.slice(0, 120) : "";
+    const safeDisplayName = display_name;
+    const safeShowPublicly = show_publicly;
+    const safeEmail = email;
 
     const orderRes = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
