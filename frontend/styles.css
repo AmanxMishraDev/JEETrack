@@ -5633,8 +5633,27 @@ select.pmo-input option{background-color:var(--sf2);color:var(--tx)}
 /* Optima partner card (armed after a new test is logged; see OPTIMA PARTNER CARD in dashboard-controller.js) */
 .optima-card-slot:empty{display:none}
 .optima-card{position:relative;width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow:hidden;background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);margin-bottom:12px}
-.optima-card iframe{width:100%;max-width:100%;display:block;border:0}
+.optima-card iframe{width:100%;max-width:100%;display:block;border:0;opacity:0;transition:opacity .25s ease}
+.optima-card.is-loaded iframe{opacity:1}
 /* Desktop height (170px) is set inline on the iframe; phones need more room because the content stacks. */
 @media (max-width:768px){.optima-card iframe{height:210px !important}}
-.optima-card-close{position:absolute;top:6px;right:6px;z-index:2;width:28px;height:28px;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;line-height:1;color:var(--tx);background:var(--sf);border:1px solid var(--bd2);border-radius:50%;cursor:pointer;opacity:.85}
+.optima-card-close{position:absolute;top:6px;right:6px;z-index:3;width:28px;height:28px;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;line-height:1;color:var(--tx);background:var(--sf);border:1px solid var(--bd2);border-radius:50%;cursor:pointer;opacity:.85}
 .optima-card-close:hover,.optima-card-close:focus-visible{opacity:1}
+/* Skeleton (shimmer) shown while Optima's page loads */
+.optima-card-skel{position:absolute;inset:0;z-index:2;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 24px;background:var(--sf);transition:opacity .25s ease,visibility .25s}
+.optima-card.is-loaded .optima-card-skel{opacity:0;visibility:hidden;pointer-events:none}
+.optima-sk-text{display:flex;flex-direction:column;gap:12px;flex:1 1 auto;min-width:0}
+.optima-sk{display:block;border-radius:6px;background:linear-gradient(90deg,var(--sf2) 0%,var(--sf3) 45%,var(--sf2) 90%);background-size:220% 100%;animation:optima-shimmer 1.4s linear infinite}
+.optima-card.is-loaded .optima-sk{animation:none}
+.optima-sk-label{width:110px;height:10px}
+.optima-sk-title{width:62%;height:24px;border-radius:8px}
+.optima-sk-line{width:88%;height:12px}
+.optima-sk-short{width:64%}
+.optima-sk-btn{flex:0 0 auto;width:210px;height:44px;border-radius:10px}
+@media (max-width:768px){
+  .optima-card-skel{flex-direction:column;align-items:stretch;justify-content:center;gap:16px;padding:18px 16px}
+  .optima-sk-btn{width:100%;height:42px}
+  .optima-sk-title{width:78%}
+}
+@keyframes optima-shimmer{0%{background-position:120% 0}100%{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.optima-sk{animation:none}}

@@ -50,6 +50,19 @@ describe('Optima partner card', () => {
     expect(flagCall).toBeLessThan(newBranchMarker);
   });
 
+  it('shows a skeleton until the iframe loads, with a safety timeout', () => {
+    expect(block).toContain('_optimaSkeleton()');
+    expect(block).toContain("frame.addEventListener('load', reveal)");
+    expect(block).toContain('setTimeout(reveal, OPTIMA_CARD_SKELETON_MAX_MS)');
+    expect(block).toMatch(/const OPTIMA_CARD_PREWARM = (true|false);/);
+  });
+
+  it('counts the analytics view when the page is shown, not when the card is built', () => {
+    const render = block.slice(block.indexOf('function renderOptimaCard'), block.indexOf('function _optimaCountView'));
+    expect(render).not.toContain('optima_card_view');
+    expect(block).toContain("_optimaTrack('optima_card_view', { page: page })");
+  });
+
   it('keeps state in localStorage (not sessionStorage) under jt_optima_card', () => {
     expect(block).toContain("const OPTIMA_CARD_KEY = 'jt_optima_card';");
     expect(block.replace(/\/\/.*$/gm, '')).not.toContain('sessionStorage');

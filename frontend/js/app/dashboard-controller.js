@@ -665,11 +665,16 @@ window.addEventListener('popstate', function(e) {
 // It goes away ONLY when: the student taps x, OPTIMA_CARD_TTL_HOURS have
 // passed, or OPTIMA_CARD_ENABLED is false. Navigating never clears it.
 // Logging another new test arms it again, even if it was dismissed before.
+// While Optima's page loads, a shimmer skeleton shows (iframe stays invisible
+// until its load event). With OPTIMA_CARD_PREWARM the iframe starts loading in
+// the hidden page right after the app opens, so it is usually ready on arrival.
 // SECURITY: the iframe sandbox must NEVER include allow-same-origin.
 // No user data is sent to the iframe URL or to analytics (only {page}).
 // ═══════════════════════════════════════════════════════════════
 const OPTIMA_CARD_ENABLED = true; // single switch: false = card never shows
 const OPTIMA_CARD_TTL_HOURS = 24;  // card auto-expires this long after the test was logged
+const OPTIMA_CARD_PREWARM = true;  // load the card in the background (hidden) while the state is armed, so it is already ready when the student opens Mains/Advanced. false = load only when that page is shown
+const OPTIMA_CARD_SKELETON_MAX_MS = 10000; // reveal the iframe anyway if its load event never fires
 const OPTIMA_CARD_URL = 'https://optima-edu.in/embed/jeetrack/';
 const OPTIMA_CARD_KEY = 'jt_optima_card';
 const OPTIMA_CARD_PAGES = ['mains', 'advanced'];
@@ -725,14 +730,33 @@ function clearOptimaCard(){
   _optimaClearState();
   _optimaEmptySlots();
 }
+// Shimmer placeholder shaped like the card (label, title, two lines, button).
+function _optimaSkeleton(){
+  const sk = document.createElement('div');
+  sk.className = 'optima-card-skel';
+  sk.setAttribute('aria-hidden', 'true');
+  const txt = document.createElement('div');
+  txt.className = 'optima-sk-text';
+  ['optima-sk-label', 'optima-sk-title', 'optima-sk-line', 'optima-sk-line optima-sk-short'].forEach(function(c){
+    const b = document.createElement('span');
+    b.className = 'optima-sk ' + c;
+    txt.appendChild(b);
+  });
+  const btn = document.createElement('span');
+  btn.className = 'optima-sk optima-sk-btn';
+  sk.appendChild(txt);
+  sk.appendChild(btn);
+  return sk;
+}
 // Renders the card into the page's slot if the stored state says it belongs there.
+// (Does not count a view: that happens when the page is actually shown.)
 function renderOptimaCard(page){
   if(OPTIMA_CARD_PAGES.indexOf(page) === -1) return;
   const st = _optimaReadState();
   if(!st || st.exam !== page) return;
   _optimaEmptySlots(page);
   const slot = document.getElementById('optima-card-slot-' + page);
-  if(!slot || slot.firstChild) return; // already there: keep the loaded iframe, don't recount the view
+  if(!slot || slot.firstChild) return; // already there: keep the loaded iframe
   _optimaPreconnect();
 
   const wrap = document.createElement('div');
@@ -756,16 +780,32 @@ function renderOptimaCard(page){
   frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
   frame.setAttribute('style', 'width:100%;height:170px;border:0;display:block'); // mobile height: styles.css
 
-  wrap.appendChild(closeBtn);
+  // Skeleton shows until the iframe has loaded (or the safety timeout passes).
+  let revealed = false;
+  function reveal(){ if(!revealed){ revealed = true; wrap.classList.add('is-loaded'); } }
+  frame.addEventListener('load', reveal);
+  setTimeout(reveal, OPTIMA_CARD_SKELETON_MAX_MS);
+
   wrap.appendChild(frame);
+  wrap.appendChild(_optimaSkeleton());
+  wrap.appendChild(closeBtn);
   slot.appendChild(wrap);
+}
+// Counts one analytics view per card instance, the first time its page is shown.
+function _optimaCountView(page){
+  const slot = document.getElementById('optima-card-slot-' + page);
+  const card = slot && slot.firstChild;
+  if(!card || card.getAttribute('data-viewed') === '1') return;
+  card.setAttribute('data-viewed', '1');
   _optimaTrack('optima_card_view', { page: page });
 }
 // Called from nav() whenever a page is shown. It never clears the card because
 // of navigation; it only drops stale slots if the state is gone (x / expired / disabled).
 function syncOptimaCard(page){
-  if(!_optimaReadState()) _optimaEmptySlots();
-  else renderOptimaCard(page);
+  const st = _optimaReadState();
+  if(!st){ _optimaEmptySlots(); return; }
+  if(OPTIMA_CARD_PREWARM || st.exam === page) renderOptimaCard(st.exam);
+  if(st.exam === page) _optimaCountView(page);
 }
 // ═══════════ end OPTIMA PARTNER CARD ═══════════
 
