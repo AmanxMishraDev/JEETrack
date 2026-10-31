@@ -658,27 +658,42 @@ window.addEventListener('popstate', function(e) {
 
 // ═══════════════════════════════════════════════════════════════
 // OPTIMA PARTNER CARD — renderOptimaCard / clearOptimaCard
-// Shown on JEE Mains / JEE Advanced only right after a NEW test is
-// logged (saveTest sets the session flag; edits never do). Cleared on
-// × or when the student navigates to ANY other page (including Mains <->
-// Advanced). A reload keeps the card (sessionStorage survives reloads).
+// Shown at the top of the JEE Mains / JEE Advanced page that matches the
+// exam of a NEW test the student just logged (saveTest arms it; edits never
+// do). State lives in localStorage "jt_optima_card" = {exam, armedAt}, so it
+// survives page changes, reloads and reopening the app.
+// It goes away ONLY when: the student taps x, OPTIMA_CARD_TTL_HOURS have
+// passed, or OPTIMA_CARD_ENABLED is false. Navigating never clears it.
+// Logging another new test arms it again, even if it was dismissed before.
 // SECURITY: the iframe sandbox must NEVER include allow-same-origin.
-// No user data is sent to the iframe URL or to analytics.
+// No user data is sent to the iframe URL or to analytics (only {page}).
 // ═══════════════════════════════════════════════════════════════
 const OPTIMA_CARD_ENABLED = true; // single switch: false = card never shows
+const OPTIMA_CARD_TTL_HOURS = 24;  // card auto-expires this long after the test was logged
 const OPTIMA_CARD_URL = 'https://optima-edu.in/embed/jeetrack/';
-const OPTIMA_CARD_FLAG = 'jt_optima_card_pending';
+const OPTIMA_CARD_KEY = 'jt_optima_card';
 const OPTIMA_CARD_PAGES = ['mains', 'advanced'];
 
 function _optimaTrack(event, props){
   try{ if(window.posthog && posthog.capture) posthog.capture(event, props); }catch(_e){}
 }
-function _optimaFlagSet(){
-  try{ return sessionStorage.getItem(OPTIMA_CARD_FLAG) === '1'; }catch(_e){ return false; }
+function _optimaClearState(){
+  try{ localStorage.removeItem(OPTIMA_CARD_KEY); }catch(_e){}
 }
-function _optimaFlagClear(){
-  try{ sessionStorage.removeItem(OPTIMA_CARD_FLAG); }catch(_e){}
+// Returns the stored {exam, armedAt} if the card is still allowed to show,
+// otherwise removes the stored state (expired / invalid / disabled) and returns null.
+function _optimaReadState(){
+  if(!OPTIMA_CARD_ENABLED){ _optimaClearState(); return null; }
+  let st = null;
+  try{ st = JSON.parse(localStorage.getItem(OPTIMA_CARD_KEY)); }catch(_e){ st = null; }
+  const ok = !!st && typeof st === 'object' && OPTIMA_CARD_PAGES.indexOf(st.exam) !== -1
+    && typeof st.armedAt === 'number' && isFinite(st.armedAt);
+  const age = ok ? Date.now() - st.armedAt : 0;
+  // small negative tolerance for clock changes; anything older than the TTL expires
+  if(!ok || age < -300000 || age >= OPTIMA_CARD_TTL_HOURS * 3600000){ _optimaClearState(); return null; }
+  return st;
 }
+// Empties the card slots (optionally keeping one page's slot).
 function _optimaEmptySlots(exceptPage){
   OPTIMA_CARD_PAGES.forEach(function(pg){
     if(pg === exceptPage) return;
@@ -686,28 +701,39 @@ function _optimaEmptySlots(exceptPage){
     if(slot) slot.replaceChildren();
   });
 }
-function _optimaShownOn(page){
-  const slot = document.getElementById('optima-card-slot-' + page);
-  return !!(slot && slot.firstChild);
+// Opens the connection to Optima early (not a script) so the iframe loads faster.
+function _optimaPreconnect(){
+  try{
+    if(document.getElementById('optima-preconnect')) return;
+    const l = document.createElement('link');
+    l.id = 'optima-preconnect';
+    l.rel = 'preconnect';
+    l.href = new URL(OPTIMA_CARD_URL).origin;
+    document.head.appendChild(l);
+  }catch(_e){}
 }
-// Called from saveTest() (new-test branch only). Also drops any card still
-// showing from an earlier test so the new one re-renders on the target page.
-function markOptimaCardPending(){
-  if(!OPTIMA_CARD_ENABLED) return;
+// Called from saveTest() (new-test branch only). Arms the card for that exam,
+// replacing any earlier state so a dismissed/old card shows again.
+function markOptimaCardPending(exam){
+  if(!OPTIMA_CARD_ENABLED || OPTIMA_CARD_PAGES.indexOf(exam) === -1) return;
   _optimaEmptySlots();
-  try{ sessionStorage.setItem(OPTIMA_CARD_FLAG, '1'); }catch(_e){}
+  try{ localStorage.setItem(OPTIMA_CARD_KEY, JSON.stringify({ exam: exam, armedAt: Date.now() })); }catch(_e){}
+  _optimaPreconnect();
 }
-// Removes the card from every slot and clears the flag.
+// Removes the card everywhere and forgets the state (used by x).
 function clearOptimaCard(){
-  _optimaFlagClear();
+  _optimaClearState();
   _optimaEmptySlots();
 }
-// Renders the card into the given page's slot if the flag is set.
+// Renders the card into the page's slot if the stored state says it belongs there.
 function renderOptimaCard(page){
-  if(!OPTIMA_CARD_ENABLED || OPTIMA_CARD_PAGES.indexOf(page) === -1) return;
+  if(OPTIMA_CARD_PAGES.indexOf(page) === -1) return;
+  const st = _optimaReadState();
+  if(!st || st.exam !== page) return;
+  _optimaEmptySlots(page);
   const slot = document.getElementById('optima-card-slot-' + page);
-  if(!slot || !_optimaFlagSet()) return;
-  if(slot.firstChild) return; // already rendered — don't reload the iframe or double-count the view
+  if(!slot || slot.firstChild) return; // already there: keep the loaded iframe, don't recount the view
+  _optimaPreconnect();
 
   const wrap = document.createElement('div');
   wrap.className = 'optima-card';
@@ -725,22 +751,20 @@ function renderOptimaCard(page){
   const frame = document.createElement('iframe');
   frame.setAttribute('src', OPTIMA_CARD_URL);
   frame.setAttribute('title', 'Optima error notebook');
-  frame.setAttribute('loading', 'lazy');
+  frame.setAttribute('loading', 'eager'); // card sits at the top of the page: no reason to wait for scroll
   frame.setAttribute('referrerpolicy', 'strict-origin');
   frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
-  frame.setAttribute('style', 'width:100%;height:230px;border:0;display:block');
+  frame.setAttribute('style', 'width:100%;height:170px;border:0;display:block'); // mobile height: styles.css
 
   wrap.appendChild(closeBtn);
   wrap.appendChild(frame);
   slot.appendChild(wrap);
   _optimaTrack('optima_card_view', { page: page });
 }
-// Called from nav(). The card belongs to the page it was first rendered on:
-// landing on a different page (even the other JEE page) clears card + flag.
+// Called from nav() whenever a page is shown. It never clears the card because
+// of navigation; it only drops stale slots if the state is gone (x / expired / disabled).
 function syncOptimaCard(page){
-  const isCardPage = OPTIMA_CARD_PAGES.indexOf(page) !== -1;
-  const shownElsewhere = OPTIMA_CARD_PAGES.some(function(pg){ return pg !== page && _optimaShownOn(pg); });
-  if(!isCardPage || shownElsewhere) clearOptimaCard();
+  if(!_optimaReadState()) _optimaEmptySlots();
   else renderOptimaCard(page);
 }
 // ═══════════ end OPTIMA PARTNER CARD ═══════════
@@ -767,7 +791,6 @@ function nav(page, _pushState){
   }
   
   if(page === 'tests'){
-    clearOptimaCard();
     document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active','anim-done'); });
     const choicePage = document.getElementById('mob-tests-choice-page');
     if(choicePage){ choicePage.style.display='block'; choicePage.classList.add('active'); }
@@ -1994,7 +2017,7 @@ function saveTest(){
     nav(exam==='mains'?'mains':'advanced');
     return;
   }
-  markOptimaCardPending();
+  markOptimaCardPending(e.exam);
   maybeShowReviewPrompt();
   pushUndo('test',e,'Test score added',false);
   navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');navMarkDirty('compare');

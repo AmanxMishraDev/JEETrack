@@ -19,8 +19,9 @@ describe('Optima partner card', () => {
     expect(end).toBeGreaterThan(start);
   });
 
-  it('exposes the on/off switch and URL constants', () => {
+  it('exposes the on/off switch, TTL and URL constants', () => {
     expect(block).toMatch(/const OPTIMA_CARD_ENABLED = (true|false);/);
+    expect(block).toMatch(/const OPTIMA_CARD_TTL_HOURS = 24;/);
     expect(block).toContain("const OPTIMA_CARD_URL = 'https://optima-edu.in/embed/jeetrack/';");
   });
 
@@ -43,10 +44,26 @@ describe('Optima partner card', () => {
 
   it('only flags new tests, not edits', () => {
     const editBranch = src.indexOf("toast('Test score updated");
-    const flagCall = src.indexOf('markOptimaCardPending();');
+    const flagCall = src.indexOf('markOptimaCardPending(e.exam);');
     const newBranchMarker = src.indexOf("pushUndo('test',e,'Test score added'");
     expect(flagCall).toBeGreaterThan(editBranch);
     expect(flagCall).toBeLessThan(newBranchMarker);
+  });
+
+  it('keeps state in localStorage (not sessionStorage) under jt_optima_card', () => {
+    expect(block).toContain("const OPTIMA_CARD_KEY = 'jt_optima_card';");
+    expect(block.replace(/\/\/.*$/gm, '')).not.toContain('sessionStorage');
+  });
+
+  it('page navigation never clears the card', () => {
+    const navStart = src.indexOf('function nav(page, _pushState){');
+    const navEnd = src.indexOf('function _navInternal');
+    const navBody = src.slice(navStart, navEnd);
+    expect(navBody).not.toContain('clearOptimaCard');
+    expect(navBody).toContain('syncOptimaCard(page)');
+    // clearOptimaCard() appears exactly twice: its definition and the x button handler
+    const callers = src.split('clearOptimaCard()').length - 1;
+    expect(callers).toBe(2);
   });
 
   it('has a slot under the hero and above the filter bar on both pages', () => {
