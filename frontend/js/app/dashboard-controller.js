@@ -656,6 +656,95 @@ window.addEventListener('popstate', function(e) {
   _handleRoute();
 });
 
+// ═══════════════════════════════════════════════════════════════
+// OPTIMA PARTNER CARD — renderOptimaCard / clearOptimaCard
+// Shown on JEE Mains / JEE Advanced only right after a NEW test is
+// logged (saveTest sets the session flag; edits never do). Cleared on
+// × or when the student navigates to ANY other page (including Mains <->
+// Advanced). A reload keeps the card (sessionStorage survives reloads).
+// SECURITY: the iframe sandbox must NEVER include allow-same-origin.
+// No user data is sent to the iframe URL or to analytics.
+// ═══════════════════════════════════════════════════════════════
+const OPTIMA_CARD_ENABLED = true; // single switch: false = card never shows
+const OPTIMA_CARD_URL = 'https://optima-edu.in/embed/jeetrack/';
+const OPTIMA_CARD_FLAG = 'jt_optima_card_pending';
+const OPTIMA_CARD_PAGES = ['mains', 'advanced'];
+
+function _optimaTrack(event, props){
+  try{ if(window.posthog && posthog.capture) posthog.capture(event, props); }catch(_e){}
+}
+function _optimaFlagSet(){
+  try{ return sessionStorage.getItem(OPTIMA_CARD_FLAG) === '1'; }catch(_e){ return false; }
+}
+function _optimaFlagClear(){
+  try{ sessionStorage.removeItem(OPTIMA_CARD_FLAG); }catch(_e){}
+}
+function _optimaEmptySlots(exceptPage){
+  OPTIMA_CARD_PAGES.forEach(function(pg){
+    if(pg === exceptPage) return;
+    const slot = document.getElementById('optima-card-slot-' + pg);
+    if(slot) slot.replaceChildren();
+  });
+}
+function _optimaShownOn(page){
+  const slot = document.getElementById('optima-card-slot-' + page);
+  return !!(slot && slot.firstChild);
+}
+// Called from saveTest() (new-test branch only). Also drops any card still
+// showing from an earlier test so the new one re-renders on the target page.
+function markOptimaCardPending(){
+  if(!OPTIMA_CARD_ENABLED) return;
+  _optimaEmptySlots();
+  try{ sessionStorage.setItem(OPTIMA_CARD_FLAG, '1'); }catch(_e){}
+}
+// Removes the card from every slot and clears the flag.
+function clearOptimaCard(){
+  _optimaFlagClear();
+  _optimaEmptySlots();
+}
+// Renders the card into the given page's slot if the flag is set.
+function renderOptimaCard(page){
+  if(!OPTIMA_CARD_ENABLED || OPTIMA_CARD_PAGES.indexOf(page) === -1) return;
+  const slot = document.getElementById('optima-card-slot-' + page);
+  if(!slot || !_optimaFlagSet()) return;
+  if(slot.firstChild) return; // already rendered — don't reload the iframe or double-count the view
+
+  const wrap = document.createElement('div');
+  wrap.className = 'optima-card';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'optima-card-close';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.textContent = '\u00d7';
+  closeBtn.addEventListener('click', function(){
+    _optimaTrack('optima_card_dismiss', { page: page });
+    clearOptimaCard();
+  });
+
+  const frame = document.createElement('iframe');
+  frame.setAttribute('src', OPTIMA_CARD_URL);
+  frame.setAttribute('title', 'Optima error notebook');
+  frame.setAttribute('loading', 'lazy');
+  frame.setAttribute('referrerpolicy', 'strict-origin');
+  frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
+  frame.setAttribute('style', 'width:100%;height:230px;border:0;display:block');
+
+  wrap.appendChild(closeBtn);
+  wrap.appendChild(frame);
+  slot.appendChild(wrap);
+  _optimaTrack('optima_card_view', { page: page });
+}
+// Called from nav(). The card belongs to the page it was first rendered on:
+// landing on a different page (even the other JEE page) clears card + flag.
+function syncOptimaCard(page){
+  const isCardPage = OPTIMA_CARD_PAGES.indexOf(page) !== -1;
+  const shownElsewhere = OPTIMA_CARD_PAGES.some(function(pg){ return pg !== page && _optimaShownOn(pg); });
+  if(!isCardPage || shownElsewhere) clearOptimaCard();
+  else renderOptimaCard(page);
+}
+// ═══════════ end OPTIMA PARTNER CARD ═══════════
+
 function nav(page, _pushState){
   
   const path = _pageToPath[page] || '/dashboard';
@@ -678,6 +767,7 @@ function nav(page, _pushState){
   }
   
   if(page === 'tests'){
+    clearOptimaCard();
     document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active','anim-done'); });
     const choicePage = document.getElementById('mob-tests-choice-page');
     if(choicePage){ choicePage.style.display='block'; choicePage.classList.add('active'); }
@@ -705,6 +795,7 @@ function nav(page, _pushState){
       p.classList.remove('active','anim-done');
     }
   });
+  syncOptimaCard(page);
   const map={overview:'dashboard',mains:'jee mains',advanced:'jee advanced',compare:'compare',hours:'study hours',todo:'to-do',backlog:'backlog',syllabus:'syllabus',practice:'practice log',insights:'ai',settings:'settings'};
   _navNi().forEach(n=>{n.classList.toggle('active', n.textContent.toLowerCase().trim().startsWith(map[page]||''));});
 
@@ -1903,6 +1994,7 @@ function saveTest(){
     nav(exam==='mains'?'mains':'advanced');
     return;
   }
+  markOptimaCardPending();
   maybeShowReviewPrompt();
   pushUndo('test',e,'Test score added',false);
   navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');navMarkDirty('compare');
