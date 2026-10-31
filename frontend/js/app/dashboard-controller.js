@@ -671,10 +671,20 @@ window.addEventListener('popstate', function(e) {
 // SECURITY: the iframe sandbox must NEVER include allow-same-origin.
 // No user data is sent to the iframe URL or to analytics (only {page}).
 // ═══════════════════════════════════════════════════════════════
-const OPTIMA_CARD_ENABLED = true; // single switch: false = card never shows
-const OPTIMA_CARD_TTL_HOURS = 24;  // card auto-expires this long after the test was logged
-const OPTIMA_CARD_PREWARM = true;  // load the card in the background (hidden) while the state is armed, so it is already ready when the student opens Mains/Advanced. false = load only when that page is shown
-const OPTIMA_CARD_SKELETON_MAX_MS = 10000; // reveal the iframe anyway if its load event never fires
+// NOTE: keep these const lines free of trailing // comments. build-app-bundle.mjs
+// scans top-level const/let lines for names, and a comma inside a trailing
+// comment gets parsed as an extra variable (it once produced a bogus window.so
+// exposure that broke app start-up). Explain each constant here instead.
+// OPTIMA_CARD_ENABLED: single switch. false = the card never shows.
+// OPTIMA_CARD_TTL_HOURS: the card auto-expires this long after the test was logged.
+// OPTIMA_CARD_PREWARM: build the card in the hidden page while it is armed so it is
+//   already loaded when the student opens Mains/Advanced. false = build it only when
+//   that page is shown.
+// OPTIMA_CARD_SKELETON_MAX_MS: reveal the iframe anyway if its load event never fires.
+const OPTIMA_CARD_ENABLED = true;
+const OPTIMA_CARD_TTL_HOURS = 24;
+const OPTIMA_CARD_PREWARM = true;
+const OPTIMA_CARD_SKELETON_MAX_MS = 10000;
 const OPTIMA_CARD_URL = 'https://optima-edu.in/embed/jeetrack/';
 const OPTIMA_CARD_KEY = 'jt_optima_card';
 const OPTIMA_CARD_PAGES = ['mains', 'advanced'];

@@ -4,6 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 const src = fs.readFileSync(path.join(root, 'frontend/js/app/dashboard-controller.js'), 'utf8');
@@ -87,5 +88,26 @@ describe('Optima partner card', () => {
       expect(slot).toBeGreaterThan(page);
       expect(slot).toBeLessThan(filter);
     }
+  });
+
+  it('has no trailing comments on top-level const/let lines (build script would read commas as extra names)', () => {
+    const bad = block.split('\n').filter((l) => /^(const|let|var)\s/.test(l) && /;\s*\/\//.test(l));
+    expect(bad).toEqual([]);
+  });
+
+  it('generated dashboard bundle only exposes names that really exist (no phantom window.x = x)', () => {
+    // Runs the real bundle step (same as `npm run build`'s first half) and
+    // checks its output; a phantom name throws at load and breaks app start-up.
+    execFileSync(process.execPath, [path.join(root, 'frontend/scripts/build-app-bundle.mjs')], { cwd: root, stdio: 'pipe' });
+    const gen = fs.readFileSync(path.join(root, 'frontend/public/dashboard-bundle.generated.js'), 'utf8');
+    const exposed = [...gen.matchAll(/^window\.([A-Za-z_$][\w$]*) = \1;$/gm)].map((m) => m[1]);
+    expect(exposed.length).toBeGreaterThan(100);
+    const phantom = exposed.filter((n) => {
+      const esc = n.replace(/[$]/g, '\\$&');
+      const declared = new RegExp('^\\s*(?:const|let|var|function\\*?|async function)\\s+' + esc + '\\b', 'm').test(gen)
+        || new RegExp('[,\\s]' + esc + '\\s*=(?!=)').test(gen);
+      return !declared;
+    });
+    expect(phantom).toEqual([]);
   });
 });
