@@ -1,3 +1,4 @@
+/* global openAnalysis, openAnnouncements, optimaSectionHTML, optimaCellHTML */
 
 const CANONICAL_SYLLABUS = {
   physics:[
@@ -628,6 +629,9 @@ function _handleRoute(){
     }
     return;
   }
+  const _am = path.match(/^\/analysis\/(\d+)$/);
+  if(_am){ openAnalysis(Number(_am[1]), false); return; }
+  if(path === '/announcements'){ openAnnouncements(false); return; }
   if(path === '/tests'){ _navInternal('tests', false); return; }
   if(path === '/settings'){
     _navInternal('settings', false);
@@ -2315,7 +2319,8 @@ function viewTest(id){
     ${bar(t.maths,subMax,'var(--am)')}
     <div style="font-size:10px;color:var(--mu);margin-top:-6px;margin-bottom:12px">Maths</div>
     ${t.notes?`<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:.6rem .8rem;font-size:12px;color:var(--mu);margin-bottom:12px"><span style="color:var(--tx);font-weight:500">Notes:</span> ${t.notes}</div>`:''}
-    <div class="pmo-field">
+    ${typeof optimaSectionHTML==='function'?optimaSectionHTML(t.id):''}
+     <div class="pmo-field">
       <label class="pmo-label">Analyzed this mock?</label>
       <div class="pmo-pill-row" style="margin-top:6px">
         <button type="button" class="pmo-pill pmo-pill-sm td-an-pill${_linked?'':' active'}" id="td-an-no" onclick="_matToggleDetail(${t.id},false)">Not yet</button>
@@ -3270,7 +3275,7 @@ function renderMnUnified(){
           <button class="btn bg2 bsm" onclick="mnScoresNav(1)" ${nextDis?'disabled':''} style="padding:4px 8px${nextDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
       </div>`:'';
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'mains')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="9"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th>Analysis</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'mains')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td>${typeof optimaCellHTML==='function'?optimaCellHTML(t.id):''}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> No mains tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
   }
 }
 
@@ -3385,7 +3390,7 @@ function renderAdvUnified(){
           <button class="btn bg2 bsm" onclick="advScoresNav(1)" ${nextDis?'disabled':''} style="padding:4px 8px${nextDis?';opacity:.35;cursor:not-allowed':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
       </div>`:'';
-    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'advanced')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
+    el.innerHTML=`<div class="tw"><table><thead><tr><th>Date</th><th>Paper</th><th>Type</th><th>Total</th><th>%</th><th>Phy</th><th>Chem</th><th>Math</th><th>Notes</th><th>Analysis</th><th></th></tr></thead><tbody>${pageTests.length?pageTests.map(t=>`<tr><td style="font-family:'DM Mono',monospace">${fmt(t.date)}</td><td><span class="chip bac">${t.paper?cap(t.paper):'—'}</span></td><td><span class="tt ${t.type==='full'?'tf':'tp'}">${t.type==='full'?'Full':'Partial'}</span></td><td><b>${t.total}</b>/${t.max}</td><td><span class="sp ${sbgGoal(t.total,t.max,'advanced')}">${pct(t.total,t.max)}%</span></td><td style="color:var(--bl)">${t.physics}</td><td style="color:var(--gn)">${t.chemistry}</td><td style="color:var(--am)">${t.maths}</td><td style="color:var(--mu);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.notes||'—'}</td><td>${typeof optimaCellHTML==='function'?optimaCellHTML(t.id):''}</td><td style="display:flex;gap:4px"><button class="btn bg2 bsm" onclick="viewTest(${t.id})" title="Details" style="padding:3px 6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>`).join(''):`<tr><td colspan="11"><div class="empty"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px;opacity:.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>No advanced tests yet.</div></td></tr>`}</tbody></table></div>${pagerHTML}`;
   }
 }
 
@@ -4160,7 +4165,7 @@ const MOB_PAGE_TITLES = {
   overview:'Dashboard', mains:'JEE Mains', advanced:'JEE Advanced',
   compare:'Compare', hours:'Study Hours', todo:'To-Do',
   backlog:'Backlog', syllabus:'Syllabus', practice:'Practice Log', insights:'AI Insights', settings:'Settings',
-  'tests-choice':'Tests'
+  'tests-choice':'Tests', analysis:'Mock Analysis', announcements:'Announcements'
 };
 function updateMobTopbarTitle(page, sub){
   const el = document.getElementById('mob-page-title');
@@ -4230,7 +4235,7 @@ function mobNavTo(page, el){
 }
 function syncMobNav(page){
   
-  const navMap={overview:'overview',mains:'mains',advanced:'mains',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',practice:'todo-tab',settings:'todo-tab'};
+  const navMap={overview:'overview',mains:'mains',advanced:'mains',analysis:'mains',announcements:'overview',compare:'mains',hours:'hours',insights:'insights',todo:'todo-tab',backlog:'todo-tab',syllabus:'todo-tab',practice:'todo-tab',settings:'todo-tab'};
   _mobNavItems().forEach(b=>b.classList.remove('active'));
   const tab = navMap[page];
   if(tab && tab !== 'todo-tab'){

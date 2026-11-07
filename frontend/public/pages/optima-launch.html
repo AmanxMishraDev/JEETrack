@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>JEETrack × Optima — Log. Sync. Analyse.</title>
+<meta name="description" content="JEETrack PW Sync now works with Optima: log your PW mocks in one click and get your mistakes analysed.">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="canonical" href="https://www.jeetrack.in/optima-launch">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--text:#f0eff5;--muted:#7a7990;--soft:#a8a7bd;--p:#7c6af7;--lp:#a695ff;--pink:#f472b6;--ok:#34d399;
+--line:rgba(255,255,255,.09);--glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.08);
+--logo:linear-gradient(135deg,#a695ff,#f472b6);--btn:linear-gradient(135deg,#7c6af7,#a67af5);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:70px;height:auto;overflow-x:clip}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "DM Sans",system-ui,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.wm{font-family:Syne,"DM Sans",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1;margin:0}
+.t,.g{background:var(--logo);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.fx{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(700px 480px at 8% 0,rgba(124,106,247,.3),transparent 70%),radial-gradient(560px 420px at 95% 30%,rgba(244,114,182,.16),transparent 70%)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.live{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--soft)}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pu 2s infinite}
+@keyframes pu{70%,100%{box-shadow:0 0 0 9px rgba(52,211,153,0)}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;cursor:pointer;font:600 15px "DM Sans",sans-serif;color:#fff;text-decoration:none;padding:14px 26px;border-radius:99px;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
+.btn.pri{background:var(--btn);box-shadow:0 8px 26px rgba(124,106,247,.4)}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(166,122,245,.5)}
+.btn.gh{background:var(--glass);border-color:var(--line)}
+.btn.gh:hover{background:var(--glass2);border-color:rgba(166,149,255,.5);transform:translateY(-2px)}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+.btn i{font-style:normal;transition:transform .2s}.btn:hover i{transform:translateX(4px)}
+
+/* hero */
+.hero{padding:48px 20px 0}
+.kick{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--lp);margin-bottom:18px}
+.hero h1{font-size:clamp(46px,11.5vw,124px);line-height:.9;text-transform:uppercase}
+.hero h1 span{display:block}
+.o{color:transparent;-webkit-text-stroke:2px rgba(240,239,245,.9)}
+.sub{display:flex;gap:28px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-top:32px}
+.sub p{margin:0;max-width:440px;color:var(--soft);font-size:16px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.mq{overflow:hidden;transform:rotate(-1deg);margin:40px 0 0;border:1px solid rgba(166,149,255,.3);border-radius:18px;background:rgba(124,106,247,.12);padding:12px 0}
+.mq div{display:flex;width:max-content;gap:40px;animation:mq 28s linear infinite;font:800 18px Syne;letter-spacing:-.02em;white-space:nowrap}
+.mq span:nth-child(even){color:var(--pink)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* story */
+.story{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:48px;padding:80px 0 30px}
+.stick{position:sticky;top:90px;align-self:start}
+.tc{border-radius:28px;padding:20px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.pipe{display:flex;align-items:center;margin-bottom:16px}
+.nd{padding:6px 14px;border-radius:99px;border:1px solid var(--line);font:700 12px "Space Grotesk";color:var(--muted);transition:.5s}
+.ln{flex:1;height:2px;background:var(--line);margin:0 6px;position:relative;overflow:hidden}
+.ln i{position:absolute;inset:0;width:0;background:var(--logo);transition:width .6s}
+.n1,.tc[data-s="2"] .n2,.tc[data-s="3"] .n2,.tc[data-s="3"] .n3{color:#fff;border-color:var(--lp);background:rgba(124,106,247,.25)}
+.tc[data-s="2"] .l1 i,.tc[data-s="3"] .l1 i,.tc[data-s="3"] .l2 i{width:100%}
+.stage{position:relative;height:270px}
+.pw{height:100%;border-radius:18px;background:#f4f3fa;color:#1d1b3a;padding:84px 16px 16px}
+.pw small{color:#6b6a80;font-size:12px}
+.pw h4{margin:2px 0 0;font:600 16px "DM Sans"}
+.pw .sc{margin-top:10px;background:#fff;border:1px solid #cfe0f5;border-radius:12px;padding:10px 14px;font:700 32px/1.1 "Space Grotesk";color:#0f4c81;letter-spacing:-.03em}
+.pw .sc small{display:block;font:600 11px "DM Sans";color:#444;letter-spacing:.05em;margin-bottom:2px}
+.pw .sc s{text-decoration:none;font-size:18px;color:#6b6a80}
+.nl{position:absolute;top:18px;left:20px;font-size:12px;font-weight:600;color:#6b6a80;background:#e6e4f2;padding:5px 12px;border-radius:99px;transition:opacity .4s}
+.tc:not([data-s="1"]) .nl{opacity:0}
+.mini{position:absolute;top:10px;left:10px;right:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;background:#0e0e14;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 12px;font-size:12px;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.45);opacity:0;transform:translateY(-10px);transition:.5s}
+.tc:not([data-s="1"]) .mini{opacity:1;transform:none}
+.mini .wm{font-size:14px}.mini .ng{margin-left:auto;background:var(--btn);padding:7px 12px;border-radius:9px;font-weight:600}
+.cb{display:inline-grid;place-items:center;position:relative;width:14px;height:14px;border-radius:4px;background:var(--p);font-size:9px;vertical-align:-2px}
+.bn{position:absolute;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:14px;background:#0e0e14;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px 14px;color:#fff;font-size:12px;line-height:1.45;box-shadow:0 16px 38px rgba(0,0,0,.5);opacity:0;transform:translateY(-10px);transition:.5s}
+.tc:not([data-s="1"]) .bn{opacity:1;transform:none}
+.jt{width:34px;height:34px;border-radius:10px;background:#0a0a0f;border:1px solid var(--p);display:grid;place-items:center;flex:none;font:italic 800 13px Syne}
+.jt span{background:var(--logo);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.bb{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr)}
+.bb>div{grid-area:1/1;min-width:0;transition:opacity .45s;display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap}
+.bb .wm{font-size:14px;margin-bottom:2px}
+.bb small{display:block;color:#b9b8cc;font-size:11.5px}
+.bb em{font-style:normal;color:var(--lp);font-weight:700}
+.bb .tx{flex:1;min-width:150px}
+.sv{background:#1c1c26;border:1px solid #3a3a48;border-radius:5px;padding:0 6px;color:#fff;font-weight:600}
+.lb{display:inline-flex;align-items:center;gap:7px;color:#d4d3e0;font-size:12px}
+.b2 .ng{background:var(--btn);padding:8px 14px;border-radius:9px;font-weight:600;white-space:nowrap}
+@keyframes gl{50%{box-shadow:0 0 0 5px rgba(124,106,247,.3)}}
+.b3{opacity:0}
+.tc[data-s="3"] .b2{opacity:0}.tc[data-s="3"] .b3{opacity:1}
+.sp{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:var(--lp);animation:sn .9s linear infinite;flex:none}
+@keyframes sn{to{transform:rotate(360deg)}}
+.okc{color:var(--ok);font-weight:700}
+.xx{color:#8a8a9a;font-size:16px;line-height:1}
+.bb>.b2{flex-wrap:nowrap}
+.bb .tx{min-width:0}
+.bb .tx small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb,.b2 .ng{flex:none;white-space:nowrap;position:relative}
+.tc[data-s="2"] .cb{animation:ck 6s infinite}
+@keyframes ck{0%,20%{background:transparent;box-shadow:inset 0 0 0 1.5px #8a8a9a;color:transparent}26%,100%{background:var(--p);box-shadow:none;color:#fff}}
+.tc[data-s="2"] .b2 .ng{animation:pr 6s infinite}
+@keyframes pr{0%,44%{transform:none;box-shadow:none}47%{transform:scale(.94)}51%{transform:none;box-shadow:0 0 0 7px rgba(124,106,247,.3)}60%,100%{transform:none;box-shadow:none}}
+.cur{position:absolute;left:52%;top:55%;width:20px;height:20px;pointer-events:none;opacity:0;z-index:5;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+.cur svg{display:block}
+.tc[data-s="2"] .cur.c1{animation:m1 6s infinite}
+.tc[data-s="2"] .cur.c2{animation:m2 6s infinite}
+@keyframes m1{0%,10%{opacity:0;transform:translate(26px,20px)}18%{opacity:1;transform:none}24%{transform:scale(.86)}30%{transform:none}38%,100%{opacity:0;transform:translate(10px,14px)}}
+@keyframes m2{0%,36%{opacity:0;transform:translate(26px,20px)}44%{opacity:1;transform:none}47%{transform:scale(.86)}52%{transform:none}62%,100%{opacity:0;transform:translate(10px,14px)}}
+.b3a,.b3b,.b3c{opacity:0}
+.tc[data-s="3"] .b3a{animation:fa 5.6s forwards}
+.tc[data-s="3"] .b3b{animation:fb 5.6s forwards}
+.tc[data-s="3"] .b3c{animation:fc 5.6s forwards}
+@keyframes fa{0%{opacity:0}8%,30%{opacity:1}38%,100%{opacity:0}}
+@keyframes fb{0%,30%{opacity:0}38%,64%{opacity:1}72%,100%{opacity:0}}
+@keyframes fc{0%,64%{opacity:0}74%,100%{opacity:1}}
+.ok2{width:30px;height:30px;border-radius:50%;background:rgba(52,211,153,.18);color:var(--ok);display:grid;place-items:center;font-weight:700;flex:none}
+.tc[data-s="3"] .b3a .ok2,.tc[data-s="3"] .b3c .ok2{animation:pop .5s both}
+@keyframes pop{from{transform:scale(.5)}60%{transform:scale(1.15)}}
+.an{position:absolute;left:10px;right:10px;bottom:10px;background:#0e0e14;border:1px solid rgba(166,149,255,.4);border-radius:16px;padding:14px 16px;color:#fff;opacity:0;transform:translateY(16px);transition:.5s;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.tc[data-s="3"] .an{opacity:1;transform:none}
+.an b{font-size:13px;display:block}.an small{color:var(--soft);font-size:12px}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.1);margin:10px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--logo);border-radius:9px}
+.tc[data-s="3"] .bar i{animation:fill 2.4s ease-out forwards}
+@keyframes fill{to{width:72%}}
+.ch{min-height:66vh;display:flex;flex-direction:column;justify-content:center;opacity:.35;transition:opacity .5s}
+.ch.on{opacity:1}
+.ch .no{font:700 13px "Space Grotesk";color:var(--pink);letter-spacing:.14em;margin-bottom:14px}
+.ch h2{font-size:clamp(28px,4vw,42px);margin-bottom:12px}
+.ch p{color:var(--soft);font-size:16px;margin:0;max-width:420px}
+.ch p b{color:var(--text);font-weight:600}
+.hint{margin-top:16px!important;font-size:14px!important;color:var(--muted)!important}
+
+/* bento */
+.sec{padding:56px 0 16px}
+.sec>h2{font-size:clamp(26px,4.2vw,42px);margin-bottom:24px;max-width:720px}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto);gap:14px}
+.tile{border-radius:26px;padding:22px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;flex-direction:column;justify-content:space-between;gap:16px;transition:transform .25s,border-color .25s}
+.tile:hover{transform:translateY(-4px);border-color:rgba(166,149,255,.5)}
+.tile .big{font:700 clamp(32px,4.6vw,46px)/1 "Space Grotesk";letter-spacing:-.04em}
+.tile p{margin:0;color:var(--soft);font-size:14px}
+.tile h3{font-size:19px;margin-bottom:6px}
+.t1{grid-column:span 2;grid-row:span 2;background:linear-gradient(145deg,rgba(124,106,247,.28),rgba(244,114,182,.14));border-color:rgba(166,149,255,.4)}
+.t1 .lk{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;white-space:nowrap}
+.t1 .lk .wm{font-size:clamp(24px,3.6vw,38px)}
+.t1 .lk .x{color:var(--muted);font-size:22px}
+.t1 .lk .op{font:700 clamp(24px,3.6vw,38px) "Space Grotesk";letter-spacing:-.03em}
+.t5{grid-column:span 2}
+
+/* doors */
+.doors{display:flex;gap:14px;min-height:320px}
+.door{flex:1;position:relative;overflow:hidden;border-radius:30px;padding:26px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;border:1px solid var(--line);transition:flex .6s cubic-bezier(.2,.8,.2,1),border-color .3s}
+.door:hover,.door:focus-within{flex:1.5;border-color:rgba(166,149,255,.6)}
+.d1{background:linear-gradient(160deg,rgba(124,106,247,.34),rgba(10,10,15,.2))}
+.d2{background:linear-gradient(160deg,rgba(244,114,182,.28),rgba(10,10,15,.2))}
+.door .ghost{position:absolute;top:-24px;right:12px;font:800 150px/1 Syne;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.18);pointer-events:none}
+.door .tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lp)}
+.d2 .tag{color:var(--pink)}
+.door h3{font-size:clamp(22px,2.6vw,30px)}
+.door p{margin:0 0 10px;color:var(--soft);max-width:380px;font-size:15px}
+.door .btn{align-self:flex-start}
+
+.final{text-align:center;padding:70px 0 40px}
+.final h2{font-size:clamp(34px,7vw,84px);line-height:.92;text-transform:uppercase;margin-bottom:28px}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s}
+.rv.in{opacity:1;transform:none}
+@media(max-width:860px){
+ .story{grid-template-columns:1fr;gap:0;padding-top:60px}
+ .stick{top:58px;z-index:5;padding:10px 0;background:linear-gradient(var(--bg) 80%,transparent)}
+ .stage{height:310px}.pw{padding-top:120px}.ch{min-height:56vh}.bn{padding:10px 11px;gap:10px;font-size:11px}.lb{font-size:11px;order:3;flex:1 1 100%}.bb>.b2{flex-wrap:wrap}.b2 .ng{padding:7px 10px;font-size:11px}
+ .bento{grid-template-columns:1fr 1fr}.t1,.t5{grid-column:span 2}.t1{grid-row:auto}
+ .doors{flex-direction:column}.door,.door:hover{flex:none;min-height:300px}
+ .o{-webkit-text-stroke-width:1.5px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.ch{opacity:1}}
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.8);border-bottom:1px solid rgba(255,255,255,.07);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:#f0eff5;letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:#7a7990;text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:#f0eff5;background:rgba(255,255,255,.05)}
+.nav-cta{background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.85}
+.foot{text-align:center;padding:2rem;border-top:1px solid rgba(255,255,255,.07);color:#7a7990;font-size:.78rem}
+.foot a{color:#7a7990;text-decoration:none;transition:color .15s}
+.foot a:hover{color:#f0eff5}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+@media(max-width:700px){.nav{padding:0 1.25rem}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<div class="fx"></div>
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/support">Support Us</a>
+  </div>
+  <a class="nav-cta" href="/dashboard">Open JEETrack &rarr;</a>
+</nav>
+
+<header class="wrap hero">
+  <div class="kick rv">JEETrack PW Sync × Optima</div>
+  <h1 class="rv"><span class="o">Log.</span><span>Sync.</span><span class="g">Analyse.</span></h1>
+  <div class="sub rv">
+    <p>Your PW mock tests now go straight into JEETrack, and with our partner Optima, your mistakes become a clear analysis.</p>
+    <div class="cta"><a class="btn pri" href="#story">See how it works <i>↓</i></a><a class="btn gh" href="#paths">Get your analysis</a></div>
+  </div>
+  <div class="mq"><div>
+    <span>Log your mocks</span><span>✦</span><span>Build your error notebook</span><span>✦</span><span>Analysed by Optima</span><span>✦</span><span>Log your mocks</span><span>✦</span><span>Build your error notebook</span><span>✦</span><span>Analysed by Optima</span><span>✦</span>
+    <span>Log your mocks</span><span>✦</span><span>Build your error notebook</span><span>✦</span><span>Analysed by Optima</span><span>✦</span><span>Log your mocks</span><span>✦</span><span>Build your error notebook</span><span>✦</span><span>Analysed by Optima</span><span>✦</span>
+  </div></div>
+</header>
+
+<main class="wrap">
+  <section class="story" id="story">
+    <div class="stick">
+      <div class="tc" id="tc" data-s="1">
+        <div class="pipe"><span class="nd n1">PW</span><span class="ln l1"><i></i></span><span class="nd n2">JEETrack</span><span class="ln l2"><i></i></span><span class="nd n3">Optima</span></div>
+        <div class="stage">
+          <div class="pw"><h4>JEE Mains · Full Mock</h4><small>75 Questions • 300 Marks • 180 mins</small><div class="sc"><small>SCORE</small>198<s> / 300</s></div></div>
+          <span class="nl">Not logged yet</span>
+          <div class="bn">
+            <div class="bb">
+              <div class="b2"><div class="tx"><div class="wm"><span>JEE</span><span class="t">Track</span></div><small>Test detected: <b style="color:#fff">JEE Mains</b> · <em>198</em> / 300</small></div><span class="lb"><span class="cb">✓<i class="cur c1"></i></span>Analyse mistakes</span><span class="ng">Send to JEETrack<i class="cur c2"></i></span></div>
+              <div class="b3a"><span class="ok2">✓</span><div><div class="wm"><span>JEE</span><span class="t">Track</span></div><small>Added to JEETrack</small></div></div>
+              <div class="b3b"><span class="sp"></span><div><div class="wm"><span>JEE</span><span class="t">Track</span></div><small>Score added <span class="okc">✓</span> Sending your questions for analysis…</small></div></div>
+              <div class="b3c"><span class="ok2">✓</span><div><div class="wm"><span>JEE</span><span class="t">Track</span></div><small>Sent to Optima for analysis · ready within an hour</small></div></div>
+            </div><span class="xx">×</span></div>
+          
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="ch on" data-c="1"><div class="no">CHAPTER 01</div><h2>Attempt on PW</h2><p>Take your mock test exactly as you do today. Nothing changes about how you practise.</p></div>
+      <div class="ch" data-c="2"><div class="no">CHAPTER 02</div><h2>Log it in one click</h2><p>Install <b>JEETrack PW Sync</b> once. On your result page a JEETrack bar appears. Press <b>Send to JEETrack</b> and your score is logged.</p><p class="hint">Tick <b>Analyse mistakes</b> to also send your questions to Optima for analysis.</p></div>
+      <div class="ch" data-c="3"><div class="no">CHAPTER 03</div><h2>Learn from it, with Optima</h2><p>The same bar confirms your score is added and sends your questions to Optima for analysis. It is ready within an hour, and you can follow the status on your JEETrack test page.</p></div>
+    </div>
+  </section>
+
+  <section class="sec rv">
+    <h2>Built for <span class="g">serious</span> mock-test prep.</h2>
+    <div class="bento">
+      <div class="tile t1"><div class="lk"><div class="wm"><span>JEE</span><span class="t">Track</span></div><span class="x">×</span><span class="op">Optima</span></div><div><h3>Mistake analysis, powered by Optima</h3><p>We’ve partnered with Optima, so your mistakes can be analysed right from your JEETrack test.</p></div></div>
+      <div class="tile"><div class="big g">1</div><p>click to log a PW test in JEETrack.</p></div>
+      <div class="tile"><div class="big g">1h</div><p>or less for your analysis to be ready.</p></div>
+      <div class="tile"><h3>Any test</h3><p>Not on PW? Send your mistakes to Optima directly.</p></div>
+      <div class="tile"><h3>One-time setup</h3><p>Install the extension once and you are set.</p></div>
+      
+    </div>
+  </section>
+
+  <section class="sec rv" id="paths">
+    <h2>Choose your path to analysis.</h2>
+    <div class="doors">
+      <article class="door d1"><span class="ghost">A</span><span class="tag">PW tests</span><h3>Import with PW Sync</h3><p>Install the extension once, then send any PW test to JEETrack in a click.</p><a class="btn pri" id="guide" href="#" >Installation guide <i>→</i></a></article>
+      <article class="door d2"><span class="ghost">B</span><span class="tag">All other tests</span><h3>Send mistakes to Optima</h3><p>Took the test elsewhere, or added it by hand? Optima will analyse your mistakes.</p><a class="btn pri" href="https://optima-edu.in/?ref=jeetrack" target="_blank" rel="noopener">Send mistakes on Optima <i>→</i></a></article>
+    </div>
+  </section>
+
+  <section class="final rv">
+    <h2>Make every<br><span class="g">mock count.</span></h2>
+    <a class="btn pri" href="#paths">Get started <i>→</i></a>
+  </section>
+</main>
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:#f0eff5;letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/support">Support</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  &copy; 2026 JEETrack &middot; Built for JEE Aspirants across India
+</footer>
+
+<script>
+var GUIDE_URL="/pw-sync-guide";
+document.getElementById("guide").setAttribute("href",GUIDE_URL);
+var CUR='<svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 2l7 18 2.5-7.5L20 10z" fill="#fff" stroke="#0a0a0f" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+[].forEach.call(document.querySelectorAll(".cur"),function(p){p.innerHTML=CUR});
+var tc=document.getElementById("tc"),chs=[].slice.call(document.querySelectorAll(".ch"));
+var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){chs.forEach(function(c){c.classList.toggle("on",c===e.target)});tc.setAttribute("data-s",e.target.dataset.c)}})},{rootMargin:"-40% 0px -40% 0px"});
+chs.forEach(function(c){so.observe(c)});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.1});
+[].forEach.call(document.querySelectorAll(".rv"),function(el){io.observe(el)});
+</script>
+</body>
+</html>

@@ -54,9 +54,14 @@
     { "source": "/hall-of-support", "destination": "/pages/hall-of-support.html" },
     { "source": "/hall-of-support.html", "destination": "/pages/hall-of-support.html" },
 
+    { "source": "/pw-sync-guide", "destination": "/pages/pw-sync-guide.html" },
+    { "source": "/pw-sync-guide.html", "destination": "/pages/pw-sync-guide.html" },
+    { "source": "/optima-launch", "destination": "/pages/optima-launch.html" },
+    { "source": "/optima-launch.html", "destination": "/pages/optima-launch.html" },
+
     { "source": "/admin", "destination": "/admin/admin.html" },
     { "source": "/admin.html", "destination": "/admin/admin.html" },
 
-    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|favicon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
+    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|pw-sync-guide\\.html|optima-launch\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|favicon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
   ]
 }
