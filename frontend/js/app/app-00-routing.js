@@ -1,29 +1,30 @@
 const _routeMap = {
   '/':'overview', '/dashboard':'overview', '/mains':'mains', '/advanced':'advanced',
   '/compare':'compare', '/tests':'tests', '/hours':'hours', '/todo':'todo',
-  '/backlog':'backlog', '/syllabus':'syllabus', '/practice':'practice', '/insights':'insights', '/settings':'settings',
+  '/backlog':'backlog', '/syllabus':'syllabus', '/practice':'practice', '/insights':'insights', '/settings':'settings', '/announcements':'announcements',
   
   '/login':'__login__', '/onboarding':'__onboarding__',
 };
 const _pageToPath = {
   overview:'/dashboard', mains:'/mains', advanced:'/advanced', compare:'/compare',
   tests:'/tests', hours:'/hours', todo:'/todo', backlog:'/backlog',
-  syllabus:'/syllabus', practice:'/practice', insights:'/insights', settings:'/settings',
+  syllabus:'/syllabus', practice:'/practice', insights:'/insights', settings:'/settings', announcements:'/announcements',
 };
 const _pageTitles = {
   overview:'Dashboard', mains:'JEE Mains', advanced:'JEE Advanced', compare:'Compare',
   tests:'Tests', hours:'Study Hours', todo:'To-Do', backlog:'Backlog',
-  syllabus:'Syllabus', practice:'Practice Log', insights:'AI Insights', settings:'Settings',
+  syllabus:'Syllabus', practice:'Practice Log', insights:'AI Insights', settings:'Settings', analysis:'Analysis', announcements:'Announcements',
 };
 const _settingsTabs = ['profile','study','goals','appearance','alerts','data','account','feedback','contact'];
 
 
-const _staticPages = ['/faq','/privacy','/terms','/admin'];
+const _staticPages = ['/faq','/privacy','/terms','/admin','/pw-sync-guide','/optima-launch'];
 
 function _isKnownPath(path){
   if(path==='/index.html') return true;
   if(_routeMap.hasOwnProperty(path)) return true;
   if(_staticPages.includes(path)) return true;
+  if(/^\/analysis\/\d+$/.test(path)) return true; // per-test Optima analysis page
   return false;
 }
 

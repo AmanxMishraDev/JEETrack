@@ -142,6 +142,10 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   <button id="config-error-retry-btn" onclick="retryConfigLoad()" style="background:linear-gradient(135deg,#a695ff,#f472b6);border:none;color:#0b0b14;font-weight:600;padding:10px 24px;border-radius:999px;cursor:pointer;font-size:14px;">Retry</button>
 </div>
 
+<script>
+/* Diwali splash flag (India time, same window as app-13-diwali.js). Runs before the splash paints. */
+(function(){try{var d=new Date(Date.now()+19800000).toISOString().slice(0,10);if(d>='2026-11-07'&&d<='2026-11-11')document.documentElement.classList.add('dw-on');}catch(e){}})();
+</script>
 <div id="splash">
   <div class="splash-spotlight"></div>
   <div class="splash-orb splash-orb-1"></div>
@@ -200,6 +204,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
       <div class="splash-name-wipe"><span class="splash-name"><span class="splash-jee">JEE</span><span class="splash-track">Track</span></span><span class="splash-wipe-glow"></span></div>
       <div class="splash-rule"></div>
       <div class="splash-tagline">Track. Practice. Achieve.</div>
+    </div>
+
+    <div class="splash-dw" aria-hidden="true">
+      <div class="dw-halo"></div>
+      <div class="dw-lights"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 4 Q50 34 100 8 T200 8 T300 8 T400 4" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/></svg><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i></div>
+      <i class="e e1"></i><i class="e e2"></i><i class="e e3"></i><i class="e e4"></i><i class="e e5"></i><i class="e e6"></i><i class="e e7"></i><i class="e e8"></i><i class="e e9"></i><i class="e e10"></i>
+      <div class="splash-dw-diyas"><span class="sd"><b></b></span><span class="sd sd-m"><b></b></span><span class="sd"><b></b></span></div>
     </div>
 
     <div class="splash-progress-wrap">
@@ -1229,15 +1240,17 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
 
 <main class="main">
 
+<div class="desk-topbar" id="desk-topbar"><button type="button" class="ann-bell" onclick="openAnnouncements()" aria-label="Announcements" title="Announcements" style="display:none"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ann-dot"></span></button></div>
+
 <div class="mob-topbar" id="mob-topbar">
   <div class="mob-topbar-text">
     <span class="mob-topbar-title" id="mob-page-title">JEE<span>Track</span></span>
     <span class="mob-topbar-sub" id="mob-page-sub" style="display:none"></span>
   </div>
-  <button class="profile-btn" onclick="openAvMenu()" id="mob-profile-btn" title="Account" style="overflow:hidden;position:relative;align-self:center;flex-shrink:0">
+  <div class="mob-topbar-right"><button type="button" class="ann-bell" onclick="openAnnouncements()" aria-label="Announcements" title="Announcements" style="display:none"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ann-dot"></span></button><button class="profile-btn" onclick="openAvMenu()" id="mob-profile-btn" title="Account" style="overflow:hidden;position:relative;align-self:center;flex-shrink:0">
     <span id="mob-avatar">A</span>
     <img id="mob-avatar-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%"/>
-  </button>
+  </button></div>
 </div>
 
 <div class="av-menu-overlay" id="avMenuOverlay" onclick="closeAvMenu()"></div>
@@ -1294,6 +1307,13 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
   </svg>
 
   
+  <div class="dw-banner" id="diwali-banner" style="display:none" role="region" aria-label="Diwali greeting">
+    <div class="dw-diya" aria-hidden="true"><svg viewBox="0 0 48 48" width="46" height="46"><defs><linearGradient id="dwf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs><path class="dw-flame" d="M24 4c3.5 5.5 7 9 7 13.5a7 7 0 0 1-14 0C17 13 20.500 9.500 24 4z" fill="url(#dwf)"/><path d="M5 27h38c0 9-8.500 15-19 15S5 36 5 27z" fill="#c2410c"/><rect x="13" y="25" width="22" height="3.500" rx="1.750" fill="#f59e0b"/></svg></div>
+    <div class="dw-text"><div class="dw-title">Happy Diwali from JEETrack</div><div class="dw-sub">May your hard work light up your rank list. Wishing you and your family a bright and joyful Diwali.</div></div>
+    <button type="button" class="dw-close" onclick="diwaliCloseBanner()" aria-label="Dismiss">&times;</button>
+    <span class="dw-sp s1"></span><span class="dw-sp s2"></span><span class="dw-sp s3"></span><span class="dw-sp s4"></span>
+  </div>
+
   <div class="dash-header-wrap">
     <div class="dash-greeting-block">
       <div class="dash-greeting-name"><em id="dash-greeting">Hi, there</em></div>
@@ -1919,6 +1939,31 @@ window.ensureJsPdf=function(){return loadScript(window._jsPdfUrl);};
     </div>
   </div>
 
+</div>
+</div>
+
+<div class="page" id="page-announcements">
+<div class="page-inner">
+  <div class="ph">
+    <div>
+      <div class="pt">Announce<span style="background:linear-gradient(135deg,#a695ff,#7c6af7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">ments</span></div>
+      <div style="font-size:12px;color:var(--mu);margin-top:2px">News and updates from JEETrack</div>
+    </div>
+  </div>
+  <div id="announcements-root"></div>
+</div>
+</div>
+
+<div class="page" id="page-analysis">
+<div class="page-inner">
+  <div class="ph">
+    <div>
+      <div class="pt">Mock <span style="background:linear-gradient(135deg,#a695ff,#7c6af7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Analysis</span></div>
+      <div style="font-size:12px;color:var(--mu);margin-top:2px">What to work on, from your wrong and skipped questions</div>
+    </div>
+    <button type="button" class="btn bg2" onclick="analysisBack()">&larr; Back to tests</button>
+  </div>
+  <div id="analysis-root"></div>
 </div>
 </div>
 

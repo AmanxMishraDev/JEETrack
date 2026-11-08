@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>JEETrack PW Sync — Installation Guide</title>
+<meta name="description" content="Install the JEETrack PW Sync extension in 4 simple steps and send your PW mock scores to JEETrack.">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="canonical" href="https://www.jeetrack.in/pw-sync-guide">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f; --text:#f0eff5; --muted:#7a7990; --soft:#a8a7bd;
+  --p:#7c6af7; --lp:#a695ff; --pink:#f472b6; --ok:#34d399;
+  --line:rgba(255,255,255,.08); --glass:rgba(255,255,255,.035); --glass2:rgba(255,255,255,.07);
+  --logo:linear-gradient(135deg,#a695ff,#f472b6); --btn:linear-gradient(135deg,#7c6af7,#a67af5);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:80px;height:auto}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "DM Sans",system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.wm{font-family:Syne,"DM Sans",sans-serif;font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0}
+.num,.n{font-family:"Space Grotesk",sans-serif;font-weight:700}
+.wm .t,.g{background:var(--logo);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(620px 420px at 12% 0,rgba(124,106,247,.26),transparent 70%),radial-gradient(520px 380px at 92% 18%,rgba(244,114,182,.16),transparent 70%);animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateY(-16px) scale(1.04)}}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+.pill{font-size:12px;color:var(--soft);border:1px solid var(--line);padding:4px 11px;border-radius:99px;background:var(--glass)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;cursor:pointer;font:600 15px "DM Sans",sans-serif;color:#fff;text-decoration:none;padding:13px 22px;border-radius:13px;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s}
+.btn.pri{background:var(--btn);box-shadow:0 8px 26px rgba(124,106,247,.4)}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(166,122,245,.5)}
+.btn.gh{background:var(--glass);border-color:var(--line)}
+.btn.gh:hover{background:var(--glass2);border-color:rgba(166,149,255,.5);transform:translateY(-2px)}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible,.st:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+.sm{padding:10px 16px;font-size:14px;border-radius:11px}
+.hero{padding:68px 0 44px;text-align:center}
+.eyebrow{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--lp);padding:7px 14px;border-radius:99px;background:rgba(124,106,247,.13);border:1px solid rgba(124,106,247,.35);margin-bottom:22px}
+h1{font-size:clamp(36px,7vw,66px)}
+.hero p{max-width:560px;margin:20px auto 30px;color:var(--soft);font-size:18px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+section{padding:52px 0}
+.head{text-align:center;margin-bottom:32px}
+.head h2{font-size:clamp(28px,4.5vw,40px)}
+.head p{color:var(--soft);margin:10px 0 0}
+
+/* STEPPER */
+.stepper{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr);gap:24px;align-items:start}
+.list{display:grid;gap:12px;position:relative}
+.list::before{content:"";position:absolute;left:35px;top:36px;bottom:36px;width:2px;background:var(--line);z-index:0}
+.list::after{content:"";position:absolute;left:35px;top:36px;width:2px;height:calc((100% - 72px) * var(--prog,0));background:var(--logo);transition:height .5s;z-index:0}
+.st{position:relative;z-index:1;display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px;border-radius:18px;background:rgba(10,10,15,.88);border:1px solid var(--line);cursor:pointer;transition:border-color .25s,background .25s,box-shadow .25s}
+.st:hover{border-color:rgba(166,149,255,.4)}
+.n{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:16px;background:var(--glass2);border:1px solid var(--line);color:var(--soft);transition:.3s}
+.st h3{font-size:19px;padding-top:4px}
+.body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}
+.body>div{overflow:hidden}
+.body p{margin:10px 0 0;color:var(--soft);font-size:15px}
+.body code{background:rgba(124,106,247,.2);color:#d9d2ff;padding:1px 7px;border-radius:6px;font-size:14px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 2px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.st.on{background:linear-gradient(135deg,rgba(124,106,247,.16),rgba(244,114,182,.08));border-color:rgba(166,149,255,.55);box-shadow:0 10px 36px rgba(124,106,247,.18)}
+.st.on .body{grid-template-rows:1fr}
+.st.on .n{background:var(--btn);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(124,106,247,.5)}
+.st.done .n{background:var(--ok);color:#06231a;border-color:transparent}
+.bi{width:18px;height:18px;border-radius:50%;flex:none}
+.bi.c{background:radial-gradient(circle,#4285f4 0 28%,#fff 29% 38%,transparent 39%),conic-gradient(#ea4335 0 33%,#fbbc04 0 66%,#34a853 0)}
+.bi.e{background:linear-gradient(135deg,#0c8ce9,#35d6a8)}
+.btn.sel{border-color:var(--lp);background:rgba(124,106,247,.2)}
+
+/* STAGE */
+.stage{position:sticky;top:78px;border-radius:24px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:18px}
+.screen{min-height:440px;border-radius:16px;background:linear-gradient(160deg,#14131f,#0e0d16);border:1px solid var(--line);padding:22px;position:relative;overflow:hidden}
+.vis{display:none;height:100%}
+.vis.show{display:block;animation:fi .5s}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}}
+.bar{display:flex;align-items:center;gap:6px;margin-bottom:14px}
+.bar i{width:9px;height:9px;border-radius:50%;background:#2a2938}
+.url{flex:1;margin-left:8px;font:500 13px "DM Sans";color:var(--soft);background:rgba(255,255,255,.05);border-radius:8px;padding:6px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;background:var(--glass2);border:1px solid var(--line);margin-top:30px}
+.fi{width:46px;height:56px;border-radius:10px;background:var(--btn);display:grid;place-items:center;font:700 12px "Space Grotesk";box-shadow:0 8px 22px rgba(124,106,247,.4)}
+.file b{display:block;font-size:15px}
+.file small{color:var(--muted)}
+.prog{height:6px;border-radius:9px;background:rgba(255,255,255,.08);margin-top:9px;overflow:hidden}
+.prog span{display:block;height:100%;width:0;background:var(--logo);border-radius:9px}
+.show .prog span{animation:load 2.2s ease-out forwards}
+@keyframes load{to{width:100%}}
+.row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;background:var(--glass2);border:1px solid var(--line);font-weight:600;font-size:15px;margin-top:6px}
+.tg{width:46px;height:26px;border-radius:99px;background:#2a2938;position:relative}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.3s}
+.show .tg{animation:tgbg .1s .9s forwards}
+.show .tg::after{animation:knob .4s .9s forwards}
+@keyframes tgbg{to{background:var(--p)}}
+@keyframes knob{to{transform:translateX(20px)}}
+.drop{margin-top:40px;height:210px;font-size:17px;border:2px dashed rgba(166,149,255,.5);border-radius:16px;display:grid;place-items:center;color:var(--lp);font-weight:600;position:relative;background:rgba(124,106,247,.06)}
+.chip{position:absolute;top:-30px;left:50%;margin-left:-46px;padding:9px 14px;border-radius:10px;background:var(--btn);font:700 12px "Space Grotesk";box-shadow:0 10px 26px rgba(124,106,247,.5)}
+.show .chip{animation:dropin 2.4s ease-in-out infinite}
+@keyframes dropin{0%{transform:translateY(-30px);opacity:0}25%{opacity:1}65%{transform:translateY(80px);opacity:1}100%{transform:translateY(80px);opacity:0}}
+.pop{max-width:300px;margin:0 auto;border-radius:16px;background:#17162a;border:1px solid rgba(166,149,255,.35);padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.pop .wm{font-size:18px;margin-bottom:12px}
+.pop .btn{width:100%;margin-bottom:10px;padding:11px;font-size:14px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--glass2);font-size:13px;margin-top:6px;color:var(--soft)}
+.opt b{color:var(--text);display:block;font-size:13.5px}
+.opt em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink);margin-left:6px}
+.cap{font-size:11.5px;color:var(--muted);text-align:center;margin:10px 0 0}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.dots{display:flex;gap:6px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.3s}
+.dots i.on{width:22px;border-radius:9px;background:var(--logo)}
+
+.xh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 10px}
+.xh h3{font-size:22px}
+.srch{flex:1;max-width:140px;border:1px solid rgba(166,149,255,.45);border-radius:99px;font-size:11px;color:var(--muted);padding:4px 12px}
+.dmw{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--soft);position:relative}
+.xbtns{display:flex;gap:10px;flex-wrap:wrap;margin:44px 0 0;opacity:0}
+.show .xbtns{animation:xin .5s 1.4s forwards}
+@keyframes xin{to{opacity:1}}
+.xb{border:1px solid rgba(124,106,247,.65);color:var(--lp);border-radius:99px;padding:8px 16px;font-size:13px;font-weight:600}
+.pg{background:#f6f5fb;border-radius:12px;padding:112px 16px 16px;position:relative;color:#1d1b3a;overflow:hidden}
+.pg h4{margin:0;font:600 17px "DM Sans"}
+.pg small{color:#6b6a80;font-size:12px}
+.sc{display:flex;gap:8px;margin-top:10px}
+.sc div{flex:1;background:#fff;border:1px solid #cfe0f5;border-radius:8px;padding:14px;font-size:11.5px;color:#444}
+.sc div+div{background:#fffaf0;border-color:#f3dfae}
+.sc b{display:block;font:700 28px "Space Grotesk";color:#0f4c81}
+.sc div+div b{color:#7a5a10}
+.bn{position:absolute;top:8px;left:8px;right:8px;background:#0e0e14;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;display:none;align-items:center;gap:10px;color:#fff;font-size:12.5px;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.bn small{color:#9a99ad;font-size:11.5px}
+.vis[data-ph="1"] .b1,.vis[data-ph="2"] .b2{display:flex;animation:fi .4s}
+.bn .tx{flex:1;min-width:0}
+.jt{width:32px;height:32px;border-radius:7px;background:#0a0a0f;border:1px solid var(--p);display:grid;place-items:center;flex:none;font:italic 800 10px Syne}
+.jt span{background:var(--logo);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.bn .go{position:relative;background:var(--p);padding:9px 14px;border-radius:8px;font-weight:600;white-space:nowrap;animation:pulse 1.8s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(124,106,247,.25)}}
+.s2{display:inline-block;background:#1c1c26;border:1px solid #3a3a48;border-radius:5px;padding:0 6px;color:#fff;font-weight:600}
+.cbx{display:inline-block;width:9px;height:9px;border:1px solid #8a8a9a;border-radius:2px;vertical-align:-1px;margin:0 4px 0 9px}
+.pcs{display:flex;gap:6px;justify-content:center;margin-top:12px}
+.pc{font:600 11.5px "DM Sans";padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--glass);color:var(--soft);cursor:pointer}
+.pc.on{border-color:var(--lp);color:#fff;background:rgba(124,106,247,.25)}
+.ptr{position:absolute;left:55%;top:55%;width:24px;height:24px;z-index:7;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55));animation:tap 1.6s ease-in-out infinite}
+.ptr svg{display:block}
+.ptr::before{content:"";position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;border:2px solid var(--pink);animation:ring 1.6s ease-out infinite}
+@keyframes tap{0%,100%{transform:translate(0,0)}40%{transform:translate(-3px,-3px) scale(.9)}}
+@keyframes ring{0%{transform:scale(.4);opacity:1}75%,100%{transform:scale(2.4);opacity:0}}
+.tip{display:inline-block;background:var(--logo);color:#0a0a0f;font:700 12.5px "DM Sans";padding:5px 12px;border-radius:99px;box-shadow:0 6px 18px rgba(244,114,182,.35);white-space:nowrap;animation:bob 1.6s ease-in-out infinite}
+.tip.abs{position:absolute;z-index:6}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.dl{display:flex;align-items:center;gap:18px;margin-top:22px}
+kbd{font:600 12px "Space Grotesk",sans-serif;background:rgba(255,255,255,.1);border:1px solid var(--line);border-bottom-width:2px;padding:1px 7px;border-radius:6px;color:var(--text)}
+.vis[data-v="2"]{position:relative}
+.dlb{margin-left:8px;color:var(--lp);font-size:14px}
+.dh{position:absolute;top:46px;right:0;width:56%;background:#1f1e2e;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 12px;box-shadow:0 16px 40px rgba(0,0,0,.55);z-index:3}
+.dh>b{font:700 12.5px "DM Sans";display:block;margin-bottom:8px}
+.dr{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.06);border-radius:8px;padding:8px}
+.dr b{font-size:12px;display:block;word-break:break-all;line-height:1.3}
+.dr small{color:var(--muted);font-size:11px}
+.fi2{width:26px;height:30px;border-radius:5px;background:var(--btn);display:grid;place-items:center;font:700 8px "Space Grotesk";flex:none}
+.chip.dz{top:88px;left:calc(44% + 4px);margin-left:0;z-index:5}
+.show .chip.dz{animation:dragzip 3.4s ease-in-out infinite}
+@keyframes dragzip{0%,8%{left:calc(44% + 4px);top:88px;opacity:0}16%{opacity:1}68%,88%{left:calc(50% - 25px);top:246px;opacity:1}100%{left:calc(50% - 25px);top:246px;opacity:0}}
+@media(prefers-reduced-motion:reduce){.ptr,.tip{animation:none!important}}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.btn.pri{box-shadow:0 8px 26px rgba(124,106,247,.4),inset 0 1px 0 rgba(255,255,255,.28)}
+.btn:hover .ic.dn{transform:translateY(2px)}
+#next:hover .ic{transform:translateX(3px)}
+#back:hover .ic{transform:translateX(-3px)}
+.dlb .ic{width:15px;height:15px}
+.hero{padding:52px 0 4px}
+.hero h1{font-size:clamp(34px,6vw,56px)}
+.hero p{margin:16px auto 0;font-size:17px}
+.lb2{display:flex;align-items:center;font-size:11px;color:#d4d3e0;white-space:nowrap}
+.lb2 .cbx{background:var(--p);border-color:var(--p);margin:0 6px 0 0;width:11px;height:11px;border-radius:3px}
+.help{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:24px 28px;border-radius:22px;background:linear-gradient(135deg,rgba(124,106,247,.14),rgba(244,114,182,.08));border:1px solid rgba(166,149,255,.3)}
+.help .hi{display:flex;align-items:center;gap:16px;flex:1;min-width:260px}
+.help .mi{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;background:rgba(124,106,247,.18);border:1px solid rgba(124,106,247,.35);color:var(--lp)}
+.help .mi .ic{width:22px;height:22px}
+.help h3{font-size:20px;margin-bottom:4px}
+.help p{margin:0;color:var(--soft);font-size:15px}
+.help a.em{color:var(--lp);font-weight:600;text-decoration:none}
+.help a.em:hover{text-decoration:underline}
+/* CARDS */
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:24px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .25s,border-color .25s,background .25s;position:relative}
+.card:hover{transform:translateY(-4px);border-color:rgba(166,149,255,.45);background:var(--glass2)}
+.ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:rgba(124,106,247,.15);border:1px solid rgba(124,106,247,.3);margin-bottom:14px}
+.card h3{font-size:19px;margin-bottom:6px}
+.card p{margin:0;color:var(--soft);font-size:15px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tag{position:absolute;top:22px;right:22px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.tag.r{background:rgba(124,106,247,.2);color:var(--lp)}
+.tag.o{background:rgba(244,114,182,.15);color:var(--pink)}
+.two ul{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px;color:var(--soft);font-size:15px}
+.two li::before{content:"✓";color:var(--ok);font-weight:700;margin-right:9px}
+.final{text-align:center;padding:46px 22px;border-radius:28px;background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(244,114,182,.13));border:1px solid rgba(166,149,255,.35)}
+.final h2{font-size:clamp(26px,4vw,36px);margin-bottom:10px}
+.final p{color:var(--soft);margin:0 0 24px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:#1b1a2e;border:1px solid rgba(166,149,255,.5);padding:11px 18px;border-radius:12px;font-size:14px;transition:.3s;pointer-events:none;z-index:30;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.stepper{grid-template-columns:1fr}.stage{position:static;order:2}.screen{min-height:340px;padding:16px}.tag{position:static;display:inline-block;margin-bottom:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.show .prog span{width:100%}.show .tg{background:var(--p)}.show .tg::after{transform:translateX(20px)}}
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(10,10,15,.8);border-bottom:1px solid rgba(255,255,255,.07);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-decoration:none;color:#f0eff5;letter-spacing:-.02em}
+.nav-logo span{background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:#7a7990;text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .85rem;border-radius:8px;transition:all .15s}
+.nav-links a:hover{color:#f0eff5;background:rgba(255,255,255,.05)}
+.nav-cta{background:linear-gradient(135deg,#7c6af7,#f472b6);color:#fff;text-decoration:none;padding:.5rem 1.15rem;border-radius:8px;font-size:.83rem;font-weight:600;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.85}
+.foot{text-align:center;padding:2rem;border-top:1px solid rgba(255,255,255,.07);color:#7a7990;font-size:.78rem}
+.foot a{color:#7a7990;text-decoration:none;transition:color .15s}
+.foot a:hover{color:#f0eff5}
+.foot-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem}
+@media(max-width:700px){.nav{padding:0 1.25rem}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<div class="bgfx"></div>
+<nav class="nav">
+  <a class="nav-logo" href="/">JEE<span>Track</span></a>
+  <div class="nav-links">
+    <a href="/features">Features</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about">About</a>
+    <a href="/support">Support Us</a>
+  </div>
+  <a class="nav-cta" href="/dashboard">Open JEETrack &rarr;</a>
+</nav>
+
+<main class="wrap">
+  <header class="hero rv">
+    <span class="eyebrow">Installation guide</span>
+    <h1>Install <span class="g">JEETrack PW Sync</span></h1>
+    <p>Set up the extension in 4 simple steps. It takes about two minutes and works on Chrome and Edge.</p>
+  </header>
+
+  <section id="install" class="rv">
+    <div class="stepper">
+      <div class="list" id="list">
+        <div class="st" tabindex="0" role="button" data-i="0">
+          <div class="n">1</div>
+          <div><h3>Download the extension ZIP</h3>
+            <div class="body"><div><p>Save the PW Sync ZIP to your computer. Keep it zipped — no need to unzip.</p>
+              <div class="acts"><a class="btn pri sm" href="#" data-zip><svg class="ic dn" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download ZIP</a></div></div></div></div>
+        </div>
+        <div class="st" tabindex="0" role="button" data-i="1">
+          <div class="n">2</div>
+          <div><h3>Open Extensions &amp; enable Developer Mode</h3>
+            <div class="body"><div><p>Open your browser’s extensions page, then switch on <b>Developer mode</b> (<span id="dm">top-right corner</span>).</p>
+              <div class="acts">
+                <button class="btn gh sm sel" data-b="chrome"><span class="bi c"></span>Chrome Extensions</button>
+                <button class="btn gh sm" data-b="edge"><span class="bi e"></span>Edge Extensions</button>
+              </div>
+              <div class="hint">Browsers don’t let websites open this page directly, so we copy <code class="u">chrome://extensions</code> — paste it in a new tab.</div></div></div></div>
+        </div>
+        <div class="st" tabindex="0" role="button" data-i="2">
+          <div class="n">3</div>
+          <div><h3>Drag the ZIP onto the page</h3>
+            <div class="body"><div><p>Open your downloads (click the download icon in the toolbar, or press <kbd>Ctrl</kbd> + <kbd>J</kbd>), then drag the ZIP directly onto the Extensions page. The browser installs PW Sync for you.</p></div></div></div>
+        </div>
+        <div class="st" tabindex="0" role="button" data-i="3">
+          <div class="n">4</div>
+          <div><h3>Connect &amp; sync</h3>
+            <div class="body"><div><p>Open a supported PW test result page. A JEETrack bar appears at the top. If it asks you to log in, click <b>Open JEETrack</b> and sign in. Then press <b>Send to JEETrack</b>.</p><div class="hint">Optional: tick <b>Analyse mistakes</b> to also send your questions to Optima for analysis.</div></div></div></div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="screen">
+          <div class="vis" data-v="0"><div class="bar"><i></i><i></i><i></i></div>
+            <div class="dl"><span class="btn pri sm" style="position:relative"><svg class="ic dn" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download ZIP<i class="ptr"></i></span></div>
+            <div class="file"><div class="fi">ZIP</div><div style="flex:1"><b>jeetrack-pw-sync.zip</b><small>Saved to your Downloads</small><div class="prog"><span></span></div></div></div></div>
+          <div class="vis" data-v="1"><div class="bar"><i></i><i></i><i></i><div class="url u">chrome://extensions</div></div>
+            <div class="xh"><h3>Extensions</h3><div class="srch">Search extensions</div><div class="dmw">Developer mode<div class="tg"><i class="ptr"></i></div><span class="tip abs" style="top:38px;right:0">Turn this on</span></div></div>
+            <div class="xbtns"><span class="xb">Load unpacked</span><span class="xb">Pack extension</span><span class="xb">Update</span></div>
+            <p class="cap" style="margin-top:40px">These buttons appear once Developer mode is on.</p></div>
+          <div class="vis" data-v="2"><div class="bar"><i></i><i></i><i></i><div class="url u">chrome://extensions</div><span class="dlb"><svg class="ic dn" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span></div>
+            <div class="dh"><b>Recent download history</b><div class="dr"><div class="fi2">ZIP</div><div><b>jeetrack-pw-sync.zip</b><small>191 KB • Done</small></div></div></div><div class="chip dz">ZIP<i class="ptr"></i></div><div class="xh" style="margin-top:6px"><h3>Extensions</h3></div><div class="drop" style="margin-top:96px;height:170px">Drop the ZIP here</div></div>
+          <div class="vis" data-v="3" data-ph="1"><div class="pg">
+            <div class="bn b1"><div class="tx"><div class="wm" style="font-size:13px"><span>JEE</span><span class="t">Track</span></div><small style="color:#d4d3e0">Log in to JEETrack in this browser to send <b style="color:#fff">Milestone:4</b>.</small></div><span class="go">Open JEETrack<i class="ptr"></i><span class="tip abs" style="top:calc(100% + 24px);right:0">Connect to JEETrack</span></span></div>
+            <div class="bn b2"><div class="tx"><div class="wm" style="font-size:13px"><span>JEE</span><span class="t">Track</span></div><span style="color:#d4d3e0">Test detected: <b style="color:#fff">Milestone:4</b> · <b style="color:var(--lp)">161</b> / 300 · 75 questions</span></div><span class="lb2"><span class="cbx"></span>Analyse mistakes</span><span class="go">Send to JEETrack<i class="ptr"></i></span></div>
+            <h4>Milestone:4</h4><small>75 Questions • 300 Marks • 180 mins</small>
+            <div class="sc"><div>SCORE<b>161/300</b>Percentile: 92.43</div><div>RANK<b>161</b>Predicted</div></div></div>
+            <div class="pcs"><button class="pc on" data-p="1">① Log in first</button><button class="pc" data-p="2">② Send your test</button></div></div>
+        </div>
+        <p class="cap">Illustration — your extension prompts may look slightly different.</p>
+        <div class="nav"><button class="btn gh sm" id="back"><svg class="ic" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Back</button><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><button class="btn pri sm" id="next">Next</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rv">
+    <div class="help">
+      <div class="hi"><div class="mi"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg></div>
+        <div><h3>Facing any trouble?</h3><p>If you run into any issue while installing, write to us at <a class="em" href="mailto:support@jeetrack.in">support@jeetrack.in</a> and we’ll help you out.</p></div></div>
+      <a class="btn pri" href="mailto:support@jeetrack.in"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg>Email support</a>
+    </div>
+  </section>
+</main>
+<footer class="foot">
+  <div style="margin-bottom:1rem">
+    <a href="/" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;text-decoration:none;color:#f0eff5;letter-spacing:-.02em">JEE<span style="background:linear-gradient(135deg,#a695ff,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Track</span></a>
+  </div>
+  <div class="foot-links">
+    <a href="/features">Features</a><a href="/faq">FAQ</a><a href="/about">About</a><a href="/support">Support</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+  </div>
+  &copy; 2026 JEETrack &middot; Built for JEE Aspirants across India
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+var ZIP_URL="/downloads/jeetrack-pw-sync.zip";
+document.querySelectorAll("[data-zip]").forEach(function(a){a.setAttribute("href",ZIP_URL)});
+
+var $=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
+var IC={r:'<svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>',ck:'<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>'};
+var sts=$(".st"),vis=$(".vis"),dots=$("#dots i"),list=document.getElementById("list"),cur=0;
+function go(i){
+  cur=Math.max(0,Math.min(3,i));
+  sts.forEach(function(s,k){s.classList.toggle("on",k===cur);s.classList.toggle("done",k<cur)});
+  vis.forEach(function(v,k){v.classList.remove("show");if(k===cur){void v.offsetWidth;v.classList.add("show")}});
+  dots.forEach(function(d,k){d.classList.toggle("on",k===cur)});
+  list.style.setProperty("--prog",cur/3);
+  document.getElementById("back").style.visibility=cur===0?"hidden":"visible";
+  document.getElementById("next").innerHTML=cur===3?"Done "+IC.ck:"Next "+IC.r;
+}
+sts.forEach(function(s){
+  s.addEventListener("click",function(e){if(e.target.closest("a,button"))return;go(+s.dataset.i)});
+  s.addEventListener("keydown",function(e){if(e.target!==s)return;if(e.key==="Enter"||e.key===" "){e.preventDefault();go(+s.dataset.i)}});
+});
+document.getElementById("back").onclick=function(){go(cur-1)};
+document.getElementById("next").onclick=function(){if(cur===3){say("You’re all set! 🎉")}else go(cur+1)};
+$("[data-zip]").forEach(function(a){a.addEventListener("click",function(){if(cur===0)setTimeout(function(){go(1)},400)})});
+
+var toast=document.getElementById("toast"),tt;
+function say(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("show")},2800)}
+function copy(t,ok){
+  function fb(){try{var i=document.createElement("textarea");i.value=t;document.body.appendChild(i);i.select();document.execCommand("copy");i.remove();ok()}catch(e){say("Type "+t+" in a new tab")}}
+  try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}
+}
+$("[data-b]").forEach(function(b){b.addEventListener("click",function(){
+  var br=b.dataset.b,url=br+"://extensions";
+  $("[data-b]").forEach(function(x){x.classList.toggle("sel",x===b)});
+  $(".u").forEach(function(u){u.textContent=url});
+  document.getElementById("dm").textContent=br==="edge"?"left sidebar":"top-right corner";
+  copy(url,function(){say("Copied "+url+" — paste it in a new tab")});
+})});
+
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.1});
+$(".rv").forEach(function(el){io.observe(el)});
+var v3=document.querySelector('[data-v="3"]'),man=false;
+function ph(n){v3.setAttribute("data-ph",n);$(".pc").forEach(function(c){c.classList.toggle("on",c.dataset.p==n)})}
+$(".pc").forEach(function(c){c.addEventListener("click",function(){man=true;ph(c.dataset.p)})});
+setInterval(function(){if(cur===3&&!man)ph(v3.getAttribute("data-ph")==="1"?"2":"1")},3600);
+var CUR='<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 2l7 18 2.5-7.5L20 10z" fill="#fff" stroke="#0a0a0f" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+$(".ptr").forEach(function(p){p.innerHTML=CUR});
+go(0);
+</script>
+</body>
+</html>
