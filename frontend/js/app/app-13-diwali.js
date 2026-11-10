@@ -9,6 +9,7 @@ function _dwToday(now){ return new Date((now || new Date()).getTime() + 5.5 * 36
 function diwaliActive(now){ const d = _dwToday(now); return d >= DIWALI.from && d <= DIWALI.to; }
 function diwaliBannerClosed(){ try{ return localStorage.getItem(DIWALI.closedKey) === '1'; }catch(e){ return false; } }
 function diwaliCloseBanner(){
+  try{ if(typeof _jtTrack === 'function') _jtTrack('diwali_banner_closed'); }catch(e){ /* analytics must never break the page */ }
   try{ localStorage.setItem(DIWALI.closedKey, '1'); }catch(e){ /* private mode: it just shows again next time */ }
   const b = document.getElementById('diwali-banner'); if(b) b.style.display = 'none';
 }

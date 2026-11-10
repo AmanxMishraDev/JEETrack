@@ -3199,6 +3199,31 @@ function settingsMobileReset(){
     </div>
 
     <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Time spent on the test</label>
+      <div class="pmo-hrs-row" style="margin-top:6px">
+        <div class="pmo-hrs-row-label">Test time</div>
+        <div class="pmo-hrs-row-controls">
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('at-tt-h',-1)" aria-label="Decrease test hours">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="at-tt-h" placeholder="0" aria-label="Test hours" oninput="_lhClampH(this)"/>
+              <span class="pmo-hrs-suf">hr</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('at-tt-h',1)" aria-label="Increase test hours">+</button>
+          </div>
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('at-tt-h','at-tt-m',-5)" aria-label="Decrease test minutes">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="at-tt-m" placeholder="0" aria-label="Test minutes" oninput="_lhClampM(this)"/>
+              <span class="pmo-hrs-suf">min</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('at-tt-h','at-tt-m',5)" aria-label="Increase test minutes">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pmo-field" style="margin-top:12px">
       <label class="pmo-label">Analyzed this mock?</label>
       <div class="pmo-pill-row" style="margin-top:6px">
         <button type="button" class="pmo-pill pmo-pill-sm at-an-pill active" id="at-an-no" onclick="_matToggle(false)">Not yet</button>
@@ -3960,6 +3985,31 @@ function settingsMobileReset(){
     <div class="pmo-field" style="margin-top:12px">
       <label class="pmo-label">Notes <span style="opacity:.5;font-weight:400">(optional)</span></label>
       <input type="text" class="pmo-input" id="hwt-notes" placeholder="How did it feel? What to improve?"/>
+    </div>
+
+    <div class="pmo-field" style="margin-top:12px">
+      <label class="pmo-label">Time spent on the test</label>
+      <div class="pmo-hrs-row" style="margin-top:6px">
+        <div class="pmo-hrs-row-label">Test time</div>
+        <div class="pmo-hrs-row-controls">
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('hwt-tt-h',-1)" aria-label="Decrease test hours">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="24" class="pmo-hrs-inp" id="hwt-tt-h" placeholder="0" aria-label="Test hours" oninput="_lhClampH(this)"/>
+              <span class="pmo-hrs-suf">hr</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepH('hwt-tt-h',1)" aria-label="Increase test hours">+</button>
+          </div>
+          <div class="pmo-hrs-stepper">
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('hwt-tt-h','hwt-tt-m',-5)" aria-label="Decrease test minutes">−</button>
+            <div class="pmo-hrs-inp-wrap">
+              <input type="number" inputmode="numeric" min="0" max="59" step="5" class="pmo-hrs-inp" id="hwt-tt-m" placeholder="0" aria-label="Test minutes" oninput="_lhClampM(this)"/>
+              <span class="pmo-hrs-suf">min</span>
+            </div>
+            <button type="button" class="pmo-hrs-stepbtn" tabindex="-1" onclick="_lhStepM('hwt-tt-h','hwt-tt-m',5)" aria-label="Increase test minutes">+</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="pmo-field" style="margin-top:12px">

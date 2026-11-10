@@ -69,6 +69,7 @@ function renderAnnouncements(){
   root.innerHTML = announcementsHTML();
 }
 function openAnnouncements(push){
+  try{ if(typeof _jtTrack === 'function') _jtTrack('announcements_opened'); }catch(e){ /* analytics must never break the page */ }
   if(push !== false) history.pushState({ page: 'announcements' }, '', '/announcements');
   nav('announcements', false);
   _navNi().forEach(n => n.classList.remove('active'));

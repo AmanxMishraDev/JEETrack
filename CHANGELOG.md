@@ -4,6 +4,45 @@ All notable changes to JEETrack are recorded here, newest first.
 
 ---
 
+## 📈 v2.5.1 — Nov 10, 2026 — Test Time & Analytics
+
+### ⏱️ Test time in Study Hours
+- New **Test** category in Study Hours: the time you spent sitting a test
+- Logging a test now has a "Time spent on the test" field, set to 3 hours by default. Change it if your test was shorter or longer
+- It shows in your hours charts, totals and history alongside Lecture, Practice, Revision and Mock Analysis
+
+### 📊 Analytics
+- Added anonymous product events for the Analyse flow (button shown and tapped, guide opened, notebook opened, status checked) so we can see where students drop off. No personal details are recorded
+- Support page now counts how many people open it, start a payment, complete it or close it. Only the amount is recorded, never names, notes or emails
+
+---
+
+## 🪔 v2.5.0 — Nov 8, 2026 — Mock Analysis & Diwali
+
+Turn any mock test into a personal error notebook, plus a cleaner Tests page.
+
+### 🧠 Mock Analysis (with Optima)
+- New **Analyse** button on every test. Pick the PW Sync route (import your PW mock and analyse it in one go) or send your mistakes from any other test
+- Clear status pages: Analysing, Ready (opens your error notebook) and Failed. Your score is always saved, even if analysis fails
+- Test summary card with score, percentage and subject-wise breakdown
+- New PW Sync installation guide and launch page, hosted on jeetrack.in
+- PW Sync extension updated to 0.8.2: the option is now called "Analyse mistakes"
+- Behind the scenes: secure submission to Optima, status checks and a private student ID, so no personal details are shared
+
+### 📣 Announcements
+- New bell icon at the top right and an Announcements page
+- Announcements expire on their own date and an unread dot shows what's new
+
+### 🪔 Diwali Theme (7–11 Nov)
+- Festive top strip, dismissible greeting card and a lights-and-diyas splash screen
+- Switches on and off by date automatically (India time). Nothing to clean up afterwards
+
+### ✨ Cleaner Tests Page
+- Shows your 5 most recent tests; "View all" opens the full list
+- Mobile table keeps only the essentials: date, type, total, percentage, Analyse and details. Subject scores and notes are in the details view
+
+---
+
 ## 🚀 v2.4.0 — Sep 22, 2026 — Hardening & Scalability
 
 A behind-the-scenes release. Nothing changes in how the app looks or feels — this is about making JEETrack more reliable, secure, and easier to maintain as it grows.

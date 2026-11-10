@@ -11,6 +11,10 @@
 // RLS lets a student read only their own rows. The Optima key never reaches the browser.
 // No timers: the status is refreshed when the page loads, when the tab is shown again, on the status page and on "Check now".
 // ---------------------------------------------------------------------------
+// Product analytics (PostHog via _jtTrack). Never throws, and sends no student details: only the step and the route.
+const _optSeen = new Set();
+function _optTrack(ev, props){ try{ if(typeof _jtTrack === 'function') _jtTrack(ev, props || {}); }catch(e){ /* analytics must never break the page */ } }
+function _optOnce(key, ev, props){ if(_optSeen.has(key)) return; _optSeen.add(key); _optTrack(ev, props); }
 let _optimaJobs = [];          // newest first: {id,test_id,status,question_count,created_at,attempted_at,notebook_url}
 let _analysisTestId = null;    // the test whose status page is open
 let _optimaRefreshing = false;
@@ -56,6 +60,7 @@ const _OPT_TIP = {
 };
 function optimaCellHTML(testId){
   const st = _optState(testId);
+  _optOnce('shown:' + st + ':' + testId, 'analyse_button_shown', { state: st, route: _optIsPw(testId) ? 'pw' : 'other' });
   return `<button type="button" class="opt-btn opt-${st}" data-tid="${Number(testId)}" title="${_OPT_TIP[st]}" onclick="openAnalysis(${Number(testId)})"><i class="od"></i>${_OPT_LABEL[st]}</button>`;
 }
 // kept for older callers
@@ -82,6 +87,7 @@ function optimaSectionHTML(testId){
 function _analysisTest(){ return (S.tests || []).find(t => t.id === _analysisTestId) || null; }
 
 function openAnalysis(testId, push){
+  if(push !== false) _optTrack('analyse_button_tapped', { state: _optState(testId), route: _optIsPw(testId) ? 'pw' : 'other' });
   _analysisTestId = Number(testId);
   if(push !== false) history.pushState({ page: 'analysis', testId: _analysisTestId }, '', '/analysis/' + _analysisTestId);
   nav('analysis', false);
@@ -113,7 +119,7 @@ function _optSummaryCard(t){
 function _optNotebookLink(job, primary){
   const url = job && _optSafeUrl(job.notebook_url);
   if(!url) return '';
-  return `<a href="${_optEsc(url)}" target="_blank" rel="noopener noreferrer" class="an-btn${primary ? '' : ' an-btn-ghost'}">Open my error notebook <span aria-hidden="true">&rarr;</span></a>`;
+  return `<a href="${_optEsc(url)}" target="_blank" rel="noopener noreferrer" onclick="_optTrack('analysis_notebook_opened')" class="an-btn${primary ? '' : ' an-btn-ghost'}">Open my error notebook <span aria-hidden="true">&rarr;</span></a>`;
 }
 
 // Two ways to get a test analysed (design: Aman's "Test Analysis" page). The route that fits where the test came from comes first.
@@ -132,7 +138,7 @@ function _optHowCards(){
           <li><span>Tick <b>Analyse mistakes</b> and press <b>Send to JEETrack</b>.</span></li>
           <li><span>Return here to follow the status of your analysis.</span></li>
         </ol>
-        ${guide ? `<a class="an-btn an-btn-fit" href="${_optEsc(guide)}" target="_blank" rel="noopener noreferrer">View installation guide <span aria-hidden="true">&rarr;</span></a>` : ''}
+        ${guide ? `<a class="an-btn an-btn-fit" href="${_optEsc(guide)}" target="_blank" rel="noopener noreferrer" onclick="_optTrack('analysis_guide_opened')">View installation guide <span aria-hidden="true">&rarr;</span></a>` : ''}
       </article>
       <article class="an-door an-d2"><span class="an-ghost" aria-hidden="true">B</span>
         <span class="an-tag an-tag2">Option 2 · All other tests</span>
@@ -143,7 +149,7 @@ function _optHowCards(){
           <li><span><b>Direct submission</b> — share your mistakes on Optima.</span></li>
           <li><span><b>Quick turnaround</b> — analysis is ready within an hour.</span></li>
         </ul>
-        ${site ? `<a class="an-btn an-btn-fit" href="${_optEsc(site)}" target="_blank" rel="noopener noreferrer">Send mistakes on Optima <span aria-hidden="true">&rarr;</span></a><div class="an-sub an-sub-l">Opens optima-edu.in in a new tab</div>` : ''}
+        ${site ? `<a class="an-btn an-btn-fit" href="${_optEsc(site)}" target="_blank" rel="noopener noreferrer" onclick="_optTrack('analysis_optima_site_opened')">Send mistakes on Optima <span aria-hidden="true">&rarr;</span></a><div class="an-sub an-sub-l">Opens optima-edu.in in a new tab</div>` : ''}
       </article>
     </div>
     <p class="an-help"><b>Not sure which to choose?</b> If the test was on PW, use Option 1. For anything else, use Option 2.</p>
@@ -165,7 +171,7 @@ function _optStatusCard(t, job, st){
   const when = job ? _optEsc(new Date(job.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })) : '';
   const qs = job && job.question_count ? ` &middot; ${_optEsc(job.question_count)} wrong or skipped questions` : '';
   const site = _optSafeUrl(OPTIMA_SITE_URL), guide = _optGuideHref(OPTIMA_EXT_GUIDE_URL);
-  const ext = u => `href="${_optEsc(u)}" target="_blank" rel="noopener noreferrer"`;
+  const ext = (u, ev) => `href="${_optEsc(u)}" target="_blank" rel="noopener noreferrer"${ev ? ` onclick="_optTrack('${ev}')"` : ''}`;
   if(st === 'none') return _optHowCards();
   if(st === 'sent') return _optStateShell('<span class="an-chip an-chip-wait"><i></i>In progress</span>',
     'Your error notebook is <span class="an-g">being built</span>',
@@ -177,7 +183,7 @@ function _optStatusCard(t, job, st){
     `${_optProgress(0, true)}<ol class="an-steps">
       <li><span>Open this test’s result page on PW. The JEETrack bar appears at the top.</span></li>
       <li><span>Select <b>Analyse mistakes</b>, then press <b>Send to JEETrack</b>.</span></li>
-    </ol><div class="an-row">${guide ? `<a class="an-btn an-btn-ghost" ${ext(guide)}>Installation guide</a>` : ''}${site ? `<a class="an-btn" ${ext(site)}>Send mistakes on Optima <span aria-hidden="true">&rarr;</span></a>` : ''}</div>`);
+    </ol><div class="an-row">${guide ? `<a class="an-btn an-btn-ghost" ${ext(guide, 'analysis_guide_opened')}>Installation guide</a>` : ''}${site ? `<a class="an-btn" ${ext(site, 'analysis_optima_site_opened')}>Send mistakes on Optima <span aria-hidden="true">&rarr;</span></a>` : ''}</div>`);
   return '';
 }
 
@@ -186,6 +192,7 @@ function renderAnalysis(){
   const t = _analysisTest();
   if(!t){ root.innerHTML = `<div class="card"><div style="font-size:13px;color:var(--mu)">${(S.tests || []).length ? 'This test was not found. It may have been deleted.' : 'Loading…'}</div></div>`; return; }
   const job = optimaJobFor(t.id), st = job ? _optStatus(job) : 'none';
+  _optOnce('view:' + t.id + ':' + st, 'analysis_status_viewed', { status: st, route: _optIsPw(t.id) ? 'pw' : 'other' });
   let html = _optSummaryCard(t);
   if(st !== 'done') html += _optStatusCard(t, job, st);
   else {
@@ -234,7 +241,7 @@ async function optimaRefresh(force){
   _optimaRefreshing = false;
   await optimaLoadJobs();
 }
-async function optimaCheckNow(){ await optimaRefresh(true); toast('Checked ✓'); }
+async function optimaCheckNow(){ _optTrack('analysis_check_now'); await optimaRefresh(true); toast('Checked ✓'); }
 
 // The PW extension adds tests on the server and bumps sync_state.updated_at. When the tab is shown again,
 // pull them in, but only if nothing local is waiting to be saved (so no edit is ever overwritten).

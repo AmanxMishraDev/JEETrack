@@ -493,6 +493,26 @@ main{max-width:1040px;margin:0 auto;padding:3.2rem clamp(1rem,5vw,2.5rem) 5rem;p
 </script>
 
 <script>
+/* PostHog (support page only): counts only. Events carry amount/tier, never name, note or email.
+   No session recording or autocapture on this page. */
+(function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js";(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;void 0!==a?u=e[a]=[]:a="posthog";u.people=u.people||[];u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e};u.people.toString=function(){return u.toString(1)+".people (stub)"};o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" ");for(var c=0;c<o.length;c++)g(u,o[c]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]));
+var _spSeen = {};
+function _spTrack(ev, props){ try{ posthog.capture(ev, props || {}); }catch(e){} }
+function _spOnce(key, ev, props){ if(_spSeen[key]) return; _spSeen[key] = 1; _spTrack(ev, props); }
+function _spTier(a){ return a >= 499 ? 'diamond' : a >= 199 ? 'gold' : a >= 99 ? 'silver' : 'bronze'; }
+(function(){
+  fetch('/api/config').then(function(r){ return r.json(); }).then(function(cfg){
+    if(!cfg || !cfg.posthogKey) return;
+    posthog.init(cfg.posthogKey, {
+      api_host: 'https://us.i.posthog.com',
+      capture_pageview: false, capture_pageleave: false, autocapture: false,
+      disable_session_recording: true, persistence: 'localStorage'
+    });
+    _spOnce('view', 'support_page_viewed', { referrer: document.referrer ? new URL(document.referrer).hostname : '' });
+  }).catch(function(){});
+})();
+</script>
+<script>
 let SUPABASE_URL = null, SUPABASE_ANON_KEY = null, sb = null;
 let selectedAmount = 99;
 
@@ -784,6 +804,7 @@ async function checkPendingPayment(){
     });
     if(data && data.paid){
       clearPendingOrder();
+      _spOnce('paid:' + pending.orderId, 'support_payment_completed', { amount: data.amount || pending.amount, tier: _spTier(data.amount || pending.amount), logged_in: !!currentUser, recovered: true });
       showCelebration(data.amount || pending.amount, data.badge_tier, !!currentUser, pending.note);
       loadCommunityTeaser();
     }
@@ -805,6 +826,7 @@ document.addEventListener('visibilitychange', function(){
 
 function selectAmount(amt, el){
   selectedAmount = amt;
+  _spTrack('support_amount_selected', { amount: amt, tier: _spTier(amt) });
   document.querySelectorAll('.item-card').forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-checked','false'); });
   el.classList.add('active');
   el.setAttribute('aria-checked','true');
@@ -881,6 +903,9 @@ async function payChai(){
     // etc.) but the payment actually succeeded, checkPendingPayment() picks
     // this up on the next page load/return and shows the success UI anyway.
     savePendingOrder(data.order_id, selectedAmount, supporterNote);
+    const _spAmt = selectedAmount;
+    let _spDone = false;
+    _spTrack('support_payment_initiated', { amount: _spAmt, tier: _spTier(_spAmt), logged_in: !!currentUser });
 
     const rzp = new Razorpay({
       key: data.key_id,
@@ -899,6 +924,7 @@ async function payChai(){
       theme: { color: '#7c6af7' },
       redirect: false,
       handler: async function(response){
+        _spDone = true; // Razorpay closes the modal on success; don't count that as a discard
         try{
           const { data: verifyData } = await sb.functions.invoke('verify-razorpay-payment', {
             body: {
@@ -918,6 +944,7 @@ async function payChai(){
             btn.disabled = false; btnTxt.textContent = prevLabel;
             return;
           }
+          _spOnce('paid:' + data.order_id, 'support_payment_completed', { amount: _spAmt, tier: _spTier(_spAmt), logged_in: !!currentUser, has_note: !!supporterNote });
           showCelebration(selectedAmount, verifyData.badge_tier, !!currentUser, supporterNote);
           loadCommunityTeaser();
           // verify-razorpay-payment responds instantly with a fast fallback
@@ -932,10 +959,14 @@ async function payChai(){
         }
       },
       modal: {
-        ondismiss: function(){ btn.disabled = false; btnTxt.textContent = prevLabel; }
+        ondismiss: function(){
+          if(!_spDone) _spOnce('dismiss:' + data.order_id, 'support_payment_discarded', { amount: _spAmt, tier: _spTier(_spAmt) });
+          btn.disabled = false; btnTxt.textContent = prevLabel;
+        }
       }
     });
     rzp.on('payment.failed', function(){
+      _spTrack('support_payment_failed', { amount: _spAmt, tier: _spTier(_spAmt) });
       errEl.textContent = 'Payment failed — please try again.';
       btn.disabled = false; btnTxt.textContent = prevLabel;
     });

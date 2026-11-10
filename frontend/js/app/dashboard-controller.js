@@ -1020,6 +1020,8 @@ const openM=function(id,preset){
           } else {
             _matToggle(false);
           }
+          const _linkedTest=S.hours.find(h=>h.source==='test'&&h.mockId===t.id);
+          _ttFill('at-tt',_linkedTest?_linkedTest.testTime||_linkedTest.total:0);
           _atUpdateBar();
         }
       } else {
@@ -1033,6 +1035,7 @@ const openM=function(id,preset){
         document.getElementById('at-total').value='';
         document.getElementById('at-notes').value='';
         _matToggle(false);
+        _ttFill('at-tt',TEST_TIME_DEFAULT_H);
         const _examPreset = preset || 'mains';
         document.getElementById('at-exam').value=_examPreset;
         document.getElementById(_examPreset==='advanced'?'at-exam-adv':'at-exam-mains')?.classList.add('active');
@@ -1045,6 +1048,7 @@ const openM=function(id,preset){
       document.getElementById('hwt-score-bar').style.width='0%';
       document.getElementById('hwt-live-pct').textContent='—%';
       _hwtAnToggle(false);
+      _ttFill('hwt-tt',TEST_TIME_DEFAULT_H);
     },50);
   }
   
@@ -1808,7 +1812,8 @@ const HOUR_CATS=[
   {key:'lecture',    label:'Lecture',       color:'#60a5fa', manual:true},
   {key:'practice',   label:'Practice',      color:'#34d399', manual:true},
   {key:'revision',   label:'Revision',      color:'#a695ff', manual:true},
-  {key:'mockAnalysis',label:'Mock Analysis',color:'#2dd4bf', manual:false}
+  {key:'mockAnalysis',label:'Mock Analysis',color:'#2dd4bf', manual:false},
+  {key:'testTime',  label:'Test',          color:'#f59e0b', manual:false}
 ];
 
 /* Called whenever a mock's analysis time is known — currently wired to the
@@ -1828,6 +1833,35 @@ function logMockAnalysisHours(hoursSpent,meta){
     e.mockAnalysis=hrs;e.total=hrs;e.date=meta.date||e.date;e.label=meta.examLabel||e.label;
   } else {
     e={id:Date.now(),date:meta.date||td(),subject:'mixed',lecture:0,practice:0,revision:0,mockAnalysis:hrs,total:hrs,source:'auto',label:meta.examLabel||'Mock Test',mockId};
+    S.hours.push(e);
+  }
+  save();
+  navMarkDirty('hours');navMarkDirty('overview');
+  renderHours();renderOverview();
+}
+/* Time the student spent sitting a test. Stored as its own hours entry (source:'test', total = the time) linked to the
+   test by mockId, so it needs no extra database column. Default is 3 hours (a full JEE paper); the student can change it. */
+const TEST_TIME_DEFAULT_H=3;
+function _ttFill(prefix,hrs){
+  const h=document.getElementById(prefix+'-h'),m=document.getElementById(prefix+'-m');
+  if(!h||!m)return;
+  const v=+hrs||0;
+  h.value=v>0?Math.floor(v+1e-9):'';
+  m.value=v>0?Math.round((v-Math.floor(v+1e-9))*60):'';
+}
+function logMockTestHours(hoursSpent,meta){
+  meta=meta||{};
+  const hrs=Math.round((+hoursSpent||0)*100)/100;
+  const mockId=meta.mockId||null;
+  let e=mockId?S.hours.find(h=>h.source==='test'&&h.mockId===mockId):null;
+  if(hrs<=0){
+    if(e){S.hours=S.hours.filter(x=>x!==e);save();navMarkDirty('hours');navMarkDirty('overview');renderHours();renderOverview();}
+    return;
+  }
+  if(e){
+    e.testTime=hrs;e.total=hrs;e.date=meta.date||e.date;e.label=meta.examLabel||e.label;
+  } else {
+    e={id:Date.now()+1,date:meta.date||td(),subject:'mixed',lecture:0,practice:0,revision:0,mockAnalysis:0,testTime:hrs,total:hrs,source:'test',label:meta.examLabel||'Mock Test',mockId};
     S.hours.push(e);
   }
   save();
@@ -2063,6 +2097,7 @@ function saveTest(){
   const _analyzed=document.getElementById('at-an-yes').classList.contains('active');
   const _anHrs=_analyzed?_lhDur('at-an-h','at-an-m'):0;
   logMockAnalysisHours(_anHrs,{mockId:e.id,date:e.date,examLabel:_examLabel});
+  logMockTestHours(_lhDur('at-tt-h','at-tt-m'),{mockId:e.id,date:e.date,examLabel:_examLabel});
   if(isEdit){
     _atEditId=null;
     navMarkDirty('mains');navMarkDirty('advanced');navMarkDirty('overview');
@@ -2158,6 +2193,7 @@ function saveHWT(){
   const _hwtAnalyzed=document.getElementById('hwt-an-yes').classList.contains('active');
   const _hwtAnHrs=_hwtAnalyzed?_lhDur('hwt-an-h','hwt-an-m'):0;
   logMockAnalysisHours(_hwtAnHrs,{mockId:e.id,date:e.date,examLabel:`${e.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${e.type==='full'?'Full':'Partial'} — ${fmt(e.date)}`});
+  logMockTestHours(_lhDur('hwt-tt-h','hwt-tt-m'),{mockId:e.id,date:e.date,examLabel:`${e.exam==='advanced'?'JEE Advanced':'JEE Mains'} ${e.type==='full'?'Full':'Partial'} — ${fmt(e.date)}`});
   _hwtMarkDismissed(upid);
   pushUndo('test',e,'Score logged from scheduled test',false);
   const gm2=getGoalMains(),ga2=getGoalAdv();
@@ -3150,8 +3186,8 @@ function renderOvTrend(){
 }
 function renderOvWeek(){
   const days=l7();
-  const ovHasMock=S.hours.some(h=>(h.mockAnalysis||0)>0);
-  const ovCats=HOUR_CATS.filter(c=>c.manual||ovHasMock);
+  const ovHasMock=S.hours.some(h=>(h.mockAnalysis||0)>0), ovHasTest=S.hours.some(h=>h.source==='test');
+  const ovCats=HOUR_CATS.filter(c=>c.manual||(c.key==='testTime'?ovHasTest:ovHasMock));
   const newData={labels:days.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short'})),datasets:ovCats.map(c=>({label:c.label.slice(0,4),data:days.map(d=>S.hours.filter(h=>h.date===d).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
   const newOpts={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}}},scales:{...sO(),x:{...sO().x,stacked:true},y:{...sO().y,stacked:true}}};
   if(!uC('ovWC',newData,newOpts)){
@@ -3441,6 +3477,8 @@ function _renderHours(){
   const _dateIndex={};
   S.hours.forEach(h=>{(_dateIndex[h.date]=_dateIndex[h.date]||[]).push(h);});
   const hasMockEver=S.hours.some(h=>(h.mockAnalysis||0)>0);
+  const hasTestEver=S.hours.some(h=>h.source==='test');
+  const hasAutoEver=hasMockEver||hasTestEver;
   const heroMock=document.getElementById('hr-hero-mock');
   if(heroMock)heroMock.style.display=hasMockEver?'':'none';
   const total=hrs.reduce((a,b)=>a+b.total,0);
@@ -3454,7 +3492,8 @@ function _renderHours(){
   const thisMD=[...new Set(S.hours.filter(h=>{const d=new Date(h.date+'T00:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).map(h=>h.date))];
   const mAvg=thisMD.length?(thisMD.reduce((s,d)=>s+(_dateIndex[d]||[]).reduce((a,b)=>a+b.total,0),0)/thisMD.length).toFixed(1):0;
   const mockAll=hrs.reduce((a,b)=>a+(b.mockAnalysis||0),0);
-  const totalSub=mockAll>0?`incl. ${mockAll.toFixed(1)}h mock analysis`:'in selected period';
+  const testAll=hrs.reduce((a,b)=>a+(b.testTime||0),0);
+  const totalSub=(mockAll>0||testAll>0)?`incl. ${[mockAll>0?mockAll.toFixed(1)+'h mock analysis':'',testAll>0?testAll.toFixed(1)+'h tests':''].filter(Boolean).join(' + ')}`:'in selected period';
   document.getElementById('hr-stats').innerHTML=`
     <div class="prem-stat-card" style="border-color:rgba(124,106,247,.16)">
       <div class="prem-stat-icon-row">
@@ -3495,7 +3534,7 @@ function _renderHours(){
     </div>`;
   const last14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().split('T')[0];});
   const sf=F.hours.subj;const hF=h=>sf==='all'||h.subject===sf;
-  const activeCats=HOUR_CATS.filter(c=>c.manual||hasMockEver);
+  const activeCats=HOUR_CATS.filter(c=>c.manual||(c.key==='testTime'?hasTestEver:hasMockEver));
   const hrBCData={labels:last14.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en',{month:'short',day:'numeric'})),datasets:activeCats.map(c=>({label:c.label,data:last14.map(d=>(_dateIndex[d]||[]).filter(hF).reduce((a,b)=>a+(b[c.key]||0),0)),backgroundColor:c.color,stack:'s',borderRadius:2}))};
   const hrBCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:9},boxWidth:7,padding:7}},tooltip:{callbacks:{title:ctx=>{const idx=ctx[0].dataIndex;const d=last14[idx];const tot=(_dateIndex[d]||[]).filter(hF).reduce((a,b)=>a+b.total,0);return `${new Date(d+'T00:00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})} — ${tot.toFixed(1)}h total`;},label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}h`}}},scales:{...sO(),x:{...sO().x,stacked:true,ticks:{...sO().x.ticks,maxRotation:45}},y:{...sO().y,stacked:true,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrBC',hrBCData,hrBCOpts)){dc('hrBC');CIs['hrBC']=new Chart(document.getElementById('hrBC').getContext('2d'),{type:'bar',data:hrBCData,options:hrBCOpts});}
@@ -3506,9 +3545,9 @@ function _renderHours(){
   const hrDCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a7990',font:{size:10},boxWidth:9,padding:9}},tooltip:{callbacks:{label:ctx=>`${activeCats[ctx.dataIndex].label}: ${ctx.parsed.toFixed(1)}h (${catPct[ctx.dataIndex]}%)`}}}};
   if(!uC('hrDC',hrDCData,hrDCOpts)){dc('hrDC');CIs['hrDC']=new Chart(document.getElementById('hrDC').getContext('2d'),{type:'doughnut',data:hrDCData,options:hrDCOpts});}
   const dcTitle=document.getElementById('hr-dc-title'),dcSub=document.getElementById('hr-dc-sub'),scSub=document.getElementById('hr-sc-sub');
-  if(dcTitle)dcTitle.textContent=hasMockEver?'Study Breakdown':'Lecture / Practice / Revision';
-  if(dcSub)dcSub.textContent=hasMockEver?'% of total, incl. mock analysis':'split breakdown';
-  if(scSub)scSub.textContent=hasMockEver?'manual study only':'total per subject';
+  if(dcTitle)dcTitle.textContent=hasAutoEver?'Study Breakdown':'Lecture / Practice / Revision';
+  if(dcSub)dcSub.textContent=hasAutoEver?'% of total, incl. mock analysis and test time':'split breakdown';
+  if(scSub)scSub.textContent=hasAutoEver?'manual study only':'total per subject';
   const hrSCData={labels:['Physics','Chemistry','Maths'],datasets:[{label:'Hours',data:['physics','chemistry','maths'].map(s=>+hrs.filter(h=>h.subject===s).reduce((a,b)=>a+b.total,0).toFixed(1)),backgroundColor:['#60a5fa','#34d399','#fbbf24'],borderRadius:5,barThickness:28}]};
   const hrSCOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...sO(),y:{...sO().y,ticks:{...sO().y.ticks,callback:v=>v+'h'}}}};
   if(!uC('hrSC',hrSCData,hrSCOpts)){dc('hrSC');CIs['hrSC']=new Chart(document.getElementById('hrSC').getContext('2d'),{type:'bar',data:hrSCData,options:hrSCOpts});}
@@ -3549,6 +3588,17 @@ function _renderMockBanner(hrs){
     <div class="prem-mock-banner-val">${mockHrs.toFixed(1)}<span>h</span></div>`;
 }
 function _hoursRowHTML(h,i){
+  if(h.source==='test'){
+    return `<div class="prem-task source-auto" style="animation-delay:${i*.03}s">
+      <div style="flex:1;min-width:0">
+        <div class="prem-task-title">Test <span style="color:#f59e0b;font-weight:700;margin-left:6px">${(+h.total).toFixed(2)}h</span></div>
+        <div class="prem-task-meta">
+          <span class="subj-chip" style="background:rgba(245,158,11,.12);color:#f59e0b">${h.label||'Mock Test'}</span>
+          <span class="task-date">${fmt(h.date)}</span>
+        </div>
+      </div>
+    </div>`;
+  }
   if(h.source==='auto'){
     return `<div class="prem-task source-auto" style="animation-delay:${i*.03}s">
       <div style="flex:1;min-width:0">
@@ -4150,7 +4200,7 @@ function openAvMenu(){
     const now = new Date();
     const monthHrs = (S.hours||[])
       .filter(h=>{ const d=new Date(h.date); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); })
-      .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0)+(+h.mockAnalysis||0),0);
+      .reduce((acc,h)=>acc+(+h.lecture||0)+(+h.practice||0)+(+h.revision||0)+(+h.mockAnalysis||0)+(+h.testTime||0),0);
     const hrsEl = document.getElementById('avStatHrs');
     if(hrsEl) hrsEl.textContent = monthHrs>0 ? (Number.isInteger(monthHrs)?monthHrs:monthHrs.toFixed(1))+'h' : '—';
     

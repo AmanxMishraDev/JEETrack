@@ -135,3 +135,34 @@ describe('Wiring', () => {
   it('empty-state colspans match the new column counts (Main 10, Advanced 11)', () => { expect(ctrl).toContain('<td colspan="10"><div class="empty"><svg width="12"'); expect(ctrl).toContain('<td colspan="11"><div class="empty"><svg width="13"'); });
   it('the Optima key / partner URL are never in frontend code', () => { expect(src + html + ctrl).not.toMatch(/x-partner-key|OPTIMA_PARTNER_KEY|optima_partner/i); });
 });
+
+describe('PostHog events (no student details, never break the page)', () => {
+  const track = t => { const ev = []; t.ctx._jtTrack = (name, props) => ev.push([name, props]); return ev; };
+  it('button shown: once per test and state, with the route', async () => {
+    const t = load({ tests: [test7], pw: [7] }); const ev = track(t); await t.api.optimaLoadJobs();
+    t.api.optimaCellHTML(7); t.api.optimaCellHTML(7);
+    expect(ev.filter(e => e[0] === 'analyse_button_shown')).toEqual([['analyse_button_shown', { state: 'none', route: 'pw' }]]);
+  });
+  it('a manual test is route "other"', () => {
+    const t = load({ tests: [test7] }); const ev = track(t); t.api.optimaCellHTML(7);
+    expect(ev[0][1]).toEqual({ state: 'none', route: 'other' });
+  });
+  it('tap is counted for a click, not when the page is restored from the URL', () => {
+    const t = load({ tests: [test7] }); const ev = track(t);
+    t.api.openAnalysis(7, false); expect(ev.filter(e => e[0] === 'analyse_button_tapped')).toHaveLength(0);
+    t.api.openAnalysis(7); expect(ev.filter(e => e[0] === 'analyse_button_tapped')).toEqual([['analyse_button_tapped', { state: 'none', route: 'other' }]]);
+  });
+  it('status page view carries only the status and route; links report which step was used', async () => {
+    const t = load({ tests: [test7], jobs: [job({ status: 'ready' })] }); const ev = track(t); await t.api.optimaLoadJobs();
+    t.api.openAnalysis(7, false); t.api.renderAnalysis();
+    expect(ev.filter(e => e[0] === 'analysis_status_viewed')).toEqual([['analysis_status_viewed', { status: 'done', route: 'other' }]]);
+    expect(t.el.innerHTML).toContain("onclick=\"_optTrack('analysis_notebook_opened')\"");
+    const f = load({ tests: [test7] }); f.api.openAnalysis(7, false);
+    expect(f.el.innerHTML).toContain("_optTrack('analysis_guide_opened')"); expect(f.el.innerHTML).toContain("_optTrack('analysis_optima_site_opened')");
+  });
+  it('analytics that throws or is missing changes nothing', () => {
+    const t = load({ tests: [test7] }); t.ctx._jtTrack = () => { throw new Error('blocked'); };
+    expect(() => { t.api.optimaCellHTML(7); t.api.openAnalysis(7); }).not.toThrow();
+    const u = load({ tests: [test7] }); expect(() => u.api.optimaCellHTML(7)).not.toThrow();
+  });
+});

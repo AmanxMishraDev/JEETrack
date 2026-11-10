@@ -285,7 +285,7 @@ async function loadUserData(){
   // Cuts a full load from 8 round trips down to 1.
   const _applyFullState = (full, uid) => {
     S.tests=(full.tests||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,paper:r.paper,type:r.type,date:r.date,total:r.total,max:r.max,physics:r.physics,chemistry:r.chemistry,maths:r.maths,notes:r.notes||''}));
-    S.hours=(full.hours||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
+    S.hours=(full.hours||[]).map(r=>({id:r.id,date:r.date,subject:r.subject,lecture:r.lecture,practice:r.practice,revision:r.revision,total:r.total,mockAnalysis:r.mock_analysis||0,testTime:r.source==='test'?(+r.total||0):0,source:r.source||'manual',label:r.label||null,mockId:r.mock_id||null}));
     S.backlogs=(full.backlogs||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.todos=(full.todos||[]).map(r=>({id:r.id,title:r.title,subject:r.subject,priority:r.priority,due:r.due,details:r.details||'',done:r.done,addedDate:r.added_date,doneDate:r.done_date}));
     S.upcoming=(full.upcoming||[]).map(r=>({id:r.id,exam:r.exam,session:r.session,type:r.type,date:r.date,venue:r.venue||'',notes:r.notes||''}));
