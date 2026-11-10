@@ -48,10 +48,10 @@ describe('Announcements', () => {
     api.announcementsSyncBell(at(a.date)); expect(bell.style.display).toBe('');
     api.announcementsSyncBell(at('2026-12-31')); expect(bell.style.display).toBe('none');
   });
-  it('page text is escaped and has the link and days left', () => {
+  it('page text is escaped and has the link and no countdown', () => {
     const { api } = load(); const a = api.ANNOUNCEMENTS[0];
     const h = api.announcementsHTML(at(a.date));
-    expect(h).toContain('href="' + a.url + '"'); expect(h).toContain('days left'); expect(h).not.toContain('<script');
+    expect(h).toContain('href="' + a.url + '"'); expect(h).not.toContain('days left'); expect(h).not.toContain('<script');
     expect(api.announcementsHTML(at('2026-12-31'))).toContain('all caught up');
   });
   it('works when browser storage is blocked', () => {

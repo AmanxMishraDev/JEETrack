@@ -37,6 +37,11 @@
     { "source": "/favicon.png", "destination": "/assets/icons/favicon.png" },
     { "source": "/icon-152.png", "destination": "/assets/icons/icon-152.png" },
     { "source": "/icon-192.png", "destination": "/assets/icons/icon-192.png" },
+    { "source": "/icon-512.png", "destination": "/assets/icons/icon-512.png" },
+    { "source": "/favicon.ico", "destination": "/assets/icons/favicon.ico" },
+    { "source": "/favicon-48.png", "destination": "/assets/icons/favicon-48.png" },
+    { "source": "/apple-touch-icon.png", "destination": "/assets/icons/apple-touch-icon.png" },
+    { "source": "/apple-touch-icon-precomposed.png", "destination": "/assets/icons/apple-touch-icon.png" },
     { "source": "/jeetrack-logo-email.png", "destination": "/assets/icons/jeetrack-logo-email.png" },
 
     { "source": "/faq", "destination": "/pages/faq.html" },
@@ -62,6 +67,6 @@
     { "source": "/admin", "destination": "/admin/admin.html" },
     { "source": "/admin.html", "destination": "/admin/admin.html" },
 
-    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|pw-sync-guide\\.html|optima-launch\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|favicon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
+    { "source": "/((?!faq\\.html|privacy\\.html|terms\\.html|features\\.html|about\\.html|support\\.html|hall-of-support\\.html|pw-sync-guide\\.html|optima-launch\\.html|admin\\.html|sitemap\\.xml|robots\\.txt|google.*\\.html|icon.*|apple-touch-icon.*|favicon.*|logo\\.svg|manifest\\.json|sw\\.js).*)", "destination": "/index.html" }
   ]
 }

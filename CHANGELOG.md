@@ -4,6 +4,13 @@ All notable changes to JEETrack are recorded here, newest first.
 
 ---
 
+## 🔎 v2.5.2 — Nov 10, 2026 — Logo & Search
+
+- Fixed the JEETrack logo not being found by Google. The 512px app icon and `favicon.ico` were missing (404), so Google and link previews had nothing to show. Both are now served, plus a 48px and an Apple touch icon
+- Announcements no longer show a "days left" countdown
+
+---
+
 ## 📈 v2.5.1 — Nov 10, 2026 — Test Time & Analytics
 
 ### ⏱️ Test time in Study Hours

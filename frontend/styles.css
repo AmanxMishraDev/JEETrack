@@ -5767,7 +5767,6 @@ button.an-btn{border:1px solid var(--bd2)}
 .ann-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px}
 .ann-cta{display:inline-flex;align-items:center;gap:8px;font:600 14px 'DM Sans',sans-serif;color:#fff;text-decoration:none;padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,#7c6af7,#a67af5);box-shadow:0 8px 24px rgba(124,106,247,.35);transition:transform .2s}
 .ann-cta:hover{transform:translateY(-2px)}
-.ann-left{font-size:12px;color:var(--mu)}
 .ann-empty{text-align:center;padding:60px 20px;color:var(--mu)}
 .ann-empty-ic{font-size:30px;margin-bottom:10px}
 .ann-empty-t{font-weight:600;color:var(--tx);margin-bottom:4px}

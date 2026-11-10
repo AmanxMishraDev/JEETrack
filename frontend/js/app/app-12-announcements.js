@@ -55,12 +55,12 @@ function announcementsHTML(now){
   const list = announcementsActive(now), seen = new Set(_annSeen());
   if(!list.length) return `<div class="ann-empty"><div class="ann-empty-ic">&#128276;</div><div class="ann-empty-t">You are all caught up</div><div class="ann-empty-s">New announcements will show up here.</div></div>`;
   return `<div class="ann-list">${list.map(a => {
-    const left = _annDaysLeft(a, now), isNew = !seen.has(a.id);
+    const isNew = !seen.has(a.id);
     return `<article class="ann-card${isNew ? ' is-new' : ''}">
       <div class="ann-top"><span class="ann-tag">${_annEsc(a.tag || 'Update')}</span>${isNew ? '<span class="ann-new">New</span>' : ''}<span class="ann-date">${_annEsc(new Date(a.date + 'T00:00:00Z').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }))}</span></div>
       <h3>${_annEsc(a.title)}</h3>
       <p>${_annEsc(a.summary)}</p>
-      <div class="ann-foot"><a class="ann-cta" href="${_annEsc(a.url)}">${_annEsc(a.cta || 'Read more')} <span aria-hidden="true">&rarr;</span></a><span class="ann-left">${left <= 0 ? 'Last day' : left === 1 ? '1 day left' : left + ' days left'}</span></div>
+      <div class="ann-foot"><a class="ann-cta" href="${_annEsc(a.url)}">${_annEsc(a.cta || 'Read more')} <span aria-hidden="true">&rarr;</span></a></div>
     </article>`;
   }).join('')}</div>`;
 }
